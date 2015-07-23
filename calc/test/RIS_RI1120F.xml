@@ -1,0 +1,151 @@
+<Nodes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="TKE_Calc_Graph.xsd" topic="Rebate">
+  <Versions>
+    <Version id="TKE.Calc.Runtime">1</Version>
+    <Version id="TKE.Calc.FileFormat">1</Version>
+    <Version id="TKE.Gist">1</Version>
+    <Version id="TKE.MeF">1</Version>
+  </Versions>
+  <!--
+
+            ASSIGNMENT
+
+
+
+        -->
+  <Node name="/Return/Data/FORMSET_RIS/FORM_RI1120F/L24">
+    <Inputs>
+      <Input>/Return/Data/FORMSET_RIS/FORM_RI1120F/L23</Input>
+      <Input>/Return/Data/FORMSET_RIS/FORM_RI1120F/CONSTANT_20</Input>
+    </Inputs>
+    <Gist>
+      <PercentageOf>
+        <Value>/Return/Data/FORMSET_RIS/FORM_RI1120F/L23</Value>
+        <Percentage>/Return/Data/FORMSET_RIS/FORM_RI1120F/CONSTANT_20</Percentage>
+        <ValueType>price</ValueType>
+        <OutputType>rebate</OutputType>
+      </PercentageOf>
+    </Gist>
+    <RoundTo>
+      <Dollars/>
+    </RoundTo>
+  </Node>
+  <!--
+
+            ASSIGNMENT
+
+
+
+        -->
+  <Node name="/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L25">
+    <Inputs>
+      <Input>/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L24</Input>
+      <Input>/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L23b</Input>
+      <Input>/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L23a</Input>
+      <Input>/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L22</Input>
+      <Input>/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L21</Input>
+      <Input>/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L20</Input>
+      <Input>/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L19</Input>
+      <Input>/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L18</Input>
+      <Input>/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L17</Input>
+      <Input>/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L16</Input>
+      <Input>/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L14</Input>
+      <Input>/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L15</Input>
+    </Inputs>
+    <Gist>
+      <Accumulation>
+        <Value>/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L24</Value>
+        <Value>/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L23b</Value>
+        <Value>/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L23a</Value>
+        <Value>/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L22</Value>
+        <Value>/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L21</Value>
+        <Value>/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L20</Value>
+        <Value>/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L19</Value>
+        <Value>/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L18</Value>
+        <Value>/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L17</Value>
+        <Value>/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L16</Value>
+        <Value>/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L14</Value>
+        <Value>/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L15</Value>
+        <Type>income</Type>
+      </Accumulation>
+    </Gist>
+    <RoundTo>
+      <Dollars/>
+    </RoundTo>
+  </Node>
+  <!--
+               INPUTS
+            -->
+  <Node type="input" name="/Return/Data/FORMSET_RIS/FORM_RI1120F/L23">
+    <RoundTo>
+      <Dollars/>
+    </RoundTo>
+  </Node>
+  <Node type="input" name="/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L24">
+    <RoundTo>
+      <Dollars/>
+    </RoundTo>
+  </Node>
+  <Node type="input" name="/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L23b">
+    <RoundTo>
+      <Dollars/>
+    </RoundTo>
+  </Node>
+  <Node type="input" name="/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L23a">
+    <RoundTo>
+      <Dollars/>
+    </RoundTo>
+  </Node>
+  <Node type="input" name="/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L22">
+    <RoundTo>
+      <Dollars/>
+    </RoundTo>
+  </Node>
+  <Node type="input" name="/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L21">
+    <RoundTo>
+      <Dollars/>
+    </RoundTo>
+  </Node>
+  <Node type="input" name="/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L20">
+    <RoundTo>
+      <Dollars/>
+    </RoundTo>
+  </Node>
+  <Node type="input" name="/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L19">
+    <RoundTo>
+      <Dollars/>
+    </RoundTo>
+  </Node>
+  <Node type="input" name="/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L18">
+    <RoundTo>
+      <Dollars/>
+    </RoundTo>
+  </Node>
+  <Node type="input" name="/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L17">
+    <RoundTo>
+      <Dollars/>
+    </RoundTo>
+  </Node>
+  <Node type="input" name="/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L16">
+    <RoundTo>
+      <Dollars/>
+    </RoundTo>
+  </Node>
+  <Node type="input" name="/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L14">
+    <RoundTo>
+      <Dollars/>
+    </RoundTo>
+  </Node>
+  <Node type="input" name="/Return/Data/FORMSET_RIS/FORM_RI1120F/P2L15">
+    <RoundTo>
+      <Dollars/>
+    </RoundTo>
+  </Node>
+  <!--
+                CONSTANTS
+            -->
+  <Node type="input" name="/Return/Data/FORMSET_RIS/FORM_RI1120F/CONSTANT_20">
+    <RoundTo>
+      <Dollars/>
+    </RoundTo>
+  </Node>
+</Nodes>

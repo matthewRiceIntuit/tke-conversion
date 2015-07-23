@@ -1,0 +1,19 @@
+SECTION Address;
+/*  *
+**----------------------------------------------------------------------------------------------*/
+VAR
+
+    ZipBegin, world, asdfasdf : FText;
+    ZipEnd     : FText;
+
+BEGIN
+    L24  := MAX(L24,SInfoWks.HMinTax);
+    if HasValue(Sinfowks.CITY) then
+      begin
+        if Length(ZipEnd) > 0 then
+          hCityStZip := Concat(SinfoWks.CITY,", ",SinfoWks.ST," ",ZipBegin,"-",ZipEnd);
+        else
+          hCityStZip := Concat(SinfoWks.CITY,", ",SinfoWks.ST," ",ZipBegin);
+      end;
+
+END;

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.intuit.ctg.tla.sample</groupId>
+    <artifactId>sample-element-types</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <properties>
+        <!-- Parameters - Change these as needed or override via -D when running maven command -->
+        <inputFile>Sample/Sample.xsd</inputFile>
+        <outputFile>SampleElementTypes.xml</outputFile>
+        <elementRoot>/Return</elementRoot>
+        <formRoot>/Return/Data</formRoot>
+        <includeAnnotations>false</includeAnnotations>     
+        <includeFacets>false</includeFacets>
+
+        <!-- Dependency -->
+        <cg.central.repo>http://ctg-cache-repo.corp.intuit.net/nexus/content/groups/public</cg.central.repo>
+        <tke.version>2014.1.15</tke.version>  
+    </properties>
+    
+    <pluginRepositories>
+        <pluginRepository>
+            <id>cg-central</id>
+            <name>CG Central Repo</name>
+            <url>${cg.central.repo}</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+    
+    <dependencies>
+        <dependency>
+            <groupId>com.intuit.ctg.tla.compilers</groupId>
+            <artifactId>element-types-maven-plugin</artifactId>
+            <version>${tke.version}</version>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.intuit.ctg.tla.compilers</groupId>
+                <artifactId>element-types-maven-plugin</artifactId>
+                <version>${tke.version}</version>
+                <executions>
+                    <execution>
+                        <id>Generate document with element types from Schema files</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>element-types</goal>
+                        </goals>
+                        <configuration>
+                            <inputFile>${inputFile}</inputFile>
+                            <outputFile>${outputFile}</outputFile>
+                            <elementRoot>${elementRoot}</elementRoot>
+                            <formRoot>${formRoot}</formRoot>
+                            <includeAnnotations>${includeAnnotations}</includeAnnotations>
+                            <includeFacets>${includeFacets}</includeFacets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

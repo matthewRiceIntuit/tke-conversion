@@ -1,0 +1,357 @@
+<FormML xmlns="http://schemas.intuit.com/cg/services/calc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" serviceImplementationVersion="mef-tsi-formml.2013.0">
+  <formset id="FDI">
+    <form id="F1040"/>
+    <form id="FW2" uuid="12345678-1234-1234-0030-123456789abc">
+      <field xsi:type="Text" id="D">
+        <value>567010046</value>
+      </field>
+      <field xsi:type="Text" id="EIN">
+        <value>567010046</value>
+      </field>
+      <field xsi:type="Cent" id="WAGES">
+        <value>40000</value>
+      </field>
+      <field xsi:type="Cent" id="FEDTAX">
+        <value>6000</value>
+      </field>
+      <field xsi:type="Cent" id="SSWAGES">
+        <value>40000</value>
+      </field>
+      <field xsi:type="Cent" id="SSTAX">
+        <value>2480</value>
+      </field>
+      <field xsi:type="Cent" id="MEDTAX">
+        <value>580</value>
+      </field>
+      <field xsi:type="Cent" id="MEDWAGES">
+        <value>40000</value>
+      </field>
+      <table id="CODES">
+        <row copy="1">
+          <field xsi:type="Text" id="CODESC">
+            <value>A</value>
+          </field>
+          <field xsi:type="Cent" id="CODESA">
+            <value>10</value>
+          </field>
+        </row>
+        <row copy="2">
+          <field xsi:type="Text" id="CODESC">
+            <value>B</value>
+          </field>
+          <field xsi:type="Cent" id="CODESA">
+            <value>100</value>
+          </field>
+        </row>
+        <row copy="3">
+          <field xsi:type="Text" id="CODESC">
+            <value>C</value>
+          </field>
+          <field xsi:type="Cent" id="CODESA">
+            <value>20</value>
+          </field>
+        </row>
+        <row copy="4">
+          <field xsi:type="Text" id="CODESC">
+            <value>D</value>
+          </field>
+          <field xsi:type="Cent" id="CODESA">
+            <value>30</value>
+          </field>
+        </row>
+      </table>
+      <field xsi:type="Boolean" id="STATX">
+        <value>true</value>
+      </field>
+      <field xsi:type="Boolean" id="PPX">
+        <value>false</value>
+      </field>
+      <field xsi:type="Boolean" id="SICKPAYX">
+        <value>false</value>
+      </field>
+      <table id="OTHR"/>
+      <table id="STATE">
+        <row copy="1">
+          <field xsi:type="Text" id="STATEST">
+            <value>CA</value>
+          </field>
+          <field xsi:type="Cent" id="STATEWAG">
+            <value>9994</value>
+          </field>
+          <field xsi:type="Cent" id="STATETAX">
+            <value>400</value>
+          </field>
+        </row>
+        <row copy="2">
+          <field xsi:type="Text" id="STATEST">
+            <value>MI</value>
+          </field>
+          <field xsi:type="Cent" id="STATEWAG">
+            <value>20001</value>
+          </field>
+          <field xsi:type="Cent" id="STATETAX">
+            <value>200</value>
+          </field>
+        </row>
+        <row copy="3">
+          <field xsi:type="Text" id="STATEST">
+            <value>NY</value>
+          </field>
+          <field xsi:type="Cent" id="STATEWAG">
+            <value>9000</value>
+          </field>
+          <field xsi:type="Cent" id="STATETAX">
+            <value>900</value>
+          </field>
+        </row>
+        <row copy="4">
+          <field xsi:type="Text" id="STATEST">
+            <value>MA</value>
+          </field>
+          <field xsi:type="Cent" id="STATEWAG">
+            <value>19999</value>
+          </field>
+          <field xsi:type="Cent" id="STATETAX">
+            <value>400</value>
+          </field>
+        </row>
+        <row copy="5">
+          <field xsi:type="Text" id="STATEST">
+            <value>NY</value>
+          </field>
+        </row>
+      </table>
+      <table id="LOCAL">
+        <row copy="1">
+          <field xsi:type="Cent" id="LCLWAGES">
+            <value>9994</value>
+          </field>
+          <field xsi:type="Cent" id="LCLTAX">
+            <value>192</value>
+          </field>
+          <field xsi:type="Text" id="LCLSTATE">
+            <value>CA</value>
+          </field>
+        </row>
+        <row copy="2">
+          <field xsi:type="Cent" id="LCLWAGES">
+            <value>20001</value>
+          </field>
+          <field xsi:type="Cent" id="LCLTAX">
+            <value>3001</value>
+          </field>
+          <field xsi:type="Text" id="LCLSTATE">
+            <value>MI</value>
+          </field>
+        </row>
+        <row copy="3">
+          <field xsi:type="Cent" id="LCLWAGES">
+            <value>8500</value>
+          </field>
+          <field xsi:type="Cent" id="LCLTAX">
+            <value>212</value>
+          </field>
+          <field xsi:type="Text" id="LCLSTATE">
+            <value>NY</value>
+          </field>
+        </row>
+        <row copy="4">
+          <field xsi:type="Cent" id="LCLWAGES">
+            <value>19999</value>
+          </field>
+          <field xsi:type="Cent" id="LCLTAX">
+            <value>7546</value>
+          </field>
+          <field xsi:type="Text" id="LCLSTATE">
+            <value>MA</value>
+          </field>
+        </row>
+        <row copy="5">
+          <field xsi:type="Cent" id="LCLWAGES">
+            <value>500</value>
+          </field>
+          <field xsi:type="Cent" id="LCLTAX">
+            <value>300</value>
+          </field>
+          <field xsi:type="Text" id="LCLSTATE">
+            <value>NY</value>
+          </field>
+        </row>
+      </table>
+      <field xsi:type="Text" id="NSX">
+        <value>X</value>
+      </field>
+    </form>
+    <form id="FW2" uuid="f940e950-d170-11e3-9c1a-0800200c9a66">
+      <field xsi:type="Text" id="D">
+        <value>567010046</value>
+      </field>
+      <field xsi:type="Text" id="EIN">
+        <value>959595959</value>
+      </field>
+      <field xsi:type="Cent" id="WAGES">
+        <value>40000</value>
+      </field>
+      <field xsi:type="Cent" id="FEDTAX">
+        <value>6000</value>
+      </field>
+      <field xsi:type="Cent" id="SSWAGES">
+        <value>40000</value>
+      </field>
+      <field xsi:type="Cent" id="SSTAX">
+        <value>2480</value>
+      </field>
+      <field xsi:type="Cent" id="MEDTAX">
+        <value>580</value>
+      </field>
+      <field xsi:type="Cent" id="MEDWAGES">
+        <value>40000</value>
+      </field>
+      <table id="CODES">
+        <row copy="1">
+          <field xsi:type="Text" id="CODESC">
+            <value>A</value>
+          </field>
+          <field xsi:type="Cent" id="CODESA">
+            <value>10</value>
+          </field>
+        </row>
+        <row copy="2">
+          <field xsi:type="Text" id="CODESC">
+            <value>B</value>
+          </field>
+          <field xsi:type="Cent" id="CODESA">
+            <value>100</value>
+          </field>
+        </row>
+        <row copy="3">
+          <field xsi:type="Text" id="CODESC">
+            <value>C</value>
+          </field>
+          <field xsi:type="Cent" id="CODESA">
+            <value>20</value>
+          </field>
+        </row>
+        <row copy="4">
+          <field xsi:type="Text" id="CODESC">
+            <value>D</value>
+          </field>
+          <field xsi:type="Cent" id="CODESA">
+            <value>30</value>
+          </field>
+        </row>
+      </table>
+      <field xsi:type="Boolean" id="STATX">
+        <value>true</value>
+      </field>
+      <field xsi:type="Boolean" id="PPX">
+        <value>false</value>
+      </field>
+      <field xsi:type="Boolean" id="SICKPAYX">
+        <value>false</value>
+      </field>
+      <table id="OTHR"/>
+      <table id="STATE">
+        <row copy="1">
+          <field xsi:type="Text" id="STATEST">
+            <value>CA</value>
+          </field>
+          <field xsi:type="Cent" id="STATEWAG">
+            <value>9994</value>
+          </field>
+          <field xsi:type="Cent" id="STATETAX">
+            <value>400</value>
+          </field>
+        </row>
+        <row copy="2">
+          <field xsi:type="Text" id="STATEST">
+            <value>MI</value>
+          </field>
+          <field xsi:type="Cent" id="STATEWAG">
+            <value>20001</value>
+          </field>
+          <field xsi:type="Cent" id="STATETAX">
+            <value>200</value>
+          </field>
+        </row>
+        <row copy="3">
+          <field xsi:type="Text" id="STATEST">
+            <value>NY</value>
+          </field>
+          <field xsi:type="Cent" id="STATEWAG">
+            <value>90</value>
+          </field>
+          <field xsi:type="Cent" id="STATETAX">
+            <value>900</value>
+          </field>
+        </row>
+        <row copy="4">
+          <field xsi:type="Text" id="STATEST">
+            <value>MA</value>
+          </field>
+          <field xsi:type="Cent" id="STATEWAG">
+            <value>19999</value>
+          </field>
+          <field xsi:type="Cent" id="STATETAX">
+            <value>400</value>
+          </field>
+        </row>
+        <row copy="5">
+          <field xsi:type="Text" id="STATEST">
+            <value>NY</value>
+          </field>
+        </row>
+      </table>
+      <table id="LOCAL">
+        <row copy="1">
+          <field xsi:type="Cent" id="LCLWAGES">
+            <value>9994</value>
+          </field>
+          <field xsi:type="Cent" id="LCLTAX">
+            <value>192</value>
+          </field>
+          <field xsi:type="Text" id="LCLSTATE">
+            <value>CA</value>
+          </field>
+        </row>
+        <row copy="2">
+          <field xsi:type="Cent" id="LCLWAGES">
+            <value>20001</value>
+          </field>
+          <field xsi:type="Cent" id="LCLTAX">
+            <value>3001</value>
+          </field>
+          <field xsi:type="Text" id="LCLSTATE">
+            <value>MI</value>
+          </field>
+        </row>
+        <row copy="3">
+          <field xsi:type="Cent" id="LCLWAGES">
+            <value>8500</value>
+          </field>
+          <field xsi:type="Cent" id="LCLTAX">
+            <value/>
+          </field>
+          <field xsi:type="Text" id="LCLSTATE">
+            <value>NY</value>
+          </field>
+        </row>
+        <row copy="4">
+          <field xsi:type="Cent" id="LCLWAGES">
+            <value>500</value>
+          </field>
+          <field xsi:type="Cent" id="LCLTAX">
+            <value>300</value>
+          </field>
+          <field xsi:type="Text" id="LCLSTATE">
+            <value>NY</value>
+          </field>
+        </row>
+      </table>
+      <field xsi:type="Text" id="NSX">
+        <value>X</value>
+      </field>
+    </form>
+    <form id="FONLINE"/>
+  </formset>
+</FormML>

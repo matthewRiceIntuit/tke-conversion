@@ -1,0 +1,5574 @@
+/****************************************************************************
+<=>
+<=>  FileName:    FCC.Y   (Form Calculation Compiler grammar)
+<=>
+<=>  Description: This file contains the YACC grammar for the Form
+<=>               Calculation Language.  The rules here are responsible
+<=>               for creating the vast majority of the parse tree.
+<=>               The companion lex specification can be found in FCC.L
+<=>
+<=>  Copyright <c> 1993-2011 Intuit, Inc All rights reserved
+<=>
+****************************************************************************/
+
+%{
+#pragma warning( disable : 4305 )
+#pragma warning( disable : 4309 )
+
+#include "cayaclex.h"
+
+#include "pMovALst.h"
+#include "pMvArItr.h"
+
+#include <cstdlib>
+#include <string.h>
+#include <assert.h>
+#include <sstream>
+#include <vector>
+
+
+// Misc globals for parse
+ZTableDecl* gTableDecl = NULL;
+UINT16      gNestedLoops = 0;
+
+std::vector<FormID_t> gChildFormIDs;
+
+
+//***********************************************************************
+// store the form IDs of any of the current form's child forms.
+// These IDs will be used by CheckForClashesWithChildFormIDs
+//***********************************************************************
+
+void CacheChildFormIDs( 
+	ZFormDeclList* formDecls,
+	zcsErrorHandler*  errorHandler )
+{
+	gChildFormIDs.clear();
+
+	assert( formDecls );
+	if ( !formDecls )
+	{
+		return;
+	}
+
+	const zctFormSet* currentFormSet= nullptr;
+	const zctForm* currentForm = nullptr;
+	formDecls->GetFormSetAndForm( &currentFormSet, &currentForm );
+
+	assert( currentFormSet );
+	assert( currentForm );
+
+
+	const zpMoveableArrayList& formList = currentFormSet->GetFormList();
+
+	if ( formList.Lock() == kNoError )
+	{
+		zpMoveableArrayIterator iter( &formList );
+		zctForm* pForm = (zctForm*)iter.First();
+
+		while ( pForm )
+		{
+			FormID_t associatedID;
+			if ( pForm->GetAssociatedForm( associatedID ) == currentForm->GetID() )
+			{
+				gChildFormIDs.push_back( pForm->GetID() );
+			}
+
+			pForm = (zctForm*)iter.Next();
+		}
+
+		formList.Release();
+	}
+
+/* This is handy for debuging:
+
+	if ( !gChildFormIDs.empty() )
+	{
+		std::ostringstream oss;
+		oss << "this form (" << currentForm->GetID() << ") has " << gChildFormIDs.size() << " child forms:";
+		errorHandler->ReportLineError(zcsErrorHandler::kWarning, oss.str().c_str() );
+
+		std::vector<FormID_t>::iterator iter = gChildFormIDs.begin();
+		while ( iter != gChildFormIDs.end() )
+		{
+			std::ostringstream oss;
+			oss << "\t" << *iter++;
+			errorHandler->ReportLineError(zcsErrorHandler::kWarning, oss.str().c_str() );
+		}
+	}
+*/
+}
+
+
+//***********************************************************************
+// Report an error if the specified field ID is the same as the form ID
+// of any of this form's child forms.
+//***********************************************************************
+
+void CheckForClashesWithChildFormIDs( 
+	const FormID_t& parentFormID, 
+	const zpString& theID, 
+	zcsErrorHandler*  errorHandler )
+{
+	std::vector<FormID_t>::iterator iter = gChildFormIDs.begin();
+
+	while ( iter != gChildFormIDs.end() )
+	{
+		FormID_t formID = *iter++;
+		if ( formID == theID )
+		{
+			std::ostringstream oss;
+
+			oss << "child form ID " << formID
+				<< " conflicts with a (possibly hidden) field or a table id on form "
+				<< parentFormID << ".";
+
+			errorHandler->ReportLineError(zcsErrorHandler::kError, oss.str().c_str() );
+		}
+	}
+}
+
+
+
+//***********************************************************************
+
+bool IsFunctionCall( ZExpression* exp )
+{
+   if ( dynamic_cast<ZFunctionCall*>(exp) )
+   {
+      return true;
+   }
+
+   ZUnaryExpression* pUnaryExp = dynamic_cast<ZUnaryExpression*>(exp);
+   if ( pUnaryExp )
+   {
+      if ( IsFunctionCall( pUnaryExp->GetOperand() ) )
+      {
+         return true;
+      }
+   }
+
+   ZBinaryExpression* pBinaryExp = dynamic_cast<ZBinaryExpression*>(exp);
+   if ( pBinaryExp )
+   {
+      if ( IsFunctionCall( pBinaryExp->GetLeftChild() ) )
+      {
+         return true;
+      }
+
+      if ( IsFunctionCall( pBinaryExp->GetRightChild() ) )
+      {
+         return true;
+      }
+   }
+
+   return false;
+}
+
+
+
+//***********************************************************************
+
+void TestForFunctionCall(
+   ZExpression*      exp,
+   const char*       loopType,
+   zcsErrorHandler*  errorHandler )
+{
+   if ( IsFunctionCall( exp ) )
+   {
+      zpString ErrMsg;
+
+      ErrMsg.Assign( "Performance issue: This " );
+      ErrMsg.Append( loopType );
+      ErrMsg.Append( " is using the return value of a function in its loop bound. " );
+
+      errorHandler->ReportLineError(zcsErrorHandler::kWarning, ErrMsg);
+   }
+}
+
+
+
+//***********************************************************************
+
+bool IsReferenceToSelf(
+   ZFormAddress*  formAddr,
+   ZParseTree*    pParseTree )
+{
+   if ( formAddr )
+   {
+      ZFormDeclList* FormDecls = pParseTree->GetFormDeclList();
+
+      if ( FormDecls )
+      {
+         const zctFormSet* OwningFormSet = NULL;
+         const zctForm*    OwningForm = NULL;
+
+         FormDecls->GetFormSetAndForm( &OwningFormSet, &OwningForm );
+         if ( OwningForm->GetID() == *formAddr->GetFormID() )
+         {
+            Error_t err( kNoError );
+
+
+            if ( OwningForm->GetMaximumCopies() != 1 )
+            {
+               if ( formAddr->BaseFormWasIndexed() )
+               {
+                  std::stringstream errString;
+
+                  errString << "\"" << formAddr->GetFormID()->Contents() << "\""
+                            << " has a copy number that will be ignored because this is a reference to the current form";
+
+                  zpString errMsg( err, errString.str().c_str() );
+                  gpParser->GetErrorHandler().ReportLineError( zcsErrorHandler::kWarning, errMsg );
+               }
+               else
+               {
+                  std::stringstream errString;
+
+                  errString << "\"" << formAddr->GetFormID()->Contents() << "\"" << kFormShouldBeIndexed;
+                  zpString errMsg( err, errString.str().c_str() );
+                  gpParser->GetErrorHandler().ReportLineError( zcsErrorHandler::kError, errMsg );
+               }
+            }
+            else if ( formAddr->BaseFormWasIndexed() )
+            {
+               std::stringstream errString;
+
+               errString << "\"" << formAddr->GetFormID()->Contents() << "\"" << kFormShouldNotBeIndexed;
+               zpString errMsg( err, errString.str().c_str() );
+               gpParser->GetErrorHandler().ReportLineError( zcsErrorHandler::kError, errMsg );
+            }
+
+            return true;
+         }
+      }
+   }
+
+   return false;
+}
+
+%}
+
+/****************************************************************************
+    Tokens used by the language
+****************************************************************************/
+
+%token   _ARRAY
+%token   _ASSIGN
+%token   _BEGIN
+%token   _BOOLEANTYPE
+%token   _BLANQUE
+%token   _BREAK
+%token   _CASE
+%token   _CHAR
+%token   _COLON
+%token   _TPS_COMMA
+%token   _CONSTANT
+%token   _CONTINUE
+%token   _DO
+%token   _DOESNOTDEPENDON
+%token   _DOT
+%token   _DOTDOT
+%token   _DOWNTO
+%token   _DROPASSIGN
+%token   _SETDEFAULTVALUE
+%token   _ELSE
+%token   _END
+%token   _EQ
+%token   _FALSE
+%token   _FIRSTAVAILABLEINDEX
+%token   _FOR
+%token   _FORM
+%token   _FORMHASUSERDATA
+%token   _ISUSERENTERED
+%token   _FUNCTION
+%token   _GETTABLEVALUE
+%token   _IDENTIFIER
+%token   _IF
+%token   _INTEGER
+%token   _INTEGERTYPE
+%token   _LASTINDEX
+%token   _LBRACKET
+%token   _LOOPINDEXTYPE
+%token   _LPAREN
+%token   _NUMBEROFRECORDS
+%token   _NUMCOPIES
+%token   _OF
+%token   _OPENFORM
+%token   _OTHERWISE
+%token   _POUNDSIGN
+%token   _PROCEDURE
+%token   _QUESTIONMARK
+%token   _REAL
+%token   _REPEAT
+%token   _RBRACKET
+%token   _RPAREN
+%token   _RUNSECTIONSTHATREAD
+%token   _SECTION
+%token   _SEMICOLON
+%token   _STRING
+%token   _TABLE
+%token   _TESTFORMIS
+%token   _TESTSUPPORTEDFORMIS
+%token   _THEN
+%token   _TO
+%token   _TRUE
+%token   _VAR
+%token   _UNTIL
+%token   _WHILE
+%token   _BOXGROUP
+%token   _MUTEX
+%token   _GETCCTYPE
+%token   _ISCCTOKENIZED
+%token   _ISCCCOMPLETE
+%token   _EFNV
+%token   _GENERICNV
+%token   _GETPLDESCRIPTION
+%token   _ISFORMPURETRANSFERRED
+%token   _ISROWPURETRANSFERRED
+%token   _ISNONFINAL
+%token   _ISNONFINALERROR
+
+%token   _AUTOARRAY
+%token   _FOREACH
+%token   _REVERSE
+
+
+/****************************************************************************
+    The following establishes precedence for these operators
+****************************************************************************/
+%left    _EQ _LT _GT _NE  _LE  _GE _IN
+%left    _PLUS _MINUS _OR
+%left    _MULT _DIV _MOD _AND
+%right   _NOT
+%right   _UNARY
+
+
+/****************************************************************************
+    The union declaration and types returned by the rules
+****************************************************************************/
+%union {
+   ZParseTree*                         ParseTree;
+   ZFormDecl*                          FormDecl;
+   ZFormDeclList*                      FormDeclList;
+   ZFieldDeclList*                     FieldDeclList;
+   ZConstantDeclList*                  ConstantDeclList;
+   ZTableDeclList*                     TableDeclList;
+   ZTablePair*                         TablePair;
+   ZCodeBlock*                         CodeBlock;
+   ZStatement*                         Statement;
+   ZCase*                              Case;
+   ZForStatement::DirectionType        Direction;
+
+   ZExpression*                        Expression;
+
+   ZConstantDecl*                      ConstantDecl;
+   ZFieldDecl*                         FieldDecl;
+
+   ZReadableAddress*                   ReadableAddress;
+   ZWritableAddress*                   WritableAddress;
+   ZFormAddress*                       FormAddress;
+   ZReadableFieldAddress*              ReadableFieldAddress;
+   ZFormSpec*                          FormSpec;
+
+   ZPrimary*                           Primary;
+   ZFunctionCall*                      FunctionCall;
+   ZLiteral*                           Literal;
+   ZNumberLiteral*                     Number;
+   ZValueListItem*                     ValueListItem;
+   zpString*                           String;
+   ZStringLiteral*                     StringLiteral;
+   ZCharLiteral*                       CharLiteral;
+   zpList*                             List;
+   VarType                             VariableType;
+   INT32                               IntegralValue;
+   zctFormSet::NamedFieldAddressType   NamedType;
+   ZArrayDeclInfo*                     ArrayDeclInfo;
+}
+
+
+
+%type <ParseTree>       SourceProgram
+%type <FormDecl>        FormDecl
+
+%type <VariableType>    GlobalFieldType TableType FunctionType, BoxGroupType
+%type <Number>          TableIndex
+%type <List>            TableContents TablePairList
+%type <TablePair>       TablePair TableLine
+
+%type <List>            FormalParameterList TypedIdentifierList TypedIdentifiers
+%type <ArrayDeclInfo>   OptionalArrayDecl
+%type <IntegralValue>   RequiredIntegerOrConstant
+%type <FieldDecl>       DDArrayDecl
+%type <VariableType>    LocalVariableType ParameterType
+%type <CodeBlock>       CodeBlock
+%type <List>            StatementList
+%type <Statement>       Statement StatementWithSemicolon AssignmentStatement IfStatement CaseStatement
+%type <Statement>       WhileStatement RepeatStatement ForStatement ForEachStatement BlankStatement OpenFormStatement
+%type <Statement>       ProcedureCallStatement ContinueStatement BreakStatement RunSectionsThatReadStatement
+%type <List>            CaseList BlankList
+%type <Case>            Case
+%type <Direction>       Direction
+%type <List>            ParameterList ExpressionList
+%type <Expression>      Expression Condition FieldValueExpression IfConditionError SimpleExpression
+%type <Primary>         Primary
+%type <List>            ValueList
+%type <ValueListItem>   ValueListItem
+%type <Primary>         ValueListPrimary
+
+%type <WritableAddress> WritableAddress ForEachTarget
+%type <Primary>         ReadableAddress ForEachSource
+%type <FormAddress>     FormAddress
+%type <ReadableFieldAddress> ReadableFieldAddress
+/*%type <FieldDecl>       ForEachSource */
+%type <List>            FormSpecList
+%type <FormSpec>        FormSpec
+
+%type <FunctionCall>    FunctionCall TestFormIsCall GetTableValueCall NumCopiesCall FirstAvailIndexCall LastIndexCall NumRecsCall
+%type <FunctionCall>    FormHasUserDataCall IsUserEnteredCall GetCCTypeCall IsCCTokenizedCall IsCCCompleteCall
+%type <FunctionCall>    GetPLDescriptionCall IsFormPureTransferredCall IsRowPureTransferredCall
+%type <List>            GetTableValueParams
+%type <List>            GetPLDescriptionParams
+%type <List>            IsFormPureTransferredParams
+%type <List>            IdentifierList
+%type <String>          Identifier ForLoopIndex OptionalReverse
+
+%type <List>            LiteralList SignedLiteralList
+%type <Literal>         Literal SignedLiteral IsNonFinalCall IsNonFinalErrorCall
+%type <StringLiteral>   String
+%type <CharLiteral>     Char
+%type <Number>          Number NegativeNumber SignedNumber Real Integer
+%type <NamedType>       NamedFieldAddressType
+
+/****************************************************************************
+    Start at the top
+****************************************************************************/
+%start SourceProgram
+
+%%
+
+
+/************************************************************************
+   The Entire Source File
+************************************************************************/
+
+SourceProgram
+	:	FormDecls FormLevelDecls ProceduralCodeBlock ProceduralBlockList
+		{
+		}
+	|	FormDecls FormLevelDecls ProceduralCodeBlock
+		{
+		}
+		/**************  ERROR RULES  *************/
+	|	error
+		{
+			fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kSyntaxError );
+			fpErrorHandler->StopParse();
+		}
+	|	FormLevelDeclError FormLevelDecls ProceduralCodeBlock ProceduralBlockList
+		{
+		}
+	|	FormLevelDeclError FormLevelDecls ProceduralCodeBlock
+		{
+		}
+	;
+
+
+
+FormLevelDeclError
+   :  FormDecls error
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kExpectedFormLevelDecl );
+         fpErrorHandler->StopParse();
+      }
+   ;
+
+
+
+/***********************************************************************
+    Form Specification
+************************************************************************/
+
+FormDecls
+	:	FormDeclList
+		{
+			// Use any Form declaration to Build the ZXFieldList from known Fields
+			((ZParseTree*)fpParseTree)->BuildZXFieldListFromFormMangager();
+		}
+	;
+
+
+
+FormDeclList
+   :  FormDecl
+      {
+         ZFormDeclList* FormDecls = ((ZParseTree*)fpParseTree)->GetFormDeclList();
+         if ( FormDecls )
+         {
+            FormDecls->Prepend( *$1 );
+			 if ( FormDecls->Length() == 1 )
+			 {
+				CacheChildFormIDs( FormDecls, fpErrorHandler );
+			 }
+         }
+      }
+   |  FormDecl FormDeclList
+      {
+         ZFormDeclList* FormDecls = ((ZParseTree*)fpParseTree)->GetFormDeclList();
+         if ( FormDecls )
+         {
+            FormDecls->Prepend( *$1 );
+         }
+      }
+   ;
+
+
+
+FormDecl
+   :  _FORM Identifier _DOT Identifier RequiredSemicolon
+      {
+         ZFormDecl* aDecl = new ZFormDecl( $2, $4 );  // Add the new Form declaration
+
+         if ( !aDecl->VerifyDecl() )
+         {
+            delete aDecl;
+            fpErrorHandler->StopParse();
+         }
+         $$ = aDecl;
+      }
+      /**************  ERROR RULES  *************/
+   |  _FORM Identifier RequiredSemicolon
+      {
+//         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kFormDeclSansFormSet );
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadFormDecl );
+         delete $2;
+         fpErrorHandler->StopParse();
+      }
+   |  _FORM error _SEMICOLON
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadFormDecl );
+         fpErrorHandler->StopParse();
+      }
+   ;
+
+
+
+/************************************************************************
+   Form Level Declarations
+************************************************************************/
+
+FormLevelDecls
+   :  FormLevelDeclList
+      {
+         // If no VAR section, we need to do this anyway for conditions
+         // Get list of fields from global parse tree
+         zpList* Fields = ((ZParseTree*)fpParseTree)->GetFields();
+
+
+         if (Fields)
+         {
+            ((ZParseTree*)fpParseTree)->AddCalcSpecificFieldsToZXFieldList();
+         }
+      }
+   |
+      {
+         // If no VAR section, we need to do this anyway for conditions
+         // Get list of fields from global parse tree
+         zpList* Fields = ((ZParseTree*)fpParseTree)->GetFields();
+
+
+         if (Fields)
+         {
+            ((ZParseTree*)fpParseTree)->AddCalcSpecificFieldsToZXFieldList();
+         }
+      }
+   ;
+
+
+
+FormLevelDeclList
+   :   FormLevelDecl
+       {
+       }
+   |  FormLevelDecl FormLevelDeclList
+      {
+      }
+   ;
+
+
+
+FormLevelDecl
+   :  GlobalVar GlobalFieldDeclList
+      {
+         // Get list of fields from global parse tree
+         zpList* Fields = ((ZParseTree*)fpParseTree)->GetFields();
+
+
+         if ( Fields )
+         {
+            ((ZParseTree*)fpParseTree)->AddCalcSpecificFieldsToZXFieldList();
+         }
+      }
+   |  GlobalConstant GlobalConstantDeclList
+      {
+      }
+   |  TableDecl
+      {
+      }
+   ;
+
+
+
+GlobalVar
+   :  _VAR
+      {
+         // Get list of fields from global parse tree
+         zpList* Fields = ((ZParseTree*)fpParseTree)->GetFields();
+
+
+         if ( Fields )
+         {
+            if (Fields->Length() > kNumSystemFields)    // If we have already handled a VAR block
+            {
+               if (((ZParseTree*)fpParseTree)->DidPTWriteHiddenFields())
+               {
+                  fpErrorHandler->ReportLineError(zcsErrorHandler::kWarning, kPTDeclaredVarBlock);
+               }
+               else
+               {
+                  fpErrorHandler->ReportLineError(zcsErrorHandler::kError, k2VarBlocks);
+               }
+            }
+         }
+      }
+   ;
+
+
+
+GlobalFieldDeclList
+   :  GlobalFieldDecl
+      {
+      }
+   |  GlobalFieldDecl GlobalFieldDeclList
+      {
+      }
+   ;
+
+
+
+GlobalFieldDecl
+   :  IdentifierList _COLON OptionalArrayDecl GlobalFieldType RequiredSemicolon
+      {
+         zpList* IDs = $1;   // Get list of IDs for this type
+
+         if (!((ZParseTree*)fpParseTree)->DidPTWriteHiddenFields())
+         {
+			   /*******************************************************
+				This stuff was added to accomodate the call to
+				CheckForClashesWithChildFormIDs below:
+			   */
+
+			   FormID_t			   owningFormID;
+			   ZFormDeclList*		formDecls = ((ZParseTree *)fpParseTree)->GetFormDeclList();
+			   assert( formDecls );
+
+			   if ( formDecls )
+			   {
+				   const zctFormSet*	owningFormSet = nullptr;
+				   const zctForm*		owningForm = nullptr;
+
+				   formDecls->GetFormSetAndForm( &owningFormSet, &owningForm );
+				   owningFormID = owningForm->GetID();
+			   }
+
+			   /*******************************************************/
+
+
+            zpList* Fields = ((ZParseTree*)fpParseTree)->GetFields();
+
+            /* are we dynamically sized? */
+            bool    doDynamicSize = false;
+            UINT16  numElements   = 0;
+            if ( $3 )
+            {
+               doDynamicSize = $3->fAutoResize;
+               numElements = $3->fSize;
+            }
+
+            zpIterator  IDIter( IDs );
+            zpString*   anID = (zpString*)IDIter.First();
+
+            while ( anID != NULL ) // Iterate through IDs
+            {
+               if ( ((ZParseTree*)fpParseTree)->CheckNewGlobalScopeID(*anID) )
+               {
+					   CheckForClashesWithChildFormIDs( owningFormID, 
+													            *anID, 
+													            fpErrorHandler );
+
+                  // Add each one to our list of FieldDecls with correct type
+                  ZFieldDecl* aFieldDecl = new ZFieldDecl(anID, $4, numElements, doDynamicSize);
+
+
+                  // Check against Global TABLE IDs
+				      // As of 8/13/2012 the IDs of non-arrayed fields must also
+				      // be compared against the global table IDs.
+                  //if( aFieldDecl->IsArrayed() )
+                  {
+                     ((ZParseTree*)fpParseTree)->CheckNewGlobalScopeTableID( *anID );
+                  }
+
+                  // Add the field declaration even if the table id is not unique, otherwise
+                  // the compiler will issue another error wherever the field is referenced.
+                  Fields->Prepend( *aFieldDecl );
+               }
+               else
+               {
+                  delete anID; // Note that the pointer to it in the list is now invalid!!!!
+				      anID = nullptr;
+               }
+
+               anID = (zpString *) IDIter.Next();
+            }
+
+            IDs->DeleteNodes(); // nuke the list of IDs (but not the IDs themselves)
+            delete IDs;
+            delete $3;
+         }
+         else
+         {
+            if ( IDs )
+            {
+               IDs->DeleteNodesAndItems();
+               delete IDs;
+            }
+
+            delete $3;
+         }
+      }
+      /*************** Double dimensioned array **********/
+   |  IdentifierList _COLON DDArrayDecl GlobalFieldType RequiredSemicolon
+      {
+		   zpList*     IDs      = $1; // Get list of IDs for this type
+         ZFieldDecl* pDecl    = $3;
+
+         if( !((ZParseTree *)fpParseTree)->DidPTWriteHiddenFields() )
+         {
+			   /*******************************************************
+				This stuff was added to accomodate the call to
+				CheckForClashesWithChildFormIDs below:
+			   */
+
+			   FormID_t			   owningFormID;
+			   ZFormDeclList*		formDecls = ((ZParseTree *)fpParseTree)->GetFormDeclList();
+			   assert( formDecls );
+
+			   if ( formDecls )
+			   {
+				   const zctFormSet*	owningFormSet = nullptr;
+				   const zctForm*		owningForm = nullptr;
+
+				   formDecls->GetFormSetAndForm( &owningFormSet, &owningForm );
+				   owningFormID = owningForm->GetID();
+			   }
+
+			   /*******************************************************/
+
+            zpList* Fields   = ((ZParseTree *)fpParseTree)->GetFields();
+
+            if ( pDecl )
+            {
+               zpIterator  IDIter( IDs );
+               zpString*   anID = (zpString *)IDIter.First();
+
+
+               while ( anID != NULL )  // Iterate through IDs
+               {
+                  if (((ZParseTree*)fpParseTree)->CheckNewGlobalScopeID(*anID))
+                  {
+					      CheckForClashesWithChildFormIDs( owningFormID, 
+							               					   *anID, 
+													               fpErrorHandler );
+
+                     // Add each one to our list of FieldDecls with correct type
+
+                     ZFieldDecl* aFieldDecl = new ZFieldDecl(anID, $4,
+                                                             pDecl->GetNumElements(),
+                                                             pDecl->GetNumCols());
+                     
+					      ((ZParseTree*)fpParseTree)->CheckNewGlobalScopeTableID( *anID );
+
+                     Fields->Prepend( *aFieldDecl );
+                  }
+                  else
+                  {
+                     delete anID;   // Note that the pointer to it in the list is now invalid!!!!
+					      anID = nullptr;
+                  }
+
+                  anID = (zpString*)IDIter.Next();
+               }
+
+                delete pDecl;
+            }
+
+            IDs->DeleteNodes(); // nuke the list of IDs (but not the IDs themselves)
+            delete IDs;
+         }
+         else
+         {
+            if ( IDs )
+            {
+               IDs->DeleteNodesAndItems();
+               delete IDs;
+            }
+
+            delete pDecl;
+         }
+      }
+
+   /******** Box Group Declaration *********/
+   |  IdentifierList _COLON OptionalArrayDecl _BOXGROUP _LPAREN IdentifierList _RPAREN BoxGroupType RequiredSemicolon
+      {
+         zpList*  pList = $1;
+         zpList*  theBoxIDs = $6; // names of member boxes
+
+         if (!((ZParseTree*)fpParseTree)->DidPTWriteHiddenFields() )
+         {
+            if ( pList->Length() == 1 )
+            {
+				   /*******************************************************
+					This stuff was added to accomodate the call to
+					CheckForClashesWithChildFormIDs below:
+				   */
+
+				   FormID_t			   owningFormID;
+				   ZFormDeclList*		formDecls = ((ZParseTree *)fpParseTree)->GetFormDeclList();
+				   assert( formDecls );
+
+				   if ( formDecls )
+				   {
+					   const zctFormSet*	owningFormSet = nullptr;
+					   const zctForm*		owningForm = nullptr;
+
+					   formDecls->GetFormSetAndForm( &owningFormSet, &owningForm );
+					   owningFormID = owningForm->GetID();
+				   }
+
+				   /*******************************************************/
+
+				   zpString* boxGroupID = (zpString*)pList->RemoveFirst();
+
+				   // are we dynamically sized?
+				   bool    doDynamicSize = false;
+				   UINT16  numElements   = 0;
+				   if ( $3 )
+				   {
+					   doDynamicSize = $3->fAutoResize;
+					   numElements = $3->fSize;
+				   }
+
+               if ( ((ZParseTree*)fpParseTree)->CheckNewGlobalScopeID(*boxGroupID))
+               {
+                  ((ZParseTree*)fpParseTree)->CheckNewGlobalScopeTableID( *boxGroupID );
+
+					   zpList*     globalFieldList = ((ZParseTree *)fpParseTree)->GetFields();
+					   zpIterator  iter( theBoxIDs );
+					   zpString*   anID = (zpString*)iter.Last();
+
+
+					   while ( anID )
+					   {
+						   if ( ((ZParseTree*)fpParseTree)->CheckNewGlobalScopeID(*anID) )
+						   {
+							   // Add each one to our list of FieldDecls with correct type
+							   ZFieldDecl* aBoxField = new ZFieldDecl(anID, kFBox, numElements, doDynamicSize);
+
+							   CheckForClashesWithChildFormIDs( owningFormID, 
+                                                         *anID, 
+                                                         fpErrorHandler );
+
+                        // Check against Global TABLE IDs
+						      // As of 8/13/2012 the IDs of non-arrayed fields must also
+						      // be compared against the global table IDs.
+
+                        //if( aBoxField->IsArrayed() )
+                        {
+                           ((ZParseTree*)fpParseTree)->CheckNewGlobalScopeTableID( *anID );
+                        }
+
+                        globalFieldList->Prepend( *aBoxField );
+                     }
+                     else
+                     {
+                        delete anID;
+						      anID = nullptr;
+                     }
+
+                     anID = (zpString*)iter.Prev();
+                  }
+
+                  // Check the box group ID now that the group's box fields
+                  // have been added to the global field list.  If the test
+                  // fails we don't do anything special, we just want to 
+                  // trigger a compile-time error.
+                  ((ZParseTree*)fpParseTree)->CheckNewGlobalScopeID( *boxGroupID );
+
+                  ZFieldDecl* theBoxGroup = new ZFieldDecl( boxGroupID, $8, numElements, doDynamicSize );
+                  globalFieldList->Prepend( *theBoxGroup );
+               }
+               else
+               {
+                  delete boxGroupID;
+               }
+
+               pList->DeleteNodes();
+               theBoxIDs->DeleteNodes();
+            }
+            else
+            {
+               fpErrorHandler->ReportLineError(zcsErrorHandler::kError, kTooManyBoxGroupsInDecl);
+               pList->DeleteNodesAndItems();
+               theBoxIDs->DeleteNodesAndItems();
+            }
+
+            delete pList;
+            delete theBoxIDs;
+         }
+         else
+         {
+            if ( pList )
+            {
+               pList->DeleteNodesAndItems();
+               delete pList;
+            }
+
+            if ( theBoxIDs )
+            {
+               theBoxIDs->DeleteNodesAndItems();
+               delete theBoxIDs;
+            }
+         }
+
+         //RCJ
+         delete $3;
+         $3 = nullptr;
+      }
+      /**************  ERROR RULES  *************/
+   |  error _COLON GlobalFieldType RequiredSemicolon
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadVariableList );
+      }
+   |  IdentifierList error GlobalFieldType RequiredSemicolon
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kMissingColonInVarDecl );
+      }
+   |  IdentifierList _COLON error RequiredSemicolon
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadVarType );
+      }
+   |  error RequiredSemicolon
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadVarDecl );
+      }
+   ;
+
+
+
+BoxGroupType
+   :  _MUTEX
+      {
+         $$ = kFBox1;
+      }
+   |
+      {
+         $$ = kFBoxn;
+      }
+   ;
+
+
+
+OptionalArrayDecl
+   :   _ARRAY _LBRACKET RequiredIntegerOrConstant _RBRACKET _OF
+      {
+         if ( $3 > 0)
+         {
+            $$ = new ZArrayDeclInfo;
+            $$->fSize = $3;
+            $$->fAutoResize = false;
+            // check upper bound (should this be kFAInfiniteNumElem, which is less than UINT16_MAX?)
+            if ( $3 > UINT16_MAX )
+            {
+               zpString ErrMsg;
+               ErrMsg.Append(kFieldIndexRangeTooBig);
+               fpErrorHandler->ReportLineError(zcsErrorHandler::kError, ErrMsg);
+               $$ = 0;
+            }
+         }
+         else
+         {
+            fpErrorHandler->ReportLineError(zcsErrorHandler::kError, "Array size must be greater than zero.");
+            $$ = 0;
+         }
+      }
+   |  _AUTOARRAY OptionalEmptySquareBrackets _OF
+      {
+         $$ = new ZArrayDeclInfo;
+         // an AutoArray has no upper bound
+         $$->fSize = kFAInfiniteNumElem;
+         $$->fAutoResize = true;
+      }
+   |
+      {
+         $$ = 0;
+      }
+   ;
+
+
+
+OptionalEmptySquareBrackets
+   :  _LBRACKET _RBRACKET
+      {
+      }
+   |
+      {
+      }
+   ;
+
+
+
+RequiredIntegerOrConstant
+   :  Integer
+      {
+         $$ = $1->GetIntegralValue();
+         delete $1;
+      }
+   |  Identifier
+      {
+         // Is "Identifier" a global constant?
+         ZConstantDecl* aDecl = (ZConstantDecl*)((ZParseTree*)gpParser->GetParseTree())->GetConstants()->Find( *$1 );
+
+         // If not global, is it a local constant?
+         if ( !aDecl )
+         {
+            if ( gCurrentBlock )
+            {
+               aDecl = (ZConstantDecl *) gCurrentBlock->GetConstants()->Find( *$1 );
+            }
+         }
+
+         if ( aDecl )
+         {
+            ZNumberLiteral* numLit = dynamic_cast<ZNumberLiteral*>(aDecl->GetValue());
+            if ( numLit )
+            {
+               $$ = numLit->GetIntegralValue();
+            }
+            else
+            {
+               zpString msg;
+
+               msg.Assign( *$1 );
+               msg.Append( " is not an integer constant." );
+               fpErrorHandler->ReportLineError( zcsErrorHandler::kError, msg );
+
+               $$ = 0;
+            }
+         }
+         else
+         { // ID not found in global OR local space, error...
+            zpString msg;
+
+            msg.Assign( "Unknown constant " );
+            msg.Append( *$1 );
+            fpErrorHandler->ReportLineError( zcsErrorHandler::kError, msg );
+
+            $$ = 0;
+         }
+
+         delete $1;
+      }
+      /*** Errors ***/
+   |
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, "Integer value or constant expected" );
+      }
+   ;
+
+
+
+DDArrayDecl
+   :  _ARRAY _LBRACKET RequiredIntegerOrConstant _TPS_COMMA RequiredIntegerOrConstant _RBRACKET _OF
+      {
+        if (($3 > 0) && ($5 > 0))
+         {
+            zpString* anID = NULL;
+            INT32 numElements =  (INT32)$3 * (INT32)$5;
+
+
+            if ( numElements > UINT16_MAX )
+            {
+               zpString ErrMsg;
+               ErrMsg.Append(kFieldIndexRangeTooBig);
+               fpErrorHandler->ReportLineError(zcsErrorHandler::kError, ErrMsg);
+               $$ = NULL;
+            }
+            else
+            {
+               ZFieldDecl *pDecl = new ZFieldDecl( anID, kNone,
+                                                   (UINT16)numElements,
+                                                   (UINT16)$5 );
+               $$ =   pDecl;
+            }
+         }
+         else
+         {
+            fpErrorHandler->ReportLineError(zcsErrorHandler::kError, "Array index must be greater than zero");
+            $$ = NULL;
+         }
+      }
+   |
+      {
+         $$ = 0;
+      }
+   ;
+
+
+GlobalFieldType
+   :  _BOOLEANTYPE
+      {
+         $$ = kBoolean;
+      }
+   |  _INTEGERTYPE    /*This production is here only to handle the error*/
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError, kGlobalInteger);
+         $$ = kNone;
+      }
+   |  Identifier
+      {
+         VarType TheType = fFieldTypeTable->FindType(*$1);
+         if (TheType == kNone)  //Check identifier against correct Field types and complain
+         {
+            zpString ErrMsg;
+
+            ErrMsg.Assign("\"");
+            ErrMsg.Append(*$1);
+            ErrMsg.Append("\"");
+            ErrMsg.Append(kBadGlobalVarType);
+            fpErrorHandler->ReportLineError(zcsErrorHandler::kError, ErrMsg);
+         }
+
+         delete $1;
+         $$ = TheType;
+      }
+   ;
+
+
+GlobalConstant
+   :  _CONSTANT
+      {
+/* OK for more than one constant block to allow include files to work better....
+
+            // Get list of constants from global parse tree
+            ZConstantDeclList *Constants = ((ZParseTree *)fpParseTree)->GetConstants();
+
+            if (Constants)
+                if (Constants->Length() != 0)   // If we have already handled a CONSTANT block
+                    fpErrorHandler->ReportLineError(zcsErrorHandler::kError, k2ConstBlocks);
+*/
+      }
+   ;
+
+
+GlobalConstantDeclList
+   :  GlobalConstantDecl
+      {
+      }
+   |  GlobalConstantDecl GlobalConstantDeclList
+      {
+      }
+   ;
+
+
+
+GlobalConstantDecl
+   :  Identifier ConstantAssignmentOperator SignedLiteral RequiredSemicolon
+      {
+         if (((ZParseTree *)fpParseTree)->CheckNewGlobalScopeID(*$1))
+         {
+            // Get list of constants from global parse tree
+            ZConstantDeclList*   Constants = ((ZParseTree*)fpParseTree)->GetConstants();
+            ZConstantDecl*       aDecl = new ZConstantDecl($1, $3);
+
+
+            Constants->Prepend(*aDecl);
+         }
+         else
+         {
+            delete $1;
+            delete $3;
+         }
+      }
+      /**************  ERROR RULES  *************/
+   |  Identifier ConstantAssignmentOperator error RequiredSemicolon
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadConstantValue );
+         delete $1;
+      }
+   |  error RequiredSemicolon
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadConstantDecl );
+      }
+   ;
+
+
+
+TableDecl
+   :  TableHeader TableContents RequiredSemicolon
+      {
+         gTableDecl = NULL;
+      }
+      /**************  ERROR RULES  *************/
+   |  TableDeclError TableContents RequiredSemicolon
+      {
+      }
+   ;
+
+
+
+TableHeader
+   :  _TABLE _LPAREN TableIndex _TPS_COMMA TableType _TPS_COMMA TableType _RPAREN RequiredSemicolon
+      {
+         // Get list of tables from global parse tree
+         ZTableDeclList* Tables = ((ZParseTree*)fpParseTree)->GetTables();
+
+
+         if ($3)
+         {
+            if ( Tables->Find( *$3 ) ) // Make sure that this is not a duplicate
+            {
+               delete $3;
+            }
+            else                       // Ok so add it to list of tables
+            {
+               // Build new table
+                ZTableDecl* aTable = new ZTableDecl($3, $5, $7);
+                gTableDecl = aTable;
+
+               // Add it to the list
+               if ( Tables )
+               {
+                  Tables->Append(*aTable);
+               }
+            }
+         }
+      }
+   ;
+
+
+
+TableDeclError
+   :  _TABLE error
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadTableDecl );
+   }
+   ;
+
+
+
+TableIndex
+   :  Integer
+      {
+         // Get list of tables from global parse tree
+         ZTableDeclList* Tables = ((ZParseTree*)fpParseTree)->GetTables();
+
+
+         if (Tables->Find( *$1 ) )  // Make sure that this is not a duplicate
+         {
+            fpErrorHandler->ReportLineError(zcsErrorHandler::kError, kDuplicateTableIndex);
+         }
+
+         $$ = $1;
+      }
+      /**************  ERROR RULES  *************/
+   |  error
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadTableIndex );
+         $$ = NULL;
+      }
+   ;
+
+
+
+TableType
+   :  Identifier
+      {
+         VarType TheType = fFieldTypeTable->FindType(*$1);
+         if (TheType == kNone)  //Check identifier against correct Field types and complain
+         {
+            zpString ErrMsg;
+
+            ErrMsg.Assign("\"");
+            ErrMsg.Append(*$1);
+            ErrMsg.Append("\"");
+            ErrMsg.Append(kBadTableType);
+            fpErrorHandler->ReportLineError(zcsErrorHandler::kError, ErrMsg);
+         }
+
+         delete $1;
+         $$ = TheType;
+      }
+      /**************  ERROR RULES  *************/
+   |  _BOOLEANTYPE
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError, kTableBoolean);
+         $$ = kNone;
+      }
+   |  _INTEGERTYPE
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError, kTableInteger);
+         $$ = kNone;
+      }
+   ;
+
+
+
+TableContents
+   :  Begin TablePairList _END
+      {
+      }
+   ;
+
+
+
+Begin
+   :  _BEGIN
+      {
+      }
+   |
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kMissingBeginInTable );
+      }
+   ;
+
+
+
+
+TablePairList
+   :  TableLine
+      {
+      }
+   |  TableLine TablePairList
+      {
+      }
+   ;
+
+
+
+TableLine
+   :  TablePair RequiredSemicolon
+      {
+      }
+      /**************  ERROR RULES  *************/
+   |  error RequiredSemicolon
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadTablePair );
+         $$ = NULL;
+      }
+   ;
+
+
+
+TablePair
+   :  SignedNumber _TPS_COMMA SignedNumber
+      {
+         if (gTableDecl)
+         {
+            ZTablePair* aPair = new ZTablePair($1, $3);
+            gTableDecl->AddPair(aPair);
+         }
+      }
+   ;
+
+
+
+/************************************************************************
+   Procedural Blocks (Section, Procedure, Function)
+************************************************************************/
+
+ProceduralBlockList
+   :  ProceduralCodeBlock
+      {
+      }
+   |  ProceduralCodeBlock ProceduralBlockList
+      {
+      }
+   /**************  ERROR RULES  *************/
+   |  ProceduralCodeBlockError ProceduralBlockList
+      {
+      }
+   ;
+
+
+
+ProceduralCodeBlock
+   :  Section
+      {
+      }
+   |  Function
+      {
+      }
+   |  Procedure
+      {
+      }
+   ;
+
+
+
+ProceduralCodeBlockError
+   :  error _SEMICOLON
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kExpectedProcBlockDecl );
+         fpErrorHandler->StopParse();
+      }
+   ;
+
+
+
+Section
+   :  SectionDecl OptDependencyDecls LocalDecls CodeBlock RequiredSemicolon
+      {
+         assert(gCurrentBlock != NULL);
+
+         // Get access to list of sections in global parse tree
+         ZProcBlockList* SectionList = ((ZParseTree*)fpParseTree)->GetSections();
+
+         // Set the code block
+         gCurrentBlock->SetCodeBlock($4);
+
+         // Attach the new section to the list
+         if (SectionList)
+         {
+            SectionList->Append(*gCurrentBlock);
+         }
+
+         //DebugStr("\p end Section 1");
+         gCurrentBlock = NULL;
+      }
+      /**************  ERROR RULES  *************/
+   |  SectionDeclError OptDependencyDecls LocalDecls CodeBlock RequiredSemicolon
+      {
+         //DebugStr("\p end Section 2");
+         gCurrentBlock = NULL;
+      }
+   ;
+
+
+
+SectionDeclError
+   :  SectionDecl error
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kExpectedConstantVarBegin );
+         fpErrorHandler->StopParse();
+      }
+   ;
+
+
+
+SectionDecl
+   :  _SECTION Identifier RequiredSemicolon
+      {
+         assert(gCurrentBlock == NULL);
+
+         ((ZParseTree *)fpParseTree)->CheckNewGlobalScopeID(*$2);
+
+         // build a procedural block and set global to point at it
+         ZProcBlockList* SectionList = ((ZParseTree *)fpParseTree)->GetSections();
+         gCurrentBlock = new ZSection(((ZParseTree *)fpParseTree)->GetSections(), $2);
+      }
+      /**************  ERROR RULES  *************/
+   |  _SECTION Identifier FormalParameterList RequiredSemicolon
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kSectionHadParams );
+         assert(gCurrentBlock == NULL);
+
+         ((ZParseTree *)fpParseTree)->CheckNewGlobalScopeID(*$2);
+
+         // build a procedural block and set global to point at it
+         ZProcBlockList* SectionList = ((ZParseTree *)fpParseTree)->GetSections();
+         gCurrentBlock = new ZSection(((ZParseTree *)fpParseTree)->GetSections(), $2);
+      }
+   |  _SECTION error _SEMICOLON
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadSectionDecl );
+         Error_t Err=kNoError;
+         zpString* ID = new zpString(Err, "Zaphod_Beeblebrox");
+         gCurrentBlock = new ZSection(((ZParseTree *)fpParseTree)->GetSections(), ID);
+      }
+   ;
+
+
+
+Procedure
+   :  ProcedureDecl LocalDecls CodeBlock RequiredSemicolon
+      {
+         assert(gCurrentBlock != NULL);
+
+         // Get access to list of procedures in global parse tree
+         ZProcBlockList* ProcedureList = ((ZParseTree *)fpParseTree)->GetProcedures();
+
+         // Set the code block
+         gCurrentBlock->SetCodeBlock($3);
+
+         // Attach the new procedure to the list
+         if (ProcedureList)
+         {
+            ProcedureList->Append(*gCurrentBlock);
+         }
+
+         //DebugStr("\p end procedure 1");
+         gCurrentBlock = NULL;
+      }
+      /**************  ERROR RULES  *************/
+   |  ProcedureDeclError LocalDecls CodeBlock RequiredSemicolon
+      {
+      }
+   ;
+
+
+
+ProcedureDeclError
+   :  ProcedureDecl error
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kExpectedConstantVarBegin );
+         fpErrorHandler->StopParse();
+      }
+   ;
+
+
+
+ProcedureDecl
+   :  _PROCEDURE Identifier RequiredSemicolon
+      {
+         assert(gCurrentBlock == NULL);
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError, kProceduresNotSupported);
+
+         ((ZParseTree *)fpParseTree)->CheckNewGlobalScopeID(*$2);
+         // build a procedural block and set global to point at it
+         gCurrentBlock = new ZUserProcBlock($2, kNone, NULL);
+      }
+      /**************  ERROR RULES  *************/
+   |  _PROCEDURE Identifier FormalParameterList RequiredSemicolon
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError, kProceduresNotSupported);
+
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kProcedureHadParams );
+         assert(gCurrentBlock == NULL);
+         ((ZParseTree *)fpParseTree)->CheckNewGlobalScopeID(*$2);
+
+         // build a procedural block and set global to point at it
+         gCurrentBlock = new ZUserProcBlock($2, kNone, NULL);
+      }
+   |  _PROCEDURE error RequiredSemicolon
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kProceduresNotSupported );
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadProcedureDecl );
+
+         Error_t Err=kNoError;
+         zpString* ID = new zpString(Err, "Zaphod_Beeblebrox");
+         gCurrentBlock = new ZUserProcBlock(ID, kNone, NULL);
+      }
+   ;
+
+
+
+Function
+   :  FunctionDecl LocalDecls CodeBlock RequiredSemicolon
+      {
+         assert(gCurrentBlock != NULL);
+
+         // Get access to list of functions in global parse tree
+         ZProcBlockList* FunctionList = ((ZParseTree *)fpParseTree)->GetFunctions();
+
+         // Set the code block
+         gCurrentBlock->SetCodeBlock($3);
+
+         // Attach the new function to the list
+         if (FunctionList)
+         {
+            FunctionList->Append(*gCurrentBlock);
+         }
+
+         // make sure they assigned a return value. RFS.phx.1
+         gCurrentBlock->CheckForFunctionAssignment();
+
+         //DebugStr("\p end Function");
+         gCurrentBlock = NULL;
+      }
+      /**************  ERROR RULES  *************/
+   |  FunctionDeclError LocalDecls CodeBlock RequiredSemicolon
+      {
+      }
+   ;
+
+
+
+FunctionDeclError
+   :  FunctionDecl error
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kExpectedConstantVarBegin );
+         fpErrorHandler->StopParse();
+      }
+   ;
+
+
+
+FunctionDecl
+   :  _FUNCTION Identifier FormalParameterList _COLON FunctionType RequiredSemicolon
+      {// 1     2          3                   4      5            6
+         assert(gCurrentBlock == NULL);
+         ((ZParseTree *)fpParseTree)->CheckNewGlobalScopeID(*$2);
+
+         // Now run through parameters and make sure they are ok
+         if ($3)
+         {
+            ZFieldDecl* Param = NULL;
+            ZFieldDecl* Param2 = NULL;
+            UINT16      n = 0;
+            UINT16      i;
+            zpIterator  pIter( $3 );
+            zpList*     pList = $3;
+
+
+            Param = (ZFieldDecl *)pIter.First();
+
+            while (Param != NULL)
+            {
+               const zpString* ParamID = Param->GetID();
+
+               // Make sure no parameter names are given out twice
+               Param2 = (ZFieldDecl *)pList->nthItem(++n);
+               i = n;
+               while (Param2 != NULL)
+               {
+                  const zpString* Param2ID = Param2->GetID();
+
+
+                  if ( ParamID->IsEqualI(*Param2ID) == TRUE )
+                  {
+                     zpString ErrMsg;
+
+                     ErrMsg.Assign("\"");
+                     ErrMsg.Append(*ParamID);
+                     ErrMsg.Append("\"");
+                     ErrMsg.Append(kDuplicateParameterNames);
+                     fpErrorHandler->ReportLineError(zcsErrorHandler::kError,ErrMsg);
+                     break;
+                  }
+
+                  Param2 = (ZFieldDecl *)pList->nthItem(++i);
+               }
+
+               // New name scope in functions so dont check globals
+               // if (((ZParseTree *)fpParseTree)->CheckNewGlobalScopeID(*ParamID))
+               if ( $2->IsEqualI(*ParamID) == TRUE )
+               {
+                  zpString ErrMsg;
+
+                  ErrMsg.Assign("\"");
+                  ErrMsg.Append(*ParamID);
+                  ErrMsg.Append("\"");
+                  ErrMsg.Append(kBlockNameDefinedAsLocal);
+                  fpErrorHandler->ReportLineError(zcsErrorHandler::kError,ErrMsg);
+               }
+
+               Param = (ZFieldDecl *) pIter.Next();
+            }
+         }
+
+         //DebugStr("\p FunctionDecl 1");
+         gCurrentBlock = new ZUserProcBlock($2, $5, $3);
+      }
+      /**************  ERROR RULES  *************/
+   |  _FUNCTION Identifier FormalParameterList RequiredSemicolon
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kMissingFunctionType );
+
+         Error_t Err=kNoError;
+         zpString* ID = new zpString(Err, "Zaphod_Beeblebrox");
+         //DebugStr("\p FunctionDecl 2");
+         gCurrentBlock = new ZUserProcBlock(ID, kUnknown, $3);
+         delete $2;
+      }
+   |  _FUNCTION error FormalParameterList _COLON FunctionType RequiredSemicolon
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadFunctionDecl );
+
+         Error_t Err=kNoError;
+         zpString* ID = new zpString(Err, "Zaphod_Beeblebrox");
+         //DebugStr("\p FunctionDecl 3");
+         gCurrentBlock = new ZUserProcBlock(ID, $5, $3);
+      }
+   |  _FUNCTION error _COLON FunctionType RequiredSemicolon
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadFunctionDecl );
+
+         Error_t Err=kNoError;
+         zpString* ID = new zpString(Err, "Zaphod_Beeblebrox");
+         //DebugStr("\p FunctionDecl 4");
+         gCurrentBlock = new ZUserProcBlock(ID, $4, NULL);
+      }
+   ;
+
+
+
+FunctionType
+   :  _BOOLEANTYPE
+      {
+         $$ = kBoolean;
+      }
+   |  Identifier
+      {
+         VarType TheType = fFieldTypeTable->FindType(*$1);
+         if (TheType == kNone)  //Check identifier against correct Field types and complain
+         {
+            zpString ErrMsg;
+
+            ErrMsg.Assign("\"");
+            ErrMsg.Append(*$1);
+            ErrMsg.Append("\"");
+            ErrMsg.Append(kBadFunctionType);
+            fpErrorHandler->ReportLineError(zcsErrorHandler::kError, ErrMsg);
+         }
+
+         delete $1;
+         $$ = TheType;
+      }
+      /**************  ERROR RULES  *************/
+   |  _LOOPINDEXTYPE
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError, kFunctionLoopIndex);
+         $$ = kNone;
+      }
+   |  _INTEGERTYPE   /*This production is here only to handle the error*/
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError, kFunctionInteger);
+         $$ = kNone;
+      }
+   ;
+
+
+
+FormalParameterList
+   :  _LPAREN TypedIdentifierList _RPAREN
+      {
+         $$ = $2;
+      }
+   |  _LPAREN _RPAREN
+      {
+         $$ = NULL;
+      }
+      /**************  ERROR RULES  *************/
+   |  _LPAREN error _RPAREN
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadParameterDecls );
+         $$ = NULL;
+      }
+   |  _LPAREN error _SEMICOLON
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kMissingRightParen);
+         fpErrorHandler->StopParse();
+      }
+   ;
+
+
+
+TypedIdentifierList
+   :  TypedIdentifiers
+      {
+         $$ = $1;
+      }
+   |  TypedIdentifierList _SEMICOLON TypedIdentifiers
+      {
+         $1->Transfer(*$3);
+         delete $3;
+      }
+   ;
+
+
+
+TypedIdentifiers
+   :  IdentifierList _COLON ParameterType
+      {
+         zpList*     Params = new zpList;
+         zpList*     IDs = $1;   // Get list of IDs for this type
+         zpIterator  IDIter( IDs );
+         zpString* anID = (zpString *)IDIter.First();
+
+
+         while ( anID != NULL )  // Iterate through IDs
+         {
+            ZFieldDecl* aParamDecl = new ZFieldDecl( anID, $3, 0 );
+            Params->Append( *aParamDecl );
+            anID = ( zpString* ) IDIter.Next();
+         }
+
+         IDs->DeleteNodes(); // nuke the list of IDs (but not the IDs themselves)
+         delete IDs;
+         $$ = Params;
+      }
+   ;
+
+
+
+ParameterType
+   :  _BOOLEANTYPE
+      {
+         $$ = kBoolean;
+      }
+   |  Identifier
+      {
+         VarType TheType = fFieldTypeTable->FindType(*$1);
+         if (TheType == kNone)  //Check identifier against correct Field types and complain
+         {
+            zpString ErrMsg;
+
+            ErrMsg.Assign("\"");
+            ErrMsg.Append(*$1);
+            ErrMsg.Append("\"");
+            ErrMsg.Append(kBadParameterType);
+            fpErrorHandler->ReportLineError(zcsErrorHandler::kError, ErrMsg);
+         }
+
+         delete $1;
+         $$ = TheType;
+      }
+      /**************  ERROR RULES  *************/
+   |  _LOOPINDEXTYPE
+      {
+         // !FIX  bad err message constant
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError, kParameterLoopIndex);
+         $$ = kNone;
+      }
+   |  _INTEGERTYPE
+      {
+         // !FIX  bad err message constant
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError, kParameterInteger);
+         $$ = kNone;
+      }
+   ;
+
+
+
+/************************************************************************
+   Non Dependency Declarations
+************************************************************************/
+
+OptDependencyDecls
+   :  _DOESNOTDEPENDON DependencyList
+      {
+      }
+   |
+      {
+      }
+   ;
+
+
+
+DependencyList
+   :  DependencyDecl
+      {
+      }
+   |  DependencyDecl DependencyList
+      {
+      }
+   ;
+
+
+
+DependencyDecl
+   :  Identifier _DOT Identifier RequiredSemicolon
+      {
+         assert (gCurrentBlock != NULL);
+         assert (gCurrentBlock->IsA() == kIdZSection);
+
+         ZSection* CurrentSection = (ZSection*) gCurrentBlock;
+         zcaAttNonDependency* NonDep = new zcaAttNonDependency();
+         NonDep->SetNonDependency(*$1, *$3);
+         delete $1;
+         delete $3;
+         CurrentSection->AddNonDependency(NonDep);
+      }
+      /**************  ERROR RULES  *************/
+   |  error _DOT Identifier RequiredSemicolon
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadFormIDInDependencyDecl );
+         delete $3;
+      }
+   |  Identifier error Identifier RequiredSemicolon
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kMissingDotInDependencyDeclDecl );
+         delete $1;
+      }
+   |  Identifier _DOT error RequiredSemicolon
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadSectionNameInDependencyDecl );
+         delete $1;
+      }
+   |  error RequiredSemicolon
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadDependencyDecl );
+      }
+   ;
+
+
+
+/************************************************************************
+   Local Declarations
+************************************************************************/
+
+LocalDecls
+   :  LocalDeclList
+      {
+      }
+   |
+      {
+      }
+   ;
+
+
+
+LocalDeclList
+   :  LocalDecl
+      {
+      }
+   |  LocalDecl LocalDeclList
+      {
+      }
+   ;
+
+
+
+LocalDecl
+   :  _VAR
+      {
+         zpList* Fields = gCurrentBlock->GetFields();
+
+
+         if ( Fields )
+         {
+            if ( Fields->Length() > 0 )
+            {
+               fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kTwoLocalVarBlocks );
+            }
+         }
+      }
+      LocalVariableDeclList
+      {
+      }
+   |  _CONSTANT
+      {
+         zpList* Fields = gCurrentBlock->GetFields();
+
+
+         if ( Fields )
+         {
+            if ( Fields->Length() > 0 )
+            {
+               fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kLocalVarsBeforeConstants );
+            }
+         }
+      }
+      LocalConstantDeclList
+      {
+      }
+   ;
+
+
+
+LocalVariableDeclList
+   :  LocalVariableDecl
+      {
+      }
+   |  LocalVariableDecl LocalVariableDeclList
+      {
+      }
+   ;
+
+
+
+LocalVariableDecl
+   :  IdentifierList _COLON OptionalArrayDecl LocalVariableType RequiredSemicolon
+      {
+         assert (gCurrentBlock != NULL);
+
+         zpList* Fields = gCurrentBlock->GetFields();
+         zpList* IDs = $1;   // Get list of IDs for this type
+
+
+         // are we dynamically sized?
+         bool    doDynamicSize = false;
+         UINT16  numElements   = 0;
+
+         if ( $3 )
+         {
+            doDynamicSize = $3->fAutoResize;
+            numElements = yypvt[-2].ArrayDeclInfo->fSize;
+/*
+            if  ( doDynamicSize )
+            {
+               numElements = 100;
+            }
+            else
+            {
+               numElements = $3->fSize;
+            }
+*/
+         }
+
+         zpIterator  IDIter( IDs );
+         zpString*   anID = (zpString*)IDIter.First();
+
+         while ( anID != NULL )  // Iterate through IDs
+         {
+            if (gCurrentBlock->CheckNewLocalScopeID(*anID))
+            {
+               // Add each local to our list of FieldDecls with correct type
+               ZFieldDecl* aFieldDecl = new ZFieldDecl(anID, $4, numElements, doDynamicSize);
+
+               // Add the field declaration even if the table id is not unique, otherwise
+               // the compiler will issue another error wherever the field is referenced.
+               Fields->Prepend(*aFieldDecl);
+            }
+            else
+            {
+               delete anID;   // Note that the pointer to it in the list is now invalid!!!!
+            }
+
+            anID = (zpString*)IDIter.Next();
+         }
+
+         IDs->DeleteNodes(); // nuke the list of IDs (but not the IDs themselves)
+         delete IDs;
+//RCJ
+delete $3;
+$3 = NULL;
+
+      }
+      /*************** Double dimensioned array **********/
+   |  IdentifierList _COLON DDArrayDecl LocalVariableType RequiredSemicolon
+      {
+         zpList*     Fields = gCurrentBlock->GetFields();
+         zpList*     IDs = $1;   // Get list of IDs for this type
+         ZFieldDecl* pDecl = $3;
+
+
+         if ( pDecl )
+         {
+            zpIterator  IDIter( IDs );
+            zpString*   anID = (zpString *)IDIter.First();
+
+
+            while( anID != NULL )
+            {
+               if ( gCurrentBlock->CheckNewLocalScopeID( *anID ) )
+               {
+                  // Add each one to our list of FieldDecls with correct type
+                  ZFieldDecl* aFieldDecl = new ZFieldDecl(anID, $4, pDecl->GetNumElements(), pDecl->GetNumCols());
+                  Fields->Prepend(*aFieldDecl);
+               }
+               else
+               {
+                  delete anID;   // Note that the pointer to it in the list is now invalid!!!!
+               }
+
+               anID = (zpString *) IDIter.Next();
+            }
+
+            delete pDecl ;
+         }
+
+         IDs->DeleteNodes(); // nuke the list of IDs (but not the IDs themselves)
+         delete IDs;
+      }
+      /**************  ERROR RULES  *************/
+   |  error _COLON LocalVariableType RequiredSemicolon
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadVariableList );
+      }
+   |  IdentifierList error LocalVariableType RequiredSemicolon
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kMissingColonInVarDecl );
+      }
+   |  IdentifierList _COLON error RequiredSemicolon
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadVarType );
+      }
+   |  error RequiredSemicolon
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadVarDecl );
+      }
+   ;
+
+
+
+LocalVariableType
+   :  _INTEGERTYPE
+      {
+         $$ = kInteger;
+      }
+   |  _LOOPINDEXTYPE
+      {
+         $$ = kInteger;
+      }
+   |  _BOOLEANTYPE
+      {
+         $$ = kBoolean;
+      }
+   |  Identifier
+      {
+         VarType TheType = fFieldTypeTable->FindType(*$1);
+
+
+         if (TheType == kNone)  //Check identifier against correct Field types and complain
+         {
+            zpString ErrMsg;
+
+            ErrMsg.Assign("\"");
+            ErrMsg.Append(*$1);
+            ErrMsg.Append("\"");
+            ErrMsg.Append(kBadLocalVarType);
+            fpErrorHandler->ReportLineError(zcsErrorHandler::kError, ErrMsg);
+         }
+
+         delete $1;
+         $$ = TheType;
+      }
+   ;
+
+
+
+LocalConstantDeclList
+   :  LocalConstantDecl
+      {
+      }
+   |  LocalConstantDecl LocalConstantDeclList
+      {
+      }
+   ;
+
+
+
+LocalConstantDecl
+   :  Identifier ConstantAssignmentOperator SignedLiteral RequiredSemicolon
+      {
+         assert (gCurrentBlock != NULL);
+
+         if ( gCurrentBlock->CheckNewLocalScopeID( *$1 ) )
+         {
+            // Get list of constants from procedural block we are in
+            ZConstantDeclList*  Constants = gCurrentBlock->GetConstants();
+            ZConstantDecl*      aDecl = new ZConstantDecl($1, $3);
+
+
+            Constants->Prepend(*aDecl);
+         }
+         else
+         {
+            delete $1;
+            delete $3;
+         }
+   }
+      /**************  ERROR RULES  *************/
+   |  Identifier ConstantAssignmentOperator error RequiredSemicolon
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadConstantValue );
+         delete $1;
+      }
+   |  error RequiredSemicolon
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadConstantDecl );
+      }
+   ;
+
+
+
+ConstantAssignmentOperator
+   :  _EQ
+      {
+      }
+      /**************  ERROR RULES  *************/
+   |  _ASSIGN
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kUsedAssignForConstantDecl );
+      }
+   |  _DROPASSIGN
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kUsedDropAssignForConstantDecl );
+      }
+   |  _SETDEFAULTVALUE
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kUsedSetDefaultValueForConstantDecl );
+      }
+   ;
+
+
+
+/************************************************************************
+   Code Blocks (statements)
+************************************************************************/
+
+CodeBlock
+   :  _BEGIN StatementList _END
+      {
+         ZCodeBlock* aStatement = new ZCodeBlock($2);
+         $$ = aStatement;
+      }
+   |  _BEGIN _END
+      {
+         zpList* aList = new zpList;
+         ZCodeBlock *aStatement = new ZCodeBlock( aList );
+         $$ = aStatement;
+      }
+      /**************  ERROR RULES  *************/
+   |  _BEGIN StatementList _ELSE
+      {
+         $2->DeleteNodesAndItems();
+         delete $2;
+
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kMissingEnd );
+         fpErrorHandler->StopParse();
+      }
+   ;
+
+
+
+StatementList
+   :  StatementWithSemicolon
+      {
+         // Standard List Reduction
+         zpList* aList = new zpList;
+
+
+         if ( $1 )   // do not include null statements
+         {
+            aList->Prepend( *$1 );
+         }
+
+            $$ = aList;
+      }
+   |  StatementWithSemicolon StatementList
+      {
+         // Standard List Reduction
+         zpList* aList = $2;
+
+
+         if ( $1 )   // do not include null statements
+         {
+             aList->Prepend(*$1);
+         }
+
+         $$ = aList;
+      }
+   ;
+
+
+
+
+StatementWithSemicolon
+   :  Statement _SEMICOLON
+      {
+         $$ = $1;
+      }
+      /**************  ERROR RULES  *************/
+   |  Statement error
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kMissingSemicolon );
+         $$ = $1;
+      }
+   ;
+
+
+
+Statement
+   :  CodeBlock
+      {
+         $$ = $1;
+      }
+   |  AssignmentStatement
+      {
+         $$ = $1;
+      }
+   |  IfStatement
+      {
+         $$ = $1;
+      }
+   |  CaseStatement
+      {
+         $$ = $1;
+      }
+   |  WhileStatement
+      {
+         $$ = $1;
+      }
+   |  RepeatStatement
+      {
+         $$ = $1;
+      }
+   |  ForStatement
+      {
+         $$ = $1;
+      }
+   |  ForEachStatement
+      {
+         $$ = $1;
+      }
+   |  BreakStatement
+      {
+         $$ = $1;
+      }
+   |  ContinueStatement
+      {
+         $$ = $1;
+      }
+   |  BlankStatement
+      {
+         $$ = $1;
+      }
+   |  OpenFormStatement
+      {
+         $$ = $1;
+      }
+   |  ProcedureCallStatement
+      {
+         $$ = $1;
+      }
+   |  RunSectionsThatReadStatement
+      {
+         $$ = $1;
+      }
+      /**************  ERROR RULES  *************/
+   |  ProcBlockHeader
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kMissingEnd );
+         fpErrorHandler->StopParse();
+      }
+   |  error
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadStatement );
+         $$ = NULL;
+      }
+   ;
+
+
+
+ProcBlockHeader
+   :  _SECTION
+      {}
+   |  _FUNCTION
+      {}
+   |  _PROCEDURE
+      {}
+   ;
+
+
+
+AssignmentStatement
+   :  WritableAddress _ASSIGN Expression
+      {
+         Boolean bHasValue;
+         ZAssignmentStatement* aStatement = new ZAssignmentStatement($1, $3);
+
+
+         aStatement->VerifyAssignment(bHasValue);
+         if ( !bHasValue )
+         {
+            aStatement->SetValue( NULL );
+            delete $3;
+            $3 = NULL;
+         }
+
+         $1->SetDrop(FALSE);
+         $1->SetDefaultValue(FALSE);
+         $$ = aStatement;
+      }
+   |  WritableAddress _DROPASSIGN Expression
+      {
+         Boolean bHasValue;
+         ZAssignmentStatement* aStatement = new ZAssignmentStatement($1, $3);
+
+
+         $1->SetDrop( TRUE );
+         aStatement->VerifyAssignment(bHasValue);
+
+         if ( !bHasValue )
+         {
+            aStatement->SetValue( NULL );
+            delete $3;
+            $3 = NULL;
+         }
+
+         $1->SetDefaultValue( FALSE );
+         $$ = aStatement;
+      }
+   |  WritableAddress _SETDEFAULTVALUE Expression
+      {
+         Boolean bHasValue;
+         ZAssignmentStatement* aStatement = new ZAssignmentStatement($1, $3);
+
+
+         $1->SetDefaultValue( TRUE );
+         aStatement->VerifyAssignment(bHasValue);
+
+         if ( !bHasValue )
+         {
+            aStatement->SetValue(NULL);
+            delete $3;
+            $3 = NULL;
+         }
+
+         $1->SetDrop(FALSE);
+         $$ = aStatement;
+      }
+      /**************  ERROR RULES  *************/
+   |  WritableAddress _EQ Expression
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kUsedEqForAssign );
+         ZAssignmentStatement* aStatement = new ZAssignmentStatement($1, $3);
+         $$ = aStatement;
+      }
+   |  WritableAddress _QUESTIONMARK _ASSIGN Expression
+      {
+         zpString ErrMsg;
+
+         ErrMsg.Assign( kSyntaxError );
+         ErrMsg.Append(" in Assignment Statement.");
+
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError, ErrMsg);
+      }
+   |  WritableAddress _POUNDSIGN _ASSIGN Expression
+      {
+         zpString ErrMsg;
+         ErrMsg.Assign(kSyntaxError);
+         ErrMsg.Append(" in Assignment Statement.");
+
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError, ErrMsg);
+      }
+   ;
+
+
+
+IfStatement
+   :  _IF Condition _THEN Statement
+      {
+         ZIfStatement* aStatement = new ZIfStatement($2, $4, (ZStatement *) NULL);
+         $$ = aStatement;
+      }
+   |  _IF Condition _THEN Statement _ELSE Statement
+      {
+         ZIfStatement* aStatement = new ZIfStatement($2, $4, $6);
+         $$ = aStatement;
+      }
+      /**************  ERROR RULES  *************/
+   |  IfConditionError Statement
+      {
+         if ( $1 )
+         {
+            ZIfStatement* aStatement = new ZIfStatement($1, $2, (ZStatement *) NULL);
+            $$ = aStatement;
+         }
+         else
+         {
+            delete $2;
+            $2 = NULL;
+            $$ = NULL;
+         }
+      }
+   ;
+
+
+
+IfConditionError
+   :  _IF error _THEN
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadIfExpression );
+         $$ = NULL;
+      }
+   |  _IF Condition error
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kMissingThen );
+         $$ = $2;
+      }
+   ;
+
+
+
+CaseStatement
+   :  _CASE FieldValueExpression _OF CaseList _END
+      {
+         ZCaseStatement* aStatement = new ZCaseStatement($2, $4);
+         $$ = aStatement;
+      }
+      /**************  ERROR RULES  *************/
+   |  CaseHeaderError CaseList _END
+      {
+         $$ = NULL;
+      }
+    ;
+
+
+
+CaseHeaderError
+   :  _CASE error _OF
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadCaseExpression );
+      }
+   |  _CASE FieldValueExpression error
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kMissingOf );
+      }
+   ;
+
+
+
+CaseList
+   :  Case
+      {
+         // Standard List Reduction
+         zpList* aList = new zpList;
+
+
+         aList->Prepend(*$1);
+         $$ = aList;
+      }
+   |  Case CaseList
+      {
+         // Standard List Reduction
+         zpList* aList = $2;
+         aList->Prepend(*$1);
+
+
+         $$ = aList;
+      }
+   ;
+
+
+
+Case
+   :  SignedLiteralList _COLON Statement RequiredSemicolon
+      {
+         ZCase* aCase = new ZCase($1, $3);
+         $$ = aCase;
+      }
+   |  _OTHERWISE Statement RequiredSemicolon
+      {
+         ZCase* aCase = new ZCase((zpList *) NULL, $2);
+         $$ = aCase;
+      }
+      /**************  ERROR RULES  *************/
+   |  CaseError Statement RequiredSemicolon
+      {
+         $$ = NULL;
+      }
+   ;
+
+
+
+CaseError
+   :  error _COLON
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError, kBadCase);
+      }
+   ;
+
+
+
+WhileStatement
+   :  WhileHeader Condition _DO Statement
+      {
+         TestForFunctionCall( $2, "WHILE loop", fpErrorHandler );
+
+
+         ZWhileStatement* aStatement = new ZWhileStatement($2, $4);
+         gNestedLoops--;
+         $$ = aStatement;
+      }
+      /**************  ERROR RULES  *************/
+   |  WhileConditionError Statement
+      {
+         gNestedLoops--;
+         $$ = NULL;
+      }
+   ;
+
+
+
+WhileConditionError
+   :  WhileHeader error _DO
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadWhileExpression );
+      }
+   |  WhileHeader Condition error
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kMissingDoInWhile );
+      }
+   ;
+
+
+
+WhileHeader
+   :  _WHILE
+      {
+         gNestedLoops++;
+      }
+   ;
+
+
+
+RepeatStatement
+   :  RepeatHeader StatementList _UNTIL Condition
+      {
+         TestForFunctionCall( $4, "REPEAT/UNTIL loop", fpErrorHandler );
+
+         // First build a code block from statement list
+         ZCodeBlock*       aCodeBlock = new ZCodeBlock($2);
+         ZRepeatStatement* aStatement = new ZRepeatStatement($4, aCodeBlock);
+
+         gNestedLoops--;
+         $$ = aStatement;
+      }
+   |  RepeatHeader _UNTIL Condition
+      {
+         TestForFunctionCall( $3, "REPEAT/UNTIL loop", fpErrorHandler );
+
+         // empty statement list
+         zpList*     aList = new zpList;
+         ZCodeBlock* aCodeBlock = new ZCodeBlock(aList);
+         ZRepeatStatement* aStatement = new ZRepeatStatement($3, aCodeBlock);
+
+
+         gNestedLoops--;
+         $$ = aStatement;
+      }
+   ;
+
+
+
+RepeatHeader
+   :  _REPEAT
+      {
+         gNestedLoops++;
+      }
+   ;
+
+
+
+ForStatement
+   :  ForHeader ForLoopIndex ForLoopAssign FieldValueExpression Direction FieldValueExpression _DO Statement
+      {
+         TestForFunctionCall( $6, "FOR loop", fpErrorHandler );
+
+         ZForStatement* aStatement = new ZForStatement($2, $4, $6, $5, $8);
+
+         gNestedLoops--;
+         $$ = aStatement;
+      }
+      /**************  ERROR RULES  *************/
+   |  ForHeaderError Statement
+      {
+         gNestedLoops--;
+         $$ = NULL;
+      }
+   ;
+
+
+
+ForHeaderError
+   :  ForHeader error ForLoopAssign FieldValueExpression Direction FieldValueExpression _DO
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kExpectedAssignInForLoop );
+      }
+   |  ForHeader ForLoopIndex error FieldValueExpression Direction FieldValueExpression _DO
+      {
+         delete $2;
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadForLoopIndex );
+      }
+   |  ForHeader ForLoopIndex ForLoopAssign error Direction FieldValueExpression _DO
+      {
+         delete $2;
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadForLoopStartExpression );
+      }
+   |  ForHeader ForLoopIndex ForLoopAssign FieldValueExpression error FieldValueExpression _DO
+      {
+         delete $2;
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadForLoopDirection );
+      }
+   |  ForHeader ForLoopIndex ForLoopAssign FieldValueExpression Direction error _DO
+      {
+         delete $2;
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadForLoopFinishExpression );
+      }
+   |  ForHeader ForLoopIndex ForLoopAssign FieldValueExpression Direction FieldValueExpression error
+      {
+         delete $2;
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kMissingDoInForLoop );
+      }
+   ;
+
+
+
+ForHeader
+   :  _FOR
+      {
+         gNestedLoops++;
+      }
+   ;
+
+
+
+ForLoopAssign
+   :  _ASSIGN
+      {
+      }
+   |  _EQ
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError, kUsedEqInForLoopAssignment);
+      }
+   |  _DROPASSIGN
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kUsedDropAssignInForLoopAssignment );
+      }
+   |  _SETDEFAULTVALUE
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kUsedSetDefaultValueInForLoopAssignment );
+      }
+   ;
+
+
+
+ForLoopIndex
+   :  Identifier
+      {
+         // Try to find a local declaration that matches
+         const ZTypedDecl* aLocalDecl = gCurrentBlock->FindLocalDecl(*$1);
+
+
+         if ( aLocalDecl )
+         {
+            if (aLocalDecl->IsA() == kIdZConstantDecl)  // Cannot use a local constant
+            {
+               aLocalDecl = NULL;
+            }
+            else if (aLocalDecl->IsA() == kIdZFieldDecl)
+            {
+               if (aLocalDecl->GetValueType() != kInteger)
+               {
+                  aLocalDecl = NULL;
+               }
+            }
+         }
+
+         if (!aLocalDecl)
+         {
+            zpString ErrMsg;
+
+
+            ErrMsg.Assign(kBadForLoopIndex);
+            ErrMsg.Append("(\"");
+            ErrMsg.Append(*$1);
+            ErrMsg.Append("\")");
+            fpErrorHandler->ReportLineError(zcsErrorHandler::kError,ErrMsg);
+         }
+
+         $$ = $1;
+      }
+   ;
+
+
+
+Direction
+   :  _DOWNTO
+      {
+         $$ = ZForStatement::kDownTo;
+      }
+   |  _TO
+      {
+         $$ = ZForStatement::kTo;
+      }
+   ;
+
+
+
+ForEachStatement
+   :  ForEachHeader ForEachTarget _IN ForEachSource _DO OptionalReverse Statement
+      {
+         ZWritableAddress* targetVar = dynamic_cast<ZWritableAddress*>($2);         // ForEachTarget
+         ZReadableAddress* sourceArrayDecl = dynamic_cast<ZReadableAddress*>($4);   // ForEachSource
+
+
+         if ( sourceArrayDecl && targetVar)
+         {
+            // The target variable must be the same type as the source array elements
+            if ( targetVar->GetValueType() == sourceArrayDecl->GetValueType() )
+            {
+               // create and add loop index
+               zpString     loopIndexName;
+               gCurrentBlock->MakeUniqueLocalVarName( &loopIndexName );
+
+
+               ZFieldDecl*  aFieldDecl = new ZFieldDecl( new zpString( loopIndexName ), kFInteger, 0, false );
+               zpList*      fields = gCurrentBlock->GetFields();
+
+
+               fields->Append( *aFieldDecl );
+
+               // create and add loop control
+               zpString     loopControlName;
+               gCurrentBlock->MakeUniqueLocalVarName( &loopControlName );
+
+
+               aFieldDecl = new ZFieldDecl( new zpString( loopControlName ), kFInteger, 0, false );
+               fields->Append( *aFieldDecl );
+
+               bool doReverse = ($6) ? true : false;
+
+               $$ = new ZForEachStatement(
+                           targetVar,
+                           sourceArrayDecl,
+                           loopIndexName,
+                           loopControlName,
+                           doReverse,
+                           $7 );
+            }
+            else
+            {
+               delete $2;
+               delete $4;
+               delete $7;
+               $$ = NULL;
+               fpErrorHandler->ReportLineError( zcsErrorHandler::kError, "Target variable and Source array elements must have same type" );
+            }
+         }
+         else
+         {
+            // One or the other (or BOTH) were wrong type, report on one of them
+            if (!sourceArrayDecl)
+            {
+               fpErrorHandler->ReportLineError( zcsErrorHandler::kError, "Syntax error in ForEach Source array" );
+            }
+            else
+            {
+               fpErrorHandler->ReportLineError( zcsErrorHandler::kError, "Syntax error in ForEach Target variable" );
+            }
+
+            delete $2;
+            delete $4;
+            delete $7;
+            $$ = NULL;
+         }
+
+         delete $6;
+         gNestedLoops--;
+      }
+      /**************  ERROR RULES  *************/
+   |  ForEachHeader error _IN ForEachSource _DO OptionalReverse Statement
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError, "Expected a local variable ID here");
+         delete $4;
+         delete $6;
+         delete $7;
+         gNestedLoops--;
+         $$ = NULL;
+      }
+   |  ForEachHeader ForEachTarget error ForEachSource _DO OptionalReverse Statement
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError, "Expected 'IN' keyword here");
+         delete $2;
+         delete $4;
+         delete $6;
+         delete $7;
+         gNestedLoops--;
+         $$ = NULL;
+      }
+   |  ForEachHeader ForEachTarget _IN error _DO OptionalReverse Statement
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError, "Expected a source array ID here");
+         delete $2;
+         delete $6;
+         delete $7;
+         gNestedLoops--;
+         $$ = NULL;
+      }
+   |  ForEachHeader ForEachTarget _IN ForEachSource error OptionalReverse Statement
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError, "Expected 'DO' keyword here");
+         delete $2;
+         delete $4;
+         delete $6;
+         delete $7;
+         gNestedLoops--;
+         $$ = NULL;
+      }
+   |  ForEachHeader ForEachTarget _IN ForEachSource _DO OptionalReverse error
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError, "Expected statement after ForEach");
+         delete $2;
+         delete $4;
+         delete $6;
+         gNestedLoops--;
+         $$ = NULL;
+      }
+   ;
+
+
+
+ForEachHeader
+   :  _FOREACH
+      {
+         gNestedLoops++;
+      }
+   ;
+
+
+
+ForEachTarget
+   :  WritableAddress
+      {
+         ZWritableAddress* pAddr = dynamic_cast<ZWritableAddress*>($1);
+         const ZFieldDecl* pFieldDecl = NULL;
+
+
+         if ( pAddr )
+         {
+            // Look for the target Var as a local variable.
+            // We intentionally do NOT allow globals here, because they would trigger value-chg events on each loop,
+            // so unless somebody comes up with a reason to use globals, we force this restriction here.
+            pFieldDecl = dynamic_cast<const ZFieldDecl*>( gCurrentBlock->FindLocalDecl( *pAddr->GetID() ) );
+         }
+
+         if ( pFieldDecl )
+         {
+            if ( pFieldDecl->IsA() == kIdZConstantDecl ) // Cannot use a local constant
+            {
+               fpErrorHandler->ReportLineError( zcsErrorHandler::kError, "ForEach 'Target variable' cannot be a constant." );
+               pFieldDecl = NULL;
+            }
+         }
+         else
+         {
+            fpErrorHandler->ReportLineError( zcsErrorHandler::kError, "ForEach 'Target variable' must be a local variable." );
+         }
+
+         $$ = $1;
+      }
+   ;
+
+
+
+ForEachSource
+   :  ReadableFieldAddress
+      {
+         ZReadableAddress* anAddress = new ZReadableAddress( NULL, $1 );
+         anAddress->VerifyAddress( TRUE ); /* TRUE means it's OK to leave the brackes off of an array */
+
+         ZFieldAddress::ReferenceType refType;
+         anAddress->GetReferenceType( refType );
+
+         if ( refType == ZFieldAddress::kLocalVar )
+         {
+            const ZFieldDecl* pFieldDecl = dynamic_cast<const ZFieldDecl*>( gCurrentBlock->FindLocalDecl( *anAddress->GetFieldID() ) );
+
+
+            if ( !pFieldDecl->IsArrayed() )
+            {
+               fpErrorHandler->ReportLineError( zcsErrorHandler::kError, "Array expected here." );
+               delete anAddress;
+               anAddress = NULL;
+            }
+            else if ( anAddress->FieldIsIndexed() )
+            {
+               fpErrorHandler->ReportLineError( zcsErrorHandler::kError, "Array index is not allowed here." );
+               delete anAddress;
+               anAddress = NULL;
+            }
+         }
+         else if ( refType != ZFieldAddress::kFieldArray )
+         {
+            if ( anAddress->FieldIsIndexed() )
+            {
+               fpErrorHandler->ReportLineError( zcsErrorHandler::kError, "Array index is not allowed here." );
+            }
+            else
+            {
+               fpErrorHandler->ReportLineError( zcsErrorHandler::kError, "Array expected here." );
+            }
+
+            delete anAddress;
+            anAddress = NULL;
+         }
+
+         $$ = anAddress;
+      }
+   |  FormAddress _DOT ReadableFieldAddress
+      {
+         if ( IsReferenceToSelf( $1, (ZParseTree*)fpParseTree ) )
+         {
+            delete $1;
+            $1 = NULL;
+         }
+
+         ZReadableAddress* anAddress = new ZReadableAddress($1, $3);
+         anAddress->VerifyAddress( TRUE ); /* TRUE means it's OK to leave the brackes off of an array */
+
+         if ( !anAddress->GetFieldAddress()->FieldIsInTable() )
+         {
+            fpErrorHandler->ReportLineError( zcsErrorHandler::kError, "Array expected here." );
+            delete anAddress;
+            anAddress = NULL;
+         }
+         else if ( anAddress->FieldIsIndexed() )
+         {
+            fpErrorHandler->ReportLineError( zcsErrorHandler::kError, "Array index is not allowed here." );
+            delete anAddress;
+            anAddress = NULL;
+         }
+
+         $$ = anAddress;
+      }
+   ;
+
+
+
+OptionalReverse
+   :  _REVERSE
+      {
+         $$ = new zpString;
+      }
+   |  {
+         $$ = NULL;
+      }
+   ;
+
+
+
+BreakStatement
+   :  _BREAK
+      {
+         if ( gNestedLoops == 0 )
+         {
+            fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kBreakNotInLoop);
+         }
+
+         ZBreakStatement* aStatement = new ZBreakStatement;
+         $$ = aStatement;
+      }
+   ;
+
+
+
+ContinueStatement
+   :  _CONTINUE
+      {
+         if ( gNestedLoops == 0 )
+         {
+            fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kContinueNotInLoop);
+         }
+
+         ZContinueStatement* aStatement = new ZContinueStatement;
+         $$ = aStatement;
+      }
+   ;
+
+
+
+
+/*
+   The Blank statement must be part of the grammar instead of using the
+   call back routine objects. This is because we need WritableAddresses
+   for parameters instead of ReadableAddresses.  Taking this route allows
+   us to use the existing mechanisms to add the dependency tree info easily.
+*/
+
+BlankStatement
+   :  _BLANQUE _LPAREN BlankList _RPAREN
+      {
+         zpList* Assignments = new zpList;
+         zpIterator pIter( $3 );
+         ZWritableAddress* Address = (ZWritableAddress*)pIter.First();
+
+         while (Address != NULL)
+         {
+            ZAssignmentStatement* Stmt = new ZAssignmentStatement(Address, NULL);
+            Assignments->Append(*Stmt);
+            Address = (ZWritableAddress *) pIter.Next();
+         }
+
+         delete $3;
+         ZCodeBlock* CodeBlock = new ZCodeBlock(Assignments);
+         $$ = CodeBlock;
+      }
+      /**************  ERROR RULES  *************/
+   |  _BLANQUE _LPAREN error _RPAREN
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kBadParametersForBlank);
+
+         zpList* Assignments = new zpList;
+         ZCodeBlock* CodeBlock = new ZCodeBlock(Assignments);
+         $$ = CodeBlock;
+      }
+   |  _BLANQUE _LPAREN error _SEMICOLON
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kMissingRightParen);
+         fpErrorHandler->StopParse();
+      }
+   ;
+
+
+
+BlankList
+   :  WritableAddress
+      {
+         // Standard List Reduction
+         zpList* aList = new zpList;
+
+
+         if ($1)
+         {
+            aList->Prepend(*$1);
+         }
+         $$ = aList;
+      }
+   |  WritableAddress _TPS_COMMA BlankList
+      {
+         // Standard List Reduction
+         zpList* aList = $3;
+
+
+         if ($1)
+         {
+            aList->Prepend(*$1);
+         }
+
+         $$ = aList;
+      }
+   ;
+
+
+
+/*
+   The OpenForm statement must be part of the grammar to avoid nasty
+   reduce/reduce conflicts with Form addresses and Field Addresses.
+   The usual call back objects can be used but we can't make a Form
+   address a legal primary in the YACC grammar or all heck will break
+   loose.
+*/
+
+OpenFormStatement
+   :  _OPENFORM _LPAREN FormAddress _RPAREN
+      {
+         Error_t           Err = kNoError;
+         zpString          OpenFormString(Err, "OpenForm");
+         const ZProcBlock* ProcBlock = ((ZParseTree *)fpParseTree)->FindProceduralBlock(OpenFormString);
+         zpList* ParamList = new zpList();
+
+
+         ParamList->Append(*$3);
+         $3->VerifyAddress(false);
+         ZLCBase* aStatement = ProcBlock->VerifyCall(ParamList);
+
+         if ( aStatement )
+         {
+            $$ = (ZStatement *) aStatement;
+         }
+         else
+         {
+             $$ = NULL;
+         }
+      }
+      /**************  ERROR RULES  *************/
+   |  _OPENFORM _LPAREN error _RPAREN
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kBadParametersForOpenForm);
+         $$ = NULL;
+      }
+   |  _OPENFORM _LPAREN error _SEMICOLON
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kMissingRightParen);
+         fpErrorHandler->StopParse();
+      }
+   ;
+
+
+
+RunSectionsThatReadStatement
+   :  _RUNSECTIONSTHATREAD _LPAREN ReadableAddress _RPAREN
+      {
+         Error_t           Err = kNoError;
+         zpString          aString(Err, "RunSectionsThatRead");
+         const ZProcBlock* ProcBlock = ((ZParseTree *)fpParseTree)->FindProceduralBlock(aString);
+         zpList*           ParamList = new zpList();
+
+
+         ParamList->Append(*$3);
+         ZLCBase* aStatement = ProcBlock->VerifyCall(ParamList);
+
+         if (aStatement)
+         {
+            $$ = (ZStatement*) aStatement;
+         }
+         else
+         {
+            $$ = NULL;
+         }
+      }
+      /**************  ERROR RULES  *************/
+   |  _RUNSECTIONSTHATREAD _LPAREN error _RPAREN
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kBadParamForRunSections);
+         $$ = NULL;
+      }
+   |  _RUNSECTIONSTHATREAD _LPAREN error _SEMICOLON
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kMissingRightParen);
+         fpErrorHandler->StopParse();
+      }
+   ;
+
+
+
+ProcedureCallStatement
+   :  Identifier _LPAREN ParameterList _RPAREN
+      {
+         const ZProcBlock* ProcBlock = ((ZParseTree *)fpParseTree)->FindProceduralBlock(*$1);
+
+
+         if ( !ProcBlock )
+         {
+            zpString ErrMsg;
+
+
+            ErrMsg.Assign("\"");
+            ErrMsg.Append(*$1);
+            ErrMsg.Append("\"");
+            ErrMsg.Append(kUnknownProcedure);
+            fpErrorHandler->ReportLineError(zcsErrorHandler::kError,ErrMsg);
+            delete $1;
+
+            $3->DeleteNodesAndItems();
+            delete $3;
+
+            $$ = NULL;
+         }
+         else
+         {
+            ZLCBase* aStatement = ProcBlock->VerifyCall($3);
+
+            if ( aStatement )
+            {
+               if ( aStatement->IsA() == kIdZFunctionCall )
+               {
+                  zpString ErrMsg;
+
+
+                  ErrMsg.Assign("\"");
+                  ErrMsg.Append(*$1);
+                  ErrMsg.Append("\"");
+                  ErrMsg.Append(kFunctionCalledAsProcedure);
+
+                  fpErrorHandler->ReportLineError(zcsErrorHandler::kError,ErrMsg);
+
+                  delete aStatement;
+                  $$ = NULL;
+               }
+               else
+               {
+                  $$ = (ZStatement *) aStatement;
+               }
+            }
+            else
+            {
+               $$ = NULL;
+            }
+
+            delete  $1;
+         }
+      }
+      /**************  ERROR RULES  *************/
+   |  Identifier _LPAREN error _RPAREN
+      {
+         zpString ErrMsg;
+
+
+         ErrMsg.Assign(kBadParameterListInCall);
+         ErrMsg.Append("\"");
+         ErrMsg.Append(*$1);
+         ErrMsg.Append("\"");
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,ErrMsg);
+
+         const ZProcBlock* ProcBlock = ((ZParseTree *)fpParseTree)->FindProceduralBlock(*$1);
+
+
+         if ( !ProcBlock )
+         {
+            zpString ErrMsg;
+
+
+            ErrMsg.Assign("\"");
+            ErrMsg.Append(*$1);
+            ErrMsg.Append("\"");
+            ErrMsg.Append(kUnknownProcedure);
+            fpErrorHandler->ReportLineError(zcsErrorHandler::kError,ErrMsg);
+
+            delete $1;
+            $$ = NULL;
+         }
+         else
+         {
+            ZLCBase* aStatement = ProcBlock->VerifyCall(NULL);
+            if ( aStatement )
+            {
+               if ( aStatement->IsA() != kIdZProcedureCallStatement )
+               {
+                  zpString ErrMsg;
+
+
+                  ErrMsg.Assign("\"");
+                  ErrMsg.Append(*$1);
+                  ErrMsg.Append("\"");
+                  ErrMsg.Append(kFunctionCalledAsProcedure);
+                  fpErrorHandler->ReportLineError(zcsErrorHandler::kError,ErrMsg);
+
+                  delete aStatement;
+                  $$ = NULL;
+               }
+               else
+               {
+                  $$ = (ZProcedureCallStatement *) aStatement;
+               }
+            }
+
+            delete $1;
+         }
+      }
+   |  Identifier _LPAREN error _SEMICOLON
+      {
+         delete $1;
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kMissingRightParen);
+         fpErrorHandler->StopParse();
+      }
+   ;
+
+
+
+ParameterList
+   :  ExpressionList
+      {
+         $$ = $1;
+      }
+   |
+      {
+         zpList* aList = new zpList; // Return empty list
+         $$ = aList;
+      }
+   ;
+
+
+
+/************************************************************************
+   Expressions
+************************************************************************/
+
+ExpressionList
+   :  SimpleExpression
+      {
+         // Standard List Reduction
+         zpList* aList = new zpList;
+
+
+         if ( $1 )
+         {
+            aList->Prepend( *$1 );
+         }
+
+         $$ = aList;
+      }
+   |  SimpleExpression _TPS_COMMA ExpressionList
+      {
+         // Standard List Reduction
+         zpList* aList = $3;
+
+
+         if ($1)
+         {
+            aList->Prepend(*$1);
+         }
+
+         $$ = aList;
+      }
+   ;
+
+
+
+SimpleExpression
+   :  Expression
+      {
+         if ( $1 )
+         {
+            if ( $1->GetWeight() > kMaxExprWeight )
+            {
+               fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kExpressionTooComplex);
+            }
+
+            $$ = $1;
+         }
+      }
+   ;
+
+
+
+Expression
+   :  _LPAREN Expression _RPAREN
+      {
+         ZUnaryExpression* anExp = new ZUnaryExpression(ZUnaryExpression::kComposite, $2);
+         $$ = anExp;
+      }
+   |  _MINUS Expression %prec _UNARY
+      {
+         ZUnaryExpression* anExp = new ZUnaryExpression(ZUnaryExpression::kNeg, $2);
+         $$ = anExp;
+      }
+   |  _PLUS Expression %prec _UNARY
+      {
+         ZUnaryExpression* anExp = new ZUnaryExpression(ZUnaryExpression::kPos, $2);
+         $$ = anExp;
+      }
+   |  Expression _PLUS Expression
+      {
+         ZBinaryExpression* anExp = new ZBinaryExpression(ZBinaryExpression::kAdd, $1, $3);
+         $$ = anExp;
+      }
+   |  Expression _MINUS Expression
+      {
+         ZBinaryExpression* anExp = new ZBinaryExpression(ZBinaryExpression::kSub, $1, $3);
+         $$ = anExp;
+      }
+   |  Expression _MULT Expression
+      {
+         ZBinaryExpression* anExp = new ZBinaryExpression(ZBinaryExpression::kMul, $1, $3);
+         $$ = anExp;
+      }
+   |  Expression _DIV Expression
+      {
+         ZBinaryExpression* anExp = new ZBinaryExpression(ZBinaryExpression::kDiv, $1, $3);
+         $$ = anExp;
+      }
+   |  Expression _MOD Expression
+      {
+         ZBinaryExpression* anExp = new ZBinaryExpression(ZBinaryExpression::kMod, $1, $3);
+         $$ = anExp;
+      }
+   |  Expression _LT Expression
+      {
+         ZBinaryExpression* anExp = new ZBinaryExpression(ZBinaryExpression::kLT, $1, $3);
+         $$ = anExp;
+      }
+   |  Expression _GT Expression
+      {
+         ZBinaryExpression* anExp = new ZBinaryExpression(ZBinaryExpression::kGT, $1, $3);
+         $$ = anExp;
+      }
+   |  Expression _EQ Expression
+      {
+         ZBinaryExpression* anExp = new ZBinaryExpression(ZBinaryExpression::kEq, $1, $3);
+         $$ = anExp;
+      }
+   |  Expression _NE Expression
+      {
+         ZBinaryExpression* anExp = new ZBinaryExpression(ZBinaryExpression::kNe, $1, $3);
+         $$ = anExp;
+      }
+   |  Expression _GE Expression
+      {
+         ZBinaryExpression* anExp = new ZBinaryExpression(ZBinaryExpression::kGE, $1, $3);
+         $$ = anExp;
+      }
+   |  Expression _LE Expression
+      {
+         ZBinaryExpression* anExp = new ZBinaryExpression(ZBinaryExpression::kLE, $1, $3);
+         $$ = anExp;
+      }
+   |  Expression _IN _LBRACKET ValueList _RBRACKET
+      {
+         ZValueListExpression*   ValueList = new ZValueListExpression($4);
+         ZBinaryExpression*      anExp = new ZBinaryExpression(ZBinaryExpression::kIn,
+                                                               $1,
+                                                               ValueList);
+         $$ = anExp;
+      }
+   |  Expression _AND Expression
+      {
+         ZBinaryExpression* anExp = new ZBinaryExpression(ZBinaryExpression::kAnd, $1, $3);
+         $$ = anExp;
+      }
+   |  Expression _OR Expression
+      {
+         ZBinaryExpression* anExp = new ZBinaryExpression(ZBinaryExpression::kOR, $1, $3);
+         $$ = anExp;
+      }
+   |  _NOT Expression
+      {
+         ZUnaryExpression* anExp = new ZUnaryExpression(ZUnaryExpression::kNot, $2);
+         $$ = anExp;
+      }
+   |  Primary
+      {
+            $$ = $1;
+      }
+      /**************  ERROR RULES  *************/
+   |  _LPAREN error PostExpressionToken
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kMissingRightParen);
+         fpErrorHandler->StopParse();
+      }
+   |  Expression _IN _LBRACKET error PostExpressionToken
+      {
+         delete $1;
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kMissingRightBracket);
+         fpErrorHandler->StopParse();
+      }
+   |  _LPAREN error _RPAREN
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kBadExpression);
+
+         ZUnaryExpression* anExp = new ZUnaryExpression(ZUnaryExpression::kComposite, NULL);
+         $$ = anExp;
+      }
+   |  Expression _NOT _IN _LBRACKET ValueList _RBRACKET
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kNotIn);
+
+         ZValueListExpression*   ValueList = new ZValueListExpression($5);
+         ZBinaryExpression*      anExp = new ZBinaryExpression(ZBinaryExpression::kIn,
+                                                               $1,
+                                                               ValueList);
+         $$ = anExp;
+      }
+   |  Expression _IN _LBRACKET error _RBRACKET
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kBadValueList);
+
+         zpList* List = new zpList;
+         ZValueListExpression* ValueList = new ZValueListExpression(List);
+         ZBinaryExpression* anExp = new ZBinaryExpression(ZBinaryExpression::kIn,
+                                                          $1,
+                                                          ValueList);
+         $$ = anExp;
+      }
+   ;
+
+
+
+PostExpressionToken
+   :  _SEMICOLON
+      {
+      }
+   |  _THEN
+      {
+      }
+   |  _DO
+      {
+      }
+   |  _TO
+      {
+      }
+   |  _DOWNTO
+      {
+      }
+   |  _TPS_COMMA
+      {
+      }
+   ;
+
+
+
+Condition
+   :  Expression
+      {
+         if ( $1 )
+         {
+            if (($1->GetExpressionType() != kLogical) &&        // Expecting a logical expression
+                ($1->GetExpressionType() != kInvalidExpr) &&    // Problem already reported
+                ($1->GetValueType() != kFInteger) &&            // Integer and Boolean treated the same
+                ($1->GetValueType() != kUnknown))               // No Error if we dont know type
+            {
+               fpErrorHandler->ReportLineError(zcsErrorHandler::kError, kExpectedCondition);
+            }
+
+            if ( $1->GetWeight() > kMaxExprWeight )
+            {
+               fpErrorHandler->ReportLineError(zcsErrorHandler::kError, kConditionTooComplex);
+            }
+         }
+
+         $$ = $1;
+      }
+   ;
+
+
+
+FieldValueExpression
+   :  SimpleExpression
+      {
+         if ( $1 )
+         {
+            if (($1->GetExpressionType() != kValue) &&      // Expecting a value of some sort
+                ($1->GetExpressionType() != kInvalidExpr))  // Problem already reported
+            {
+               fpErrorHandler->ReportLineError(zcsErrorHandler::kError, kExpectedValue);
+            }
+         }
+
+         $$ = $1;
+      }
+   ;
+
+
+
+ValueList
+   :  ValueListItem
+      {
+         // Standard List Reduction
+         zpList* aList = new zpList;
+
+
+         aList->Prepend(*$1);
+         $$ = aList;
+      }
+   |  ValueListItem _TPS_COMMA ValueList
+      {
+         // Standard List Reduction
+         zpList* aList = $3;
+
+
+         aList->Prepend(*$1);
+         $$ = aList;
+      }
+   ;
+
+
+
+ValueListItem
+   :  ValueListPrimary
+      {
+         ZValueListItem* anItem = new ZValueListItem($1, (ZPrimary *) NULL);
+         $$ = anItem;
+      }
+   |  ValueListPrimary _DOTDOT ValueListPrimary
+      {
+         ZValueListItem* anItem = new ZValueListItem($1, $3);
+         anItem->VerifyRangeOrder();
+
+         $$ = anItem;
+      }
+   ;
+
+
+
+ValueListPrimary
+   :  SignedLiteral
+      {
+         $$ = $1;
+      }
+   |  ReadableAddress
+      {
+         $$ = $1;
+      }
+   |  FunctionCall
+      {
+         $$ = $1;
+      }
+   ;
+
+
+
+Primary
+   :  Literal
+      {
+         $$ = $1;
+      }
+   |  ReadableAddress
+      {
+         $$ = $1;
+      }
+   |  FunctionCall
+      {
+         $$ = $1;
+      }
+   ;
+
+
+
+FunctionCall
+   :  TestFormIsCall
+      {
+         $$ = $1;
+      }
+   |  GetTableValueCall
+      {
+         $$ = $1;
+      }
+   |  NumCopiesCall
+      {
+         $$ = $1;
+      }
+   |  FirstAvailIndexCall
+      {
+         $$ = $1;
+      }
+   |  LastIndexCall
+      {
+         $$ = $1;
+      }
+   |  NumRecsCall
+      {
+         $$ = $1;
+      }
+   |  FormHasUserDataCall
+      {
+         $$ = $1;
+      }
+   |  IsUserEnteredCall
+      {
+         $$ = $1;
+      }
+   |  GetCCTypeCall
+      {
+         $$ = $1;
+      }
+   |  IsCCTokenizedCall
+      {
+         $$ = $1;
+      }
+   |  IsCCCompleteCall
+      {
+         $$ = $1;
+      }
+   |  GetPLDescriptionCall
+      {
+         $$ = $1;
+      }
+   |  IsFormPureTransferredCall
+      {
+         $$ = $1;
+      }
+   |  IsRowPureTransferredCall
+      {
+         $$ = $1;
+      }
+   |  Identifier _LPAREN ParameterList _RPAREN
+      {
+         const ZProcBlock* ProcBlock = ((ZParseTree*)fpParseTree)->FindProceduralBlock( *$1 );
+
+
+         if ( ProcBlock )
+         {
+            ZLCBase* aFunctionCall = ProcBlock->VerifyCall( $3 );
+
+
+            if ( aFunctionCall )
+            {
+               if ( aFunctionCall->IsA() == kIdZFunctionCall )
+               {
+                  $$ = (ZFunctionCall*)aFunctionCall;
+               }
+               else
+               {
+                  zpString ErrMsg;
+
+
+                  ErrMsg.Assign( "\"" );
+                  ErrMsg.Append( *$1 );
+                  ErrMsg.Append( "\"" );
+                  ErrMsg.Append( kProcedureCalledAsFunction );
+
+                  fpErrorHandler->ReportLineError( zcsErrorHandler::kError,ErrMsg );
+
+                  delete aFunctionCall;
+                  $$ = NULL;
+               }
+            }
+
+            delete $1;
+         }
+         else
+         {
+            zpString ErrMsg;
+
+
+            ErrMsg.Assign( "\"" );
+            ErrMsg.Append( *$1 );
+            ErrMsg.Append( "\"" );
+            ErrMsg.Append( kUnknownFunction );
+
+            fpErrorHandler->ReportLineError( zcsErrorHandler::kError, ErrMsg );
+
+            delete $1;
+            $3->DeleteNodesAndItems();
+            delete $3;
+            $$ = NULL;
+         }
+      }
+      /**************  ERROR RULES  *************/
+   |  Identifier _LPAREN error _RPAREN
+      {
+         zpString ErrMsg;
+
+
+         ErrMsg.Assign( kBadParameterListInCall );
+         ErrMsg.Append( "\"" );
+         ErrMsg.Append( *$1 );
+         ErrMsg.Append( "\"" );
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, ErrMsg );
+
+         const ZProcBlock* ProcBlock = ((ZParseTree*)fpParseTree)->FindProceduralBlock( *$1 );
+
+
+         if ( !ProcBlock )
+         {
+            zpString ErrMsg;
+
+
+            ErrMsg.Assign( "\"" );
+            ErrMsg.Append( *$1 );
+            ErrMsg.Append( "\"" );
+            ErrMsg.Append( kUnknownFunction );
+
+            fpErrorHandler->ReportLineError( zcsErrorHandler::kError, ErrMsg );
+
+            delete $1;
+            $$ = NULL;
+         }
+         else
+         {
+            delete $1;
+            ZLCBase* aFunctionCall = ProcBlock->VerifyCall( NULL );
+
+
+            if ( aFunctionCall )
+            {
+               if ( aFunctionCall->IsA() != kIdZFunctionCall )
+               {
+                  zpString ErrMsg;
+
+
+                  ErrMsg.Assign( "\"" );
+                  ErrMsg.Append( *$1 );
+                  ErrMsg.Append( "\"" );
+                  ErrMsg.Append( kProcedureCalledAsFunction );
+
+                  fpErrorHandler->ReportLineError( zcsErrorHandler::kError, ErrMsg );
+
+                  delete aFunctionCall;
+                  $$ = NULL;
+               }
+               else
+               {
+                  $$ = (ZFunctionCall *) aFunctionCall;
+               }
+            }
+         }
+      }
+   |  Identifier _LPAREN error PostExpressionToken
+      {
+         delete $1;
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kMissingRightParen );
+         fpErrorHandler->StopParse();
+      }
+   ;
+
+
+
+IsNonFinalCall
+   :  _ISNONFINAL _LPAREN Identifier _RPAREN
+      {
+         FormID_t formID( *$3 );
+         delete $3;
+         $3 = NULL;
+
+         Boolean nonFinal = FALSE;
+         ZFormDeclList* FormDecls = ((ZParseTree *)fpParseTree)->GetFormDeclList();
+
+
+         assert(FormDecls);
+         if ( FormDecls )
+         {
+            const zctFormSet* owningFormSet = NULL;
+            const zctForm* owningForm = NULL;
+            FormDecls->GetFormSetAndForm( &owningFormSet, &owningForm );
+
+            assert( owningFormSet );
+            if ( owningFormSet )
+            {
+               zctFormHandle hForm = owningFormSet->FindForm( formID );
+               if ( hForm )
+               {
+                  if ( hForm->TestBitAttributes( kFBNonFinalDNFTextEnabled | kFBNonFinalWatermarkEnabled | kFBNonFinalErrorMessageEnabled ) )
+                  {
+                     nonFinal = TRUE;
+                  }
+               }
+               else
+               {
+                  std::stringstream ss;
+
+                  ss << "Form \"" << formID << "\"" << kUnknownFormField;
+			         gpParser->GetErrorHandler().ReportLineError( zcsErrorHandler::kError, ss.str().c_str() );
+               }
+            }
+         }
+
+         $$ = new ZBooleanLiteral( nonFinal );
+      }
+   ;
+
+
+IsNonFinalErrorCall
+   :  _ISNONFINALERROR _LPAREN _RPAREN
+      {
+         Boolean nonFinal = FALSE;
+         ZFormDeclList* FormDecls = ((ZParseTree *)fpParseTree)->GetFormDeclList();
+
+
+         assert(FormDecls);
+         if ( FormDecls )
+         {
+            const zctFormSet* owningFormSet = NULL;
+            const zctForm* owningForm = NULL;
+            FormDecls->GetFormSetAndForm( &owningFormSet, &owningForm );
+
+            assert( owningFormSet );
+            assert( owningForm );
+            if ( owningFormSet && owningForm )
+            {
+               if ( owningForm->TestBitAttributes( kFBNonFinalErrorMessageEnabled ) )
+               {
+                  nonFinal = TRUE;
+               }
+            }
+         }
+
+         $$ = new ZBooleanLiteral( nonFinal );
+      }
+      /**************  ERROR RULES  *************/
+   |  _ISNONFINALERROR _LPAREN Identifier _RPAREN
+      {
+         delete $3;
+         gpParser->GetErrorHandler().ReportLineError( zcsErrorHandler::kError, "IsNonFinalError takes no parameters" );
+         $$ = new ZBooleanLiteral( FALSE );
+      }
+   ;
+
+
+/************************************************************************
+   The TestFormIs function must be part of the grammar to avoid nasty
+   reduce/reduce conflicts with Form addresses and Field Addresses.
+   The usual call back objects can be used but we can't make a Form
+   address a legal primary in the YACC grammar or all heck will break
+   loose.
+************************************************************************/
+
+TestFormIsCall
+   :  _TESTFORMIS _LPAREN ReadableFieldAddress _RPAREN
+      {
+         Error_t              Err = kNoError;
+         zpString             NameString(Err, "TestFormIs");
+         const ZProcBlock*    ProcBlock = ((ZParseTree *)fpParseTree)->FindProceduralBlock(NameString);
+         zpList*              ParamList = new zpList();
+         ZLanguageConstant*   LanguageConstant = fLanguageConstants->Find($3);
+
+
+         if ( !LanguageConstant )
+         {
+            zpString ErrMsg;
+
+
+            ErrMsg.Assign(kBadParameterListInCall);
+            ErrMsg.Append("\"TestFormIs\"");
+            fpErrorHandler->ReportLineError(zcsErrorHandler::kError,ErrMsg);
+         }
+         else
+         {
+            ParamList->Append(*LanguageConstant);
+         }
+
+         ZLCBase* aFunctionCall = ProcBlock->VerifyCall(ParamList);
+
+
+         if ( aFunctionCall )
+         {
+            $$ = (ZFunctionCall *) aFunctionCall;
+         }
+         else
+         {
+            $$ = NULL;
+         }
+      }
+   |  _TESTFORMIS _LPAREN ReadableFieldAddress _TPS_COMMA  FormAddress _RPAREN
+      {
+         Error_t              Err = kNoError;
+         zpString             NameString( Err, "TestFormIs" );
+         const ZProcBlock*    ProcBlock = ((ZParseTree*)fpParseTree)->FindProceduralBlock( NameString );
+         zpList*              ParamList = new zpList();
+         ZLanguageConstant*   LanguageConstant = fLanguageConstants->Find($3);
+
+
+         if ( !LanguageConstant )
+         {
+            zpString ErrMsg;
+
+
+            ErrMsg.Assign( kBadParameterListInCall );
+            ErrMsg.Append( "\"TestFormIs\"" );
+            fpErrorHandler->ReportLineError( zcsErrorHandler::kError, ErrMsg );
+         }
+         else
+         {
+            ParamList->Append( *LanguageConstant );
+         }
+
+         // See if the specified form is the form for which these
+         // calcs are defined.  Normally this would be illegal.
+         // In this case, however, we just drop the form and
+         // continue as if the caller hasd not specified a form ID.
+
+         if ( !IsReferenceToSelf( $5, (ZParseTree*)fpParseTree ) )
+         {
+            ParamList->Append(*$5);
+            $5->VerifyAddress();
+         }
+         else
+         {
+            delete $5;
+            $5 = NULL;
+         }
+
+         ZLCBase* aFunctionCall = ProcBlock->VerifyCall( ParamList );
+
+
+         if ( aFunctionCall )
+         {
+            $$ = (ZFunctionCall*)aFunctionCall;
+         }
+         else
+         {
+            $$ = NULL;
+         }
+      }
+   |  _TESTSUPPORTEDFORMIS _LPAREN ReadableFieldAddress _RPAREN
+      {
+         Error_t              Err = kNoError;
+         zpString             NameString(Err, "TestFormIs");
+         const ZProcBlock*    ProcBlock = ((ZParseTree *)fpParseTree)->FindProceduralBlock(NameString);
+         zpList*              ParamList = new zpList();
+         ZLanguageConstant*   Condition = fLanguageConstants->Find($3);
+
+
+         if ( !Condition )
+         {
+            zpString ErrMsg;
+
+
+            ErrMsg.Assign(kBadParameterListInCall);
+            ErrMsg.Append("\"TestFormIs\"");
+            fpErrorHandler->ReportLineError(zcsErrorHandler::kError,ErrMsg);
+         }
+         else
+         {
+            ParamList->Append(*Condition);
+         }
+
+         ZReadableFieldAddress*  LC = new ZReadableFieldAddress(new zpString(Err, "SupportedForm"), NULL);
+         ZLanguageConstant*      LanguageConstant = fLanguageConstants->Find(LC);
+
+
+         if ( LanguageConstant )
+         {
+            ParamList->Append(*LanguageConstant);
+         }
+
+         ZLCBase* aFunctionCall = ProcBlock->VerifyCall(ParamList);
+
+
+         if ( aFunctionCall )
+         {
+            $$ = (ZFunctionCall *) aFunctionCall;
+         }
+         else
+         {
+            $$ = NULL;
+         }
+      }
+      /**************  ERROR RULES  *************/
+   |  _TESTFORMIS _LPAREN error _RPAREN
+      {
+         zpString ErrMsg;
+
+
+         ErrMsg.Assign(kBadParameterListInCall);
+         ErrMsg.Append("\"TestFormIs\"");
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,ErrMsg);
+         $$ = NULL;
+      }
+   |  _TESTSUPPORTEDFORMIS _LPAREN error _RPAREN
+      {
+         zpString ErrMsg;
+
+
+         ErrMsg.Assign(kBadParameterListInCall);
+         ErrMsg.Append("\"TestSupportedFormIs\"");
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,ErrMsg);
+         $$ = NULL;
+      }
+   |  _TESTFORMIS _LPAREN error PostExpressionToken
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kMissingRightParen);
+         fpErrorHandler->StopParse();
+      }
+   |  _TESTSUPPORTEDFORMIS _LPAREN error PostExpressionToken
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kMissingRightParen);
+         fpErrorHandler->StopParse();
+      }
+   ;
+
+
+
+/*
+   The NumCopies Function must be part of the grammar to avoid nasty
+   reduce/reduce conflicts with Form addresses and Field Addresses.
+   The usual call back objects can be used but we can't make a Form
+   address a legal primary in the YACC grammar or all heck will break
+   loose.
+*/
+
+NumCopiesCall
+   :  _NUMCOPIES _LPAREN FormAddress _RPAREN
+      {
+         Error_t           Err = kNoError;
+         zpString          NameString( Err, "NumCopies" );
+         const ZProcBlock* ProcBlock = ((ZParseTree *)fpParseTree)->FindProceduralBlock( NameString );
+         zpList*           ParamList = new zpList();
+
+
+         ParamList->Append( *$3 );
+         $3->VerifyAddress( FALSE, true );   // FALSE means last index should not be specified
+
+         ZLCBase* aFunctionCall = ProcBlock->VerifyCall( ParamList );
+
+
+         if ( aFunctionCall )
+         {
+            $$ = (ZFunctionCall *) aFunctionCall;
+         }
+         else
+         {
+            $$ = NULL;
+         }
+      }
+      /**************  ERROR RULES  *************/
+   |  _NUMCOPIES _LPAREN error _RPAREN
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadParametersForNumCopies );
+         $$ = NULL;
+      }
+   |  _NUMCOPIES _LPAREN error _SEMICOLON
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kMissingRightParen );
+         fpErrorHandler->StopParse();
+      }
+   ;
+
+
+
+/*
+   The FirstAvailableIndex Function must be part of the grammar to avoid
+   nasty reduce/reduce conflicts with Form addresses and Field Addresses.
+   The usual call back objects can be used but we can't make a Form address
+   a legal primary in the YACC grammar or all heck will break loose.
+*/
+
+FirstAvailIndexCall
+   :  _FIRSTAVAILABLEINDEX _LPAREN ReadableFieldAddress _RPAREN
+      {
+         Error_t           Err = kNoError;
+         zpString          NameString( Err, "FirstAvailableIndex" );
+         const ZProcBlock* ProcBlock = ((ZParseTree *)fpParseTree)->FindProceduralBlock( NameString );
+         zpList*           ParamList = new zpList();
+
+
+         ParamList->Append(*$3);
+
+         ZLCBase* aFunctionCall = ProcBlock->VerifyCall(ParamList);
+
+
+         if (aFunctionCall)
+         {
+            $$ = (ZFunctionCall *) aFunctionCall;
+         }
+         else
+         {
+            $$ = NULL;
+         }
+      }
+      /**************  ERROR RULES  *************/
+   |  _FIRSTAVAILABLEINDEX _LPAREN error _RPAREN
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kBadParametersForFirstAvailableIndex);
+         $$ = NULL;
+      }
+   |  _FIRSTAVAILABLEINDEX _LPAREN error _SEMICOLON
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kMissingRightParen);
+         fpErrorHandler->StopParse();
+      }
+   ;
+
+
+
+/************************************************************************
+   The LastIndex Function must be part of the grammar to avoid nasty
+   reduce/reduce conflicts with Form addresses and Field Addresses.
+   The usual call back objects can be used but we can't make a Form
+   address a legal primary in the YACC grammar or all heck will break
+   loose.
+************************************************************************/
+
+LastIndexCall
+   :  _LASTINDEX _LPAREN ReadableFieldAddress _RPAREN
+      {
+         Error_t           Err = kNoError;
+         zpString          NameString( Err, "LastIndex" );
+         const ZProcBlock* ProcBlock = ((ZParseTree*)fpParseTree)->FindProceduralBlock( NameString );
+         zpList*           ParamList = new zpList();
+
+
+         ParamList->Append( *$3 );
+
+         ZLCBase* aFunctionCall = ProcBlock->VerifyCall(ParamList);
+         if ( aFunctionCall )
+         {
+            $$ = (ZFunctionCall*)aFunctionCall;
+         }
+         else
+         {
+            $$ = NULL;
+         }
+      }
+   |  _LASTINDEX _LPAREN ReadableFieldAddress _TPS_COMMA FormAddress _RPAREN
+      {
+         Error_t           Err = kNoError;
+         zpString          NameString( Err, "LastIndex" );
+         const ZProcBlock* ProcBlock = ((ZParseTree*)fpParseTree)->FindProceduralBlock( NameString );
+         zpList*           ParamList = new zpList();
+
+
+         ParamList->Append(*$3);
+
+         // See if the specified form is the form for which these
+         // calcs are defined.  Normally this would be illegal.
+         // In this case, however, we just drop the form and
+         // continue as if the caller hasd not specified a form ID.
+
+         if ( !IsReferenceToSelf( $5, (ZParseTree *)fpParseTree ) )
+         {
+            ParamList->Append(*$5);
+            $5->VerifyAddress();
+         }
+         else
+         {
+            delete $5;
+            $5 = NULL;
+         }
+
+         ZLCBase *aFunctionCall = ProcBlock->VerifyCall(ParamList);
+         if ( aFunctionCall )
+         {
+            $$ = (ZFunctionCall*)aFunctionCall;
+         }
+         else
+         {
+            $$ = NULL;
+         }
+      }
+      /**************  ERROR RULES  *************/
+   |  _LASTINDEX _LPAREN error _RPAREN
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadParametersForLastIndex );
+         $$ = NULL;
+      }
+   |  _LASTINDEX _LPAREN error _SEMICOLON
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kMissingRightParen );
+         fpErrorHandler->StopParse();
+      }
+   ;
+
+
+
+/*
+   The NumberOfRecords Function must be part of the grammar to avoid nasty
+   reduce/reduce conflicts with Form addresses and Field Addresses.
+   The usual call back objects can be used but we can't make a Form address
+   a legal primary in the YACC grammar or all heck will break loose.
+*/
+
+NumRecsCall
+   :  _NUMBEROFRECORDS _LPAREN ReadableFieldAddress _RPAREN
+      {
+         Error_t           Err=kNoError;
+         zpString          NameString(Err, "NumberOfRecords");
+         const ZProcBlock* ProcBlock = ((ZParseTree *)fpParseTree)->FindProceduralBlock(NameString);
+         zpList* ParamList = new zpList();
+
+
+         ParamList->Append(*$3);
+
+         ZLCBase* aFunctionCall = ProcBlock->VerifyCall(ParamList);
+
+
+         if (aFunctionCall)
+         {
+            $$ = (ZFunctionCall *) aFunctionCall;
+         }
+         else
+         {
+            $$ = NULL;
+         }
+      }
+   |  _NUMBEROFRECORDS _LPAREN ReadableFieldAddress _TPS_COMMA FormAddress _RPAREN
+      {
+         Error_t           Err = kNoError;
+         zpString          NameString(Err, "NumberOfRecords");
+         const ZProcBlock* ProcBlock = ((ZParseTree *)fpParseTree)->FindProceduralBlock(NameString);
+         zpList*           ParamList = new zpList();
+
+
+         ParamList->Append(*$3);
+         ParamList->Append(*$5);
+         $5->VerifyAddress();
+
+         ZLCBase* aFunctionCall = ProcBlock->VerifyCall(ParamList);
+
+
+         if (aFunctionCall)
+         {
+                $$ = (ZFunctionCall *) aFunctionCall;
+         }
+         else
+         {
+            $$ = NULL;
+         }
+      }
+      /**************  ERROR RULES  *************/
+   |  _NUMBEROFRECORDS _LPAREN error _RPAREN
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kBadParametersForNumberOfRecords);
+         $$ = NULL;
+      }
+   |  _NUMBEROFRECORDS _LPAREN error _SEMICOLON
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kMissingRightParen);
+         fpErrorHandler->StopParse();
+      }
+   ;
+
+
+
+/*
+   The FormHasUserData Function must be part of the grammar to avoid
+   nasty reduce/reduce conflicts with Form addresses and Field Addresses.
+   The usual call back objects can be used but we can't make a Form address
+   a legal primary in the YACC grammar or all heck will break loose.
+*/
+
+FormHasUserDataCall
+   :  _FORMHASUSERDATA _LPAREN FormAddress _RPAREN
+      {
+         Error_t           Err = kNoError;
+         zpString          NameString(Err, "FormHasUserData");
+         const ZProcBlock* ProcBlock = ((ZParseTree *)fpParseTree)->FindProceduralBlock(NameString);
+         zpList*           ParamList = new zpList();
+
+
+         ParamList->Append(*$3);
+         $3->VerifyAddress();
+
+         ZLCBase* aFunctionCall = ProcBlock->VerifyCall(ParamList);
+
+
+         if (aFunctionCall)
+         {
+            $$ = (ZFunctionCall *) aFunctionCall;
+         }
+         else
+         {
+            $$ = NULL;
+         }
+      }
+   |  _FORMHASUSERDATA _LPAREN _RPAREN
+      {
+         Error_t           Err = kNoError;
+         zpString          NameString(Err, "FormHasUserData");
+         const ZProcBlock* ProcBlock = ((ZParseTree *)fpParseTree)->FindProceduralBlock(NameString);
+         zpList*           ParamList = new zpList();
+         ZLCBase* aFunctionCall = ProcBlock->VerifyCall(ParamList);
+
+
+         if ( aFunctionCall )
+         {
+            $$ = (ZFunctionCall *) aFunctionCall;
+         }
+         else
+         {
+            $$ = NULL;
+         }
+      }
+      /**************  ERROR RULES  *************/
+   |  _FORMHASUSERDATA _LPAREN error _RPAREN
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kBadParametersForFormHasUserData);
+         $$ = NULL;
+      }
+   |  _FORMHASUSERDATA _LPAREN error _SEMICOLON
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kMissingRightParen);
+         fpErrorHandler->StopParse();
+      }
+   ;
+
+
+
+/*
+   The IsUserEntered Function must be part of the grammar to avoid nasty
+   reduce/reduce conflicts with Form addresses and Field Addresses.
+   The usual call back objects can be used but we can't make a Form address
+   a legal primary in the YACC grammar or all heck will break loose.
+*/
+
+IsUserEnteredCall
+   :  _ISUSERENTERED _LPAREN ReadableAddress _RPAREN
+      {
+         Error_t           Err=kNoError;
+         zpString          NameString(Err, "IsUserEntered");
+         const ZProcBlock* ProcBlock = ((ZParseTree *)fpParseTree)->FindProceduralBlock(NameString);
+         zpList*           ParamList = new zpList();
+
+
+         ParamList->Append(*$3);
+
+         ZLCBase* aFunctionCall = ProcBlock->VerifyCall(ParamList);
+
+
+         if ( aFunctionCall )
+         {
+            $$ = (ZFunctionCall *) aFunctionCall;
+         }
+         else
+         {
+            $$ = NULL;
+         }
+      }
+      /**************  ERROR RULES  *************/
+   |  _ISUSERENTERED _LPAREN error _RPAREN
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kBadParamForIsUserEntered);
+         $$ = NULL;
+      }
+   |  _ISUSERENTERED _LPAREN error _SEMICOLON
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kMissingRightParen);
+         fpErrorHandler->StopParse();
+      }
+   ;
+
+
+
+/*
+   The GetCCTypeCall Function must be part of the grammar to avoid nasty
+   reduce/reduce conflicts with Form addresses and Field Addresses.
+   The usual call back objects can be used but we can't make a Form address
+   a legal primary in the YACC grammar or all heck will break loose.
+*/
+
+GetCCTypeCall
+   :  _GETCCTYPE _LPAREN ReadableAddress _RPAREN
+      {
+         Error_t           Err = kNoError;
+         zpString          NameString(Err, "GetCCType");
+         const ZProcBlock* ProcBlock = ((ZParseTree *)fpParseTree)->FindProceduralBlock(NameString);
+         zpList*           ParamList = new zpList();
+
+
+         ParamList->Append(*$3);
+
+         ZLCBase* aFunctionCall = ProcBlock->VerifyCall(ParamList);
+
+
+         if (aFunctionCall)
+         {
+            $$ = (ZFunctionCall *) aFunctionCall;
+         }
+         else
+         {
+            $$ = NULL;
+         }
+      }
+      /**************  ERROR RULES  *************/
+   |  _GETCCTYPE _LPAREN error _RPAREN
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kBadParamFormGetCCType);
+         $$ = NULL;
+      }
+   |  _GETCCTYPE _LPAREN error _SEMICOLON
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kMissingRightParen);
+         fpErrorHandler->StopParse();
+      }
+   ;
+
+
+
+/*
+   The IsCCTokenizedCall Function must be part of the grammar to avoid
+   nasty reduce/reduce conflicts with Form addresses and Field Addresses.
+   The usual call back objects can be used but we can't make a Form address
+   a legal primary in the YACC grammar or all heck will break loose.
+*/
+
+IsCCTokenizedCall
+   :  _ISCCTOKENIZED _LPAREN ReadableAddress _RPAREN
+      {
+         Error_t           Err=kNoError;
+         zpString          NameString(Err, "IsCCTokenized");
+         const ZProcBlock* ProcBlock = ((ZParseTree *)fpParseTree)->FindProceduralBlock(NameString);
+         zpList*           ParamList = new zpList();
+
+         ParamList->Append(*$3);
+
+         ZLCBase* aFunctionCall = ProcBlock->VerifyCall(ParamList);
+
+
+         if ( aFunctionCall )
+         {
+               $$ = (ZFunctionCall *) aFunctionCall;
+         }
+         else
+         {
+            $$ = NULL;
+         }
+      }
+      /**************  ERROR RULES  *************/
+   |  _ISCCTOKENIZED _LPAREN error _RPAREN
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kBadParamFormIsCCTokenized);
+         $$ = NULL;
+      }
+   |  _ISCCTOKENIZED _LPAREN error _SEMICOLON
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kMissingRightParen);
+         fpErrorHandler->StopParse();
+      }
+   ;
+
+
+
+/*
+   The IsCCCompleteCall Function must be part of the grammar to avoid nasty
+   reduce/reduce conflicts with Form addresses and Field Addresses.  The
+   usual call back objects can be used but we can't make a Form address a
+   legal primary in the YACC grammar or all heck will break loose.
+*/
+
+IsCCCompleteCall
+   :  _ISCCCOMPLETE _LPAREN ReadableAddress _RPAREN
+      {
+         Error_t           Err = kNoError;
+         zpString          NameString(Err, "IsCCComplete");
+         const ZProcBlock* ProcBlock = ((ZParseTree *)fpParseTree)->FindProceduralBlock(NameString);
+         zpList*           ParamList = new zpList();
+
+
+         ParamList->Append(*$3);
+
+         ZLCBase* aFunctionCall = ProcBlock->VerifyCall(ParamList);
+
+
+         if ( aFunctionCall )
+         {
+            $$ = (ZFunctionCall *) aFunctionCall;
+         }
+         else
+         {
+            $$ = NULL;
+         }
+      }
+      /**************  ERROR RULES  *************/
+   |  _ISCCCOMPLETE _LPAREN error _RPAREN
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kBadParamFormIsCCComplete);
+         $$ = NULL;
+      }
+   |  _ISCCCOMPLETE _LPAREN error _SEMICOLON
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kMissingRightParen);
+         fpErrorHandler->StopParse();
+      }
+   ;
+
+
+
+/*
+   The GetTableValue function must be part of the grammar to avoid nasty
+   reduce/reduce conflicts with Form addresses and Field Addresses.
+   The usual call back objects can be used but we can't make a Form address
+   a legal primary in the YACC grammar or all heck will break loose.
+*/
+
+GetTableValueCall
+   :  _GETTABLEVALUE _LPAREN GetTableValueParams _RPAREN
+      {
+         Error_t           Err = kNoError;
+         zpString          NameString(Err, "GetTableValue");
+         const ZProcBlock* ProcBlock = ((ZParseTree *)fpParseTree)->FindProceduralBlock(NameString);
+         ZLCBase*          aFunctionCall = ProcBlock->VerifyCall($3);
+
+
+         if ( aFunctionCall )
+         {
+            $$ = (ZFunctionCall *) aFunctionCall;
+         }
+         else
+         {
+            $$ = NULL;
+         }
+      }
+      /**************  ERROR RULES  *************/
+   |  _GETTABLEVALUE _LPAREN error _RPAREN
+      {
+         zpString ErrMsg;
+
+
+         ErrMsg.Assign(kBadParameterListInCall);
+         ErrMsg.Append("\"GetTableValue\"");
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,ErrMsg);
+         $$ = NULL;
+      }
+   |  _GETTABLEVALUE _LPAREN error PostExpressionToken
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kMissingRightParen);
+         fpErrorHandler->StopParse();
+      }
+   ;
+
+
+
+GetTableValueParams
+   :  SimpleExpression _TPS_COMMA SimpleExpression
+      {
+         if ($1)
+         {
+            if ($1->GetExpressionType() != kValue)
+            {
+               fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadParametersForGetTableValue );
+            }
+         }
+
+         if ($3)
+         {
+            if ($3->GetExpressionType() != kValue)
+            {
+               fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadParametersForGetTableValue );
+            }
+         }
+
+         zpList* ParamList = new zpList();
+
+
+         if ( $1 && $3 )
+         {
+            ParamList->Append(*$1);
+            ParamList->Append(*$3);
+         }
+
+         $$ = ParamList;
+      }
+   |  SimpleExpression _TPS_COMMA SimpleExpression _TPS_COMMA Identifier
+      {
+         if ( $1 )
+         {
+            if ($1->GetExpressionType() != kValue)
+            {
+               fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadParametersForGetTableValue );
+            }
+         }
+
+         if ( $3 )
+         {
+            if ( $3->GetExpressionType() != kValue )
+            {
+               fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadParametersForGetTableValue );
+            }
+         }
+
+         ZFormAddress* FormAddress = NULL;
+
+
+         if ( $5 )
+         {
+            ZFormSpec* FormSpec = new ZFormSpec($5, NULL);
+            const zctFormSet* OwningFormSet = NULL;
+            const zctForm* OwningForm = NULL;
+            ZFormDeclList* FormDecls = ((ZParseTree *)fpParseTree)->GetFormDeclList();
+
+
+            if (FormDecls)
+            {
+                  FormDecls->GetFormSetAndForm(&OwningFormSet, &OwningForm);
+            }
+
+            // Warn if we do not know about this Form
+            if (OwningFormSet)
+            {
+                 FormSpec->VerifyID(*OwningFormSet);
+            }
+
+            zpList* Forms = new zpList();
+            Forms->Append(*FormSpec);
+            FormAddress = new ZFormAddress(Forms);
+         }
+
+         zpList* ParamList = new zpList();
+
+
+         if (FormAddress && $1 && $3)
+         {
+            ParamList->Append(*$1);
+            ParamList->Append(*$3);
+            ParamList->Append(*FormAddress);
+         }
+
+         $$ = ParamList;
+      }
+   ;
+
+
+
+/*
+   The Is*PureTransferredCall functions are part of the grammar to force
+   the parameters to be of the correct type. Without this the parameter
+   passed to the function was always of the wrong type.
+*/
+
+IsRowPureTransferredCall
+   :  _ISROWPURETRANSFERRED _LPAREN ReadableAddress _RPAREN
+      {
+         // This turns into a call to the IsPureTransferred function
+         Error_t           Err = kNoError;
+         zpString          NameString( Err, "IsPureTransferred" );
+         const ZProcBlock* ProcBlock = ((ZParseTree*)fpParseTree)->FindProceduralBlock( NameString );
+         zpList*           ParamList = new zpList();
+
+
+         ParamList->Append(*$3);
+
+         ZLCBase* aFunctionCall = ProcBlock->VerifyCall( ParamList );
+
+
+         if ( aFunctionCall )
+         {
+            $$ = (ZFunctionCall*)aFunctionCall;
+         }
+         else
+         {
+            $$ = NULL;
+         }
+      }
+   |  _ISROWPURETRANSFERRED _LPAREN error _RPAREN
+      {
+         zpString msg;
+
+
+         msg.Assign( kBadParameterList );
+         msg.Append( " IsRowPureTransferred" );
+
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, msg );
+         $$ = NULL;
+      }
+   ;
+
+
+
+IsFormPureTransferredCall
+   :  _ISFORMPURETRANSFERRED _LPAREN IsFormPureTransferredParams _RPAREN
+      {
+         // This turns into a call to the IsPureTransferred function
+         Error_t           Err = kNoError;
+         zpString          NameString( Err, "IsPureTransferred" );
+         const ZProcBlock* ProcBlock = ((ZParseTree*)fpParseTree)->FindProceduralBlock( NameString );
+         ZLCBase*          aFunctionCall = ProcBlock->VerifyCall($3);
+
+
+         if ( aFunctionCall )
+         {
+            $$ = (ZFunctionCall*)aFunctionCall;
+         }
+         else
+         {
+            $$ = NULL;
+         }
+      }
+   |  _ISFORMPURETRANSFERRED _LPAREN error _RPAREN
+      {
+         zpString msg;
+
+
+         msg.Assign( kBadParameterList );
+         msg.Append( " IsFormPureTransferred" );
+
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, msg );
+         $$ = NULL;
+      }
+   ;
+
+
+
+IsFormPureTransferredParams
+   :  FormAddress
+      {
+         zpList* ParamList = new zpList();
+
+
+         if ( $1 )
+         {
+            if ( !IsReferenceToSelf( $1, (ZParseTree*)fpParseTree ) )
+            {
+               ParamList->Append( *$1 );
+               $1->VerifyAddress();
+            }
+            else
+            {
+               delete $1;
+               $1 = NULL;
+            }
+         }
+
+         $$ = ParamList;
+      }
+   |
+      {
+         $$ = new zpList();
+      }
+   ;
+
+
+
+/*
+   The GetPLDescriptionCall Function must be part of the grammar to avoid
+   nasty reduce/reduce conflicts with Form addresses and Field Addresses.
+   The usual call back objects can be used but we can't make a Form address
+   a legal primary in the YACC grammar or all heck will break loose.
+*/
+
+GetPLDescriptionCall
+   :  _GETPLDESCRIPTION _LPAREN GetPLDescriptionParams _RPAREN
+      {
+         Error_t           Err=kNoError;
+         zpString          NameString(Err, "GetPLDescription");
+         const ZProcBlock* ProcBlock = ((ZParseTree *)fpParseTree)->FindProceduralBlock(NameString);
+         ZLCBase*          aFunctionCall = ProcBlock->VerifyCall($3);
+
+
+         if ( aFunctionCall )
+         {
+             $$ = (ZFunctionCall *) aFunctionCall;
+         }
+         else
+         {
+            $$ = NULL;
+         }
+      }
+      /**************  ERROR RULES  *************/
+   |  _GETPLDESCRIPTION _LPAREN error _RPAREN
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kBadParamForGetPLDescription);
+         $$ = NULL;
+      }
+   |  _GETPLDESCRIPTION _LPAREN error _SEMICOLON
+      {
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kMissingRightParen);
+         fpErrorHandler->StopParse();
+      }
+   ;
+
+
+
+GetPLDescriptionParams
+   :  ReadableAddress
+      {
+         zpList* ParamList = new zpList();
+
+
+         if ( $1 )
+         {
+            ParamList->Append(*$1);
+         }
+
+         $$ = ParamList;
+      }
+   |  ReadableAddress _TPS_COMMA String
+      {
+         zpList* ParamList = new zpList();
+
+
+         if ( $1 && $3 )
+         {
+            ParamList->Append(*$1);
+            ParamList->Append(*$3);
+         }
+
+         $$ = ParamList;
+      }
+   ;
+
+
+
+/************************************************************************
+   Addressing
+************************************************************************/
+
+ReadableAddress
+   :  ReadableFieldAddress
+      {
+         // This can be a Language Constant, a local variable/constant,
+         // a Form level field/constant.
+
+         // First see if it is a Language Constant
+         ZLanguageConstant* LanguageConstant = fLanguageConstants->Find( $1 );
+
+
+         if ( LanguageConstant )
+         {
+            $$ = LanguageConstant;
+         }
+         else
+         {
+            // Build new reference
+            ZReadableAddress* anAddress = new ZReadableAddress( NULL, $1 );
+
+
+            // Verify the reference and issue any errors needed
+            anAddress->VerifyAddress();
+            $$ = anAddress;
+         }
+      }
+   |  FormAddress _DOT ReadableFieldAddress
+      {
+         // Build new reference
+
+         // If the form address refers to the owning form (the form
+         // that owns the calcs we are currently compiling) drop the
+         // form address and continue as if the user had not specified
+         // one.
+
+         if ( IsReferenceToSelf( $1, (ZParseTree*)fpParseTree ) )
+         {
+            delete $1;
+            $1 = NULL;
+         }
+
+         ZReadableAddress* anAddress = new ZReadableAddress($1, $3);
+
+         // The syntax here demands that this be an external Field reference so
+         // all we need to do is verify the address and set the type with the following call
+         anAddress->VerifyAddress();
+         $$ = anAddress;
+      }
+   |  NamedFieldAddressType _LBRACKET String _RBRACKET
+      {
+         const zctFormSet* OwningFormSet = NULL;
+         const zctForm*    OwningForm = NULL;
+         ZFormDeclList*    FormDecls = ((ZParseTree *)gpParser->GetParseTree())->GetFormDeclList();
+         assert(FormDecls);
+
+         FormDecls->GetFormSetAndForm(&OwningFormSet, &OwningForm);
+         assert(OwningForm);
+         assert(OwningFormSet);
+
+         zctFormSet::NamedFieldAddressType aType = $1;
+         ZStringLiteral* String = $3;
+         zctFieldAddress address;
+
+
+         zAttNamedFields namedFields( const_cast<zctFormSet*>( OwningFormSet ) );
+
+         if ( namedFields.GetNamedFieldAddress( aType, *(String->GetValue()), address ) )
+         {
+            Error_t           err = kNoError;
+            const FormID_t&   owningFormID = OwningForm->GetID();
+            FormID_t          formID;
+
+
+            address.GetFormID(&formID);
+            ZFormAddress* aFormAddress;
+
+
+            if ( owningFormID.Compare( formID ) == 0 )
+            {
+               // Local address
+               aFormAddress = NULL;
+            }
+            else
+            {
+               // External address
+               zpString*   aFormID = new zpString(err, formID);
+               ZFormSpec*  aFormSpec = new ZFormSpec(aFormID, NULL);
+               zpList*     aList = new zpList;
+
+
+               aList->Prepend(*aFormSpec);
+               aFormAddress = new ZFormAddress(aList);
+            }
+
+
+            FieldID_t fieldID;
+            address.GetFieldID(&fieldID);
+
+
+            zpString*               aFieldID = new zpString(err, fieldID);
+            ZReadableFieldAddress*  aFieldAddress = new ZReadableFieldAddress(aFieldID, NULL);
+            ZReadableAddress*       anAddress = new ZReadableAddress(aFormAddress, aFieldAddress);
+
+
+            anAddress->VerifyAddress();
+            $$ = anAddress;
+         }
+         else
+         {
+            delete $3;
+            fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kBadParamFormGetNamedValue );
+            fpErrorHandler->StopParse();
+         }
+      }
+   ;
+
+
+
+ReadableFieldAddress
+   :  Identifier
+      {
+         ZReadableFieldAddress* anAddress = new ZReadableFieldAddress($1, NULL);
+         $$ = anAddress;
+      }
+   |  Identifier _LBRACKET SimpleExpression _RBRACKET
+      {
+         ZReadableFieldAddress* anAddress = new ZReadableFieldAddress($1, $3);
+         $$ = anAddress;
+      }
+   |  Identifier _LBRACKET SimpleExpression _TPS_COMMA SimpleExpression _RBRACKET
+      {
+         ZReadableFieldAddress* anAddress = new ZReadableFieldAddress($1, $3, $5, TRUE);
+         $$ = anAddress;
+      }
+   |  Identifier _LBRACKET Integer _DOTDOT Integer _RBRACKET
+      {
+         ZReadableFieldAddress* anAddress = new ZReadableFieldAddress($1, $3, $5);
+         $$ = anAddress;
+      }
+   |  Identifier _LBRACKET SimpleExpression _DOTDOT Integer _RBRACKET
+      {
+         ZReadableFieldAddress* anAddress = new ZReadableFieldAddress($1, $3, $5);
+         $$ = anAddress;
+      }
+   |  Identifier _LBRACKET Char _DOTDOT Char _RBRACKET
+      {
+         ZReadableFieldAddress* anAddress = new ZReadableFieldAddress($1, $3, $5);
+         $$ = anAddress;
+      }
+   |  Identifier _LBRACKET Integer _DOTDOT SimpleExpression _RBRACKET
+      {
+         ZReadableFieldAddress* anAddress = new ZReadableFieldAddress($1, $3, $5);
+         $$ = anAddress;
+      }
+   |  Identifier _LBRACKET Char _DOTDOT SimpleExpression _RBRACKET
+      {
+         ZReadableFieldAddress* anAddress = new ZReadableFieldAddress($1, $3, $5);
+         $$ = anAddress;
+      }
+   |  Identifier _LBRACKET SimpleExpression _DOTDOT Integer _RBRACKET
+      {
+         ZReadableFieldAddress* anAddress = new ZReadableFieldAddress($1, $3, $5);
+         $$ = anAddress;
+      }
+   |  Identifier _LBRACKET SimpleExpression _DOTDOT Char _RBRACKET
+      {
+         ZReadableFieldAddress* anAddress = new ZReadableFieldAddress($1, $3, $5);
+         $$ = anAddress;
+      }
+      /**************  ERROR RULES  *************/
+   |  Identifier _LBRACKET error PostExpressionToken
+      {
+         delete $1;
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kMissingRightBracket);
+         fpErrorHandler->StopParse();
+      }
+   |  Identifier _LBRACKET error _RBRACKET
+      {  // ERRORS ONLY
+         zpString ErrMsg;
+
+
+         ErrMsg.Assign( kBadIndexExpression );
+         ErrMsg.Append( "\"" );
+         ErrMsg.Append( *$1 );
+         ErrMsg.Append( "\"" );
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, ErrMsg );
+
+         ZReadableFieldAddress* anAddress = new ZReadableFieldAddress($1, NULL);
+         $$ = anAddress;
+      }
+   ;
+
+
+
+FormAddress
+   :  FormSpecList
+      {
+         ZFormAddress* FormAddress = new ZFormAddress($1);
+          $$ = FormAddress;
+      }
+   ;
+
+
+FormSpecList
+   :  FormSpec
+      {
+         // Standard List Reduction
+         zpList* aList = new zpList;
+
+
+         aList->Prepend(*$1);
+         $$ = aList;
+      }
+   |  FormSpec _COLON FormSpecList
+      {
+         // Standard List Reduction
+         zpList* aList = $3;
+
+
+         aList->Prepend(*$1);
+         $$ = aList;
+      }
+   ;
+
+
+
+FormSpec
+   :  Identifier
+      {
+         ZFormSpec* aFormSpec = new ZFormSpec($1, NULL);
+         $$ = aFormSpec;
+      }
+   |  Identifier _LBRACKET SimpleExpression _RBRACKET
+      {
+         ZFormSpec* aFormSpec = new ZFormSpec($1, $3);
+         $$ = aFormSpec;
+      }
+      /**************  ERROR RULES  *************/
+   |  Identifier _LBRACKET error PostFormSpecToken
+      {
+         delete $1;
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,kMissingRightBracket);
+         fpErrorHandler->StopParse();
+      }
+   |  Identifier _LBRACKET error _RBRACKET
+      {
+         zpString ErrMsg;
+
+
+         ErrMsg.Assign(kBadIndexExpression);
+         ErrMsg.Append("\"");
+         ErrMsg.Append(*$1);
+         ErrMsg.Append("\"");
+         fpErrorHandler->ReportLineError(zcsErrorHandler::kError,ErrMsg);
+
+         ZFormSpec* aFormSpec = new ZFormSpec($1, NULL);
+         $$ = aFormSpec;
+      }
+   ;
+
+
+
+PostFormSpecToken
+   :  PostExpressionToken
+      {
+      }
+   |  _DOT
+      {
+      }
+   |  _COLON
+      {
+      }
+   ;
+
+
+
+NamedFieldAddressType
+   :  _EFNV
+      {
+         $$ = zctFormSet::kEFAddress;
+      }
+   |  _GENERICNV
+      {
+         $$ = zctFormSet::kGenericAddress;
+      }
+   ;
+
+
+
+WritableAddress
+   :  Identifier
+      {
+         // Build new Address.  Note that this could be a local variable
+         ZWritableAddress* anAddress = new ZWritableAddress( $1, NULL );
+
+
+         // Verify the address and complain about any problems
+         anAddress->VerifyAddress();
+         $$ = anAddress;
+      }
+   |  Identifier _LBRACKET SimpleExpression _RBRACKET
+      {
+         // Build new Address
+         ZWritableAddress* anAddress = new ZWritableAddress( $1, $3 );
+
+
+         // Verify the address and complain about any problems
+         anAddress->VerifyAddress();
+         $$ = anAddress;
+      }
+   |  Identifier _LBRACKET SimpleExpression _TPS_COMMA SimpleExpression _RBRACKET
+      {
+         // Build new Address
+         ZWritableAddress* anAddress = new ZWritableAddress( $1, $3, $5 );
+
+
+         // Verify the address and complain about any problems
+         anAddress->VerifyAddress();
+         $$ = anAddress;
+      }
+      /**************  ERROR RULES  *************/
+   |  Identifier _LBRACKET error PostWritableAddressToken
+      {
+         delete $1;
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kMissingRightBracket );
+         fpErrorHandler->StopParse();
+      }
+   |  Identifier _LBRACKET error _RBRACKET
+      {
+         zpString ErrMsg;
+
+
+         ErrMsg.Assign( kBadIndexExpression );
+         ErrMsg.Append( "\"" );
+         ErrMsg.Append( *$1 );
+         ErrMsg.Append( "\"" );
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, ErrMsg );
+
+         ZWritableAddress* anAddress = new ZWritableAddress( $1, NULL );
+         $$ = anAddress;
+      }
+   |  FormAddress _DOT Identifier
+      {
+         // ERRORS ONLY
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kAssignmentToExternalField );
+         ZWritableAddress* anAddress = new ZWritableAddress( $3, NULL );
+         $$ = anAddress;
+      }
+   |  FormAddress _DOT Identifier _LBRACKET SimpleExpression _RBRACKET
+      {  // ERRORS ONLY
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kAssignmentToExternalField );
+         ZWritableAddress* anAddress = new ZWritableAddress( $3, $5 );
+         $$ = anAddress;
+      }
+   ;
+
+
+
+PostWritableAddressToken
+   :  _ASSIGN
+      {
+      }
+   |  _DROPASSIGN
+      {
+      }
+   |  _SETDEFAULTVALUE
+      {
+      }
+   |  _EQ
+      {
+      }
+   |  _TPS_COMMA
+      {
+      }
+   ;
+
+
+
+/************************************************************************
+   Misc low level aspects of the language
+************************************************************************/
+
+LiteralList
+   :  Literal
+      {
+         // Standard List Reduction
+         zpList* aList = new zpList;
+
+
+         aList->Prepend(*$1);
+         $$ = aList;
+      }
+   |  Literal _TPS_COMMA LiteralList
+      {
+         // Standard List Reduction
+         zpList* aList = $3;
+
+
+         aList->Prepend(*$1);
+         $$ = aList;
+      }
+   ;
+
+
+
+Literal
+   :  Number
+      {
+         $$ = $1;
+      }
+   |  _TRUE
+      {
+         // Build the ZBooleanLiteral from yytext
+         ZBooleanLiteral* aLiteral = new ZBooleanLiteral(TRUE);
+         $$ = aLiteral;
+      }
+   |  _FALSE
+      {
+         // Build the ZBooleanLiteral from yytext
+         ZBooleanLiteral* aLiteral = new ZBooleanLiteral(FALSE);
+         $$ = aLiteral;
+      }
+   |  String
+      {
+         $$ = $1;
+      }
+   |  Char
+      {
+         $$ = $1;
+      }
+   |  IsNonFinalCall
+      {
+         $$ = $1;
+      }
+   |  IsNonFinalErrorCall
+      {
+         $$ = $1;
+      }
+   ;
+
+
+
+SignedLiteralList
+   :  SignedLiteral
+      {
+         // Standard List Reduction
+         zpList* aList = new zpList;
+
+
+         aList->Prepend(*$1);
+         $$ = aList;
+      }
+   |  SignedLiteral _TPS_COMMA LiteralList
+      {
+         // Standard List Reduction
+         zpList* aList = $3;
+
+
+         aList->Prepend(*$1);
+         $$ = aList;
+      }
+   ;
+
+
+
+SignedLiteral
+   :  Literal
+      {
+         $$ = $1;
+      }
+   |  NegativeNumber
+      {
+         $$ = $1;
+      }
+   ;
+
+
+
+Number
+   :  Integer
+      {
+         $$ = $1;
+      }
+   |  Real
+      {
+         $$ = $1;
+      }
+   ;
+
+
+
+NegativeNumber
+   :  _MINUS Integer %prec _UNARY
+      {
+         if ($2)
+         {
+            $2->MakeNegative();
+         }
+
+         $$ = $2;
+      }
+   |  _MINUS Real %prec _UNARY
+      {
+         if ($2)
+         {
+                $2->MakeNegative();
+         }
+
+         $$ = $2;
+      }
+   ;
+
+
+
+SignedNumber
+   :  Number
+      {
+         $$ = $1;
+      }
+   |  NegativeNumber
+      {
+         $$ = $1;
+      }
+   ;
+
+
+
+Real
+   :  _REAL
+      {
+         // Build the ZNumberLiteral from yytext
+         zpString* aString = new zpString;
+         aString->Assign(fpLexer->GetYYText());
+         ZNumberLiteral* aLiteral = new ZNumberLiteral(aString);
+
+         $$ = aLiteral;
+      }
+   ;
+
+
+
+Integer
+   :  _INTEGER
+      {
+         // Build the ZNumberLiteral from yytext
+         zpString* aString = new zpString;
+         aString->Assign(fpLexer->GetYYText());
+         ZNumberLiteral* aLiteral = new ZNumberLiteral(aString);
+         $$ = aLiteral;
+      }
+   ;
+
+
+
+Char
+   :  _CHAR
+      {
+         ZCharLiteral* aLiteral = new ZCharLiteral((fpLexer->GetYYText())[1]);
+         $$ = aLiteral;
+      }
+   ;
+
+
+
+String
+   :  _STRING
+      {
+         // Build the zpStringLiteral from accumulated string in Lexer
+         zpString* aString = fpLexer->GetStringAccumulator();
+         ZStringLiteral* aLiteral = new ZStringLiteral(aString);
+         $$ = aLiteral;
+      }
+   ;
+
+
+
+IdentifierList
+   :  Identifier
+      {
+         // Standard List Reduction
+         zpList* aList = new zpList;
+         aList->Prepend(*$1);
+         $$ = aList;
+      }
+   |  Identifier _TPS_COMMA IdentifierList
+      {
+         // Standard List Reduction
+         zpList* aList = $3;
+         aList->Prepend(*$1);
+         $$ = aList;
+      }
+   ;
+
+
+
+Identifier
+   :  _IDENTIFIER
+      {
+         zpString* aString = new zpString;
+
+         aString->Assign(fpLexer->GetYYText());
+
+         std::string asDeclared( aString->Contents() );
+         aString->ConvertToUpper();
+
+         std::string asUppercased( aString->Contents() );
+         ((ZParseTree*)fpParseTree)->GetIdentifierMap()[ asUppercased ] = asDeclared;
+
+         $$ = aString;
+      }
+   ;
+
+
+
+RequiredSemicolon
+   :  _SEMICOLON
+      {
+      }
+      /**************  ERROR RULES  *************/
+   |
+      {
+         fpErrorHandler->ReportLineError( zcsErrorHandler::kError, kMissingSemicolon );
+      }
+   ;
+
+%%
+

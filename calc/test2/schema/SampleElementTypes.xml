@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Return structure="group">
+    <Header structure="group"/>
+    <Data structure="group">
+        <RebateSubmissionForm structure="form">
+            <PurchasePrice baseType="xsd:integer" structure="field" type="USAmountType"></PurchasePrice>
+            <RebatePercentage baseType="xsd:integer" structure="field" type="xsd:integer"></RebatePercentage>
+            <RebateAmount baseType="xsd:integer" structure="field" type="USAmountType"></RebateAmount>
+        </RebateSubmissionForm>
+    </Data>
+</Return>

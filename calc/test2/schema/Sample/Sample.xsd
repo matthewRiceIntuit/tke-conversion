@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+    targetNamespace="http://www.irs.gov/efile" version="1.0" xmlns="http://www.irs.gov/efile"
+    xmlns:efile="http://www.irs.gov/efile" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <!-- Root Element -->
+    <xsd:annotation>
+        <xsd:documentation>
+            <Description>Sample Root Element</Description>
+        </xsd:documentation>
+    </xsd:annotation>
+    <xsd:element name="Return">
+        <xsd:annotation>
+            <xsd:documentation>
+                <Description>Root Element - wraps around Header and Data</Description>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="Header"/>
+                <xsd:element ref="Data"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <!-- Header Element -->
+    <xsd:element name="Header">
+        <xsd:complexType>
+            <xsd:sequence> </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <!-- Data Element -->
+    <xsd:element name="Data">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="RebateSubmissionForm"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <!-- Form Element -->
+    <xsd:element name="RebateSubmissionForm">
+        <xsd:annotation>
+            <xsd:documentation>Sample Form Element</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="PurchasePrice" type="USAmountType">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            <Description>Price of Product Purchased</Description>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="RebatePercentage" type="xsd:integer">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            <Description>Percentage to rebate</Description>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="RebateAmount" type="USAmountType">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            <Description>Amount to rebate</Description>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+
+    </xsd:element>
+
+
+    <!-- Simple Type -->
+    <xsd:simpleType name="StringType">
+        <xsd:annotation>
+            <xsd:documentation>Base type for a string</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string"/>
+    </xsd:simpleType>
+
+    <!-- Text Type -->
+    <xsd:simpleType name="TextType">
+        <xsd:annotation>
+            <xsd:documentation>Used for a text field. Legal Characters: printable characters from !
+                to ~ plus symbols from ¡ to ¿ plus Spanish characters and single space. Illegal
+                Character: leading space, trailing space, adjacent spaces.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="([!-~£§ÁÉÍÑÓ×ÚÜáéíñóúü] ?)*[!-~£§ÁÉÍÑÓ×ÚÜáéíñóúü]"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <!-- U.S. Amount Type -->
+    <xsd:simpleType name="USAmountType">
+        <xsd:annotation>
+            <xsd:documentation>Type for a U.S. integer amount field</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:integer">
+            <xsd:totalDigits value="15"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <!-- Social Security Number Type -->
+    <xsd:simpleType name="SSNType">
+        <xsd:annotation>
+            <xsd:documentation>Type for Social Security No. - 9 digits</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="[0-9]{9}"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+</xsd:schema>

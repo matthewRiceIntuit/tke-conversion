@@ -1,0 +1,70 @@
+<program >
+    <Decl >
+        <DeclList >
+            <VarDecl val="ZipBegin">
+            </VarDecl>
+            <VarDecl val="world">
+            </VarDecl>
+            <VarDecl val="asdfasdf">
+            </VarDecl>
+            <Type val="FText">
+            </Type>
+        </DeclList>
+        <DeclList >
+            <VarDecl val="ZipEnd">
+            </VarDecl>
+            <Type val="FText">
+            </Type>
+        </DeclList>
+    </Decl>
+    <block >
+        <Stmt >
+            <CtrlStruct >
+                <IfStruct >
+                    <FunctionCall >
+                        <Call val="HasValue">
+                            <ArgList >
+                                <VarRef val="Sinfowks.CITY">
+                                </VarRef>
+                            </ArgList>
+                        </Call>
+                    </FunctionCall>
+                    <block >
+                        <Stmt >
+                            <CtrlStruct >
+                                <IfStruct >
+                                    <Predicate val=">">
+                                        <FunctionCall >
+                                            <Call val="Length">
+                                                <ArgList >
+                                                    <VarRef val="ZipEnd">
+                                                    </VarRef>
+                                                </ArgList>
+                                            </Call>
+                                        </FunctionCall>
+                                        <Literal val="0">
+                                        </Literal>
+                                    </Predicate>
+                                    <Stmt >
+                                        <Assign >
+                                            <VarRef val="SinfoWks.CITY">
+                                            </VarRef>
+                                        </Assign>
+                                    </Stmt>
+                                    <ElseStruct >
+                                        <Stmt >
+                                            <Assign >
+                                                <VarRef val="SinfoWks.CITY">
+                                                </VarRef>
+                                            </Assign>
+                                        </Stmt>
+                                    </ElseStruct>
+                                </IfStruct>
+                            </CtrlStruct>
+                        </Stmt>
+                    </block>
+                </IfStruct>
+            </CtrlStruct>
+        </Stmt>
+    </block>
+</program>
