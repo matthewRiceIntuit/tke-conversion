@@ -1,6 +1,7 @@
 
 # Generated from java-escape by ANTLR 4.5
 from antlr4 import *
+import cgi
 
 class obj(object):
 
@@ -81,6 +82,14 @@ class CalcListener(ParseTreeListener):
     def exitBlock(self, ctx):
         self.exit()
 
+        # Enter a parse tree produced by CalcParser#dumbblock.
+    def enterDumbblock(self, ctx):
+        self.enter('block')
+
+    # Exit a parse tree produced by CalcParser#dumbblock.
+    def exitDumbblock(self, ctx):
+        self.exit()
+
 
     # Enter a parse tree produced by CalcParser#stmt.
     def enterStmt(self, ctx):
@@ -127,7 +136,7 @@ class CalcListener(ParseTreeListener):
 
     # Enter a parse tree produced by CalcParser#Literal.
     def enterLiteral(self, ctx):
-        self.close("Literal", ctx.LITERAL().getText())
+        self.close("Literal", cgi.escape(ctx.LITERAL().getText()).replace('"',"&quot;"))
 
     # Exit a parse tree produced by CalcParser#Literal.
     def exitLiteral(self, ctx):
@@ -151,10 +160,18 @@ class CalcListener(ParseTreeListener):
     def exitAddSub(self, ctx):
         self.exit()
 
+    # Enter a parse tree produced by CalcParser#AddSub.
+    def enterLogic(self, ctx):
+        self.enter(ctx.op.text)
+
+    # Exit a parse tree produced by CalcParser#AddSub.
+    def exitLogic(self, ctx):
+        self.exit()
+
 
     # Enter a parse tree produced by CalcParser#Predicate.
     def enterPredicate(self, ctx):
-        self.enter("Predicate",ctx.op.text)
+        self.enter("Predicate",cgi.escape(ctx.op.text))
 
     # Exit a parse tree produced by CalcParser#Predicate.
     def exitPredicate(self, ctx):

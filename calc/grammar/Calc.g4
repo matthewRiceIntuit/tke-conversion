@@ -1,6 +1,6 @@
 grammar Calc;
 
-calcfile: formset section*;
+calcfile: formset decl? section*;
 
 formset :
     'FORM' 'FORMSET' '(' ID ')'  '.' form ';';
@@ -13,18 +13,20 @@ section :
 
 
 block: BEGIN stmt* END ';' ;
+dumbblock:  BEGIN stmt* END  ;
 
 stmt: assign | call ';' | ret | ctrlStruct ;
 
 assign: full_id LET expr ';' ;
 
 
-call :full_id '(' argList ')';
+call :ID '(' argList ')';
 
 
 
 expr : expr op=('/' | '*') expr #DivMul
 	| expr op=('+' | '-') expr #AddSub
+	| expr op=('and' | 'or') expr #Logic
 	| expr op=('>' | '<' | '<=' | '>=' | '=') expr #Predicate
 	| expr '*' '(' expr '/' '100' ')' #PercentageOf
 	| full_id #VarRef
@@ -42,7 +44,7 @@ varDecl: ID;
 r_type: ID;
 ctrlStruct : ifStruct | loopStruct ;
 	
-ifStruct : IF expr THEN (block|stmt) elseStruct?;
+ifStruct : IF expr THEN (block|stmt|dumbblock) elseStruct?;
 
 elseStruct: ELSE  (block|stmt);
 
@@ -66,7 +68,7 @@ LITERAL : INT
 	;
 
 VAR: 'var'|'VAR';
-IF : 'if'|'IF' ;
+IF : 'if'|'IF'|'If' ;
 ELSE : 'else' |'ELSE';
 THEN : 'then'|'THEN' ;
 DO : 'do';
@@ -89,3 +91,8 @@ BOOLEAN : 'true' | 'false' ;
 COMMENT
     :   '/*' .*? '*/' -> skip
     ;
+
+LINE_COMMENT
+    :   '//' ~[\r\n]* -> skip
+    ;
+
