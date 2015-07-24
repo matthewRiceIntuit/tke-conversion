@@ -3,11 +3,12 @@ import sys
 from antlr4 import *
 from antlr4.InputStream import InputStream
 import lxml.etree as etree
+import json
 
 from grammar.CalcParser import CalcParser
 from grammar.CalcListener import CalcListener
 from grammar.CalcLexer import CalcLexer
-from util import pretty_print, xslt, write
+from util import pretty_print, xslt, write, xslt_text
 from patterns import accumulations
 from resolve_vars import resolve_vars
 
@@ -39,6 +40,14 @@ if __name__ == '__main__':
 
 
     pretty_print(root)
+
+    text = xslt_text(root,'xsl/calc2script.xsl')
+    print text
+    adict=eval(text.strip())
+    for each in adict:
+        print json.dumps(each,indent=5).strip('{}').replace('"','')
+
+
     exit()
 
     newroot = xslt(root,'xsl/nodes.xsl')

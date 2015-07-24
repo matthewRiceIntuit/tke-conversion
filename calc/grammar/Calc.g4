@@ -3,7 +3,7 @@ grammar Calc;
 calcfile: formset decl? section*;
 
 formset :
-    'FORM' 'FORMSET' '(' ID ')'  '.' form ';';
+    'FORM' ID  '.' form ';';
 form: ID;
 
 section :
