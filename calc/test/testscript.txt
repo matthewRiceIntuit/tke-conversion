@@ -1,0 +1,13 @@
+     AllConditionsTrueNontaxablecombatpay1 = AllConditionsTrue(
+          inputs: [
+               FINFOWKS.TDODIsNotBlank,
+               FINFOWKS.TDODBelowThreshold
+          ]
+      )
+
+   FW2SUM.TCOMBATAboveThreshold = AboveThreshold(
+            inputs: [
+                 value=FW2SUM.TCOMBAT,
+                 threshold=0
+            ]
+        )

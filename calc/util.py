@@ -27,7 +27,7 @@ def xslt_text(root,xsl):
         xslt = etree.parse(xsl)
         transform = etree.XSLT(xslt)
         dom = etree.ElementTree(root)
-        text = transform(dom)
+        text = transform(dom,tke_vars='tke')
     except Exception, e:
         print str(e)
         print e.error_log

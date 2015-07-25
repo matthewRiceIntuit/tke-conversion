@@ -1,24 +1,22 @@
 import sys
+import lxml.etree as etree
+import json
 
 from antlr4 import *
 from antlr4.InputStream import InputStream
-import lxml.etree as etree
-import json
 
 from grammar.CalcParser import CalcParser
 from grammar.CalcListener import CalcListener
 from grammar.CalcLexer import CalcLexer
+
 from util import pretty_print, xslt, write, xslt_text
 from patterns import accumulations
-from resolve_vars import resolve_vars
+from resolve_vars import resolve_vars,assign_ids
 
 
 if __name__ == '__main__':
 
-    if len(sys.argv) > 1:
-        input_stream = FileStream(sys.argv[1])
-    else:
-        input_stream = InputStream(sys.stdin.readline())
+    input_stream = FileStream(sys.argv[1])
 
     lexer = CalcLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
@@ -34,7 +32,8 @@ if __name__ == '__main__':
 
     root = etree.XML('<?xml version="1.0" ?>'+listner.output)
 
-    resolve_vars(root)
+    resolve_vars(root,use_tke=True)
+    assign_ids(root)
 
     accumulations(root)
 
@@ -43,9 +42,12 @@ if __name__ == '__main__':
 
     text = xslt_text(root,'xsl/calc2script.xsl')
     print text
+    print '\n**********************************************\n'
     adict=eval(text.strip())
+
     for each in adict:
-        print json.dumps(each,indent=5).strip('{}').replace('"','')
+        print json.dumps(each,indent=5).strip('{}').replace('"','').replace("(: {","(").rstrip('}\n').replace("_Blank","Blank") , ')'
+
 
 
     exit()
