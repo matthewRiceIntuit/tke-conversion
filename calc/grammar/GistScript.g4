@@ -7,14 +7,15 @@ section :
 
 gist:ID;
 
-params: var ':' (param_list|param);
+params: name ':' (param_list|param);
 
 param_list: '[' (param ',')+ param? ']';
 
 param:  named_param|var|constant;
 
-named_param: var '=' (var|constant);
+named_param: name '=' (var|constant);
 
+name: ID;
 var : ID;
 ID: [a-zA-Z_@][a-zA-Z_0-9/\.]* ;
 constant: CONSTANT;

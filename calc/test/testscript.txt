@@ -11,3 +11,11 @@
                  threshold=0
             ]
         )
+
+     EIC/EICWorksheetPP/TaxpayerNontaxableCombatPayPP = NumericCopy(
+          inputs: [
+               EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/TaxpayerNontaxableCombatPayPP
+          ],
+          BlankIfFalse: EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/TaxpayerCombatPayForEICIndPPIsNotBlank
+      )
+

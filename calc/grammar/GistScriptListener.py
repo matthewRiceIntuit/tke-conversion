@@ -66,7 +66,7 @@ class GistScriptListener(ParseTreeListener):
 
     # Enter a parse tree produced by GistScriptParser#params.
     def enterParams(self, ctx):
-        self.enter('Params')
+        self.enter('Params',ctx.ID().getText())
 
     # Exit a parse tree produced by GistScriptParser#params.
     def exitParams(self, ctx):
