@@ -3,21 +3,24 @@ grammar GistScript;
 gistscript: section*;
 
 section :
-    var  '=' gist '(' params* ')' ;
+    (var|tmp) alt? '=' gist;
 
-gist:ID;
+alt: '|' (var|tmp);
+
+gist:ID  '(' params* ')';
 
 params: name ':' (param_list|param);
 
 param_list: '[' (param ',')+ param? ']';
 
-param:  named_param|var|constant;
+param:  named_param? (var|constant|tmp)  alt?;
 
-named_param: name '=' (var|constant);
+named_param: name ':' ;
 
 name: ID;
 var : ID;
-ID: [a-zA-Z_@][a-zA-Z_0-9/\.]* ;
+tmp: '@' ID;
+ID: [a-zA-Z_][a-zA-Z_0-9/\.]* ;
 constant: CONSTANT;
 CONSTANT: [0-9]+ ;
 

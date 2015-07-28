@@ -66,7 +66,7 @@ class GistScriptListener(ParseTreeListener):
 
     # Enter a parse tree produced by GistScriptParser#params.
     def enterParams(self, ctx):
-        self.enter('Params',ctx.ID().getText())
+        self.enter('Params')
 
     # Exit a parse tree produced by GistScriptParser#params.
     def exitParams(self, ctx):
@@ -108,13 +108,34 @@ class GistScriptListener(ParseTreeListener):
     def exitVar(self, ctx):
         self.exit()
 
+    # Enter a parse tree produced by GistScriptParser#var.
+    def enterName(self, ctx):
+        self.enter('Name',ctx.ID().getText())
+
+    # Exit a parse tree produced by GistScriptParser#var.
+    def exitName(self, ctx):
+        self.exit()
 
     # Enter a parse tree produced by GistScriptParser#constant.
     def enterConstant(self, ctx):
-        self.enter('Constant',ctx.CONSTANT().getText())
+        self.enter('Var',ctx.CONSTANT().getText())
 
     # Exit a parse tree produced by GistScriptParser#constant.
     def exitConstant(self, ctx):
         self.exit()
 
+    # Enter a parse tree produced by GistScriptParser#constant.
+    def enterTmp(self, ctx):
+        self.enter('Tmp',ctx.ID().getText())
 
+    # Exit a parse tree produced by GistScriptParser#constant.
+    def exitTmp(self, ctx):
+        self.exit()
+
+    # Enter a parse tree produced by GistScriptParser#constant.
+    def enterAlt(self, ctx):
+        self.enter('Alt')
+
+    # Exit a parse tree produced by GistScriptParser#constant.
+    def exitAlt(self, ctx):
+        self.exit()

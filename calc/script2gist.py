@@ -17,6 +17,24 @@ from resolve_vars import resolve_vars,assign_ids
 def pprint(root):
     print(etree.tostring(root, pretty_print=True))
 
+def alternatives(root):
+    alts={}
+
+    for each in root.xpath('//Alt/*'):
+        name = each.getparent().getprevious().attrib['val']
+        alts[name] = each.attrib['val']
+        each.getparent().remove(each)
+
+    for each in alts.items():
+        for var in root.xpath("//*[@val='%s']" % each[0]):
+            var.attrib['val']=each[1]
+
+    print alts
+
+
+## antlr4 -Dlanguage=Python2 grammar/GistScript.g4
+## python script2gist.py test/testscript.txt
+
 if __name__ == '__main__':
 
     input_stream = FileStream(sys.argv[1])
@@ -35,35 +53,11 @@ if __name__ == '__main__':
 
     root = etree.XML('<?xml version="1.0" ?>'+listner.output)
     pretty_print(root)
-    exit()
+    alternatives(root)
 
-    root = etree.parse(sys.argv[1])
-    #pretty_print(root)
-    text = xslt_text(root.getroot(),'xsl/script2gist.xsl')
-    text = text.replace(' Value=','').replace(',\n\n',',\n').replace('\n)',')')
-    #text = text.replace('/Return/ReturnData/EIC/EICWorksheetPP/','').replace('/Temporary/EIC/','_')\
-
-    root = etree.parse('mapping/MappingSpec_EIC.xml')
-    #import ipdb;ipdb.set_trace()
-    for form in root.getroot().xpath('//Context'):
-        tke_form = form.attrib['xpath'].replace('[uuid_1]','').replace('[uuid_2]','')
-        tps_form = form.attrib['corecopy'].replace('FDI$','')
-        for field in form.xpath('Mapping'):
-            tke_field = tke_form + "/"+ field.attrib['xpath'].replace('[uuid_1]','').replace('[uuid_2]','')
-            tps_field  = tps_form+"."+field.attrib['corecopy']
-            #print tke_field ,' : ',tps_field
-            text=text.replace(tke_field ,tps_field)
-        for field in form.xpath('MapValueToAddress'):
-            tke_field = tke_form + "/"+ field.attrib['xpath']
-            try:
-                tps_field  = tps_form+"."+field.xpath('Map')[0].attrib['corecopy']+"|"+field.xpath('Map')[1].attrib['corecopy']
-                #print tke_field ,' : ',tps_field
-                text=text.replace(tke_field ,tps_field)
-            except Exception:
-                import ipdb;ipdb.set_trace()
+    newroot = xslt(root,'xsl/script2gist.xsl')
+    xmlstr = pretty_print(newroot)
 
 
-    write('test/eic.txt',text)
-    print text
 
 

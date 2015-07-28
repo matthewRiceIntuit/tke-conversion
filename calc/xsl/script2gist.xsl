@@ -1,48 +1,86 @@
 <?xml version="1.0" ?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-    <xsl:output method="text"/>
+    <xsl:output method="xml"/>
     <xsl:strip-space elements="*" />
-    <xsl:template match="Versions"/>
+
+    <xsl:key name="vars" match="//Var/@val" use="." />
+    <xsl:key name="tmps" match="//Tmp/@val" use="." />
+
+    <xsl:template match="/">
+        <Nodes>
+            <xsl:apply-templates/>
+
+            <xsl:comment>
+<xsl:text>
+
+
+
+
+
+</xsl:text>
+            </xsl:comment>
+            <xsl:for-each select="//Var/@val[generate-id() = generate-id(key('vars',.)[1])]">
+                <xsl:sort/>
+                <InputNode><xsl:attribute name="name">/Return/ReturnData/<xsl:value-of select="."/></xsl:attribute>
+
+                    <RoundTo>
+                        <Dollars />
+                    </RoundTo>
+                </InputNode>
+            </xsl:for-each>
+
+            <xsl:for-each select="//Tmp/@val[generate-id() = generate-id(key('tmps',.)[1])]">
+
+                <InputNode><xsl:attribute name="name">/Temporary/EIC/<xsl:value-of select="."/></xsl:attribute>
+                    <RoundTo>
+                        <Dollars />
+                    </RoundTo>
+                </InputNode>
+            </xsl:for-each>
+
+        </Nodes>
+    </xsl:template>
+
+    <xsl:template match="Var"><Value>/Return/ReturnData/<xsl:value-of select="@val"/></Value></xsl:template>
+    <xsl:template match="Tmp"><Value>/Temporary/EIC/<xsl:value-of select="@val"/></Value></xsl:template>
+    <xsl:template match="Named_param[Var]"><xsl:variable name="name" select="Name/@val"/><xsl:element name="{$name}">/Return/ReturnData/<xsl:value-of select="Var/@val"/></xsl:element></xsl:template>
+    <xsl:template match="Named_param[Tmp]"><xsl:variable name="name" select="Name/@val"/><xsl:element name="{$name}">/Temporary/EIC/<xsl:value-of select="Var/@val"/></xsl:element></xsl:template>
+
     <xsl:template match="/Gistscript/Section">
+<xsl:comment>
+<xsl:text>
 
 
-        <Node><xsl:attribute name="name" select="Var[1]/@val"/>
+
+
+
+</xsl:text>
+</xsl:comment>
+
+        <Node><xsl:attribute name="name"><xsl:apply-templates select="*[1]"/></xsl:attribute>
             <Inputs>
-                <xsl:for-each select="">
-                    <input><xsl:value-of select=""/></input>
+                <xsl:for-each select="Gist/Params[Name/@val='inputs']//Var">
+                    <input><xsl:apply-templates select="(.)"/></input>
                 </xsl:for-each>
-                <Input>/Return/Data/FORMSET_RIS/FORM_RI1120F/L23</Input>
-                <Input>/Return/Data/FORMSET_RIS/FORM_RI1120F/CONSTANT_20</Input>
             </Inputs>
+            <xsl:if test="Gist/Params/Name[@val='BlankIfFalse']">
+                <BlankCondition>
+                    <BlankIfFalse><xsl:value-of select="Gist/Params[Name/@val='BlankIfFalse']/Param/Var/@val"/></BlankIfFalse>
+                </BlankCondition>
+            </xsl:if>
             <Gist>
-                <PercentageOf>
-                    <Value>/Return/Data/FORMSET_RIS/FORM_RI1120F/L23</Value>
-                    <Percentage>/Return/Data/FORMSET_RIS/FORM_RI1120F/CONSTANT_20</Percentage>
-                    <ValueType>price</ValueType>
-                    <OutputType>rebate</OutputType>
-                </PercentageOf>
+                <xsl:variable name="gist" select="Gist/@val"/>
+                <xsl:element name="{$gist}">
+                    <InputRoles>
+                        <xsl:apply-templates select="Gist/Params[Name/@val='inputs']/Param_list/Param"/>
+                    </InputRoles>
+                </xsl:element>
             </Gist>
             <RoundTo>
                 <Dollars/>
             </RoundTo>
         </Node>
 
-        <xsl:for-each select="BlankCondition"><xsl:for-each select="*">if <xsl:value-of select="name()"/>( <xsl:value-of select="text()"/> ):
-        </xsl:for-each>
-        </xsl:for-each>
-        <xsl:value-of select="@name"/> = <xsl:value-of select="name(Gist/*)"/>(<xsl:apply-templates select="Gist/*"/><xsl:for-each select="RoundTo"><xsl:text>     </xsl:text>RoundTo=<xsl:value-of select="name(*)"/></xsl:for-each>
-        )
-<xsl:text>
-
-</xsl:text>
     </xsl:template>
 
-    <xsl:template match="InputRoles">[ <xsl:for-each select="*"><xsl:value-of select="name()"/>=<xsl:value-of select="text()"/>, </xsl:for-each>],
-    </xsl:template>
-    <xsl:template match="Configuration">
-        Configuration=[
-        <xsl:for-each select="*"><xsl:text>          </xsl:text>{'<xsl:value-of select="name()"/>':'<xsl:value-of select="text()"/>'},<xsl:text>
-</xsl:text></xsl:for-each><xsl:text>     </xsl:text>],
-
-    </xsl:template>
 </xsl:stylesheet>

@@ -14,16 +14,16 @@
     ]
 </xsl:template>
 
-<xsl:template match="Call[@val='HasValue']|Call[@val='IsChecked']" mode="getID"><xsl:value-of select="ArgList/VarRef/ID/@val"/>IsNotBlank</xsl:template>
-<xsl:template match="Predicate[@val='&gt;']" mode="getID"><xsl:value-of select="VarRef/ID/@val"/>AboveThreshold</xsl:template>
-<xsl:template match="Predicate[@val='&lt;']" mode="getID"><xsl:value-of select="VarRef/ID/@val"/>BelowThreshold</xsl:template>
-<xsl:template match="and" mode="getID">AllConditionsTrue<xsl:value-of select="@id"/></xsl:template>
+<xsl:template match="Call[@val='HasValue']|Call[@val='IsChecked']" mode="getID">@<xsl:value-of select="ArgList/VarRef/ID/@val"/>IsNotBlank</xsl:template>
+<xsl:template match="Predicate[@val='&gt;']" mode="getID">@<xsl:value-of select="VarRef/ID/@val"/>AboveThreshold</xsl:template>
+<xsl:template match="Predicate[@val='&lt;']" mode="getID">@<xsl:value-of select="VarRef/ID/@val"/>BelowThreshold</xsl:template>
+<xsl:template match="and" mode="getID">@AllConditionsTrue<xsl:value-of select="@id"/></xsl:template>
 
 <xsl:template match="Predicate[@val='&gt;']">
-    {"<xsl:apply-templates select="."  mode="getID"/> = AboveThreshold(":{"inputs":["value=<xsl:value-of select="VarRef/ID/@val"/>","threshold=<xsl:value-of select="Literal/@val"/>"]}},
+    {"<xsl:apply-templates select="."  mode="getID"/> = AboveThreshold(":{"inputs":["value:<xsl:value-of select="VarRef/ID/@val"/>","threshold:<xsl:value-of select="Literal/@val"/>"]}},
 </xsl:template>
 <xsl:template match="Predicate[@val='&lt;']">
-    {"<xsl:apply-templates select="."  mode="getID"/> = BelowThreshold(":{"inputs":["value=<xsl:value-of select="VarRef/ID/@val"/>","threshold=<xsl:value-of select="Literal/@val"/>"]}},
+    {"<xsl:apply-templates select="."  mode="getID"/> = BelowThreshold(":{"inputs":["value:<xsl:value-of select="VarRef/ID/@val"/>","threshold:<xsl:value-of select="Literal/@val"/>"]}},
 </xsl:template>
 
 <xsl:template match="and">

@@ -14,6 +14,8 @@ from patterns import accumulations
 from resolve_vars import resolve_vars,assign_ids
 
 
+## python calc.py tps_clc/nontaxablecombsatpay.clc
+
 if __name__ == '__main__':
 
     input_stream = FileStream(sys.argv[1])
