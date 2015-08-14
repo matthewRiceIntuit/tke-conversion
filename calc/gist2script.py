@@ -27,6 +27,12 @@ if __name__ == '__main__':
     text = text.replace(' Value=','').replace(',\n\n',',\n').replace('\n)',')')
     #text = text.replace('/Return/ReturnData/EIC/EICWorksheetPP/','').replace('/Temporary/EIC/','_')\
 
+    import map
+    text=text.replace('/Return/ReturnData/','')
+    for each in map.map.items():
+        text= text.replace(each[1],each[0])
+
+    '''
     root = etree.parse('mapping/MappingSpec_EIC.xml')
     #import ipdb;ipdb.set_trace()
     for form in root.getroot().xpath('//Context'):
@@ -48,5 +54,6 @@ if __name__ == '__main__':
 
 
     write('test/eic.txt',text)
+    '''
     print text
 

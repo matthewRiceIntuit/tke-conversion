@@ -2,6 +2,7 @@ import sys
 import lxml.etree as etree
 import json
 
+
 from antlr4 import *
 from antlr4.InputStream import InputStream
 
@@ -43,15 +44,19 @@ if __name__ == '__main__':
     pretty_print(root)
 
     text = xslt_text(root,'xsl/calc2script.xsl')
-    print text
+
     print '\n**********************************************\n'
     adict=eval(text.strip())
 
+    text=''
     for each in adict:
-        print json.dumps(each,indent=5).strip('{}').replace('"','').replace("(: {","(").rstrip('}\n').replace("_Blank","Blank") , ')'
+        text += json.dumps(each,indent=5).strip('{}').replace('"','').replace("(: {","(").rstrip('}\n').replace("_Blank","Blank") + ')'
 
+    print text
+    section = root.xpath('/CALC/Section/@val')[0]
 
-
+    write('script/%s.txt' % section, text )
+    print '\n\n\n####################\npython script2gist.py script/%s.txt' % section
     exit()
 
     newroot = xslt(root,'xsl/nodes.xsl')
