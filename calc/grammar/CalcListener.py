@@ -228,6 +228,30 @@ class CalcListener(ParseTreeListener):
     # Exit a parse tree produced by CalcParser#declList.
     def exitDeclList(self, ctx):
         self.exit()
+    # Enter a parse tree produced by CalcParser#declList.
+    def enterConstdeclList(self, ctx):
+        self.enter("DeclList")
+
+    # Exit a parse tree produced by CalcParser#declList.
+    def exitConstdeclList(self, ctx):
+        self.exit()
+
+    # Enter a parse tree produced by CalcParser#declList.
+    def enterArrayDecl(self, ctx):
+        self.enter("Array")
+        import ipdb;ipdb.set_trace()
+
+    # Exit a parse tree produced by CalcParser#declList.
+    def exitArrayDecl(self, ctx):
+        self.exit()
+
+    # Enter a parse tree produced by CalcParser#declList.
+    def enterNot(self, ctx):
+        self.enter("NOT")
+
+    # Exit a parse tree produced by CalcParser#declList.
+    def exitNot(self, ctx):
+        self.exit()
 
         # Enter a parse tree produced by CalcParser#varDecl.
     def enterVarDecl(self, ctx):

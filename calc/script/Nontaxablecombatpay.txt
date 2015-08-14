@@ -38,9 +38,9 @@
                FINFOWKS.FS2
           ]
      )
-     @FW2SUM.SCOMBATAboveThreshold = AboveThreshold(
+     @FW2SUM.SCOMBATAboveThreshold|JohnsFavorite = AboveThreshold(
           inputs: [
-               value:FW2SUM.SCOMBAT, 
+               value:FW2SUM.SCOMBAT|wdlkjaflsdk,
                threshold:0
           ]
      )

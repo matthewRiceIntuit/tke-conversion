@@ -8,7 +8,7 @@ formset :
 form: ID;
 
 section :
-    'SECTION' ID ';'
+    SECTION ID ';'
 	vardecl?
 	block;
 
@@ -30,9 +30,9 @@ expr : expr op=('/' | '*') expr #DivMul
 	| expr op=('and' | 'or') expr #Logic
 	| expr op=('>' | '<' | '<=' | '>=' | '=') expr #Predicate
 	| expr '*' '(' expr '/' '100' ')' #PercentageOf
+	| NOT expr #Not
 	| full_id #VarRef
 	| call #FunctionCall
-	| 'RunCalc' #RunCalc
 	| 'MAX' '(' argList ')' #Max
 	| LITERAL #Literal
 	| '(' expr ')'  #Parens
@@ -40,12 +40,16 @@ expr : expr op=('/' | '*') expr #DivMul
 argList : (expr (',' expr)*)? ;
 
 vardecl : VAR declList*;
-constdecl : CONSTANT declList*;
+constdecl : CONSTANT constdeclList*;
 
 declList : (varDecl (',' varDecl)*)? ':' r_type ';' ;
+constdeclList: varDecl '='  LITERAL ';';
 
 varDecl: ID;
-r_type: ID;
+r_type: arrayDecl? ID;
+
+arrayDecl: ARRAY '[' LITERAL ']' OF;
+
 ctrlStruct : ifStruct | loopStruct ;
 	
 ifStruct : IF expr THEN (block|stmt|dumbblock) elseStruct?;
@@ -71,18 +75,23 @@ LITERAL : INT
 	| BOOLEAN
 	;
 
+ARRAY: 'Array';
+OF: 'of';
 VAR: 'var'|'VAR';
 CONSTANT: 'constant'| 'CONSTANT';
 IF : 'if'|'IF'|'If' ;
-ELSE : 'else' |'ELSE';
-THEN : 'then'|'THEN' ;
+ELSE : 'else' |'ELSE'|'Else';
+THEN : 'then'|'THEN'|'Then' ;
+SECTION: 'Section'|'SECTION';
 DO : 'do';
+NOT: 'not';
+
 WHILE : 'while';
 LOOP : 'loop';
 RETURN : 'return';
 WS : [ \t\r\n]+ -> skip ;
-BEGIN : 'BEGIN'|'begin' ;
-END : 'END'|'end' ;
+BEGIN : 'BEGIN'|'begin'|'Begin' ;
+END : 'END'|'end' | 'End';
 LET : ':=' ;
 full_id : ID sub_id?;
 sub_id : '.' ID;
