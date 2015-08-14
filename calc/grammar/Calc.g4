@@ -1,14 +1,15 @@
 grammar Calc;
 
-calcfile: formset decl? section*;
+calcfile: formset constdecl? vardecl? section*;
 
 formset :
     'FORM' ID  '.' form ';';
+
 form: ID;
 
 section :
     'SECTION' ID ';'
-	decl?
+	vardecl?
 	block;
 
 
@@ -31,13 +32,16 @@ expr : expr op=('/' | '*') expr #DivMul
 	| expr '*' '(' expr '/' '100' ')' #PercentageOf
 	| full_id #VarRef
 	| call #FunctionCall
+	| 'RunCalc' #RunCalc
 	| 'MAX' '(' argList ')' #Max
 	| LITERAL #Literal
 	| '(' expr ')'  #Parens
 	;
 argList : (expr (',' expr)*)? ;
 
-decl : VAR declList*;
+vardecl : VAR declList*;
+constdecl : CONSTANT declList*;
+
 declList : (varDecl (',' varDecl)*)? ':' r_type ';' ;
 
 varDecl: ID;
@@ -55,7 +59,7 @@ loopStruct : DO (WHILE preCond=expr)?
 ret : RETURN expr? ';' ;
 			
 function: retType=full_id fnName=full_id formParList
-		  decl?
+		  vardecl?
           block ;
           
 formParList : '(' formPar* ')' ;
@@ -68,6 +72,7 @@ LITERAL : INT
 	;
 
 VAR: 'var'|'VAR';
+CONSTANT: 'constant'| 'CONSTANT';
 IF : 'if'|'IF'|'If' ;
 ELSE : 'else' |'ELSE';
 THEN : 'then'|'THEN' ;

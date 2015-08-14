@@ -205,11 +205,19 @@ class CalcListener(ParseTreeListener):
 
 
     # Enter a parse tree produced by CalcParser#decl.
-    def enterDecl(self, ctx):
+    def enterVardecl(self, ctx):
         self.enter("Decl")
 
     # Exit a parse tree produced by CalcParser#decl.
-    def exitDecl(self, ctx):
+    def exitVardecl(self, ctx):
+        self.exit()
+
+    # Enter a parse tree produced by CalcParser#decl.
+    def enterConstdecl(self, ctx):
+        self.enter("Constant")
+
+    # Exit a parse tree produced by CalcParser#decl.
+    def exitConstdecl(self, ctx):
         self.exit()
 
 
