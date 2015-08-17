@@ -12,7 +12,7 @@ def resolve_vars(root,use_tke=False):
     for each in  root.xpath("//DeclList/VarDecl"):
         locals.append(str(each.attrib['val']))
     form = root.xpath('/CALC/FORMSET/FORM/@val')[0]
-    section = root.xpath('/CALC/Section/@val')[0]
+    section = ''#root.xpath('/CALC/Section/@val')[0]
 
     for each in root.xpath("//ID"):
         if str(each.attrib['val']) in locals:
@@ -41,8 +41,8 @@ def resolve_vars(root,use_tke=False):
 
 
 def assign_ids(root):
-    section = root.xpath('/CALC/Section/@val')[0]
+    section = ''#root.xpath('/CALC/Section/@val')[0]
     count=1
-    for each in root.xpath("//and"):
-        each.attrib['id']="%s%s"%(section,count)
+    for each in root.xpath("//and|//DivMul|//AddSub|//FunctionCall"):
+        each.attrib['id']="%s_%s"%(section,count)
         count+=1

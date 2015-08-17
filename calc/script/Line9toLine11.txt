@@ -1,0 +1,66 @@
+
+     @F2441.L6IsNotBlank = IsNotBlank(
+          inputs: [
+               F2441.L6
+          ]
+     )
+     F2441.L9W = NumericCopy(
+          inputs: [
+               FEXPL24.TOTCPYE
+          ]
+     )
+     F2441.L9 = NumericCopy(
+          inputs: [
+               F2441.HL9
+          ]
+     )
+     F2441.HEFL9 = Threshold(
+          inputs: [
+               {
+                    value: /Constants/Zero
+               }, 
+               {
+                    value: @AddSub_3
+               }
+          ]
+     )
+     @AddSub_3 = Accumulate(
+          inputs: [
+               {
+                    value: @DivMul_4
+               }, 
+               {
+                    value: F2441.L9W
+               }
+          ]
+     )
+     @DivMul_4 = Product(
+          inputs: [
+               {
+                    value: F2441.L6
+               }, 
+               {
+                    value: F2441.L8
+               }
+          ]
+     )
+     F2441.L9W = NumericCopy(
+          inputs: [
+               FEXPL24.TOTCPYE
+          ]
+     )
+     F2441.HL9 = NumericCopy(
+          inputs: [
+               F2441.L9W
+          ]
+     )
+     F2441.L9 = NumericCopy(
+          inputs: [
+               F2441.HL9
+          ]
+     )
+     F2441.HEFL9 = NumericCopy(
+          inputs: [
+               F2441.L9W
+          ]
+     )

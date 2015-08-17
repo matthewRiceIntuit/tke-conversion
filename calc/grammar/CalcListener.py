@@ -238,8 +238,8 @@ class CalcListener(ParseTreeListener):
 
     # Enter a parse tree produced by CalcParser#declList.
     def enterArrayDecl(self, ctx):
-        self.enter("Array")
-        import ipdb;ipdb.set_trace()
+        self.enter("Array",ctx.LITERAL().getText())
+
 
     # Exit a parse tree produced by CalcParser#declList.
     def exitArrayDecl(self, ctx):
