@@ -16,7 +16,7 @@ def resolve_vars(root,use_tke=False):
 
     for each in root.xpath("//ID"):
         if str(each.attrib['val']) in locals:
-            each.attrib['val'] = "@"+section+'/'+each.attrib['val']
+            each.attrib['val'] = "#"+each.attrib['val']
             continue
 
         e = each.getnext()

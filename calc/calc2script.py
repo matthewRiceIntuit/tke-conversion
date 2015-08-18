@@ -10,7 +10,7 @@ from grammar.CalcListener import CalcListener
 from grammar.CalcLexer import CalcLexer
 
 from util import pretty_print, xslt, write, xslt_text
-from patterns import accumulations, multiplications
+from patterns import accumulations, multiplications,difference
 from resolve_vars import resolve_vars, assign_ids
 
 
@@ -42,54 +42,28 @@ if __name__ == '__main__':
 
     root = etree.XML('<?xml version="1.0" ?>' + listner.output)
 
-    resolve_vars(root, use_tke=False)
+    resolve_vars(root, use_tke= '-tps' not in sys.argv)
     assign_ids(root)
 
     accumulations(root)
+    difference(root)
     multiplications(root)
 
     if '-xml' in sys.argv or _debug:
         pretty_print(root)
 
-    text = xslt_text(root, 'xsl/calc2script.xsl')
+    section = root.xpath('/CALC/Section/@val')[0]
 
-    print '\n**********************************************\n'
-    try:
-        adict = eval(text.strip())
-    except Exception, e:
-        print e
-        print text
-        print e
-        exit()
+    root = xslt(root, 'xsl/calc2script.xsl')
+    pretty_print(root)
 
-    text = ''
-    for each in adict:
-        text += json.dumps(each, indent=5).strip('{}').replace('"', '').replace("(: {", "(").rstrip('}\n').replace("_Blank", "Blank") + ')'
+    root = xslt(root, 'xsl/calc2script2.xsl')
+    pretty_print(root)
+
+    text = xslt_text(root, 'xsl/calc2script3.xsl')
 
     print text
-    section = root.xpath('/CALC/Section/@val')[0]
 
     write('script/%s.txt' % section, text)
     print '\n\n\n####################\npython script2gist.py script/%s.txt' % section
-    exit()
-
-    newroot = xslt(root, 'xsl/nodes.xsl')
-    xmlstr = pretty_print(newroot)
-
-    formset = root.xpath('/CALC/FORMSET/@val')[0]
-    form = root.xpath('/CALC/FORMSET/FORM/@val')[0]
-
-    write('test/%s_%s.xml' % (formset, form), xmlstr)
-
-    newroot = xslt(root, 'xst/schema.xsl')
-    xmlstr = pretty_print(newroot)
-    write('test/SampleElementTypes.xml', xmlstr)
-
-    newroot = xslt(root, 'xsl/input.xsl')
-    xmlstr = pretty_print(newroot)
-    write('test/inputs.xml', xmlstr)
-
-    print "\n\n\n"
-    print "./TKECalcEngine -g test/%s_%s.xml -m test/SampleElementTypes.xml -i test/inputs.xml" % (formset, form)
-
 

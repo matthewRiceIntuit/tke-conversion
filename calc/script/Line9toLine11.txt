@@ -1,66 +1,108 @@
+    @F2441.L6IsNotBlank = IsNotBlank( F2441.L6 )
 
-     @F2441.L6IsNotBlank = IsNotBlank(
-          inputs: [
-               F2441.L6
-          ]
-     )
-     F2441.L9W = NumericCopy(
-          inputs: [
-               FEXPL24.TOTCPYE
-          ]
-     )
-     F2441.L9 = NumericCopy(
-          inputs: [
-               F2441.HL9
-          ]
-     )
-     F2441.HEFL9 = Threshold(
-          inputs: [
-               {
-                    value: /Constants/Zero
-               }, 
-               {
-                    value: @AddSub_3
-               }
-          ]
-     )
-     @AddSub_3 = Accumulate(
-          inputs: [
-               {
-                    value: @DivMul_4
-               }, 
-               {
-                    value: F2441.L9W
-               }
-          ]
-     )
-     @DivMul_4 = Product(
-          inputs: [
-               {
-                    value: F2441.L6
-               }, 
-               {
-                    value: F2441.L8
-               }
-          ]
-     )
-     F2441.L9W = NumericCopy(
-          inputs: [
-               FEXPL24.TOTCPYE
-          ]
-     )
-     F2441.HL9 = NumericCopy(
-          inputs: [
-               F2441.L9W
-          ]
-     )
-     F2441.L9 = NumericCopy(
-          inputs: [
-               F2441.HL9
-          ]
-     )
-     F2441.HEFL9 = NumericCopy(
-          inputs: [
-               F2441.L9W
-          ]
-     )
+    F2441.L9W = NumericChoice(
+                Choice:@F2441.L6IsNotBlank,
+                Possibility:@TRUEF2441.L9W,
+                Possibility:@FALSEF2441.L9W,
+                )
+
+    @TRUEF2441.L9W = NumericCopy( FEXPL24.TOTCPYE )
+
+    @FALSEF2441.L9W = NumericCopy( FEXPL24.TOTCPYE )
+
+    F2441.L9 = NumericChoice(
+                Choice:@F2441.L6IsNotBlank,
+                Possibility:@TRUEF2441.L9,
+                Possibility:@FALSEF2441.L9,
+                )
+
+    @TRUEF2441.L9 = Cap( inputs:[
+        /Constants/Zero,
+        @AddSub_3,
+        ])
+
+    
+    //####### Deprecating Temp TPS calc var F2441.L9 := #hL9 ####
+
+    @AddSub_3 = Accumulate( inputs:[
+        @DivMul_4,
+        F2441.L9W,
+        ])
+
+    @DivMul_4 = Product( inputs:[
+        F2441.L6,
+        F2441.L8,
+        ])
+
+    F2441.L9 = NumericChoice(
+                Choice:@F2441.L6IsNotBlank,
+                Possibility:@TRUEF2441.L9,
+                Possibility:@FALSEF2441.L9,
+                )
+
+    
+    //####### Deprecating Temp TPS calc var F2441.L9 := #hL9 ####
+
+    
+    //####### Deprecating Temp TPS calc var F2441.L9 := #hL9 ####
+
+     = NumericChoice(
+                Choice:@F2441.L6IsNotBlank,
+                Possibility:@TRUE,
+                Possibility:@FALSE,
+                )
+
+    @TRUE = Cap( inputs:[
+        /Constants/Zero,
+        @AddSub_6,
+        ])
+
+    @AddSub_6 = Accumulate( inputs:[
+        @DivMul_7,
+        F2441.L9W,
+        ])
+
+    @DivMul_7 = Product( inputs:[
+        F2441.L6,
+        F2441.L8,
+        ])
+
+    @F2441.L9IsNotBlank = IsNotBlank( F2441.L9 )
+
+    F2441.TAX1040 = NumericCopy( F1040.L42 )
+
+    
+    //####### Deprecating Temp TPS calc var #hF1116 := F1040.L43 ####
+
+    
+    //####### Deprecating Temp TPS calc var F2441.F1116 := #hF1116 ####
+
+    F2441.LIABLMT = Cap( inputs:[
+        /Constants/Zero,
+        @AddSub_10,
+        ]
+        ,blankiffalse : @F2441.L9IsNotBlank)
+
+    @AddSub_10 = Difference( inputs:[
+        F2441.TAX1040,
+        F2441.F1116,
+        ])
+
+    
+    //####### Deprecating Temp TPS calc var #h41 := F1040.L40 ####
+
+    F2441.CRDT2441 = Cap( inputs:[
+        /Constants/Zero,
+        @AddSub_12,
+        ]
+        ,blankiffalse : @F2441.L9IsNotBlank)
+
+    @AddSub_12 = Threshold( inputs:[
+        F2441.L9,
+        F2441.LIABLMT,
+        ])
+
+    
+    //####### Deprecating Temp TPS calc var F2441.CRDT2441 := #hcredit ####
+
+    
