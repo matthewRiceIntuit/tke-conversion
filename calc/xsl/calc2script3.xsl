@@ -22,15 +22,16 @@
 
     <xsl:template match="Assign">
         <xsl:param name="extra"/>
-        <xsl:value-of select='$extra'/><xsl:value-of select="ID"/> = NumericCopy( <xsl:apply-templates select="INPUT"/> )
+        <xsl:value-of select='$extra'/><xsl:value-of select="ID"/> = NumericCopy(inputs:[ <xsl:apply-templates select="INPUT"/> ])
 
     </xsl:template>
 
     <xsl:template match="IsNotBlank">
-        <xsl:value-of select="ID"/> = IsNotBlank( <xsl:value-of select="INPUT"/> )
+        <xsl:value-of select="ID"/> = IsNotBlank(inputs:[ <xsl:value-of select="INPUT"/> ])
 
     </xsl:template>
 
+    <xsl:template match="node()[ID[not(normalize-space())]]"></xsl:template>
 
     <xsl:template match="Max|AboveThreshold|Accumulate|Product|Difference|Threshold|Cap">
         <xsl:param name="extra"/>
@@ -40,7 +41,7 @@
         <xsl:for-each select="INPUT">
             <xsl:apply-templates select="."/>,
         </xsl:for-each>]<xsl:if test="$blankiffalse">
-        ,blankiffalse : <xsl:value-of select="$blankiffalse"/></xsl:if>)
+        ,BlankIfFalse : <xsl:value-of select="$blankiffalse"/></xsl:if>)
 
     </xsl:template>
 
@@ -50,10 +51,10 @@
     <xsl:for-each select="THEN/*">
         <xsl:choose>
             <xsl:when test="substring(ID,1,1)!='@'" >
-                <xsl:value-of select="ID"/> = NumericChoice(
+                <xsl:value-of select="ID"/> = NumericChoice(inputs: [
                 Choice:<xsl:value-of select="../../TEST//ID"/>,
                 Possibility:@TRUE<xsl:value-of select="ID"/>,
-                Possibility:@FALSE<xsl:value-of select="ID"/>,
+                Possibility:@FALSE<xsl:value-of select="ID"/>]
                 )
 
     <xsl:apply-templates select="."><xsl:with-param name="extra">@TRUE</xsl:with-param></xsl:apply-templates>

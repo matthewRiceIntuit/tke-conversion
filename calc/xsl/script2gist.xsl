@@ -65,7 +65,7 @@
             </Inputs>
             <xsl:if test="Gist/Params/Name[@val='BlankIfFalse']">
                 <BlankCondition>
-                    <BlankIfFalse><xsl:value-of select="Gist/Params[Name/@val='BlankIfFalse']/Param/Var/@val"/></BlankIfFalse>
+                    <BlankIfFalse><xsl:value-of select="Gist/Params[Name/@val='BlankIfFalse']/Param/*/@val"/></BlankIfFalse>
                 </BlankCondition>
             </xsl:if>
             <Gist>

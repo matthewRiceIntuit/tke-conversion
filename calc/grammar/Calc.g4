@@ -16,9 +16,9 @@ section :
 block: BEGIN stmt* END ';' ;
 dumbblock:  BEGIN stmt* END  ;
 
-stmt: assign | call ';' | ret | ctrlStruct ;
+stmt: assign ';' | call ';' | ret | ctrlStruct ;
 
-assign: full_id LET expr ';' ;
+assign: full_id LET expr ;
 
 
 call :ID '(' argList ')';
@@ -52,7 +52,7 @@ arrayDecl: ARRAY '[' LITERAL ']' OF;
 
 ctrlStruct : ifStruct | loopStruct ;
 	
-ifStruct : IF expr THEN (block|stmt|dumbblock) elseStruct?;
+ifStruct : IF expr THEN (block|stmt|dumbblock|assign) elseStruct?;
 
 elseStruct: ELSE  (block|stmt);
 

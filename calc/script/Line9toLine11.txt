@@ -1,28 +1,28 @@
-    @F2441.L6IsNotBlank = IsNotBlank( F2441.L6 )
+    @IRS2441/SmallerOfExpensesOrIncomeAmtIsNotBlank = IsNotBlank(inputs:[ IRS2441/SmallerOfExpensesOrIncomeAmt ])
 
-    F2441.L9W = NumericChoice(
-                Choice:@F2441.L6IsNotBlank,
+    F2441.L9W = NumericChoice(inputs: [
+                Choice:@IRS2441/SmallerOfExpensesOrIncomeAmtIsNotBlank,
                 Possibility:@TRUEF2441.L9W,
-                Possibility:@FALSEF2441.L9W,
+                Possibility:@FALSEF2441.L9W]
                 )
 
-    @TRUEF2441.L9W = NumericCopy( FEXPL24.TOTCPYE )
+    @TRUEF2441.L9W = NumericCopy(inputs:[ FEXPL24.TOTCPYE ])
 
-    @FALSEF2441.L9W = NumericCopy( FEXPL24.TOTCPYE )
+    @FALSEF2441.L9W = NumericCopy(inputs:[ FEXPL24.TOTCPYE ])
 
-    F2441.L9 = NumericChoice(
-                Choice:@F2441.L6IsNotBlank,
-                Possibility:@TRUEF2441.L9,
-                Possibility:@FALSEF2441.L9,
+    IRS2441/CalculatedTentativeExpenseAmt = NumericChoice(inputs: [
+                Choice:@IRS2441/SmallerOfExpensesOrIncomeAmtIsNotBlank,
+                Possibility:@TRUEIRS2441/CalculatedTentativeExpenseAmt,
+                Possibility:@FALSEIRS2441/CalculatedTentativeExpenseAmt]
                 )
 
-    @TRUEF2441.L9 = Cap( inputs:[
+    @TRUEIRS2441/CalculatedTentativeExpenseAmt = Cap( inputs:[
         /Constants/Zero,
         @AddSub_3,
         ])
 
     
-    //####### Deprecating Temp TPS calc var F2441.L9 := #hL9 ####
+    //####### Deprecating Temp TPS calc var IRS2441/CalculatedTentativeExpenseAmt := #hL9 ####
 
     @AddSub_3 = Accumulate( inputs:[
         @DivMul_4,
@@ -30,46 +30,25 @@
         ])
 
     @DivMul_4 = Product( inputs:[
-        F2441.L6,
-        F2441.L8,
+        IRS2441/SmallerOfExpensesOrIncomeAmt,
+        IRS2441/CareExpensesDecimalAmt,
         ])
 
-    F2441.L9 = NumericChoice(
-                Choice:@F2441.L6IsNotBlank,
-                Possibility:@TRUEF2441.L9,
-                Possibility:@FALSEF2441.L9,
+    IRS2441/CalculatedTentativeExpenseAmt = NumericChoice(inputs: [
+                Choice:@IRS2441/SmallerOfExpensesOrIncomeAmtIsNotBlank,
+                Possibility:@TRUEIRS2441/CalculatedTentativeExpenseAmt,
+                Possibility:@FALSEIRS2441/CalculatedTentativeExpenseAmt]
                 )
 
     
-    //####### Deprecating Temp TPS calc var F2441.L9 := #hL9 ####
+    //####### Deprecating Temp TPS calc var IRS2441/CalculatedTentativeExpenseAmt := #hL9 ####
 
     
-    //####### Deprecating Temp TPS calc var F2441.L9 := #hL9 ####
+    //####### Deprecating Temp TPS calc var IRS2441/CalculatedTentativeExpenseAmt := #hL9 ####
 
-     = NumericChoice(
-                Choice:@F2441.L6IsNotBlank,
-                Possibility:@TRUE,
-                Possibility:@FALSE,
-                )
+    @IRS2441/CalculatedTentativeExpenseAmtIsNotBlank = IsNotBlank(inputs:[ IRS2441/CalculatedTentativeExpenseAmt ])
 
-    @TRUE = Cap( inputs:[
-        /Constants/Zero,
-        @AddSub_6,
-        ])
-
-    @AddSub_6 = Accumulate( inputs:[
-        @DivMul_7,
-        F2441.L9W,
-        ])
-
-    @DivMul_7 = Product( inputs:[
-        F2441.L6,
-        F2441.L8,
-        ])
-
-    @F2441.L9IsNotBlank = IsNotBlank( F2441.L9 )
-
-    F2441.TAX1040 = NumericCopy( F1040.L42 )
+    F2441.TAX1040 = NumericCopy(inputs:[ F1040.L42 ])
 
     
     //####### Deprecating Temp TPS calc var #hF1116 := F1040.L43 ####
@@ -77,13 +56,13 @@
     
     //####### Deprecating Temp TPS calc var F2441.F1116 := #hF1116 ####
 
-    F2441.LIABLMT = Cap( inputs:[
+    IRS2441/TaxLiabLmtFromCrLmtWrkshtAmt = Cap( inputs:[
         /Constants/Zero,
-        @AddSub_10,
+        @AddSub_7,
         ]
-        ,blankiffalse : @F2441.L9IsNotBlank)
+        ,BlankIfFalse : @IRS2441/CalculatedTentativeExpenseAmtIsNotBlank)
 
-    @AddSub_10 = Difference( inputs:[
+    @AddSub_7 = Difference( inputs:[
         F2441.TAX1040,
         F2441.F1116,
         ])
@@ -91,18 +70,18 @@
     
     //####### Deprecating Temp TPS calc var #h41 := F1040.L40 ####
 
-    F2441.CRDT2441 = Cap( inputs:[
+    IRS2441/CreditForChildAndDepdCareAmt = Cap( inputs:[
         /Constants/Zero,
-        @AddSub_12,
+        @AddSub_9,
         ]
-        ,blankiffalse : @F2441.L9IsNotBlank)
+        ,BlankIfFalse : @IRS2441/CalculatedTentativeExpenseAmtIsNotBlank)
 
-    @AddSub_12 = Threshold( inputs:[
-        F2441.L9,
-        F2441.LIABLMT,
+    @AddSub_9 = Threshold( inputs:[
+        IRS2441/CalculatedTentativeExpenseAmt,
+        IRS2441/TaxLiabLmtFromCrLmtWrkshtAmt,
         ])
 
     
-    //####### Deprecating Temp TPS calc var F2441.CRDT2441 := #hcredit ####
+    //####### Deprecating Temp TPS calc var IRS2441/CreditForChildAndDepdCareAmt := #hcredit ####
 
     

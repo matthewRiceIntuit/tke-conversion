@@ -7,11 +7,11 @@ section :
 
 alt: '|' (var|tmp);
 
-gist:ID  '(' params* ')';
+gist:ID  '(' params (',' params)* ','?  ')';
 
 params: name ':' (param_list|param);
 
-param_list: '[' (param ',')+ param? ']';
+param_list: '[' param (',' param)* ','? ']';
 
 param:  named_param? (var|constant|tmp)  alt?;
 
@@ -20,7 +20,7 @@ named_param: name ':' ;
 name: ID;
 var : ID;
 tmp: '@' ID;
-ID: [a-zA-Z_][a-zA-Z_0-9/\.]* ;
+ID: [a-zA-Z_0-9\/\.]+ ;
 constant: CONSTANT;
 CONSTANT: [0-9]+ ;
 

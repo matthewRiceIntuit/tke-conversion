@@ -1,0 +1,484 @@
+<Nodes>
+
+    <Node name="/Temporary/EIC/IRS2441/SmallerOfExpensesOrIncomeAmtIsNotBlank">
+        <Inputs>
+            <input>
+                <Value>/Return/ReturnData/IRS2441/SmallerOfExpensesOrIncomeAmt</Value>
+            </input>
+        </Inputs>
+        <Gist>
+            <IsNotBlank>
+                <InputRoles>
+                    <Value>/Return/ReturnData/IRS2441/SmallerOfExpensesOrIncomeAmt</Value>
+                </InputRoles>
+            </IsNotBlank>
+        </Gist>
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </Node>
+    <!--
+
+
+
+
+
+  -->
+    <Node name="/Return/ReturnData/F2441.L9W">
+        <Inputs/>
+        <Gist>
+            <NumericChoice>
+                <InputRoles>
+                    <Value>/Temporary/EIC/IRS2441/SmallerOfExpensesOrIncomeAmtIsNotBlank</Value>
+                    <Value>/Temporary/EIC/TRUEF2441.L9W</Value>
+                    <Value>/Temporary/EIC/FALSEF2441.L9W</Value>
+                </InputRoles>
+            </NumericChoice>
+        </Gist>
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </Node>
+    <!--
+
+
+
+
+
+  -->
+    <Node name="/Temporary/EIC/TRUEF2441.L9W">
+        <Inputs>
+            <input>
+                <Value>/Return/ReturnData/FEXPL24.TOTCPYE</Value>
+            </input>
+        </Inputs>
+        <Gist>
+            <NumericCopy>
+                <InputRoles>
+                    <Value>/Return/ReturnData/FEXPL24.TOTCPYE</Value>
+                </InputRoles>
+            </NumericCopy>
+        </Gist>
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </Node>
+    <!--
+
+
+
+
+
+  -->
+    <Node name="/Temporary/EIC/FALSEF2441.L9W">
+        <Inputs>
+            <input>
+                <Value>/Return/ReturnData/FEXPL24.TOTCPYE</Value>
+            </input>
+        </Inputs>
+        <Gist>
+            <NumericCopy>
+                <InputRoles>
+                    <Value>/Return/ReturnData/FEXPL24.TOTCPYE</Value>
+                </InputRoles>
+            </NumericCopy>
+        </Gist>
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </Node>
+    <!--
+
+
+
+
+
+  -->
+    <Node name="/Return/ReturnData/IRS2441/CalculatedTentativeExpenseAmt">
+        <Inputs/>
+        <Gist>
+            <NumericChoice>
+                <InputRoles>
+                    <Value>/Temporary/EIC/IRS2441/SmallerOfExpensesOrIncomeAmtIsNotBlank</Value>
+                    <Value>/Temporary/EIC/TRUEIRS2441/CalculatedTentativeExpenseAmt</Value>
+                    <Value>/Temporary/EIC/FALSEIRS2441/CalculatedTentativeExpenseAmt</Value>
+                </InputRoles>
+            </NumericChoice>
+        </Gist>
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </Node>
+    <!--
+
+
+
+
+
+  -->
+    <Node name="/Temporary/EIC/TRUEIRS2441/CalculatedTentativeExpenseAmt">
+        <Inputs>
+            <input>
+                <Value>/Return/ReturnData//Constants/Zero</Value>
+            </input>
+        </Inputs>
+        <Gist>
+            <Cap>
+                <InputRoles>
+                    <Value>/Return/ReturnData//Constants/Zero</Value>
+                    <Value>/Temporary/EIC/AddSub_3</Value>
+                </InputRoles>
+            </Cap>
+        </Gist>
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </Node>
+    <!--
+
+
+
+
+
+  -->
+    <Node name="/Temporary/EIC/AddSub_3">
+        <Inputs>
+            <input>
+                <Value>/Return/ReturnData/F2441.L9W</Value>
+            </input>
+        </Inputs>
+        <Gist>
+            <Accumulate>
+                <InputRoles>
+                    <Value>/Temporary/EIC/DivMul_4</Value>
+                    <Value>/Return/ReturnData/F2441.L9W</Value>
+                </InputRoles>
+            </Accumulate>
+        </Gist>
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </Node>
+    <!--
+
+
+
+
+
+  -->
+    <Node name="/Temporary/EIC/DivMul_4">
+        <Inputs>
+            <input>
+                <Value>/Return/ReturnData/IRS2441/SmallerOfExpensesOrIncomeAmt</Value>
+            </input>
+            <input>
+                <Value>/Return/ReturnData/IRS2441/CareExpensesDecimalAmt</Value>
+            </input>
+        </Inputs>
+        <Gist>
+            <Product>
+                <InputRoles>
+                    <Value>/Return/ReturnData/IRS2441/SmallerOfExpensesOrIncomeAmt</Value>
+                    <Value>/Return/ReturnData/IRS2441/CareExpensesDecimalAmt</Value>
+                </InputRoles>
+            </Product>
+        </Gist>
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </Node>
+    <!--
+
+
+
+
+
+  -->
+    <Node name="/Return/ReturnData/IRS2441/CalculatedTentativeExpenseAmt">
+        <Inputs/>
+        <Gist>
+            <NumericChoice>
+                <InputRoles>
+                    <Value>/Temporary/EIC/IRS2441/SmallerOfExpensesOrIncomeAmtIsNotBlank</Value>
+                    <Value>/Temporary/EIC/TRUEIRS2441/CalculatedTentativeExpenseAmt</Value>
+                    <Value>/Temporary/EIC/FALSEIRS2441/CalculatedTentativeExpenseAmt</Value>
+                </InputRoles>
+            </NumericChoice>
+        </Gist>
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </Node>
+    <!--
+
+
+
+
+
+  -->
+    <Node name="/Temporary/EIC/IRS2441/CalculatedTentativeExpenseAmtIsNotBlank">
+        <Inputs>
+            <input>
+                <Value>/Return/ReturnData/IRS2441/CalculatedTentativeExpenseAmt</Value>
+            </input>
+        </Inputs>
+        <Gist>
+            <IsNotBlank>
+                <InputRoles>
+                    <Value>/Return/ReturnData/IRS2441/CalculatedTentativeExpenseAmt</Value>
+                </InputRoles>
+            </IsNotBlank>
+        </Gist>
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </Node>
+    <!--
+
+
+
+
+
+  -->
+    <Node name="/Return/ReturnData/F2441.TAX1040">
+        <Inputs>
+            <input>
+                <Value>/Return/ReturnData/F1040.L42</Value>
+            </input>
+        </Inputs>
+        <Gist>
+            <NumericCopy>
+                <InputRoles>
+                    <Value>/Return/ReturnData/F1040.L42</Value>
+                </InputRoles>
+            </NumericCopy>
+        </Gist>
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </Node>
+    <!--
+
+
+
+
+
+  -->
+    <Node name="/Return/ReturnData/IRS2441/TaxLiabLmtFromCrLmtWrkshtAmt">
+        <Inputs>
+            <input>
+                <Value>/Return/ReturnData//Constants/Zero</Value>
+            </input>
+        </Inputs>
+        <BlankCondition>
+            <BlankIfFalse>IRS2441/CalculatedTentativeExpenseAmtIsNotBlank</BlankIfFalse>
+        </BlankCondition>
+        <Gist>
+            <Cap>
+                <InputRoles>
+                    <Value>/Return/ReturnData//Constants/Zero</Value>
+                    <Value>/Temporary/EIC/AddSub_7</Value>
+                </InputRoles>
+            </Cap>
+        </Gist>
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </Node>
+    <!--
+
+
+
+
+
+  -->
+    <Node name="/Temporary/EIC/AddSub_7">
+        <Inputs>
+            <input>
+                <Value>/Return/ReturnData/F2441.TAX1040</Value>
+            </input>
+            <input>
+                <Value>/Return/ReturnData/F2441.F1116</Value>
+            </input>
+        </Inputs>
+        <Gist>
+            <Difference>
+                <InputRoles>
+                    <Value>/Return/ReturnData/F2441.TAX1040</Value>
+                    <Value>/Return/ReturnData/F2441.F1116</Value>
+                </InputRoles>
+            </Difference>
+        </Gist>
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </Node>
+    <!--
+
+
+
+
+
+  -->
+    <Node name="/Return/ReturnData/IRS2441/CreditForChildAndDepdCareAmt">
+        <Inputs>
+            <input>
+                <Value>/Return/ReturnData//Constants/Zero</Value>
+            </input>
+        </Inputs>
+        <BlankCondition>
+            <BlankIfFalse>IRS2441/CalculatedTentativeExpenseAmtIsNotBlank</BlankIfFalse>
+        </BlankCondition>
+        <Gist>
+            <Cap>
+                <InputRoles>
+                    <Value>/Return/ReturnData//Constants/Zero</Value>
+                    <Value>/Temporary/EIC/AddSub_9</Value>
+                </InputRoles>
+            </Cap>
+        </Gist>
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </Node>
+    <!--
+
+
+
+
+
+  -->
+    <Node name="/Temporary/EIC/AddSub_9">
+        <Inputs>
+            <input>
+                <Value>/Return/ReturnData/IRS2441/CalculatedTentativeExpenseAmt</Value>
+            </input>
+            <input>
+                <Value>/Return/ReturnData/IRS2441/TaxLiabLmtFromCrLmtWrkshtAmt</Value>
+            </input>
+        </Inputs>
+        <Gist>
+            <Threshold>
+                <InputRoles>
+                    <Value>/Return/ReturnData/IRS2441/CalculatedTentativeExpenseAmt</Value>
+                    <Value>/Return/ReturnData/IRS2441/TaxLiabLmtFromCrLmtWrkshtAmt</Value>
+                </InputRoles>
+            </Threshold>
+        </Gist>
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </Node>
+    <!--
+
+
+
+
+
+  -->
+    <InputNode name="/Return/ReturnData//Constants/Zero">
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </InputNode>
+    <InputNode name="/Return/ReturnData/F1040.L42">
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </InputNode>
+    <InputNode name="/Return/ReturnData/F2441.F1116">
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </InputNode>
+    <InputNode name="/Return/ReturnData/F2441.L9W">
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </InputNode>
+    <InputNode name="/Return/ReturnData/F2441.TAX1040">
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </InputNode>
+    <InputNode name="/Return/ReturnData/FEXPL24.TOTCPYE">
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </InputNode>
+    <InputNode name="/Return/ReturnData/IRS2441/CalculatedTentativeExpenseAmt">
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </InputNode>
+    <InputNode name="/Return/ReturnData/IRS2441/CareExpensesDecimalAmt">
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </InputNode>
+    <InputNode name="/Return/ReturnData/IRS2441/CreditForChildAndDepdCareAmt">
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </InputNode>
+    <InputNode name="/Return/ReturnData/IRS2441/SmallerOfExpensesOrIncomeAmt">
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </InputNode>
+    <InputNode name="/Return/ReturnData/IRS2441/TaxLiabLmtFromCrLmtWrkshtAmt">
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </InputNode>
+    <InputNode name="/Temporary/EIC/IRS2441/SmallerOfExpensesOrIncomeAmtIsNotBlank">
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </InputNode>
+    <InputNode name="/Temporary/EIC/TRUEF2441.L9W">
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </InputNode>
+    <InputNode name="/Temporary/EIC/FALSEF2441.L9W">
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </InputNode>
+    <InputNode name="/Temporary/EIC/TRUEIRS2441/CalculatedTentativeExpenseAmt">
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </InputNode>
+    <InputNode name="/Temporary/EIC/FALSEIRS2441/CalculatedTentativeExpenseAmt">
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </InputNode>
+    <InputNode name="/Temporary/EIC/AddSub_3">
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </InputNode>
+    <InputNode name="/Temporary/EIC/DivMul_4">
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </InputNode>
+    <InputNode name="/Temporary/EIC/IRS2441/CalculatedTentativeExpenseAmtIsNotBlank">
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </InputNode>
+    <InputNode name="/Temporary/EIC/AddSub_7">
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </InputNode>
+    <InputNode name="/Temporary/EIC/AddSub_9">
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </InputNode>
+</Nodes>
