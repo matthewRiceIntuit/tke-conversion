@@ -145,18 +145,26 @@
     </xsl:template>
 
     <xsl:template match="Predicate[@val='&lt;']">
-        {"<xsl:apply-templates select="."  mode="getID"/> = BelowThreshold(":{"inputs":["value:<xsl:value-of select="VarRef/ID/@val"/>","threshold:<xsl:value-of select="Literal/@val"/>"]}},
+        <BelowThreshold>
+            <ID><xsl:apply-templates select="."  mode="getID"/></ID>
+            <xsl:for-each select="*">
+                <INPUT><xsl:apply-templates select="."  mode="getID"/></INPUT>
+            </xsl:for-each>
+        </BelowThreshold>
+        <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:template match="and">
-        {"<xsl:apply-templates select="."  mode="getID"/> = AllConditionsTrue(":{"inputs":["<xsl:apply-templates select="*[1]" mode="getID"/>","<xsl:apply-templates select="*[2]" mode="getID"/>"]}},
+        <AllConditionsTrue>
+            <ID><xsl:apply-templates select="."  mode="getID"/></ID>
+            <xsl:for-each select="*">
+                <INPUT><xsl:apply-templates select="."  mode="getID"/></INPUT>
+            </xsl:for-each>
+        </AllConditionsTrue>
         <xsl:apply-templates/>
     </xsl:template>
 
 
 
-    <!--<xsl:template match="IfStruct">-->
-    <!--{"IsCondition<xsl:value-of select="position()"/> = AllConditionsTrue":{"inputs":["<xsl:value-of select="ArgList/VarRef/ID/@val"/>",]}},-->
-    <!--<xsl:apply-templates/>-->
-<!--</xsl:template>-->
+
 </xsl:stylesheet>
