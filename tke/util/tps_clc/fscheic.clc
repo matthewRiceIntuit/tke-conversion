@@ -1,0 +1,637 @@
+/* ************************************************* */
+/*                                                   */
+/*           Copyright 1984-2010 Intuit Inc.         */
+/*                All rights reserved                */
+/*                                                   */
+/* ************************************************* */
+
+#include "..\..\..\..\..\common\incometax\comall\comps\fed.h"
+
+#if defined(FS1040)
+FORM mFS1040.FSCHEIC;
+#endif
+
+VAR
+
+	_  						: Ftext;		// for mshouldbefinal error message
+	hIntNotFinal			: Boolean;		//for Interview hard stop jam 10/17/08
+	hNeedsReviewEIC			: Boolean;		//to display a needs review on landing table for EIC
+	qualified       		: Boolean;		//qualified for EIC
+	kids            		: FInteger;		//counts # of qual. children
+	DQKids          		: FInteger;		// counts # of qualifying children who are disqualified
+											// due to being qual child of another with higher AGI
+											// or because of invalid SSN
+	S1, S2, S3, A1, A2, A3	: FInteger;		// S = index of qualifying children, A = counter - added S3 and A3 for new tax law jam 7/28/09
+	Q1, Q2, Q3, B1, B2, B3	: FInteger;		// Q = index of dqchild,  B = counter - added Q3 and B3 for new tax law jam 7/28/09
+	youngOld        		: Boolean;		//age requirement if no qual.kids
+	HPCNAM	        		: Array[2] of FText;//kle added 11-29-95 for 1040pc
+	SpecialSSN 				: Boolean;		// TP & SP have valid SSNs for EIC
+	htage					: FInteger;		//used for 1040EZ & foinfowks input 7/10/97 et
+	hsage					: FInteger;
+	HaveSSN         		: Boolean;		// TP & SP have SSNs
+	DQ1SSN, DQ2SSN, DQ3SSN	: Boolean;		// DQkids 1 and 2 and 3 have valid SSN for EIC - added DQ3SSN for new tax law jam 7/28/09
+	//ChYOB					: Array[3] of FInteger;// for New York;	adjusted for third child jam 7/31/09 - see below dpd 9/13/12
+	CHDOB					: Array[3] of FDate; //for New York - New york changed to wanting date of birth and not just year of birth. dpd 9/13/12
+
+#ifdef FS1040
+#include "efscheic.inc"
+#endif
+
+/*****************************************************************************/					
+SECTION Header;
+BEGIN
+	Name:=		FInfoWks.HName;
+	SSN:=		FInfoWks.Tssn;
+END;
+
+/*****************************************************************************/					
+SECTION Lines1to6;
+VAR
+	i, x, q : index;
+	tDepend : Finteger;
+	hvalidrel,
+    hvalidssn : Boolean;
+BEGIN
+		// calcing even if NOEICX checked for interview reasons
+
+		S1 := 0;			//saves the index of 1st kid
+		S2 := 0;			//saves the index of 2nd kid
+		S3 := 0;			//NEW tax law enacted saves the index of 3rd child jam 7/29/09
+		A1 := 0;			//1st (qualifying) kid
+		A2 := 0;			//2nd (qualifying) kid
+		A3 := 0;			//NEW tax law enacted 3rd (qualifying) kid jam 7/29/09
+		Q1 := 0;			//saves the index of 1st dq child
+		Q2 := 0;			//saves the index of 2nd dq child
+		Q3 := 0;			//NEW tax law enacted saves the index of 3rd dq child jam 7/29/09
+		B1 := 0;			//1st dqkid
+		B2 := 0;			//2nd dqkid
+		B3 := 0;			//NEW tax law enacted 3rd dqkid jam 7/29/09
+		DQ1SSN := true;		//Indicates if 1st DQkid has valid SSN
+		DQ2SSN := true;		//Indicates if 2nd DQkid has valid SSN
+		DQ3SSN := true;		//NEW tax law enacted Indicates if 3rd DQkid has valid SSN jam 7/29/09
+
+// FINDS FIRST 3 QUALIFYING CHILDREN FOR SCH EIC FROM FINFOWKS/FDEPEND
+
+		kids:= 0;
+		DQkids := 0;
+		#ifdef FS1040
+
+		tDepend := LastIndex(depend,FInfoWks);
+		For i:= 1 to tDepend  do
+		Begin
+			//Added to allow only valid rel on SchEIC
+			If ((uppercase(FInfoWks.L6C4[i]) = "DAUGHTER") or	
+				(uppercase(FInfoWks.L6C4[i]) = "SON") or		
+				(uppercase(FInfoWks.L6C4[i]) = "CHILD") or
+				(uppercase(FInfoWks.L6C4[i]) = "FOSTER CHILD") or
+				(uppercase(FInfoWks.L6C4[i]) = "STEPCHILD") or
+				(uppercase(FInfoWks.L6C4[i]) = "ADOPTED CHILD") or
+				(uppercase(FInfoWks.L6C4[i]) = "GRANDCHILD") or
+				// brother, sister, niece, nephew valid in 2002
+				(uppercase(FInfoWks.L6C4[i]) = "BROTHER") or
+				(uppercase(FInfoWks.L6C4[i]) = "SISTER") or
+				(uppercase(FInfoWks.L6C4[i]) = "NIECE") or
+				(uppercase(FInfoWks.L6C4[i]) = "NEPHEW") ) then
+					 hvalidrel := True
+					 else hvalidrel := False;
+
+            If ((((HasValue(FInfoWks.L6C3[i])	and	// Is there Valid SSN
+				(Valid_SSN(FInfoWks.L6C3[i],1,0,0,1, _DSSN_ ) = true) and
+				(SubString(FInfoWks.L6C3[i],1,1) <> "9"))) OR	
+				(UpperCase(FInfoWks.L6C3[i]) = "DIED"))) // Or Born & Died this year
+#ifdef WEB //dpd 9/14/11 for SSN Later project for TTO testing only applies to web don't want on desktop
+                or isChecked(FEFHDSUM.SSNLATER)
+#endif
+                then                  
+                    hvalidssn := true
+                else
+                    hvalidssn := false;
+
+
+			If 	 hvalidssn		
+			     AND (HasValue(FInfoWks.EIC[i])
+			     and (FInfoWks.EIC[i] <> "N")
+			     and (FInfoWks.EIC[i] <> "H"))			// Any EIC code but N or H (non qual or qual another with higher AGI
+			
+			     AND HasValue(FInfoWks.L6C1A[i]) 		// Has first name
+			
+			     AND ((FInfoWks.CD[i] = "L") 		// Either code L or Q (dep lived with or non dep who Qualifys for EIC)
+			     or  (FInfoWks.CD[i] = "O") 		// "O" for brother, sister, niece, nephew
+			     or  (FInfoWks.CD[i] = "Q")) 
+			
+			     and (hvalidrel = True)					// Valid rel only
+
+			     and  (HasValue(FInfoWks.L6C2[i]) or	// Year of birth
+					  HasValue(FinfoWks.chdob[i]))		// date-of-birth
+
+			     and  HasValue(FInfoWks.L6C5[i])  then	// # of months in home in US
+				
+				begin
+					kids:= kids + 1;
+					If kids = 1 then
+						begin 
+							S1:= i;
+							A1:= 1;
+						end
+					else if kids = 2 then
+						begin
+							S2:= i;
+							A2:= 1;
+						end
+					else if kids = 3 then	//NEW tax law enacted jam 7/29/09
+						begin
+							S3:= i;
+							A3:= 1;
+						end;
+				end;
+				
+			If kids = 3 then break;	//Edited for NEW tax law jam 7/29/09
+		End;
+
+/*IF NOT 3 EIC KIDS THEN FIND QUALIFYING KIDS THAT EITHER QUALIFY ANOTHER
+		WITH HIGHER AGI, OR DON'T HAVE VALID SSN  */
+
+// used by f8867, check boxes on pg 2 of EIC wks, & diags
+
+	If kids < 3 then	//Edited to 3 from 2 for NEW tax law jam 7/29/09
+	Begin			
+		For q:= 1 to tDepend  do				
+		Begin
+			//Added to allow only valid rel on F8867 
+			If ((uppercase(FInfoWks.L6C4[q]) = "DAUGHTER") or	
+			   (uppercase(FInfoWks.L6C4[q]) = "SON") or			
+			   (uppercase(FInfoWks.L6C4[q]) = "CHILD") or
+			   (uppercase(FInfoWks.L6C4[q]) = "FOSTER CHILD") or	
+			   (uppercase(FInfoWks.L6C4[q]) = "STEPCHILD") or
+			   (uppercase(FInfoWks.L6C4[q]) = "ADOPTED CHILD") or
+			   (uppercase(FInfoWks.L6C4[q]) = "GRANDCHILD") or
+			   // brother, sister, niece, nephew valid in 2002
+				(uppercase(FInfoWks.L6C4[q]) = "BROTHER") or
+				(uppercase(FInfoWks.L6C4[q]) = "SISTER") or
+				(uppercase(FInfoWks.L6C4[q]) = "NIECE") or
+				(uppercase(FInfoWks.L6C4[q]) = "NEPHEW") ) then
+					 hvalidrel := True
+					 else hvalidrel := False;	
+
+		   If (((FInfoWks.EIC[q] = "H")		// Qualifys another with higher AGI
+				 OR
+		        (Not HasValue(FInfoWks.L6C3[q]))		// Missing SSN
+				 OR      			     
+				 (HasValue(FInfoWks.L6C3[q]) and     // Invalid SSN
+				 ((Valid_SSN(FInfoWks.L6C3[q],1,0,0,1, _DSSN_ ) = false) or
+				 (SubString(FInfoWks.L6C3[q],1,1) = "9")) and	
+				 (UpperCase(FInfoWks.L6C3[q]) <> "DIED")))						
+							
+			     AND
+			     (HasValue(FInfoWks.L6C1A[q]))         // has first name
+
+			   	 AND 				
+			     (hvalidrel = True)					
+				 
+			   	 AND 
+			     (HasValue(FInfoWks.L6C2[q]) or  		// year of birth added 8/1/01 ds
+				  HasValue(FinfoWks.chdob[q]))			// date-of-birth 				 
+			     
+			     AND 
+			     ((FInfoWks.CD[q] = "L")  or		// Dep lived with or non dep who Qualifys for EIC 
+			      (FInfoWks.CD[q] = "O") or			// "O" for brother, sister, niece, nephew
+			      (FInfoWks.CD[q] = "Q")) 
+
+				 AND
+				 (FInfoWks.EIC[q] <> "N")			
+			     
+				 AND 
+				 (HasValue(FInfoWks.L6C5[q]))) then	// # of months in home in US 
+							
+				begin
+					DQkids:= DQkids + 1;
+					If DQkids = 1 then
+						begin
+							Q1:= q;
+							B1:= 1;
+							If ((Not HasValue(FInfoWks.L6C3[q])) OR  
+								(HasValue(FInfoWks.L6C3[q]) and	      
+								((Valid_SSN(FInfoWks.L6C3[q],1,0,0,1, _DSSN_ ) = false) or
+								(SubString(FInfoWks.L6C3[q],1,1) = "9")) and
+								(UpperCase(FInfoWks.L6C3[q]) <> "DIED"))) then
+								DQ1SSN := false;
+						end
+					else if DQkids = 2 then
+						begin
+							Q2:= q;
+							B2:= 1;
+							If ((Not HasValue(FInfoWks.L6C3[q])) OR  
+								(HasValue(FInfoWks.L6C3[q]) and	      
+								((Valid_SSN(FInfoWks.L6C3[q],1,0,0,1, _DSSN_ ) = false) or
+								(SubString(FInfoWks.L6C3[q],1,1) = "9")) and
+								(UpperCase(FInfoWks.L6C3[q]) <> "DIED"))) then
+								DQ2SSN := false;
+						end
+					else if DQkids = 3 then
+						begin
+							Q3:= q;
+							B3:= 1;
+							If ((Not HasValue(FInfoWks.L6C3[q])) OR  
+								(HasValue(FInfoWks.L6C3[q]) and	      
+								((Valid_SSN(FInfoWks.L6C3[q],1,0,0,1, _DSSN_ ) = false) or
+								(SubString(FInfoWks.L6C3[q],1,1) = "9")) and
+								(UpperCase(FInfoWks.L6C3[q]) <> "DIED"))) then
+								DQ3SSN := false;
+						end;
+
+				end;
+			If kids + DQkids = 3 then break;	//Edited for NEW tax law jam 7/29/09
+		End;
+	End;
+
+		#endif	// FS1040
+	
+
+//LISTS 3 QUALIFYING CHILDREN FROM FINFOWKS
+// CHILD 1
+	If kids > 0 then
+		Begin
+		  if (A1 = 1) then
+			begin
+				#ifdef FS1040
+				L1A[1]:= FInfoWks.L6C1A[S1];
+				L1B[1]:= FInfoWks.L6C1B[S1];
+				L1C[1]:= FInfoWks.L6C1C[S1];
+				L1D[1]:= FInfoWks.L6C1D[S1];
+				#endif
+
+				If HasValue(FInfoWks.L6C2[S1]) then
+					begin
+						BirthYr[1] := FInfoWks.L6C2[S1];
+					end
+				else
+				If HasValue(FinfoWks.chdob[S1]) then
+					BirthYr[1] := GetYear(FinfoWks.chdob[S1]);
+
+				If HasValue(FInfoWks.EIC[S1]) then	
+					Begin
+					If (FInfoWks.EIC[S1] = "S") or
+					   (fInfoWks.EIC[S1] = "D") then
+						begin
+							If (FInfoWks.EIC[S1] = "S") then
+							begin
+								Stu1Y := Checked;		
+							end
+							else
+								If (FInfoWks.EIC[S1] = "D") then
+								begin
+									Stu1N := Checked;	
+									Dis1Y := Checked;	
+								end;
+						End;
+					End;
+
+					ChSSN[1] := FInfoWks.L6C3[S1];
+					
+					CHDOB[1] := Finfowks.CHDOB[S1]; // for New York
+						L5[1] := FInfoWks.L6C4[S1];
+														
+					if FINFOWKS.L6C2[S1] = kYear then //if the date of birth is in the current year then months lived in US for EIC child 
+						L6[1] := 12           			// should be 12.  Since they passed the EIC test to be here already this sets the
+					else								// months to 12 when they were born in the current year otherwise uses the amount entered.
+						L6[1]:= FInfoWks.L6C5[S1];
+
+			end;
+// CHILD 2		
+		  if (A2 = 1) then
+			begin
+				#ifdef FS1040
+				L1A[2]:= FInfoWks.L6C1A[S2];
+				L1B[2]:= FInfoWks.L6C1B[S2];
+				L1C[2]:= FInfoWks.L6C1C[S2];
+				L1D[2]:= FInfoWks.L6C1D[S2];
+				#endif
+
+				If HasValue(FInfoWks.L6C2[S2]) then
+					begin
+						BirthYr[2] := FInfoWks.L6C2[S2];
+					end
+				else
+				If HasValue(FinfoWks.chdob[S2]) then
+					BirthYr[2] := GetYear(FinfoWks.chdob[S2]);
+
+				If HasValue(FInfoWks.EIC[S2]) then	
+					Begin
+					If (FInfoWks.EIC[S2] = "S") or
+					   (fInfoWks.EIC[S2] = "D") then
+						begin
+							If (FInfoWks.EIC[S2] = "S") then
+							begin
+								Stu2Y := Checked;		
+							end
+							else
+								If (FInfoWks.EIC[S2] = "D") then
+								begin
+									Stu2N := Checked;	
+									Dis2Y := Checked;	
+								end;
+						End;
+					End;
+				
+					ChSSN[2] := FInfoWks.L6C3[S2];
+					
+					CHDOB[2] := Finfowks.CHDOB[S2]; // for New York
+						L5[2] := FInfoWks.L6C4[S2];
+
+					if FINFOWKS.L6C2[S2] = kYear then //if the date of birth is in the current year then months lived in US for EIC child 
+						L6[2] := 12           			// should be 12.  Since they passed the EIC test to be here already this sets the
+					else								// months to 12 when they were born in the current year otherwise uses the amount entered.
+						L6[2]:= FInfoWks.L6C5[S2];
+			end;
+
+// CHILD 3----------NEW tax law enacted in ARRA jam 7/31/09
+		  if (A3 = 1) then
+			begin
+				#ifdef FS1040
+				L1A[3]:= FInfoWks.L6C1A[S3];
+				L1B[3]:= FInfoWks.L6C1B[S3];
+				L1C[3]:= FInfoWks.L6C1C[S3];
+				L1D[3]:= FInfoWks.L6C1D[S3];
+				#endif
+
+				If HasValue(FInfoWks.L6C2[S3]) then
+					begin
+						BirthYr[3] := FInfoWks.L6C2[S3];
+					end
+				else
+				If HasValue(FinfoWks.chdob[S3]) then
+					BirthYr[3] := GetYear(FinfoWks.chdob[S3]);
+
+				If HasValue(FInfoWks.EIC[S3]) then	
+					Begin
+					If (FInfoWks.EIC[S3] = "S") or
+					   (fInfoWks.EIC[S3] = "D") then
+						begin
+							If (FInfoWks.EIC[S3] = "S") then
+							begin
+								Stu3Y := Checked;		
+							end
+							else
+								If (FInfoWks.EIC[S3] = "D") then
+								begin
+									Stu3N := Checked;	
+									Dis3Y := Checked;	
+								end;
+						End;
+					End;
+				
+					ChSSN[3] := FInfoWks.L6C3[S3];
+					
+					CHDOB[3] := Finfowks.CHDOB[S3];// for New York
+						L5[3] := FInfoWks.L6C4[S3];
+
+					if FINFOWKS.L6C2[S3] = kYear then //if the date of birth is in the current year then months lived in US for EIC child 
+						L6[3] := 12           			// should be 12.  Since they passed the EIC test to be here already this sets the
+					else								// months to 12 when they were born in the current year otherwise uses the amount entered.
+						L6[3]:= FInfoWks.L6C5[S3];
+			end;
+		End;//if kids > 0	
+END;
+
+/*****************************************************************************/					
+SECTION Age;			
+//to setup htage/hsage for the CheckQualified section
+
+	BEGIN
+
+	If HasValue(finfowks.tpage) then
+	  htage:= finfowks.tpage
+	else
+	  if HasValue(F1040EZ.tdob) then
+	    htage:= GetAge(F1040EZ.tdob, kBegNextYr);		//same as finfowks
+														
+	If HasValue(finfowks.spage) then
+	  hsage:= finfowks.spage
+	else
+	  if HasValue(F1040EZ.sdob) then
+	    hsage:= GetAge(F1040EZ.sdob, kBegNextYr);		
+
+	END;
+
+/*****************************************************************************/					
+SECTION CheckIfQualified;
+ BEGIN
+//DETERMINES WHETHER TP W/ NO QUAL.CHILD MEETS
+//AGE REQUIREMENTS
+	// 2/19/2004
+	// IRS Office of Chief Counsel: determine TP age in most favorable manner for EIC
+	// TP is age 65 actually on birthday (not day before) for EIC
+	// TP is age 25 day before birthday for EIC   
+	// true = BOTH TP & SP under 25 or over 64 years of age
+	youngOld:= false;				//not too young or too old 
+
+	//Rewrite conditions for 1040EZ direct input 
+	// NOT married filing jointly
+	If (HasValue(FInfowks.FS) and not IsChecked(FInfowks.FS2)) OR
+	   (Not HasValue(FInfowks.FS) and HasValue(F1040EZ.NAME) and not HasValue(F1040EZ.SNAM)) then
+	Begin
+	 if ( (not HasValue(htage)) or
+		(htage < 25) or
+	    (htage > 64) ) then	
+		Begin
+			youngOld := true;
+			If ( (htage = 65) and
+				// if TP's bday on Jan 1 he's not 65 yet
+				// replace dates with defines from fed.h 6/15/04 
+				//( (Finfowks.tdob = Date ("01/01/1939")) or
+				  //(F1040EZ.TDOB = Date ("01/01/1939")) )
+				 ( (Finfowks.tdob = kAge65) or
+				  (F1040EZ.TDOB = kAge65) ) 
+				 ) then
+					youngOld := false;	
+		end;
+	End;	
+
+	// married filing jointly
+	If HasValue(FInfowks.FS2) OR
+		// added to handle stand-alone 1040EZ
+	   (Not HasValue(FInfowks.FS) and HasValue(F1040EZ.NAME) and HasValue(F1040EZ.SNAM)) then
+	 Begin
+		if (not HasValue(htage)) and 	
+		   (not HasValue(hsage)) then
+		    begin
+		    youngOld := true; 
+		    end
+		    else	  	   
+		    if (HasValue(htage)) or
+		       (HasValue(hsage)) then
+			     Begin
+		      	 If ( ( (htage > 64) or
+		      	      (htage < 25)
+				 	 )
+					  AND
+			     	  ( (hsage > 64) or
+			  	       (hsage < 25)
+				 	   ) )	 then
+						youngOld := true;
+				 If ( (htage = 65) and
+					// if TP's bday on Jan 1 he's not 65 yet
+				 	// replace dates with defines from fed.h 6/15/04
+					//( (Finfowks.tdob = Date ("01/01/1939")) or
+				  	  //(F1040EZ.TDOB = Date ("01/01/1939")) )
+				  	 ( (Finfowks.tdob = kAge65) or
+				  	  (F1040EZ.TDOB = kAge65) ) 
+				 	) then
+						youngOld := false;
+				 If ( (hsage = 65) and
+					// if SP's bday on Jan 1 he's not 65 yet
+				 	// replace dates with defines from fed.h 6/15/04
+					//( (Finfowks.sdob = Date ("01/01/1939")) or
+				  	  //(F1040EZ.SDOB = Date ("01/01/1939")) )
+				  	 ( (Finfowks.sdob = kAge65) or
+				  	  (F1040EZ.SDOB = kAge65) ) 
+				 	) then
+						youngOld := false; 
+		   	  	 end;
+		    end;
+		
+   Begin
+	
+	HaveSSN    := True; // no SSN			
+    SpecialSSN := True;	// invalid SSN
+	Qualified  := True;
+
+	If IsChecked(Finfowks.DY) 
+		or IsChecked(F1040EZ.DY) then // 12/15/04
+		SpecialSSN := False;
+			
+	If Not (HasValue(FinfoWks.TSSN)) and
+	   Not (HasValue(F1040EZ.SSN)) 
+       and not(isChecked(FEFHDSUM.SSNLATER))
+         then    // no tp SSN on Finfo or 1040EZ
+	       HaveSSN := False;
+
+	If HasValue(FinfoWks.TSSN) then
+	Begin
+		If ((Valid_SSN(FInfoWks.TSSN,1,0,0,1, _DSSN_ )) = False) then
+		SpecialSSN := False;
+	End
+	Else
+	If ((Valid_SSN(F1040EZ.SSN,1,0,0,1, _DSSN_ )) = False)  then    // tp SSN invalid
+	    SpecialSSN := False;
+
+
+	If (mJoint) or HasValue (F1040EZ.SNAM) then  //MFJ or Spouse name on 1040EZ
+		Begin
+		If Not (HasValue(FinfoWks.SSSN)) and
+		   Not (HasValue(F1040EZ.SSSN))  
+           and not(isChecked(FEFHDSUM.SSNLATER))
+           then    // no sp SSN
+	       HaveSSN := False;
+
+    	    If HasValue(FinfoWks.SSSN) then
+    	    Begin
+	    	If ((Valid_SSN(FInfoWks.SSSN,1,0,0,1, _DSSN_ )) = False) then
+	     	SpecialSSN := False;
+        	End
+        	Else
+        	If ((Valid_SSN(F1040EZ.SSSN,1,0,0,1, _DSSN_ )) = False)  then    // sp SSN invalid
+	        SpecialSSN := False;
+
+		End;
+  End;
+
+	// if no ssn or invalid for tp or sp
+	If (HaveSSN = False) or			
+	   (SpecialSSN = False) then
+	    Qualified := False;
+	  
+	//IF SSN OK DETERMINES CONDITIONS THAT SET QUALIFIED TO FALSE
+	
+ 	If (Qualified = true) then // also used in fscheicw.clc
+	Begin
+	  if (kids > 0) then
+		begin
+			If (mSeparate) or // married filing separate 
+			#ifdef FS1040
+			(F25553T.L43 > 0) or  // foreign earned income exclusion
+			(F25553T.L48 > 0) or  // foreign housing deduction
+			(F25553S.L43 > 0) or
+			(F25553S.L48 > 0) or
+			#endif
+			IsChecked(FInfoWks.AY) or	// tp or sp qualifying child of another
+			IsChecked(FInfoWks.PDR) or    // dual-status return selected
+		   	IsChecked(FInfoWks.BN) or	      //Home in US for 6 mos
+		   	IsChecked(F1040EZ.BN) or 	      //Home in US for 6 mos on 1040EZ	 
+			(IsChecked(FinfoWks.FS4) and	// HoH and lived with NR alien spouse
+			IsChecked(FInfoWks.CY))			
+			#ifdef PRO 
+			or IsChecked(FInfoWks.PDS)	// dual-status statement selected	
+			#endif
+			then
+			  qualified:= false;		
+				
+		end
+	  else if (kids = 0) then
+		begin
+			If (mSeparate) or 
+			#ifdef FS1040
+			(F25553T.L43 > 0) or 
+			(F25553T.L48 > 0) or
+			(F25553S.L43 > 0) or
+			(F25553S.L48 > 0) or
+			#endif						
+		   	IsChecked(FInfoWks.AY) or 	      //TP is qualifying child of another
+			IsChecked(F1040EZ.AY) or 	      //Qualifying child of another on 1040EZ
+			 (youngOld = true) or 		      //doesn't meet age requirements
+			IsChecked(FInfoWks.DXT) or 	      //TP is eligible to be dependent of another
+			IsChecked(FInfoWks.DEPTY) or      //TP is claimed as dependent by another
+			//IsChecked(F1040EZ.DEPY) or	      //1040EZ TP or SP is dependent of another 
+		   	IsChecked(F1040EZ.DXT) or		  // 7/26/05
+		   	IsChecked(FInfoWks.BN) or	      //Home in US for 6 mos
+		   	IsChecked(F1040EZ.BN) or 	      //Home in US for 6 mos on 1040EZ	 
+			IsChecked(FInfoWks.PDR) or		  // dual-status return selected	   added 10/20/99 hw
+			(IsChecked(FInfoWks.FS4) and	  //HoH and lived with NR alien spouse
+			IsChecked(FInfoWks.CY))
+		   	#ifdef PRO 
+			or IsChecked(FInfoWks.PDS)	      // dual-status statement selected	 added 10/20/99 hw
+			#endif
+			then 
+				qualified:= false;
+
+		    If ((mJoint) and
+			 (IsChecked(FInfoWks.DXS) or      //SP is eligible to be dependent of another
+			  IsChecked(FInfoWks.DEPSY))) or  
+			  (HasValue(F1040EZ.SNAM) and IsChecked(F1040EZ.DXS))
+			  	Then
+				qualified:= false;
+					
+		end;
+	End; //of other conditions that made qualified false
+
+	If IsChecked(Finfowks.NOEICX) or
+	   IsChecked(F1040EZ.NOEICX)  or
+	            ((Kids = 0)      and	  // No Sch EIC qualifying children 
+	             (DQkids > 0)) 		 // Qualifying children of another w/higher AGI or without valid SSN 
+       then	                              
+	   Qualified := False;
+		
+	If Qualified = True then
+		OpenForm(FSchEICW);
+		
+END;
+
+/*****************************************************************************/					
+SECTION PORFlag;
+BEGIN
+	If (
+        (qualified = true) and
+        (FSchEICW.L10 > 0) and
+        (kids > 0)                 
+       ) then
+		begin
+		FormIs(PartOfReturn);
+		if IsNonFinalError() then
+			mShouldBeFinal;//10/25/10 cav comment out just this line when final
+		end;
+	//Hard stop the EIC in Interview
+	//#ifdef PER
+	//If hIntNotFinal Then
+	//mIntShouldBeFinal;	//TD060119 jam 10/17/08
+	//#endif	
+END;

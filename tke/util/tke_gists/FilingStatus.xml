@@ -1,0 +1,784 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Nodes topic="FilingStatus">
+   <Versions>
+      <Version id="TKE.Calc.FileFormat">1</Version>
+      <Version id="TKE.Calc.Runtime">1</Version>
+      <Version id="TKE.Gist">1</Version>
+      <Version id="TKE.MeF">1</Version>
+   </Versions>
+
+   <!-- Common -->
+
+   <Node name="/Temporary/FilingStatus/SingleMaritalStatus">
+      <Inputs>
+         <Input>/Return/ReturnData/PPReturnInformation/MaritalStatusPP</Input>
+         <Input>/Constants/IRS1040/FilingStatus/SingleMaritalStatus</Input>
+      </Inputs>
+      <Gist>
+         <Equals>
+            <Value>/Return/ReturnData/PPReturnInformation/MaritalStatusPP</Value>
+            <Value>/Constants/IRS1040/FilingStatus/SingleMaritalStatus</Value>
+         </Equals>
+      </Gist>
+   </Node>
+   
+   <Node name="/Temporary/FilingStatus/DivorcedMaritalStatus">
+      <Inputs>
+         <Input>/Return/ReturnData/PPReturnInformation/MaritalStatusPP</Input>
+         <Input>/Constants/IRS1040/FilingStatus/DivorcedMaritalStatus</Input>
+      </Inputs>
+      <Gist>
+      	 <Equals>
+            <Value>/Return/ReturnData/PPReturnInformation/MaritalStatusPP</Value>
+            <Value>/Constants/IRS1040/FilingStatus/DivorcedMaritalStatus</Value>
+         </Equals>
+      </Gist>
+   </Node>
+   
+   <Node name="/Temporary/FilingStatus/LegallySeparatedMaritalStatus">
+      <Inputs>
+         <Input>/Return/ReturnData/PPReturnInformation/MaritalStatusPP</Input>
+         <Input>/Constants/IRS1040/FilingStatus/LegallySeparatedMaritalStatus</Input>
+      </Inputs>
+      <Gist>
+      	 <Equals>
+            <Value>/Return/ReturnData/PPReturnInformation/MaritalStatusPP</Value>
+            <Value>/Constants/IRS1040/FilingStatus/LegallySeparatedMaritalStatus</Value>
+         </Equals>
+      </Gist>
+   </Node>
+   
+   <Node name="/Temporary/FilingStatus/RDPMaritalStatus">
+      <Inputs>
+         <Input>/Return/ReturnData/PPReturnInformation/MaritalStatusPP</Input>
+         <Input>/Constants/IRS1040/FilingStatus/RDPMaritalStatus</Input>
+      </Inputs>
+      <Gist>
+      	 <Equals>
+            <Value>/Return/ReturnData/PPReturnInformation/MaritalStatusPP</Value>
+            <Value>/Constants/IRS1040/FilingStatus/RDPMaritalStatus</Value>
+         </Equals>
+      </Gist>
+   </Node>
+   
+   <Node name="/Temporary/FilingStatus/CivilUnionMaritalStatus">
+      <Inputs>
+         <Input>/Return/ReturnData/PPReturnInformation/MaritalStatusPP</Input>
+         <Input>/Constants/IRS1040/FilingStatus/CivilUnionMaritalStatus</Input>
+      </Inputs>
+      <Gist>
+      	 <Equals>
+            <Value>/Return/ReturnData/PPReturnInformation/MaritalStatusPP</Value>
+            <Value>/Constants/IRS1040/FilingStatus/CivilUnionMaritalStatus</Value>
+         </Equals>
+      </Gist>
+   </Node>
+
+   <Node name="/Temporary/FilingStatus/WidowedMaritalStatus">
+      <Inputs>
+         <Input>/Return/ReturnData/PPReturnInformation/MaritalStatusPP</Input>
+         <Input>/Constants/IRS1040/FilingStatus/WidowedMaritalStatus</Input>
+      </Inputs>
+      <Gist>
+         <Equals>
+            <Value>/Return/ReturnData/PPReturnInformation/MaritalStatusPP</Value>
+            <Value>/Constants/IRS1040/FilingStatus/WidowedMaritalStatus</Value>
+         </Equals>
+      </Gist>
+   </Node>
+   
+   <Node name="/Temporary/FilingStatus/WidowedTaxYearOrNextTaxYear">
+      <Inputs>
+         <Input>/Temporary/FilingStatus/WidowedTaxYear</Input>
+         <Input>/Temporary/FilingStatus/WidowedNextTaxYear</Input>
+      </Inputs>
+      <Gist>
+         <AtLeastOneConditionTrue>
+            <Condition>/Temporary/FilingStatus/WidowedNextTaxYear</Condition>
+            <Condition>/Temporary/FilingStatus/WidowedTaxYear</Condition>
+         </AtLeastOneConditionTrue>
+      </Gist>
+   </Node>
+   
+   <Node name="/Temporary/FilingStatus/WidowedConsideredMarried">
+      <Inputs>
+         <Input>/Temporary/FilingStatus/WidowedMaritalStatus</Input>
+         <Input>/Temporary/FilingStatus/WidowedTaxYearOrNextTaxYear</Input>
+      </Inputs>
+      <Gist>
+         <AllConditionsTrue>
+         	<Condition>/Temporary/FilingStatus/WidowedMaritalStatus</Condition>
+            <Condition>/Temporary/FilingStatus/WidowedTaxYearOrNextTaxYear</Condition>
+         </AllConditionsTrue>
+      </Gist>
+   </Node>
+
+   <Node name="/Temporary/FilingStatus/MarriedMaritalStatus">
+      <Inputs>
+         <Input>/Return/ReturnData/PPReturnInformation/MaritalStatusPP</Input>
+         <Input>/Constants/IRS1040/FilingStatus/MarriedMaritalStatus</Input>
+      </Inputs>
+      <Gist>
+         <Equals>
+            <Value>/Return/ReturnData/PPReturnInformation/MaritalStatusPP</Value>
+            <Value>/Constants/IRS1040/FilingStatus/MarriedMaritalStatus</Value>
+         </Equals>
+      </Gist>
+   </Node>
+
+   <Node name="/Temporary/FilingStatus/DoNotFileJointReturn">
+      <Inputs>
+         <Input>/Return/ReturnData/PPReturnInformation/FileJointReturnIndPP</Input>
+      </Inputs>
+      <Gist>
+         <Opposite>
+            <Value>/Return/ReturnData/PPReturnInformation/FileJointReturnIndPP</Value>
+         </Opposite>
+      </Gist>
+   </Node>
+   
+   <Node name="/Temporary/FilingStatus/ConsideredMarriedForTaxYear">
+      <Inputs>
+         <Input>/Temporary/FilingStatus/WidowedConsideredMarried</Input>
+         <Input>/Temporary/FilingStatus/MarriedMaritalStatus</Input>
+      </Inputs>
+      <Gist>
+         <AtLeastOneConditionTrue>
+            <Condition>/Temporary/FilingStatus/WidowedConsideredMarried</Condition>
+            <Condition>/Temporary/FilingStatus/MarriedMaritalStatus</Condition>
+         </AtLeastOneConditionTrue>
+      </Gist>
+   </Node>
+   
+   <Node name="/Return/ReturnData/PPReturnInformation/ConsideredMarriedAndJointReturnIndPP">
+      <Inputs>
+         <Input>/Return/ReturnData/PPReturnInformation/FileJointReturnIndPP</Input>
+         <Input>/Temporary/FilingStatus/ConsideredMarriedForTaxYear</Input>
+      </Inputs>
+      <Gist>
+         <AllConditionsTrue>
+            <Condition>/Return/ReturnData/PPReturnInformation/FileJointReturnIndPP</Condition>
+            <Condition>/Temporary/FilingStatus/ConsideredMarriedForTaxYear</Condition>
+         </AllConditionsTrue>
+      </Gist>
+   </Node>
+
+   <!--Begin Single Filing Status Calcs-->
+
+   <!-- Widowed Marital Status -->
+
+   <Node name="/Temporary/FilingStatus/NotWidowedInTaxYear">
+      <Inputs>
+         <Input>/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/WidowedInYearPP</Input>
+         <Input>/Constants/IRS1040/FilingStatus/WidowedTaxYear</Input>
+      </Inputs>
+      <Gist>
+         <NotEquals>
+            <Value>/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/WidowedInYearPP</Value>
+            <Value>/Constants/IRS1040/FilingStatus/WidowedTaxYear</Value>
+         </NotEquals>
+      </Gist>
+   </Node>
+
+   <Node name="/Temporary/FilingStatus/WidowedQualifiesSingle">
+      <Inputs>
+         <Input>/Temporary/FilingStatus/NotWidowedInTaxYear</Input>
+         <Input>/Temporary/FilingStatus/WidowedMaritalStatus</Input>
+         <Input>/Temporary/FilingStatus/NotWidowedNextTaxYear</Input>
+      </Inputs>
+      <Gist>
+         <AllConditionsTrue>
+            <Condition>/Temporary/FilingStatus/NotWidowedInTaxYear</Condition>
+            <Condition>/Temporary/FilingStatus/WidowedMaritalStatus</Condition>
+            <Condition>/Temporary/FilingStatus/NotWidowedNextTaxYear</Condition>
+         </AllConditionsTrue>
+      </Gist>
+   </Node>
+
+   <!-- Single Qualification -->
+
+   <Node name="/Return/ReturnData/PPReturnInformation/SingleFilingStatusQualIndPP">
+      <Inputs>
+         <Input>/Temporary/FilingStatus/WidowedQualifiesSingle</Input>
+         <Input>/Temporary/FilingStatus/SingleMaritalStatus</Input>
+         <Input>/Temporary/FilingStatus/DivorcedMaritalStatus</Input>
+         <Input>/Temporary/FilingStatus/LegallySeparatedMaritalStatus</Input>
+         <Input>/Temporary/FilingStatus/RDPMaritalStatus</Input>
+         <Input>/Temporary/FilingStatus/CivilUnionMaritalStatus</Input>
+      </Inputs>
+      <Gist>
+         <AtLeastOneConditionTrue>
+            <Condition>/Temporary/FilingStatus/WidowedQualifiesSingle</Condition>
+            <Condition>/Temporary/FilingStatus/SingleMaritalStatus</Condition>
+            <Condition>/Temporary/FilingStatus/DivorcedMaritalStatus</Condition>
+            <Condition>/Temporary/FilingStatus/LegallySeparatedMaritalStatus</Condition>
+            <Condition>/Temporary/FilingStatus/RDPMaritalStatus</Condition>
+            <Condition>/Temporary/FilingStatus/CivilUnionMaritalStatus</Condition>
+         </AtLeastOneConditionTrue>
+      </Gist>
+   </Node>
+
+
+   <!--End Single FilingStatus Calcs-->
+
+   <!-- Begin Married Filing Joint Filing Status -->
+
+   <!-- Married Marital Status -->
+
+   <Node name="/Temporary/FilingStatus/MarriedQualifiesMarriedFilingJoint">
+      <Inputs>
+         <Input>/Return/ReturnData/PPReturnInformation/FileJointReturnIndPP</Input>
+         <Input>/Temporary/FilingStatus/MarriedMaritalStatus</Input>
+      </Inputs>
+      <Gist>
+         <AllConditionsTrue>
+            <Condition>/Return/ReturnData/PPReturnInformation/FileJointReturnIndPP</Condition>
+            <Condition>/Temporary/FilingStatus/MarriedMaritalStatus</Condition>
+         </AllConditionsTrue>
+      </Gist>
+   </Node>
+
+   <!-- Widowed Marital Status -->
+
+   <Node name="/Temporary/FilingStatus/WidowedTaxYear">
+      <Inputs>
+         <Input>/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/WidowedInYearPP</Input>
+         <Input>/Constants/IRS1040/FilingStatus/WidowedTaxYear</Input>
+      </Inputs>
+      <Gist>
+         <Equals>
+            <Value>/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/WidowedInYearPP</Value>
+            <Value>/Constants/IRS1040/FilingStatus/WidowedTaxYear</Value>
+         </Equals>
+      </Gist>
+   </Node>
+
+   <Node name="/Temporary/FilingStatus/WidowedNextTaxYear">
+      <Inputs>
+         <Input>/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/WidowedInYearPP</Input>
+         <Input>/Constants/IRS1040/FilingStatus/WidowedNextTaxYear</Input>
+      </Inputs>
+      <Gist>
+         <Equals>
+            <Value>/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/WidowedInYearPP</Value>
+            <Value>/Constants/IRS1040/FilingStatus/WidowedNextTaxYear</Value>
+         </Equals>
+      </Gist>
+   </Node>
+
+   <Node name="/Temporary/FilingStatus/WidowedTaxYearQualifiesMarriedFilingJoint">
+      <Inputs>
+         <Input>/Return/ReturnData/PPReturnInformation/FileJointReturnIndPP</Input>
+         <Input>/Temporary/FilingStatus/WidowedMaritalStatus</Input>
+         <Input>/Temporary/FilingStatus/WidowedTaxYear</Input>
+      </Inputs>
+      <Gist>
+         <AllConditionsTrue>
+            <Condition>/Return/ReturnData/PPReturnInformation/FileJointReturnIndPP</Condition>
+            <Condition>/Temporary/FilingStatus/WidowedMaritalStatus</Condition>
+            <Condition>/Temporary/FilingStatus/WidowedTaxYear</Condition>
+         </AllConditionsTrue>
+      </Gist>
+   </Node>
+
+   <Node name="/Temporary/FilingStatus/WidowedNextTaxYearQualifiesMarriedFilingJoint">
+      <Inputs>
+         <Input>/Return/ReturnData/PPReturnInformation/FileJointReturnIndPP</Input>
+         <Input>/Temporary/FilingStatus/WidowedMaritalStatus</Input>
+         <Input>/Temporary/FilingStatus/WidowedNextTaxYear</Input>
+      </Inputs>
+      <Gist>
+         <AllConditionsTrue>
+            <Condition>/Return/ReturnData/PPReturnInformation/FileJointReturnIndPP</Condition>
+            <Condition>/Temporary/FilingStatus/WidowedMaritalStatus</Condition>
+            <Condition>/Temporary/FilingStatus/WidowedNextTaxYear</Condition>
+         </AllConditionsTrue>
+      </Gist>
+   </Node>
+
+   <!-- MFJ Qualification -->
+
+   <Node name="/Return/ReturnData/PPReturnInformation/MarriedJointFilingStatusQualIndPP">
+      <Inputs>
+         <Input>/Temporary/FilingStatus/WidowedTaxYearQualifiesMarriedFilingJoint</Input>
+         <Input>/Temporary/FilingStatus/MarriedQualifiesMarriedFilingJoint</Input>
+         <Input>/Temporary/FilingStatus/WidowedNextTaxYearQualifiesMarriedFilingJoint</Input>
+      </Inputs>
+      <Gist>
+         <AtLeastOneConditionTrue>
+            <Condition>/Temporary/FilingStatus/WidowedTaxYearQualifiesMarriedFilingJoint</Condition>
+            <Condition>/Temporary/FilingStatus/MarriedQualifiesMarriedFilingJoint</Condition>
+            <Condition>/Temporary/FilingStatus/WidowedNextTaxYearQualifiesMarriedFilingJoint</Condition>
+         </AtLeastOneConditionTrue>
+      </Gist>
+   </Node>
+
+   <!-- End Married Filing Joint Filing Status -->
+
+   <!-- Begin Married Filing Separate Filing Status -->
+
+   <!-- Married Marital Status -->
+
+   <Node name="/Temporary/FilingStatus/MarriedQualifiesMarriedFilingSeparate">
+      <Inputs>
+         <Input>/Temporary/FilingStatus/DoNotFileJointReturn</Input>
+         <Input>/Temporary/FilingStatus/MarriedMaritalStatus</Input>
+      </Inputs>
+      <Gist>
+         <AllConditionsTrue>
+            <Condition>/Temporary/FilingStatus/DoNotFileJointReturn</Condition>
+            <Condition>/Temporary/FilingStatus/MarriedMaritalStatus</Condition>
+         </AllConditionsTrue>
+      </Gist>
+   </Node>
+
+   <!-- Widowed Marital Status -->
+
+   <Node name="/Temporary/FilingStatus/WidowedTaxYearQualifiesMarriedFilingSeparate">
+      <Inputs>
+         <Input>/Temporary/FilingStatus/DoNotFileJointReturn</Input>
+         <Input>/Temporary/FilingStatus/WidowedMaritalStatus</Input>
+         <Input>/Temporary/FilingStatus/WidowedTaxYear</Input>
+      </Inputs>
+      <Gist>
+         <AllConditionsTrue>
+            <Condition>/Temporary/FilingStatus/DoNotFileJointReturn</Condition>
+            <Condition>/Temporary/FilingStatus/WidowedMaritalStatus</Condition>
+            <Condition>/Temporary/FilingStatus/WidowedTaxYear</Condition>
+         </AllConditionsTrue>
+      </Gist>
+   </Node>
+
+   <Node name="/Temporary/FilingStatus/WidowedNextTaxYearQualifiesMarriedFilingSeparate">
+      <Inputs>
+         <Input>/Temporary/FilingStatus/DoNotFileJointReturn</Input>
+         <Input>/Temporary/FilingStatus/WidowedMaritalStatus</Input>
+         <Input>/Temporary/FilingStatus/WidowedNextTaxYear</Input>
+      </Inputs>
+      <Gist>
+         <AllConditionsTrue>
+            <Condition>/Temporary/FilingStatus/DoNotFileJointReturn</Condition>
+            <Condition>/Temporary/FilingStatus/WidowedMaritalStatus</Condition>
+            <Condition>/Temporary/FilingStatus/WidowedNextTaxYear</Condition>
+         </AllConditionsTrue>
+      </Gist>
+   </Node>
+
+   <!-- Married Filing Separate Qualification -->
+
+   <Node name="/Return/ReturnData/PPReturnInformation/MarriedSeparateFilingStatusQualIndPP">
+      <Inputs>
+         <Input>/Temporary/FilingStatus/WidowedTaxYearQualifiesMarriedFilingSeparate</Input>
+         <Input>/Temporary/FilingStatus/WidowedNextTaxYearQualifiesMarriedFilingSeparate</Input>
+         <Input>/Temporary/FilingStatus/MarriedQualifiesMarriedFilingSeparate</Input>
+      </Inputs>
+      <Gist>
+         <AtLeastOneConditionTrue>
+            <Condition>/Temporary/FilingStatus/MarriedQualifiesMarriedFilingSeparate</Condition>
+            <Condition>/Temporary/FilingStatus/WidowedTaxYearQualifiesMarriedFilingSeparate</Condition>
+            <Condition>/Temporary/FilingStatus/WidowedNextTaxYearQualifiesMarriedFilingSeparate</Condition>
+         </AtLeastOneConditionTrue>
+      </Gist>
+   </Node>
+
+   <!-- End Married Filing Separate Calcs -->
+
+   <!-- Begin Head of Household Calcs -->
+
+   <!-- Single Marital Status -->
+   
+   <Node name="/Temporary/FilingStatus/QualifiesAsSingleButNotWidowed">
+      <Inputs>
+         <Input>/Temporary/FilingStatus/SingleMaritalStatus</Input>
+         <Input>/Temporary/FilingStatus/DivorcedMaritalStatus</Input>
+         <Input>/Temporary/FilingStatus/CivilUnionMaritalStatus</Input>
+         <Input>/Temporary/FilingStatus/LegallySeparatedMaritalStatus</Input>
+         <Input>/Temporary/FilingStatus/RDPMaritalStatus</Input>
+      </Inputs>
+      <Gist>
+         <AtLeastOneConditionTrue>
+            <Condition>/Temporary/FilingStatus/SingleMaritalStatus</Condition>
+            <Condition>/Temporary/FilingStatus/DivorcedMaritalStatus</Condition>
+            <Condition>/Temporary/FilingStatus/LegallySeparatedMaritalStatus</Condition>
+         </AtLeastOneConditionTrue>
+      </Gist>
+   </Node>
+
+   <Node name="/Temporary/FilingStatus/SingleQualifiesHeadOfHousehold">
+      <Inputs>
+         <Input>/Return/ReturnData/PPReturnInformation/MaintainHalfHomeExpensesIndPP</Input>
+         <Input>/Temporary/FilingStatus/QualifiesAsSingleButNotWidowed</Input>
+         <Input>/Return/ReturnData/PPReturnInformation/HOHDependentIndPP</Input>
+      </Inputs>
+      <Gist>
+         <AllConditionsTrue>
+            <Condition>/Return/ReturnData/PPReturnInformation/MaintainHalfHomeExpensesIndPP</Condition>
+            <Condition>/Temporary/FilingStatus/QualifiesAsSingleButNotWidowed</Condition>
+            <Condition>/Return/ReturnData/PPReturnInformation/HOHDependentIndPP</Condition>
+         </AllConditionsTrue>
+      </Gist>
+   </Node>
+
+   <!-- Married Marital Status -->
+
+   <Node name="/Temporary/FilingStatus/MarriedQualifiesHeadOfHousehold">
+      <Inputs>
+         <Input>/Return/ReturnData/PPReturnInformation/MaintainHalfHomeExpensesIndPP</Input>
+         <Input>/Temporary/FilingStatus/MarriedMaritalStatus</Input>
+         <Input>/Return/ReturnData/PPReturnInformation/HOHDependentIndPP</Input>
+         <Input>/Return/ReturnData/PPReturnInformation/DidNotLiveWithSpouseLastSixMonthsIndPP</Input>
+      </Inputs>
+      <Gist>
+         <AllConditionsTrue>
+            <Condition>/Return/ReturnData/PPReturnInformation/MaintainHalfHomeExpensesIndPP</Condition>
+            <Condition>/Temporary/FilingStatus/MarriedMaritalStatus</Condition>
+            <Condition>/Return/ReturnData/PPReturnInformation/HOHDependentIndPP</Condition>
+            <Condition>/Return/ReturnData/PPReturnInformation/DidNotLiveWithSpouseLastSixMonthsIndPP</Condition>
+         </AllConditionsTrue>
+      </Gist>
+   </Node>
+
+   <!-- Widowed Filing Status -->
+
+   <Node name="/Temporary/FilingStatus/NotWidowedNextTaxYear">
+      <Inputs>
+         <Input>/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/WidowedInYearPP</Input>
+         <Input>/Constants/IRS1040/FilingStatus/WidowedNextTaxYear</Input>
+      </Inputs>
+      <Gist>
+         <NotEquals>
+            <Value>/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/WidowedInYearPP</Value>
+            <Value>/Constants/IRS1040/FilingStatus/WidowedNextTaxYear</Value>
+         </NotEquals>
+      </Gist>
+   </Node>
+
+   <Node name="/Temporary/FilingStatus/NotWidowedTaxYear">
+      <Inputs>
+         <Input>/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/WidowedInYearPP</Input>
+         <Input>/Constants/IRS1040/FilingStatus/WidowedTaxYear</Input>
+      </Inputs>
+      <Gist>
+         <NotEquals>
+            <Value>/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/WidowedInYearPP</Value>
+            <Value>/Constants/IRS1040/FilingStatus/WidowedTaxYear</Value>
+         </NotEquals>
+      </Gist>
+   </Node>
+
+   <Node name="/Temporary/FilingStatus/WidowedTaxYearQualifiesHeadOfHousehold">
+      <Inputs>
+         <Input>/Return/ReturnData/PPReturnInformation/MaintainHalfHomeExpensesIndPP</Input>
+         <Input>/Temporary/FilingStatus/WidowedMaritalStatus</Input>
+         <Input>/Return/ReturnData/PPReturnInformation/HOHDependentIndPP</Input>
+         <Input>/Temporary/FilingStatus/WidowedTaxYear</Input>
+         <Input>/Return/ReturnData/PPReturnInformation/DidNotLiveWithSpouseLastSixMonthsIndPP</Input>
+         <Input>/Temporary/FilingStatus/DoNotFileJointReturn</Input>
+      </Inputs>
+      <Gist>
+         <AllConditionsTrue>
+            <Condition>/Return/ReturnData/PPReturnInformation/MaintainHalfHomeExpensesIndPP</Condition>
+            <Condition>/Temporary/FilingStatus/WidowedMaritalStatus</Condition>
+            <Condition>/Return/ReturnData/PPReturnInformation/HOHDependentIndPP</Condition>
+            <Condition>/Temporary/FilingStatus/WidowedTaxYear</Condition>
+            <Condition>/Return/ReturnData/PPReturnInformation/DidNotLiveWithSpouseLastSixMonthsIndPP</Condition>
+            <Condition>/Temporary/FilingStatus/DoNotFileJointReturn</Condition>
+         </AllConditionsTrue>
+      </Gist>
+   </Node>
+
+   <Node name="/Temporary/FilingStatus/WidowedNextTaxYearQualifiesHeadOfHousehold">
+      <Inputs>
+         <Input>/Return/ReturnData/PPReturnInformation/MaintainHalfHomeExpensesIndPP</Input>
+         <Input>/Temporary/FilingStatus/WidowedMaritalStatus</Input>
+         <Input>/Return/ReturnData/PPReturnInformation/HOHDependentIndPP</Input>
+         <Input>/Temporary/FilingStatus/WidowedNextTaxYear</Input>
+         <Input>/Return/ReturnData/PPReturnInformation/DidNotLiveWithSpouseLastSixMonthsIndPP</Input>
+         <Input>/Temporary/FilingStatus/DoNotFileJointReturn</Input>
+      </Inputs>
+      <Gist>
+         <AllConditionsTrue>
+            <Condition>/Return/ReturnData/PPReturnInformation/MaintainHalfHomeExpensesIndPP</Condition>
+            <Condition>/Temporary/FilingStatus/WidowedMaritalStatus</Condition>
+            <Condition>/Return/ReturnData/PPReturnInformation/HOHDependentIndPP</Condition>
+            <Condition>/Temporary/FilingStatus/WidowedNextTaxYear</Condition>
+            <Condition>/Return/ReturnData/PPReturnInformation/DidNotLiveWithSpouseLastSixMonthsIndPP</Condition>
+            <Condition>/Temporary/FilingStatus/DoNotFileJointReturn</Condition>
+         </AllConditionsTrue>
+      </Gist>
+   </Node>
+
+   <Node name="/Temporary/FilingStatus/WidowedBeforeTaxYearQualifiesHeadOfHousehold">
+      <Inputs>
+         <Input>/Return/ReturnData/PPReturnInformation/MaintainHalfHomeExpensesIndPP</Input>
+         <Input>/Temporary/FilingStatus/WidowedMaritalStatus</Input>
+         <Input>/Return/ReturnData/PPReturnInformation/HOHDependentIndPP</Input>
+         <Input>/Temporary/FilingStatus/NotWidowedNextTaxYear</Input>
+         <Input>/Temporary/FilingStatus/NotWidowedTaxYear</Input>
+      </Inputs>
+      <Gist>
+         <AllConditionsTrue>
+            <Condition>/Return/ReturnData/PPReturnInformation/MaintainHalfHomeExpensesIndPP</Condition>
+            <Condition>/Temporary/FilingStatus/WidowedMaritalStatus</Condition>
+            <Condition>/Return/ReturnData/PPReturnInformation/HOHDependentIndPP</Condition>
+            <Condition>/Temporary/FilingStatus/NotWidowedNextTaxYear</Condition>
+            <Condition>/Temporary/FilingStatus/NotWidowedTaxYear</Condition>
+         </AllConditionsTrue>
+      </Gist>
+   </Node>
+
+   <!-- Head of Household Qualification -->
+
+   <Node name="/Return/ReturnData/PPReturnInformation/HeadOfHouseholdFilingStatusQualIndPP">
+      <Inputs>
+         <Input>/Temporary/FilingStatus/SingleQualifiesHeadOfHousehold</Input>
+         <Input>/Temporary/FilingStatus/MarriedQualifiesHeadOfHousehold</Input>
+         <Input>/Temporary/FilingStatus/WidowedTaxYearQualifiesHeadOfHousehold</Input>
+         <Input>/Temporary/FilingStatus/WidowedNextTaxYearQualifiesHeadOfHousehold</Input>
+         <Input>/Temporary/FilingStatus/WidowedBeforeTaxYearQualifiesHeadOfHousehold</Input>
+      </Inputs>
+      <Gist>
+         <AtLeastOneConditionTrue>
+            <Condition>/Temporary/FilingStatus/MarriedQualifiesHeadOfHousehold</Condition>
+            <Condition>/Temporary/FilingStatus/WidowedTaxYearQualifiesHeadOfHousehold</Condition>
+            <Condition>/Temporary/FilingStatus/WidowedNextTaxYearQualifiesHeadOfHousehold</Condition>
+            <Condition>/Temporary/FilingStatus/WidowedBeforeTaxYearQualifiesHeadOfHousehold</Condition>
+            <Condition>/Temporary/FilingStatus/SingleQualifiesHeadOfHousehold</Condition>
+         </AtLeastOneConditionTrue>
+      </Gist>
+   </Node>
+
+   <!-- End Head of Household Calcs -->
+
+   <!-- Begin Qualifying Widow/er Calcs -->
+
+   <!-- Widowed Filing Status -->
+
+   <Node name="/Temporary/FilingStatus/WidowedPriorTaxYear">
+      <Inputs>
+         <Input>/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/WidowedInYearPP</Input>
+         <Input>/Constants/IRS1040/FilingStatus/WidowedPriorTaxYear</Input>
+      </Inputs>
+      <Gist>
+         <Equals>
+            <Value>/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/WidowedInYearPP</Value>
+            <Value>/Constants/IRS1040/FilingStatus/WidowedPriorTaxYear</Value>
+         </Equals>
+      </Gist>
+   </Node>
+
+   <Node name="/Temporary/FilingStatus/WidowedTwoPriorTaxYear">
+      <Inputs>
+         <Input>/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/WidowedInYearPP</Input>
+         <Input>/Constants/IRS1040/FilingStatus/WidowedTwoPriorTaxYear</Input>
+      </Inputs>
+      <Gist>
+         <Equals>
+            <Value>/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/WidowedInYearPP</Value>
+            <Value>/Constants/IRS1040/FilingStatus/WidowedTwoPriorTaxYear</Value>
+         </Equals>
+      </Gist>
+   </Node>
+
+   <Node name="/Temporary/FilingStatus/WidowedPriorOrTwoPriorTaxYear">
+      <Inputs>
+         <Input>/Temporary/FilingStatus/WidowedPriorTaxYear</Input>
+         <Input>/Temporary/FilingStatus/WidowedTwoPriorTaxYear</Input>
+      </Inputs>
+      <Gist>
+         <AtLeastOneConditionTrue>
+            <Condition>/Temporary/FilingStatus/WidowedPriorTaxYear</Condition>
+            <Condition>/Temporary/FilingStatus/WidowedTwoPriorTaxYear</Condition>
+         </AtLeastOneConditionTrue>
+      </Gist>
+   </Node>
+
+   <Node name="/Return/ReturnData/PPReturnInformation/QualifyingWidowFilingStatusQualIndPP">
+      <Inputs>
+         <Input>/Return/ReturnData/PPReturnInformation/MaintainHalfHomeExpensesIndPP</Input>
+         <Input>/Temporary/FilingStatus/WidowedMaritalStatus</Input>
+         <Input>/Return/ReturnData/PPReturnInformation/QWDependentIndPP</Input>
+         <Input>/Temporary/FilingStatus/WidowedPriorOrTwoPriorTaxYear</Input>
+         <Input>/Return/ReturnData/PPReturnInformation/CouldHaveFiledJointReturnIndPP</Input>
+      </Inputs>
+      <Gist>
+         <AllConditionsTrue>
+            <Condition>/Return/ReturnData/PPReturnInformation/MaintainHalfHomeExpensesIndPP</Condition>
+            <Condition>/Temporary/FilingStatus/WidowedMaritalStatus</Condition>
+            <Condition>/Return/ReturnData/PPReturnInformation/QWDependentIndPP</Condition>
+            <Condition>/Temporary/FilingStatus/WidowedPriorOrTwoPriorTaxYear</Condition>
+            <Condition>/Return/ReturnData/PPReturnInformation/CouldHaveFiledJointReturnIndPP</Condition>
+         </AllConditionsTrue>
+      </Gist>
+   </Node>
+
+   <!-- Recommended Filing Status -->
+   <Node name="/Return/ReturnData/PPReturnInformation/RecommendedFilingStatusPP">
+      <Inputs>
+         <Input>/Return/ReturnData/PPReturnInformation/SingleFilingStatusQualIndPP</Input>
+         <Input>/Return/ReturnData/PPReturnInformation/MarriedJointFilingStatusQualIndPP</Input>
+         <Input>/Return/ReturnData/PPReturnInformation/MarriedSeparateFilingStatusQualIndPP</Input>
+         <Input>/Return/ReturnData/PPReturnInformation/HeadOfHouseholdFilingStatusQualIndPP</Input>
+         <Input>/Return/ReturnData/PPReturnInformation/QualifyingWidowFilingStatusQualIndPP</Input>
+      </Inputs>
+      <Gist>
+         <FilingStatusRecommendation>
+            <SingleQualifyingIndicator>/Return/ReturnData/PPReturnInformation/SingleFilingStatusQualIndPP</SingleQualifyingIndicator>
+            <MarriedFilingJointQualifyingIndicator>/Return/ReturnData/PPReturnInformation/MarriedJointFilingStatusQualIndPP</MarriedFilingJointQualifyingIndicator>
+            <MarriedFilingSeparateQualifyingIndicator>/Return/ReturnData/PPReturnInformation/MarriedSeparateFilingStatusQualIndPP</MarriedFilingSeparateQualifyingIndicator>
+            <HeadOfHouseholdQualifyingIndicator>/Return/ReturnData/PPReturnInformation/HeadOfHouseholdFilingStatusQualIndPP</HeadOfHouseholdQualifyingIndicator>
+            <QualifyingWidowQualifyingIndicator>/Return/ReturnData/PPReturnInformation/QualifyingWidowFilingStatusQualIndPP</QualifyingWidowQualifyingIndicator>
+         </FilingStatusRecommendation>
+      </Gist>
+   </Node>
+
+   <!-- Copy the FilingStatus to IRS1040 -->
+   <Node name="/Return/ReturnData/PPReturnInformation/FinalFilingStatusPP">
+      <Inputs>
+         <Input>/Return/ReturnData/PPReturnInformation/RecommendedFilingStatusPP</Input>
+         <Input>/Return/ReturnData/PPReturnInformation/UserSelectedFilingStatusPP</Input>
+         <Input>/Temporary/FilingStatus/IsUserSelectedFilingStatusQualified</Input>
+      </Inputs>
+      <Gist>
+         <StringChoice>
+            <Choice>/Temporary/FilingStatus/IsUserSelectedFilingStatusQualified</Choice>
+            <Possibility>/Return/ReturnData/PPReturnInformation/RecommendedFilingStatusPP</Possibility>
+            <Possibility>/Return/ReturnData/PPReturnInformation/UserSelectedFilingStatusPP</Possibility>
+            <ChoiceMapping>
+               <Option>
+                  <Value>true</Value>
+                  <ID>/Return/ReturnData/PPReturnInformation/UserSelectedFilingStatusPP</ID>
+                  <NoOtherOption>true</NoOtherOption>
+               </Option>
+               <Option>
+                  <Value>false</Value>
+                  <ID>/Return/ReturnData/PPReturnInformation/RecommendedFilingStatusPP</ID>
+                  <NoOtherOption>false</NoOtherOption>
+               </Option>
+            </ChoiceMapping>
+         </StringChoice>
+      </Gist>
+   </Node>
+   
+   <Node name="/Temporary/FilingStatus/IsUserSelectedFilingStatusQualified">
+      <Inputs>
+         <Input>/Return/ReturnData/PPReturnInformation/UserSelectedFilingStatusPP</Input>
+         <Input>/Return/ReturnData/PPReturnInformation/SingleFilingStatusQualIndPP</Input>
+         <Input>/Return/ReturnData/PPReturnInformation/MarriedJointFilingStatusQualIndPP</Input>
+         <Input>/Return/ReturnData/PPReturnInformation/MarriedSeparateFilingStatusQualIndPP</Input>
+         <Input>/Return/ReturnData/PPReturnInformation/HeadOfHouseholdFilingStatusQualIndPP</Input>
+         <Input>/Return/ReturnData/PPReturnInformation/QualifyingWidowFilingStatusQualIndPP</Input>
+         <Input>/Constants/False</Input>
+      </Inputs>
+      <Gist>
+         <BooleanChoice>
+            <Choice>/Return/ReturnData/PPReturnInformation/UserSelectedFilingStatusPP</Choice>
+            <Possibility>/Return/ReturnData/PPReturnInformation/SingleFilingStatusQualIndPP</Possibility>
+            <Possibility>/Return/ReturnData/PPReturnInformation/MarriedJointFilingStatusQualIndPP</Possibility>
+            <Possibility>/Return/ReturnData/PPReturnInformation/MarriedSeparateFilingStatusQualIndPP</Possibility>
+            <Possibility>/Return/ReturnData/PPReturnInformation/HeadOfHouseholdFilingStatusQualIndPP</Possibility>
+            <Possibility>/Return/ReturnData/PPReturnInformation/QualifyingWidowFilingStatusQualIndPP</Possibility>
+            <Possibility>/Constants/False</Possibility>
+            <ChoiceMapping>
+               <Option>
+                  <Value>1</Value>
+                  <ID>/Return/ReturnData/PPReturnInformation/SingleFilingStatusQualIndPP</ID>
+                  <NoOtherOption>true</NoOtherOption>
+               </Option>
+               <Option>
+                  <Value>2</Value>
+                  <ID>/Return/ReturnData/PPReturnInformation/MarriedJointFilingStatusQualIndPP</ID>
+                  <NoOtherOption>true</NoOtherOption>
+               </Option>
+               <Option>
+                  <Value>3</Value>
+                  <ID>/Return/ReturnData/PPReturnInformation/MarriedSeparateFilingStatusQualIndPP</ID>
+                  <NoOtherOption>true</NoOtherOption>
+               </Option>
+               <Option>
+                  <Value>4</Value>
+                  <ID>/Return/ReturnData/PPReturnInformation/HeadOfHouseholdFilingStatusQualIndPP</ID>
+                  <NoOtherOption>true</NoOtherOption>
+               </Option>
+               <Option>
+                  <Value>5</Value>
+                  <ID>/Return/ReturnData/PPReturnInformation/QualifyingWidowFilingStatusQualIndPP</ID>
+                  <NoOtherOption>true</NoOtherOption>
+               </Option>
+               <DefaultOption>
+               		<ID>/Constants/False</ID>
+               		<NoOtherOption>false</NoOtherOption>
+               </DefaultOption>
+            </ChoiceMapping>
+         </BooleanChoice>
+      </Gist>
+   </Node>
+   
+   
+   <!--Inputs-->
+   <!-- New fields -->
+   <Node name="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/WidowedInYearPP" type="input"> </Node>
+
+   <Node name="/Return/ReturnData/PPReturnInformation/MaritalStatusPP" type="input"> </Node>
+
+   <Node name="/Return/ReturnData/PPReturnInformation/HOHDependentIndPP" type="input"> </Node>
+
+   <Node name="/Return/ReturnData/PPReturnInformation/QWDependentIndPP" type="input"> </Node>
+
+   <Node name="/Return/ReturnData/PPReturnInformation/CouldHaveFiledJointReturnIndPP" type="input"> </Node>
+
+   <Node name="/Return/ReturnData/PPReturnInformation/MaintainHalfHomeExpensesIndPP" type="input"> </Node>
+
+   <Node name="/Return/ReturnData/PPReturnInformation/DidNotLiveWithSpouseLastSixMonthsIndPP" type="input"> </Node>
+
+   <Node name="/Return/ReturnData/PPReturnInformation/FileJointReturnIndPP" type="input"> </Node>
+   
+   <Node name="/Return/ReturnData/PPReturnInformation/UserSelectedFilingStatusPP" type="input"/>
+   
+   <Node name="/Return/ReturnData/PPReturnInformation/SingleFilingStatusQualIndPP" type="input"></Node>
+   
+   <Node name="/Return/ReturnData/PPReturnInformation/MarriedJointFilingStatusQualIndPP" type="input"></Node>
+   
+   <Node name="/Return/ReturnData/PPReturnInformation/MarriedSeparateFilingStatusQualIndPP" type="input"></Node>
+   
+    <Node name="/Return/ReturnData/PPReturnInformation/HeadOfHouseholdFilingStatusQualIndPP" type="input"></Node>
+    
+    <Node name="/Return/ReturnData/PPReturnInformation/QualifyingWidowFilingStatusQualIndPP" type="input"></Node>
+   <!--End Inputs-->
+
+
+   <!--Constants-->
+   <Node name="/Constants/IRS1040/FilingStatus/WidowedPriorTwoPriorTaxYear" type="constant"> </Node>
+
+   <Node name="/Constants/IRS1040/FilingStatus/WidowedPriorTaxYear" type="constant"> </Node>
+
+   <Node name="/Constants/IRS1040/FilingStatus/WidowedTaxYear" type="constant"> </Node>
+
+   <Node name="/Constants/IRS1040/FilingStatus/WidowedTwoPriorTaxYear" type="constant"> </Node>
+
+   <Node name="/Constants/IRS1040/FilingStatus/WidowedNextTaxYear" type="constant"> </Node>
+
+   <Node name="/Constants/IRS1040/FilingStatus/SingleMaritalStatus" type="constant"> </Node>
+
+   <Node name="/Constants/IRS1040/FilingStatus/WidowedMaritalStatus" type="constant"> </Node>
+
+   <Node name="/Constants/IRS1040/FilingStatus/MarriedMaritalStatus" type="constant"> </Node>
+   
+   <Node name="/Constants/IRS1040/FilingStatus/DivorcedMaritalStatus" type="constant"> </Node>
+   
+   <Node name="/Constants/IRS1040/FilingStatus/RDPMaritalStatus" type="constant"> </Node>
+   
+   <Node name="/Constants/IRS1040/FilingStatus/CivilUnionMaritalStatus" type="constant"> </Node>
+   
+   <Node name="/Constants/IRS1040/FilingStatus/LegallySeparatedMaritalStatus" type="constant"> </Node>
+
+   <Node name="/Constants/IRS1040/FilingStatus/MarriedFilingStatusJoint" type="constant"> </Node>
+
+   <Node name="/Constants/IRS1040/FilingStatus/MarriedFilingStatusSeparate" type="constant"> </Node>
+   
+   <Node name="/Constants/False" type="constant"> </Node>
+   
+
+   <!--End Constants-->
+
+</Nodes>

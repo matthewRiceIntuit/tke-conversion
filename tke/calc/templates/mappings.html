@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <style>
+        body{
+            padding:0;
+            margin:0;
+        }
+        .header{
+            background:#0082c3;
+            color:white;
+        }
+        .logo{
+            padding:15px;
+            width:150px;
+        }
+        .pad{
+            padding:15px;
+        }
+
+        BUTTON{
+            font-size: 14px;
+            font-weight: 400;
+            cursor: pointer;
+            color: #ffffff;
+            background-color: #ff8000;
+            background-image: linear-gradient(to bottom, #ff8000, #ff7000);
+            -webkit-border-top-left-radius: 0.250em;
+            -moz-border-radius-topleft: 0.250em;
+            border-top-left-radius: 0.250em;
+            -webkit-border-top-right-radius: 0.250em;
+            -moz-border-radius-topright: 0.250em;
+            border-top-right-radius: 0.250em;
+            -webkit-border-bottom-right-radius: 0.250em;
+            -moz-border-radius-bottomright: 0.250em;
+            border-bottom-right-radius: 0.250em;
+            -webkit-border-bottom-left-radius: 0.250em;
+            -moz-border-radius-bottomleft: 0.250em;
+            border-bottom-left-radius: 0.250em;
+            outline: none;
+            height: 3.437em;
+            line-height: 3.437em;
+            width: 16em;
+            box-shadow: 1px 1px 5px 0 rgba(0, 0, 0, 0.45);
+            border: none;
+        }
+
+        table{
+            font-family:Avenir, sans-serif;
+            border-spacing: 0px;
+            border-collapse: separate;
+        }
+        .head {
+            background-color: #353c46;
+            color: white;
+            font-size: 17px;
+            padding: 10px;
+        }
+        td{
+            border: 1px solid #f0f0f0;
+            padding:10px;
+        }
+        input[type='text']{
+            padding:10px;
+            min-width:300px;
+            border-radius:6px;
+            border:solid 1px #eee
+
+        }
+        .errorlist{
+            color:red;
+            font-size:10px;
+            font-weight:800;
+            padding: 0 21px;
+        }
+        .menu{
+            font-family:Avenir, sans-serif;
+            color:white;
+            float:right;
+            text-decoration:none;
+            padding:20px;
+        }
+
+
+
+
+
+    </style>
+</head>
+<body>
+<div class="header">
+    <img class="logo" alt="Intuit TurboTax" src="https://turbotax.intuit.com/handlebars/common/templates/partials/navbar/images/logo_ttcom.856557a3.png">
+<a class="menu" href="{% url 'main' %}">Back</a>
+</div>
+<div class="pad">
+<table width="100%">
+    <tr><td class="head">TPS Field</td><td class="head">MFE++</td><td class="head"></td></tr>
+    <form method="POST"> {% csrf_token %}
+        <tr>
+            <td>{{form.tps}}{{ form.tps.errors }}</td>
+            <td>{{ form.tke }}{{ form.tke.errors }}</td>
+            <td>
+                <button>Add</button>
+            </td>
+        </tr>
+    </form>
+    <tr><td class="head">TPS Field</td><td class="head">MFE++</td><td class="head"></td></tr>
+    {% for each in mappings %}
+    <tr><td>{{ each.tps }}</td><td>{{ each.tke }}</td></tr>
+    {% endfor %}
+</table>
+</div>
+
+<script>
+    $(document).ready(function(){
+    })
+</script>
+
+</body>
+</html>

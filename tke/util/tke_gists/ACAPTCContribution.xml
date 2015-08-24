@@ -1,0 +1,1493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Nodes topic="Form8962Subsidy">
+	<Versions>
+		<Version id="TKE.Calc.FileFormat">1</Version>
+        <Version id="TKE.Calc.Runtime">1</Version>
+        <Version id="TKE.Gist">1</Version>
+        <Version id="TKE.MeF">1</Version>
+	</Versions>
+
+    <Node name="/Return/ReturnData/IRS8962/PartOfReturnPP">
+        <Inputs>
+            <Input>/Temporary/IRS8962/Has1095A</Input>
+            <Input>/Temporary/IRS8962/NeedToFile</Input>
+        </Inputs>
+        <Gist>
+            <AllConditionsTrue>
+                <Condition>/Temporary/IRS8962/Has1095A</Condition>
+                <Condition>/Temporary/IRS8962/NeedToFile</Condition>
+            </AllConditionsTrue>
+        </Gist>
+    </Node>    
+    
+    <!-- to determine if there are any 1095As, we just make a multicopy of a field that should always be filled out 
+        on every 1095A and check if there are any items in the multicopy list -->
+    <Node name="/Temporary/IRS8962/Has1095A">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1095A/TotalPlanPremiumAmtPP</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyHasValues>
+                <MultiCopyValue>/Return/ReturnData/IRS1095A/TotalPlanPremiumAmtPP</MultiCopyValue>
+            </MultiCopyHasValues>
+        </Gist>
+    </Node>    
+    
+    <!-- you must file if there is advanced PTC or if you are qualified to get PTC (even if there was no advance PTC) -->
+    <Node name="/Temporary/IRS8962/NeedToFile">
+        <Inputs>
+            <Input>/Temporary/IRS8962/HasAdvancedPTC</Input>
+            <Input>/Temporary/IRS8962/NotDisqualifiedFromPTC</Input>            
+        </Inputs>
+        <Gist>
+            <AtLeastOneConditionTrue>
+                <Condition>/Temporary/IRS8962/HasAdvancedPTC</Condition>
+                <Condition>/Temporary/IRS8962/NotDisqualifiedFromPTC</Condition>
+            </AtLeastOneConditionTrue>
+        </Gist>
+    </Node>
+    
+    <!-- if the total of all allocated advanced PTC is over 0, there is advanced PTC -->
+    <Node name="/Temporary/IRS8962/HasAdvancedPTC">
+        <Inputs>
+            <Input>/Temporary/IRS8962/TotalAllocatedMonthlyAdvancedPTCAmt</Input>
+            <Input>/Constants/Zero</Input>            
+        </Inputs>
+        <Gist>
+            <AboveThreshold>
+                <Value>/Temporary/IRS8962/TotalAllocatedMonthlyAdvancedPTCAmt</Value>
+                <Threshold>/Constants/Zero</Threshold>
+            </AboveThreshold>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/NotDisqualifiedFromPTC">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AnnualDisqualification</Input>
+        </Inputs>
+        <Gist>
+            <Opposite>
+                <Value>/Temporary/IRS8962/AnnualDisqualification</Value>
+            </Opposite>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/DisqualifiedDueToBelowMinPovertyLevel">
+        <Inputs>
+            <Input>/Temporary/IRS8962/DoesNotHavePTC</Input>
+            <Input>/Temporary/IRS8962/BelowMinPovertyLevelPercentage</Input>            
+        </Inputs>
+        <Gist>
+            <AllConditionsTrue>
+                <Condition>/Temporary/IRS8962/DoesNotHavePTC</Condition>
+                <Condition>/Temporary/IRS8962/BelowMinPovertyLevelPercentage</Condition>
+            </AllConditionsTrue>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/DoesNotHavePTC">
+        <Inputs>
+            <Input>/Temporary/IRS8962/HasAdvancedPTC</Input>            
+        </Inputs>
+        <Gist>
+            <Opposite>
+                <Value>/Temporary/IRS8962/HasAdvancedPTC</Value>
+            </Opposite>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/BelowMinPovertyLevelPercentage">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8962/FederalPovertyLevelPct</Input>
+            <Input>/Constants/IRS8962/MinPovertyLevelPctForPTC</Input>            
+        </Inputs>
+        <Gist>
+            <BelowThreshold>
+                <Value>/Return/ReturnData/IRS8962/FederalPovertyLevelPct</Value>
+                <Threshold>/Constants/IRS8962/MinPovertyLevelPctForPTC</Threshold>
+            </BelowThreshold>
+        </Gist>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS8962/MonthlyContriHealthCareCvrAmt">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8962/AnnualContributionAmt</Input>
+            <Input>/Constants/NumberMonthsInYear</Input>       
+            <Input>/Temporary/IRS8962/DisqualifiedDueToFilingStatus</Input>
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8962/DisqualifiedDueToFilingStatus</BlankIfTrue>
+                <Gist>
+                    <Quotient>
+                        <Numerator>/Return/ReturnData/IRS8962/AnnualContributionAmt</Numerator>
+                        <Denominator>/Constants/NumberMonthsInYear</Denominator>
+                    </Quotient>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    
+    
+    <Node name="/Return/ReturnData/IRS8962/AnnualContributionAmt">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8962/HouseholdIncomeAmt</Input>
+            <Input>/Return/ReturnData/IRS8962/FederalPovertyLevelPct</Input>
+            <Input>/Constants/IRS8962/RequiredContributionDecimalTable</Input>  
+            <Input>/Temporary/IRS8962/DisqualifiedDueToFilingStatus</Input>
+        </Inputs>
+        <ExtraValuesForFiling>
+            <ExtraValue>
+                <ID>/Return/ReturnData/IRS8962/ApplicableFigureRt</ID>
+                <RoundTo><Dec>4</Dec></RoundTo>
+            </ExtraValue>
+        </ExtraValuesForFiling>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8962/DisqualifiedDueToFilingStatus</BlankIfTrue>
+                <Gist>
+                    <ACARequiredContribution>
+                        <HouseholdIncome>/Return/ReturnData/IRS8962/HouseholdIncomeAmt</HouseholdIncome>
+                        <PovertyLevelPct>/Return/ReturnData/IRS8962/FederalPovertyLevelPct</PovertyLevelPct>
+                        <FPLDecimalTable>/Constants/IRS8962/RequiredContributionDecimalTable</FPLDecimalTable>
+                        <ApplicableFigureRt>/Return/ReturnData/IRS8962/ApplicableFigureRt</ApplicableFigureRt>
+                    </ACARequiredContribution>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS8962/FederalPovertyLevelPct">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8962/HouseholdIncomeAmt</Input>
+            <Input>/Return/ReturnData/IRS8962/PovertyLevelAmt</Input>            
+        </Inputs>
+        <Gist>
+            <ACAFindPercentageOfPovertyLevel>
+                <HouseholdIncome>/Return/ReturnData/IRS8962/HouseholdIncomeAmt</HouseholdIncome>
+                <PovertyLevelAmt>/Return/ReturnData/IRS8962/PovertyLevelAmt</PovertyLevelAmt>
+            </ACAFindPercentageOfPovertyLevel>
+        </Gist>
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS8962/PovertyLevelAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8962/StateWithHighestPovertyLevel</Input>
+            <Input>/Return/ReturnData/IRS1040/TotalExemptionsCnt</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/AlaskaFirstPerson</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/AlaskaIncrement</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/HawaiiFirstPerson</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/HawaiiIncrement</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/MainFirstPerson</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/MainIncrement</Input>            
+        </Inputs>
+        <ExtraValuesForFiling>
+            <ExtraValue>
+                <ID>/Return/ReturnData/IRS8962/FederalPovertyTableLocCd</ID>
+            </ExtraValue>
+            <ExtraValue>
+                <ID>/Return/ReturnData/IRS8962/TotalExemptionsCnt</ID>
+                <RoundTo><Integer/></RoundTo>
+            </ExtraValue>
+        </ExtraValuesForFiling>
+        <Gist>
+            <PovertyLevel>
+                <StateAbbreviationCd>/Temporary/IRS8962/StateWithHighestPovertyLevel</StateAbbreviationCd>
+                <FamilySize>/Return/ReturnData/IRS1040/TotalExemptionsCnt</FamilySize>
+                <AlaskaFirstPerson>/Constants/IRS8962/PovertyLevel/AlaskaFirstPerson</AlaskaFirstPerson>
+                <AlaskaIncrement>/Constants/IRS8962/PovertyLevel/AlaskaIncrement</AlaskaIncrement>
+                <HawaiiFirstPerson>/Constants/IRS8962/PovertyLevel/HawaiiFirstPerson</HawaiiFirstPerson>
+                <HawaiiIncrement>/Constants/IRS8962/PovertyLevel/HawaiiIncrement</HawaiiIncrement>
+                <MainFirstPerson>/Constants/IRS8962/PovertyLevel/MainFirstPerson</MainFirstPerson>
+                <MainIncrement>/Constants/IRS8962/PovertyLevel/MainIncrement</MainIncrement>
+                <LocationCodeID>/Return/ReturnData/IRS8962/FederalPovertyTableLocCd</LocationCodeID>
+                <TotalExemptionsCntID>/Return/ReturnData/IRS8962/TotalExemptionsCnt</TotalExemptionsCntID>
+            </PovertyLevel>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS8962/HshldIncmBelowPTCThresholdInd">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8962/FederalPovertyLevelPct</Input>
+            <Input>/Constants/IRS8962/MaxPovertyLevelPctForPTC</Input>       
+            <Input>/Temporary/IRS8962/DisqualifiedDueToFilingStatus</Input>
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8962/DisqualifiedDueToFilingStatus</BlankIfTrue>
+                <Gist>
+                    <EligibleDueToLowIncome>
+                        <Income>/Return/ReturnData/IRS8962/FederalPovertyLevelPct</Income>
+                        <Threshold>/Constants/IRS8962/MaxPovertyLevelPctForPTC</Threshold>
+                        <EligibleForWhat>premium tax credit</EligibleForWhat>
+                    </EligibleDueToLowIncome>                    
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+    </Node>
+    
+    <!-- line 3 -->
+    <!-- this cannot be negative -->
+    <Node name="/Return/ReturnData/IRS8962/HouseholdIncomeAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8962/IsRawHouseholdIncomeNegative</Input>
+            <Input>/Constants/Zero</Input>
+            <Input>/Temporary/IRS8962/RawHouseholdIncomeAmt</Input>            
+        </Inputs>
+        <Gist>
+            <NumericChoice>
+                <Choice>/Temporary/IRS8962/IsRawHouseholdIncomeNegative</Choice>
+                <Possibility>/Constants/Zero</Possibility>
+                <Possibility>/Temporary/IRS8962/RawHouseholdIncomeAmt</Possibility>
+                <ChoiceMapping>
+                    <Option>
+                        <Value>true</Value>
+                        <ID>/Constants/Zero</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <DefaultOption>
+                        <ID>/Temporary/IRS8962/RawHouseholdIncomeAmt</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </DefaultOption>                    
+                </ChoiceMapping>
+            </NumericChoice>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/IsRawHouseholdIncomeNegative">
+        <Inputs>
+            <Input>/Temporary/IRS8962/RawHouseholdIncomeAmt</Input>
+            <Input>/Constants/Zero</Input>            
+        </Inputs>
+        <Gist>
+            <BelowThreshold>
+                <Value>/Temporary/IRS8962/RawHouseholdIncomeAmt</Value>
+                <Threshold>/Constants/Zero</Threshold>
+            </BelowThreshold>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/RawHouseholdIncomeAmt">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8962/ModifiedAGIAmt</Input>
+            <Input>/Return/ReturnData/IRS8962/TotalDependentsModifiedAGIAmt</Input>            
+        </Inputs>
+        <Gist>
+            <Accumulation>
+                <Value>/Return/ReturnData/IRS8962/ModifiedAGIAmt</Value>
+                <Value>/Return/ReturnData/IRS8962/TotalDependentsModifiedAGIAmt</Value>
+                <Type>income</Type>
+            </Accumulation>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS8962/ModifiedAGIAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8962/IsModifiedAGIAmtBlank</Input>
+            <Input>/Constants/Zero</Input>
+            <Input>/Temporary/IRS8962/RawModifiedAGIAmt</Input>            
+        </Inputs>
+        <Gist>
+            <NumericChoice>
+                <Choice>/Temporary/IRS8962/IsModifiedAGIAmtBlank</Choice>
+                <Possibility>/Constants/Zero</Possibility>
+                <Possibility>/Temporary/IRS8962/RawModifiedAGIAmt</Possibility>
+                <ChoiceMapping>
+                    <Option>
+                        <Value>true</Value>
+                        <ID>/Constants/Zero</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <DefaultOption>
+                        <ID>/Temporary/IRS8962/RawModifiedAGIAmt</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </DefaultOption>                    
+                </ChoiceMapping>
+            </NumericChoice>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+
+    <Node name="/Temporary/IRS8962/IsModifiedAGIAmtBlank">
+        <Inputs>
+            <Input>/Temporary/IRS8962/RawModifiedAGIAmt</Input>
+        </Inputs>
+        <Gist>
+            <IsBlank>
+                <Value>/Temporary/IRS8962/RawModifiedAGIAmt</Value>
+            </IsBlank>
+        </Gist>
+    </Node>
+
+    <Node name="/Temporary/IRS8962/RawModifiedAGIAmt">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1040/AdjustedGrossIncomeAmt</Input>
+            <Input>/Return/ReturnData/IRS1040/TaxExemptInterestAmt</Input>      
+            <Input>/Return/ReturnData/IRS1040/SocSecBnftAmt</Input>
+            <Input>/Temporary/IRS8962/TotalTotalIncomeExclusionAmt</Input>
+            <Input>/Temporary/IRS8962/TotalHousingDeductionAmt</Input>
+            <Input>/Return/ReturnData/IRS1040/TaxableSocSecAmt</Input>
+        </Inputs>
+        <Gist>
+             <ModAGI>
+                 <AGI>/Return/ReturnData/IRS1040/AdjustedGrossIncomeAmt</AGI>
+                 <ItemToAdd>/Return/ReturnData/IRS1040/TaxExemptInterestAmt</ItemToAdd>      
+                 <ItemToAdd>/Return/ReturnData/IRS1040/SocSecBnftAmt</ItemToAdd>
+                 <ItemToAdd>/Temporary/IRS8962/TotalTotalIncomeExclusionAmt</ItemToAdd>
+                 <ItemToAdd>/Temporary/IRS8962/TotalHousingDeductionAmt</ItemToAdd>
+                 <ItemToRemove>/Return/ReturnData/IRS1040/TaxableSocSecAmt</ItemToRemove>
+            </ModAGI>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/TotalTotalIncomeExclusionAmt">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS2555/TotalIncomeExclusionAmt</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyAccumulation>
+                <Value>/Return/ReturnData/IRS2555/TotalIncomeExclusionAmt</Value>
+                <Type>income</Type>
+            </MultiCopyAccumulation>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/TotalHousingDeductionAmt">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS2555/HousingDeductionAmt</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyAccumulation>
+                <Value>/Return/ReturnData/IRS2555/HousingDeductionAmt</Value>
+                <Type>deduction</Type>
+            </MultiCopyAccumulation>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltPrimaryMonthlyContriHealthCareCvrAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltPrimaryAnnualContributionAmt</Input>
+            <Input>/Constants/NumberMonthsInYear</Input>            
+        </Inputs>
+        <Gist>
+            <Quotient>
+                <Numerator>/Temporary/IRS8962/AltPrimaryAnnualContributionAmt</Numerator>
+                <Denominator>/Constants/NumberMonthsInYear</Denominator>
+            </Quotient>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltPrimaryAnnualContributionAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltPrimaryFederalPovertyLevelPct</Input>
+            <Input>/Temporary/IRS8962/HalfHouseholdIncomeAmt</Input>
+            <Input>/Constants/IRS8962/RequiredContributionDecimalTable</Input>                            
+        </Inputs>
+        <Gist>
+            <ACARequiredContribution>
+                <PovertyLevelPct>/Temporary/IRS8962/AltPrimaryFederalPovertyLevelPct</PovertyLevelPct>
+                <HouseholdIncome>/Temporary/IRS8962/HalfHouseholdIncomeAmt</HouseholdIncome>
+                <FPLDecimalTable>/Constants/IRS8962/RequiredContributionDecimalTable</FPLDecimalTable>                
+            </ACARequiredContribution>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltPrimaryFederalPovertyLevelPct">
+        <Inputs>
+            <Input>/Temporary/IRS8962/HalfHouseholdIncomeAmt</Input>
+            <Input>/Temporary/IRS8962/AltPrimaryPovertyLevelAmt</Input>            
+        </Inputs>
+        <Gist>
+            <ACAFindPercentageOfPovertyLevel>
+                <HouseholdIncome>/Temporary/IRS8962/HalfHouseholdIncomeAmt</HouseholdIncome>
+                <PovertyLevelAmt>/Temporary/IRS8962/AltPrimaryPovertyLevelAmt</PovertyLevelAmt>
+            </ACAFindPercentageOfPovertyLevel>
+        </Gist>
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/HalfHouseholdIncomeAmt">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8962/HouseholdIncomeAmt</Input>
+            <Input>/Constants/FiftyPercent</Input>            
+        </Inputs>
+        <Gist>
+            <PercentageOf>
+                <Value>/Return/ReturnData/IRS8962/HouseholdIncomeAmt</Value>
+                <Percentage>/Constants/FiftyPercent</Percentage>
+                <ValueType>income</ValueType>
+                <OutputType>income</OutputType>
+            </PercentageOf>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    
+    <Node name="/Temporary/IRS8962/AltPrimaryPovertyLevelAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8962/StateWithHighestPovertyLevel</Input>
+            <Input>/Temporary/IRS8962/AltPrimaryFamilySize</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/AlaskaFirstPerson</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/AlaskaIncrement</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/HawaiiFirstPerson</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/HawaiiIncrement</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/MainFirstPerson</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/MainIncrement</Input>                            
+        </Inputs>
+        <Gist>
+            <PovertyLevel>
+                <StateAbbreviationCd>/Temporary/IRS8962/StateWithHighestPovertyLevel</StateAbbreviationCd>
+                <FamilySize>/Temporary/IRS8962/AltPrimaryFamilySize</FamilySize>
+                <AlaskaFirstPerson>/Constants/IRS8962/PovertyLevel/AlaskaFirstPerson</AlaskaFirstPerson>
+                <AlaskaIncrement>/Constants/IRS8962/PovertyLevel/AlaskaIncrement</AlaskaIncrement>
+                <HawaiiFirstPerson>/Constants/IRS8962/PovertyLevel/HawaiiFirstPerson</HawaiiFirstPerson>
+                <HawaiiIncrement>/Constants/IRS8962/PovertyLevel/HawaiiIncrement</HawaiiIncrement>
+                <MainFirstPerson>/Constants/IRS8962/PovertyLevel/MainFirstPerson</MainFirstPerson>
+                <MainIncrement>/Constants/IRS8962/PovertyLevel/MainIncrement</MainIncrement>                
+            </PovertyLevel>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltSpouseMonthlyContriHealthCareCvrAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltSpouseAnnualContributionAmt</Input>
+            <Input>/Constants/NumberMonthsInYear</Input>            
+        </Inputs>
+        <Gist>
+            <Quotient>
+                <Numerator>/Temporary/IRS8962/AltSpouseAnnualContributionAmt</Numerator>
+                <Denominator>/Constants/NumberMonthsInYear</Denominator>
+            </Quotient>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltSpouseAnnualContributionAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltSpouseFederalPovertyLevelPct</Input>
+            <Input>/Temporary/IRS8962/HalfHouseholdIncomeAmt</Input>
+            <Input>/Constants/IRS8962/RequiredContributionDecimalTable</Input>                
+        </Inputs>
+        <Gist>
+            <ACARequiredContribution>
+                <PovertyLevelPct>/Temporary/IRS8962/AltSpouseFederalPovertyLevelPct</PovertyLevelPct>
+                <HouseholdIncome>/Temporary/IRS8962/HalfHouseholdIncomeAmt</HouseholdIncome>
+                <FPLDecimalTable>/Constants/IRS8962/RequiredContributionDecimalTable</FPLDecimalTable>                
+            </ACARequiredContribution>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltSpouseFederalPovertyLevelPct">
+        <Inputs>
+            <Input>/Temporary/IRS8962/HalfHouseholdIncomeAmt</Input>
+            <Input>/Temporary/IRS8962/AltSpousePovertyLevelAmt</Input>                            
+        </Inputs>
+        <Gist>
+            <ACAFindPercentageOfPovertyLevel>
+                <HouseholdIncome>/Temporary/IRS8962/HalfHouseholdIncomeAmt</HouseholdIncome>
+                <PovertyLevelAmt>/Temporary/IRS8962/AltSpousePovertyLevelAmt</PovertyLevelAmt>                
+            </ACAFindPercentageOfPovertyLevel>
+        </Gist>
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltSpousePovertyLevelAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8962/StateWithHighestPovertyLevel</Input>
+            <Input>/Temporary/IRS8962/AltSpouseFamilySize</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/AlaskaFirstPerson</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/AlaskaIncrement</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/HawaiiFirstPerson</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/HawaiiIncrement</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/MainFirstPerson</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/MainIncrement</Input>                                           
+        </Inputs>
+        <Gist>
+            <PovertyLevel>
+                <StateAbbreviationCd>/Temporary/IRS8962/StateWithHighestPovertyLevel</StateAbbreviationCd>
+                <FamilySize>/Temporary/IRS8962/AltSpouseFamilySize</FamilySize>
+                <AlaskaFirstPerson>/Constants/IRS8962/PovertyLevel/AlaskaFirstPerson</AlaskaFirstPerson>
+                <AlaskaIncrement>/Constants/IRS8962/PovertyLevel/AlaskaIncrement</AlaskaIncrement>
+                <HawaiiFirstPerson>/Constants/IRS8962/PovertyLevel/HawaiiFirstPerson</HawaiiFirstPerson>
+                <HawaiiIncrement>/Constants/IRS8962/PovertyLevel/HawaiiIncrement</HawaiiIncrement>
+                <MainFirstPerson>/Constants/IRS8962/PovertyLevel/MainFirstPerson</MainFirstPerson>
+                <MainIncrement>/Constants/IRS8962/PovertyLevel/MainIncrement</MainIncrement>                               
+            </PovertyLevel>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <!-- this node finds the state with the highest poverty level among the states that the taxpayer or spouse lived in for the year.
+      The ID of PotentialPovertyLevelAmts is the state abbreviation. -->
+    <Node name="/Temporary/IRS8962/StateWithHighestPovertyLevel">
+        <Inputs>
+            <Input>/Temporary/IRS8962/PotentialPovertyLevelAmts</Input>
+        </Inputs>
+        <Gist>
+            <FindIDForMaxValue>
+                <Values>/Temporary/IRS8962/PotentialPovertyLevelAmts</Values>
+            </FindIDForMaxValue>
+        </Gist>
+    </Node>
+    
+    <!-- this node finds the poverty level for each state that the taxpayer or spouse lived in for the year -->
+    <Node name="/Temporary/IRS8962/PotentialPovertyLevelAmts">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AllStatesOfResidence</Input>
+            <Input>/Return/ReturnData/IRS1040/TotalExemptionsCnt</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/AlaskaFirstPerson</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/AlaskaIncrement</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/HawaiiFirstPerson</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/HawaiiIncrement</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/MainFirstPerson</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/MainIncrement</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AllStatesOfResidence</List>
+                <Gist>
+                    <PovertyLevel>
+                        <StateAbbreviationCd>/Temporary/IRS8962/AllStatesOfResidence</StateAbbreviationCd>
+                        <FamilySize>/Return/ReturnData/IRS1040/TotalExemptionsCnt</FamilySize>
+                        <AlaskaFirstPerson>/Constants/IRS8962/PovertyLevel/AlaskaFirstPerson</AlaskaFirstPerson>
+                        <AlaskaIncrement>/Constants/IRS8962/PovertyLevel/AlaskaIncrement</AlaskaIncrement>
+                        <HawaiiFirstPerson>/Constants/IRS8962/PovertyLevel/HawaiiFirstPerson</HawaiiFirstPerson>
+                        <HawaiiIncrement>/Constants/IRS8962/PovertyLevel/HawaiiIncrement</HawaiiIncrement>
+                        <MainFirstPerson>/Constants/IRS8962/PovertyLevel/MainFirstPerson</MainFirstPerson>
+                        <MainIncrement>/Constants/IRS8962/PovertyLevel/MainIncrement</MainIncrement>
+                    </PovertyLevel>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>        
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AllStatesOfResidence">
+        <Inputs>
+            <Input>/Return/ReturnHeader/Filer/PrimaryResidentStatesInfoGrpPP/ResidentStateInfoPP/ResidentStateAbbreviationCdPP</Input>
+            <Input>/Temporary/IRS8962/SpouseStatesOfResidenceIfApplicable</Input>            
+        </Inputs>
+        <Gist>
+            <MergeStringLists>
+                <StringList>/Return/ReturnHeader/Filer/PrimaryResidentStatesInfoGrpPP/ResidentStateInfoPP/ResidentStateAbbreviationCdPP</StringList>
+                <StringList>/Temporary/IRS8962/SpouseStatesOfResidenceIfApplicable</StringList>
+            </MergeStringLists>
+        </Gist>
+    </Node>
+    
+    <!-- the spouse's states of residence can only be used if married filing jointly.  Otherwise they must be filtered out. -->
+    <Node name="/Temporary/IRS8962/SpouseStatesOfResidenceIfApplicable">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</Input>
+            <Input>/Return/ReturnHeader/Filer/SpouseResidentStatesInfoGrpPP/ResidentStateInfoPP/ResidentStateAbbreviationCdPP</Input>
+            <Input>/Temporary/IRS8962/BlankStatesOfResidence</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyChoice>
+                <Choice>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</Choice>
+                <Possibility>/Return/ReturnHeader/Filer/SpouseResidentStatesInfoGrpPP/ResidentStateInfoPP/ResidentStateAbbreviationCdPP</Possibility>
+                <Possibility>/Temporary/IRS8962/BlankStatesOfResidence</Possibility>
+                <ChoiceMapping>
+                    <Option>
+                        <Value>1</Value>
+                        <ID>/Temporary/IRS8962/BlankStatesOfResidence</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>2</Value>
+                        <ID>/Return/ReturnHeader/Filer/SpouseResidentStatesInfoGrpPP/ResidentStateInfoPP/ResidentStateAbbreviationCdPP</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>3</Value>
+                        <ID>/Temporary/IRS8962/BlankStatesOfResidence</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>4</Value>
+                        <ID>/Temporary/IRS8962/BlankStatesOfResidence</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>5</Value>
+                        <ID>/Temporary/IRS8962/BlankStatesOfResidence</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value></Value>
+                        <ID>/Temporary/IRS8962/BlankStatesOfResidence</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                </ChoiceMapping>
+            </MultiCopyChoice>
+        </Gist>
+    </Node>
+    
+    <!-- this creates a blank multicopy list that can be used as the output of the spouse states of residence if it is not married filing jointly.
+        By using the spouse states of residences as an input to MultiCopyChoice, we keep the dependency graph accurate.
+        If any other multicopy value was used for this, it the spouse states of residence would be dependent on it, when it really shouldn't be.
+        There needs to be a better way to create a blank multicopy list in the future infrastructure -->
+    <Node name="/Temporary/IRS8962/BlankStatesOfResidence">
+        <Inputs>
+            <Input>/Constants/True</Input>
+            <Input>/Constants/False</Input>
+            <Input>/Return/ReturnHeader/Filer/SpouseResidentStatesInfoGrpPP/ResidentStateInfoPP/ResidentStateAbbreviationCdPP</Input>
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Constants/True</BlankIfTrue>
+                <Gist>
+                    <MultiCopyChoice>
+                        <Choice>/Constants/False</Choice>
+                        <Possibility>/Return/ReturnHeader/Filer/SpouseResidentStatesInfoGrpPP/ResidentStateInfoPP/ResidentStateAbbreviationCdPP</Possibility>
+                        <ChoiceMapping>
+                            <Option>
+                                <Value>false</Value>
+                                <ID>/Return/ReturnHeader/Filer/SpouseResidentStatesInfoGrpPP/ResidentStateInfoPP/ResidentStateAbbreviationCdPP</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value></Value>
+                                <ID>/Return/ReturnHeader/Filer/SpouseResidentStatesInfoGrpPP/ResidentStateInfoPP/ResidentStateAbbreviationCdPP</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                        </ChoiceMapping>
+                    </MultiCopyChoice>                    
+                </Gist>
+            </BlankIfApplicable>            
+        </Gist>
+    </Node>
+    
+    
+    <Node name="/Temporary/IRS8962/AltPrimaryFamilySize">
+        <Inputs>
+            <Input>/Temporary/IRS8962/IsEligibleToTryAltBasedOnFamilySituation</Input>
+            <Input>/Temporary/IRS8962/AltFamilySizeOverridden</Input>
+            <Input>/Temporary/IRS8962/AltPrimaryCalculatedFamilySize</Input>
+            <Input>/Return/ReturnData/IRS8962/AltCalcForMarriageInputsPrimaryCalcGrpPP/FamilySizeCntPP</Input>            
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfFalse>/Temporary/IRS8962/IsEligibleToTryAltBasedOnFamilySituation</BlankIfFalse>
+                <Gist>
+                    <NumericChoice>
+                        <Choice>/Temporary/IRS8962/AltFamilySizeOverridden</Choice>
+                        <Possibility>/Temporary/IRS8962/AltPrimaryCalculatedFamilySize</Possibility>
+                        <Possibility>/Return/ReturnData/IRS8962/AltCalcForMarriageInputsPrimaryCalcGrpPP/FamilySizeCntPP</Possibility>
+                        <ChoiceMapping>
+                            <Option>
+                                <Value>true</Value>
+                                <ID>/Return/ReturnData/IRS8962/AltCalcForMarriageInputsPrimaryCalcGrpPP/FamilySizeCntPP</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <DefaultOption>
+                                <ID>/Temporary/IRS8962/AltPrimaryCalculatedFamilySize</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </DefaultOption>
+                        </ChoiceMapping>
+                    </NumericChoice>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <!-- The auto allocation is done without considering dependents that can only be the taxpayer's.  
+        Thus we have to add them back in here. -->
+    <Node name="/Temporary/IRS8962/AltPrimaryCalculatedFamilySize">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltPrimaryOnlyDependentsCount</Input>
+            <Input>/Temporary/IRS8962/AltPrimaryCalculatedFamilySizeWithAutoAllocatedDependents</Input>            
+        </Inputs>
+        <Gist>
+            <Accumulation>
+                <Value>/Temporary/IRS8962/AltPrimaryOnlyDependentsCount</Value>
+                <Value>/Temporary/IRS8962/AltPrimaryCalculatedFamilySizeWithAutoAllocatedDependents</Value>
+                <Type>family size</Type>
+            </Accumulation>
+        </Gist>
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <!-- this finds the number of auto allocated dependents for the taxpayer.  Only the shared dependents
+        are auto allocated.  This node's result is 1 + the number of dependents auto allocated to the taxpayer.
+        The 1 is for the taxpayer. -->
+    <Node name="/Temporary/IRS8962/AltPrimaryCalculatedFamilySizeWithAutoAllocatedDependents">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltPrimaryHasPoliciesBeforeMarriage</Input>
+            <Input>/Temporary/IRS8962/AltSpouseHasPoliciesBeforeMarriage</Input>
+            <Input>/Temporary/IRS8962/AltSharedDependentsCount</Input>
+        </Inputs>
+        <Gist>
+            <ACAAltFamilySize>
+                <ThisPersonHasPolicies>/Temporary/IRS8962/AltPrimaryHasPoliciesBeforeMarriage</ThisPersonHasPolicies>
+                <OtherPersonHasPolicies>/Temporary/IRS8962/AltSpouseHasPoliciesBeforeMarriage</OtherPersonHasPolicies>
+                <NumberDependents>/Temporary/IRS8962/AltSharedDependentsCount</NumberDependents>
+                <RoundUp>true</RoundUp>
+                <ThisPersonID>/Return/ReturnHeader/Filer/PrimaryFullNamePP/PersonFirstNm</ThisPersonID>
+                <OtherPersonID>/Return/ReturnHeader/Filer/SpouseFullNamePP/PersonFirstNm</OtherPersonID>
+            </ACAAltFamilySize>
+        </Gist>
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltPrimaryHasPoliciesBeforeMarriage">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltPrimaryHas1095ABeforeMarriagePerMonth</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyAtLeastOneConditionTrue>
+                <Value>/Temporary/IRS8962/AltPrimaryHas1095ABeforeMarriagePerMonth</Value>
+            </MultiCopyAtLeastOneConditionTrue>
+        </Gist>
+    </Node>
+
+    <Node name="/Temporary/IRS8962/AltSpouseFamilySize">
+        <Inputs>
+            <Input>/Temporary/IRS8962/IsEligibleToTryAltBasedOnFamilySituation</Input>
+            <Input>/Temporary/IRS8962/AltFamilySizeOverridden</Input>
+            <Input>/Temporary/IRS8962/AltSpouseCalculatedFamilySize</Input>
+            <Input>/Return/ReturnData/IRS8962/AltCalcForMarriageInputsSpouseCalcGrpPP/FamilySizeCntPP</Input>            
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfFalse>/Temporary/IRS8962/IsEligibleToTryAltBasedOnFamilySituation</BlankIfFalse>
+                <Gist>
+                    <NumericChoice>
+                        <Choice>/Temporary/IRS8962/AltFamilySizeOverridden</Choice>
+                        <Possibility>/Temporary/IRS8962/AltSpouseCalculatedFamilySize</Possibility>
+                        <Possibility>/Return/ReturnData/IRS8962/AltCalcForMarriageInputsSpouseCalcGrpPP/FamilySizeCntPP</Possibility>
+                        <ChoiceMapping>
+                            <Option>
+                                <Value>true</Value>
+                                <ID>/Return/ReturnData/IRS8962/AltCalcForMarriageInputsSpouseCalcGrpPP/FamilySizeCntPP</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <DefaultOption>
+                                <ID>/Temporary/IRS8962/AltSpouseCalculatedFamilySize</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </DefaultOption>
+                        </ChoiceMapping>
+                    </NumericChoice>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+
+    <!-- The auto allocation is done without considering dependents that can only be the spouse's.  
+        Thus we have to add them back in here. -->    
+    <Node name="/Temporary/IRS8962/AltSpouseCalculatedFamilySize">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltSpouseOnlyDependentsCount</Input>
+            <Input>/Temporary/IRS8962/AltSpouseCalculatedFamilySizeWithAutoAllocatedDependents</Input>            
+        </Inputs>
+        <Gist>
+            <Accumulation>
+                <Value>/Temporary/IRS8962/AltSpouseOnlyDependentsCount</Value>
+                <Value>/Temporary/IRS8962/AltSpouseCalculatedFamilySizeWithAutoAllocatedDependents</Value>
+                <Type>family size</Type>
+            </Accumulation>
+        </Gist>
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltSpouseCalculatedFamilySizeWithAutoAllocatedDependents">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltSpouseHasPoliciesBeforeMarriage</Input>
+            <Input>/Temporary/IRS8962/AltPrimaryHasPoliciesBeforeMarriage</Input>
+            <Input>/Temporary/IRS8962/AltSharedDependentsCount</Input>            
+        </Inputs>
+        <Gist>
+            <ACAAltFamilySize>
+                <ThisPersonHasPolicies>/Temporary/IRS8962/AltSpouseHasPoliciesBeforeMarriage</ThisPersonHasPolicies>
+                <OtherPersonHasPolicies>/Temporary/IRS8962/AltPrimaryHasPoliciesBeforeMarriage</OtherPersonHasPolicies>
+                <NumberDependents>/Temporary/IRS8962/AltSharedDependentsCount</NumberDependents>
+                <RoundUp>false</RoundUp>
+                <ThisPersonID>/Return/ReturnHeader/Filer/SpouseFullNamePP/PersonFirstNm</ThisPersonID>
+                <OtherPersonID>/Return/ReturnHeader/Filer/PrimaryFullNamePP/PersonFirstNm</OtherPersonID>
+            </ACAAltFamilySize>
+        </Gist>
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltSpouseHasPoliciesBeforeMarriage">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltSpouseHas1095ABeforeMarriagePerMonth</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyAtLeastOneConditionTrue>
+                <Value>/Temporary/IRS8962/AltSpouseHas1095ABeforeMarriagePerMonth</Value>
+            </MultiCopyAtLeastOneConditionTrue>
+        </Gist>
+    </Node>
+
+    <Node name="/Temporary/IRS8962/IsMarriedFilingJointly">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</Input>
+            <Input>/Constants/True</Input>
+            <Input>/Constants/False</Input>
+        </Inputs>
+        <Gist>
+            <BooleanChoice>
+                <Choice>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</Choice>
+                <Possibility>/Constants/True</Possibility>
+                <Possibility>/Constants/False</Possibility>
+                <ChoiceMapping>
+                    <Option>
+                        <Value>2</Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <DefaultOption>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </DefaultOption>                    
+                </ChoiceMapping>
+            </BooleanChoice>
+        </Gist>
+    </Node>
+
+    <Node name="/Temporary/IRS8962/MarriedDuringYear">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8962/MonthOfMarriagePP</Input>
+        </Inputs>
+        <Gist>
+            <IsNotBlank>
+                <Value>/Return/ReturnData/IRS8962/MonthOfMarriagePP</Value>
+            </IsNotBlank>
+        </Gist>
+    </Node>
+
+    <Node name="/Temporary/IRS8962/AltFamilySizeOverridden">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltPrimaryFamilySizeOverridden</Input>
+            <Input>/Temporary/IRS8962/AltSpouseFamilySizeOverridden</Input>            
+        </Inputs>
+        <Gist>
+            <AtLeastOneConditionTrue>
+                <Condition>/Temporary/IRS8962/AltPrimaryFamilySizeOverridden</Condition>
+                <Condition>/Temporary/IRS8962/AltSpouseFamilySizeOverridden</Condition>
+            </AtLeastOneConditionTrue>
+        </Gist>
+    </Node>
+    
+    
+    <Node name="/Temporary/IRS8962/AltPrimaryFamilySizeOverridden">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8962/AltCalcForMarriageInputsPrimaryCalcGrpPP/FamilySizeCntPP</Input>
+        </Inputs>
+        <Gist>
+            <IsNotBlank>
+                <Value>/Return/ReturnData/IRS8962/AltCalcForMarriageInputsPrimaryCalcGrpPP/FamilySizeCntPP</Value>
+            </IsNotBlank>
+        </Gist>       
+    </Node>
+    
+    
+    <Node name="/Temporary/IRS8962/AltSpouseFamilySizeOverridden">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8962/AltCalcForMarriageInputsSpouseCalcGrpPP/FamilySizeCntPP</Input>            
+        </Inputs>
+        <Gist>
+            <IsNotBlank>
+                <Value>/Return/ReturnData/IRS8962/AltCalcForMarriageInputsSpouseCalcGrpPP/FamilySizeCntPP</Value>
+            </IsNotBlank>
+        </Gist>
+    </Node>
+    
+    <!-- Determines if the taxpayer is eligible to even try the alternate calculation.  
+        This does NOT consider the fact if the taxpayer must pay back or has a net premium tax credit.
+        This is based simply on filing status, the month of marriage, and if there is enough information
+        about the dependents to allocate them to either spouse. -->
+    <Node name="/Temporary/IRS8962/IsEligibleToTryAltBasedOnFamilySituation">
+        <Inputs>
+            <Input>/Temporary/IRS8962/MarriedDuringYear</Input>
+            <Input>/Temporary/IRS8962/IsMarriedFilingJointly</Input>
+            <Input>/Temporary/IRS8962/AltFamilyOverriddenOrAllDependentsAllocated</Input>            
+        </Inputs>
+        <Gist>
+            <AllConditionsTrue>
+                <Condition>/Temporary/IRS8962/MarriedDuringYear</Condition>
+                <Condition>/Temporary/IRS8962/IsMarriedFilingJointly</Condition>
+                <Condition>/Temporary/IRS8962/AltFamilyOverriddenOrAllDependentsAllocated</Condition>
+            </AllConditionsTrue>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltFamilyOverriddenOrAllDependentsAllocated">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltFamilySizeOverridden</Input>
+            <Input>/Temporary/IRS8962/AltAllDependentsAllocated</Input>            
+        </Inputs>
+        <Gist>
+            <AtLeastOneConditionTrue>
+                <Condition>/Temporary/IRS8962/AltFamilySizeOverridden</Condition>
+                <Condition>/Temporary/IRS8962/AltAllDependentsAllocated</Condition>
+            </AtLeastOneConditionTrue>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltAllDependentsAllocated">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltDependentsWithUnknownParentsCountIsZero</Input>
+            <Input>/Temporary/IRS8962/AltDependentsWithUnknownParentsCountIsBlank</Input>            
+        </Inputs>
+        <Gist>
+            <AtLeastOneConditionTrue>
+                <Condition>/Temporary/IRS8962/AltDependentsWithUnknownParentsCountIsZero</Condition>
+                <Condition>/Temporary/IRS8962/AltDependentsWithUnknownParentsCountIsBlank</Condition>
+            </AtLeastOneConditionTrue>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltDependentsWithUnknownParentsCountIsZero">
+        <Inputs>
+            <Input>/Constants/Zero</Input>
+            <Input>/Temporary/IRS8962/AltDependentsWithUnknownParentsCount</Input>
+        </Inputs>
+        <Gist>
+            <Equals>
+                <Value>/Constants/Zero</Value>
+                <Value>/Temporary/IRS8962/AltDependentsWithUnknownParentsCount</Value>
+            </Equals>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltDependentsWithUnknownParentsCountIsBlank">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltDependentsWithUnknownParentsCount</Input>
+        </Inputs>
+        <Gist>
+            <IsBlank>
+                <Value>/Temporary/IRS8962/AltDependentsWithUnknownParentsCount</Value>
+            </IsBlank>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/MarriedBeforeJuly">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8962/MonthOfMarriagePP</Input>
+            <Input>/Constants/True</Input>
+            <Input>/Constants/False</Input>
+        </Inputs>
+        <Gist>
+            <BooleanChoice>
+                <Choice>/Return/ReturnData/IRS8962/MonthOfMarriagePP</Choice>
+                <Possibility>/Constants/True</Possibility>
+                <Possibility>/Constants/False</Possibility>
+                <ChoiceMapping>
+                    <Option>
+                        <Value>01</Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>02</Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>03</Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>04</Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>05</Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>06</Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <DefaultOption>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </DefaultOption>
+                </ChoiceMapping>
+            </BooleanChoice>
+        </Gist>
+    </Node>
+    
+
+    <!-- this is the number of shared dependents that should be used for auto allocating dependents.
+        For marriages before July, all dependents are shared (we assume they lived together the last half
+        of the year).  For marriages after July, all dependents with a DependentsLegalParentsPP of Both are
+        included here. -->
+    <Node name="/Temporary/IRS8962/AltSharedDependentsCount">
+        <Inputs>
+            <Input>/Temporary/IRS8962/MarriedBeforeJuly</Input>
+            <Input>/Temporary/IRS8962/DependentsCount</Input>
+            <Input>/Temporary/IRS8962/AltSharedDependentIDsCount</Input>            
+        </Inputs>
+        <Gist>
+            <NumericChoice>
+                <Choice>/Temporary/IRS8962/MarriedBeforeJuly</Choice>
+                <Possibility>/Temporary/IRS8962/DependentsCount</Possibility>
+                <Possibility>/Temporary/IRS8962/AltSharedDependentIDsCount</Possibility>
+                <ChoiceMapping>
+                    <Option>
+                        <Value>true</Value>
+                        <ID>/Temporary/IRS8962/DependentsCount</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <DefaultOption>
+                        <ID>/Temporary/IRS8962/AltSharedDependentIDsCount</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </DefaultOption>
+                </ChoiceMapping>
+            </NumericChoice>
+        </Gist>
+        <RoundTo><Integer/></RoundTo>        
+    </Node>
+
+    <!-- this is the total number of dependents in the family -->
+    <Node name="/Temporary/IRS8962/DependentsCount">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1040/TotalExemptionsCnt</Input>
+            <Input>/Constants/Two</Input>
+        </Inputs>
+        <Gist>
+            <Difference>
+                <Left>/Return/ReturnData/IRS1040/TotalExemptionsCnt</Left>
+                <Right>/Constants/Two</Right>
+            </Difference>
+        </Gist>
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltSharedDependentIDsCount">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltSharedDependentIDs</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyCount>
+                <MultiCopy>/Temporary/IRS8962/AltSharedDependentIDs</MultiCopy>
+            </MultiCopyCount>
+        </Gist>
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltSharedDependentIDs">
+        <Inputs>
+            <Input>/Temporary/IRS8962/DependentLegalParents</Input>
+            <Input>/Constants/IRS1040/DependentDetail/DependentLegalParentsPP/Both</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyFindAllIDsForValue>
+                <MultiCopy>/Temporary/IRS8962/DependentLegalParents</MultiCopy>
+                <Value>/Constants/IRS1040/DependentDetail/DependentLegalParentsPP/Both</Value>
+            </MultiCopyFindAllIDsForValue>
+        </Gist>
+    </Node>
+    
+    <!-- This is the number of dependents that can only belong to the primary for the auto allocation.
+        If they were married before July, this is 0, since all dependents are auto allocated -->
+    <Node name="/Temporary/IRS8962/AltPrimaryOnlyDependentsCount">
+        <Inputs>
+            <Input>/Temporary/IRS8962/MarriedBeforeJuly</Input>
+            <Input>/Constants/Zero</Input>
+            <Input>/Temporary/IRS8962/AltPrimaryDependentIDsCount</Input>
+        </Inputs>
+        <Gist>
+            <NumericChoice>
+                <Choice>/Temporary/IRS8962/MarriedBeforeJuly</Choice>
+                <Possibility>/Constants/Zero</Possibility>
+                <Possibility>/Temporary/IRS8962/AltPrimaryDependentIDsCount</Possibility>
+                <ChoiceMapping>
+                    <Option>
+                        <Value>true</Value>
+                        <ID>/Constants/Zero</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <DefaultOption>
+                        <ID>/Temporary/IRS8962/AltPrimaryDependentIDsCount</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </DefaultOption>
+                </ChoiceMapping>
+            </NumericChoice>
+        </Gist>
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltPrimaryDependentIDsCount">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltPrimaryDependentIDs</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyCount>
+                <MultiCopy>/Temporary/IRS8962/AltPrimaryDependentIDs</MultiCopy>
+            </MultiCopyCount>
+        </Gist>
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltPrimaryDependentIDs">
+        <Inputs>
+            <Input>/Temporary/IRS8962/DependentLegalParents</Input>
+            <Input>/Constants/IRS1040/DependentDetail/DependentLegalParentsPP/Taxpayer</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyFindAllIDsForValue>
+                <MultiCopy>/Temporary/IRS8962/DependentLegalParents</MultiCopy>
+                <Value>/Constants/IRS1040/DependentDetail/DependentLegalParentsPP/Taxpayer</Value>
+            </MultiCopyFindAllIDsForValue>
+        </Gist>
+    </Node>
+    
+    <!-- This is the number of dependents that can only belong to the spouse for the auto allocation.
+        If they were married before July, this is 0, since all dependents are auto allocated -->
+    <Node name="/Temporary/IRS8962/AltSpouseOnlyDependentsCount">
+        <Inputs>
+            <Input>/Temporary/IRS8962/MarriedBeforeJuly</Input>
+            <Input>/Constants/Zero</Input>
+            <Input>/Temporary/IRS8962/AltSpouseDependentIDsCount</Input>            
+        </Inputs>
+        <Gist>
+            <NumericChoice>
+                <Choice>/Temporary/IRS8962/MarriedBeforeJuly</Choice>
+                <Possibility>/Constants/Zero</Possibility>
+                <Possibility>/Temporary/IRS8962/AltSpouseDependentIDsCount</Possibility>
+                <ChoiceMapping>
+                    <Option>
+                        <Value>true</Value>
+                        <ID>/Constants/Zero</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <DefaultOption>
+                        <ID>/Temporary/IRS8962/AltSpouseDependentIDsCount</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </DefaultOption>
+                </ChoiceMapping>
+            </NumericChoice>
+        </Gist>
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltSpouseDependentIDsCount">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltSpouseDependentIDs</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyCount>
+                <MultiCopy>/Temporary/IRS8962/AltSpouseDependentIDs</MultiCopy>
+            </MultiCopyCount>
+        </Gist>
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltSpouseDependentIDs">
+        <Inputs>
+            <Input>/Temporary/IRS8962/DependentLegalParents</Input>
+            <Input>/Constants/IRS1040/DependentDetail/DependentLegalParentsPP/Spouse</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyFindAllIDsForValue>
+                <MultiCopy>/Temporary/IRS8962/DependentLegalParents</MultiCopy>
+                <Value>/Constants/IRS1040/DependentDetail/DependentLegalParentsPP/Spouse</Value>
+            </MultiCopyFindAllIDsForValue>
+        </Gist>
+    </Node>
+    
+    <!-- This is the number of dependents that should be considered as not knowing who the owning taxpayer
+        is for the auto allocation.  If they were married before July, all dependents are shared and this is 0.
+        Otherwise it is the number of dependents that have a blank for the DependentLegalParentsPP field. -->
+    <Node name="/Temporary/IRS8962/AltDependentsWithUnknownParentsCount">
+        <Inputs>
+            <Input>/Temporary/IRS8962/MarriedBeforeJuly</Input>
+            <Input>/Constants/Zero</Input>
+            <Input>/Temporary/IRS8962/AltUnknownParentsDependentIDsCount</Input>            
+        </Inputs>
+        <Gist>
+            <NumericChoice>
+                <Choice>/Temporary/IRS8962/MarriedBeforeJuly</Choice>
+                <Possibility>/Constants/Zero</Possibility>
+                <Possibility>/Temporary/IRS8962/AltUnknownParentsDependentIDsCount</Possibility>
+                <ChoiceMapping>
+                    <Option>
+                        <Value>true</Value>
+                        <ID>/Constants/Zero</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <DefaultOption>
+                        <ID>/Temporary/IRS8962/AltUnknownParentsDependentIDsCount</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </DefaultOption>
+                </ChoiceMapping>
+            </NumericChoice>
+        </Gist>
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltUnknownParentsDependentIDsCount">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltUnknownParentsDependentIDs</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyCount>
+                <MultiCopy>/Temporary/IRS8962/AltUnknownParentsDependentIDs</MultiCopy>
+            </MultiCopyCount>
+        </Gist>
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltUnknownParentsDependentIDs">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltDependentLegalParentsBlank</Input>
+            <Input>/Constants/True</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyFindAllIDsForValue>
+                <MultiCopy>/Temporary/IRS8962/AltDependentLegalParentsBlank</MultiCopy>
+                <Value>/Constants/True</Value>
+            </MultiCopyFindAllIDsForValue>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltDependentLegalParentsBlank">
+        <Inputs>
+            <Input>/Temporary/IRS8962/DependentLegalParents</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/DependentLegalParents</List>
+                <Gist>
+                    <IsBlank>
+                        <Value>/Temporary/IRS8962/DependentLegalParents</Value>
+                    </IsBlank>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+    
+    <!-- This has the DependentLegalParentsPP field for each dependent that is a true dependent 
+        (filtering out dependents that have a code of Q or X.  This also includes blanks for dependents
+        that do not have a DependentLegalParentsPP defined. -->
+    <Node name="/Temporary/IRS8962/DependentLegalParents">
+        <Inputs>
+            <Input>/Temporary/IRS8962/DependentLegalParentsIncludingBlanks</Input>
+            <Input>/Temporary/IRS8962/DependentIDs</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/DependentIDs</List>
+                <Gist>
+                    <MultiCopySelectStringByID>
+                        <MultiCopy>/Temporary/IRS8962/DependentLegalParentsIncludingBlanks</MultiCopy>
+                        <ID>/Temporary/IRS8962/DependentIDs</ID>
+                    </MultiCopySelectStringByID>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+
+    <Node name="/Temporary/IRS8962/DependentLegalParentsIncludingBlanks">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1040/DependentDetail/(DependentLegalParentsPP)</Input>
+            <Input>/Constants/IRS1040/DependentDetail/DependentLegalParentsPP/DependentLegalParentsPPFieldName</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Return/ReturnData/IRS1040/DependentDetail/(DependentLegalParentsPP)</List>
+                <Gist>
+                    <MultiCopySelectStringByID>
+                        <MultiCopy>/Return/ReturnData/IRS1040/DependentDetail/(DependentLegalParentsPP)</MultiCopy>
+                        <ID>/Constants/IRS1040/DependentDetail/DependentLegalParentsPP/DependentLegalParentsPPFieldName</ID>
+                    </MultiCopySelectStringByID>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+
+    <Node name="/Temporary/IRS8962/DependentIDs">
+        <Inputs>
+            <Input>/Temporary/IRS8962/IsDependentExcluded</Input>
+            <Input>/Constants/False</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyFindAllIDsForValue>
+                <MultiCopy>/Temporary/IRS8962/IsDependentExcluded</MultiCopy>
+                <Value>/Constants/False</Value>
+            </MultiCopyFindAllIDsForValue>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/IsDependentExcluded">
+        <Inputs>
+            <Input>/Temporary/IRS8962/ExcludedDependentCodes</Input>
+            <Input>/Temporary/IRS8962/DependentCodesIncludingBlanks</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/DependentCodesIncludingBlanks</List>
+                <Gist>
+                    <MultiCopyHasSpecificValue>
+                        <MultiCopy>/Temporary/IRS8962/ExcludedDependentCodes</MultiCopy>
+                        <Value>/Temporary/IRS8962/DependentCodesIncludingBlanks</Value>
+                    </MultiCopyHasSpecificValue>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/DependentCodesIncludingBlanks">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1040/DependentDetail/(DependentCodePP)</Input>
+            <Input>/Constants/IRS8965/DependentCodePPFieldName</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Return/ReturnData/IRS1040/DependentDetail/(DependentCodePP)</List>
+                <Gist>
+                    <MultiCopySelectStringByID>
+                        <MultiCopy>/Return/ReturnData/IRS1040/DependentDetail/(DependentCodePP)</MultiCopy>
+                        <ID>/Constants/IRS8965/DependentCodePPFieldName</ID>
+                    </MultiCopySelectStringByID>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+    
+    
+    <Node name="/Temporary/IRS8962/ExcludedDependentCodes">
+        <Inputs>
+            <Input>/Constants/IRS8965/ExcludedDependentCodesList</Input>         
+        </Inputs>
+        <Gist>
+            <MultiCopyCreateFromCSV>
+                <Data>/Constants/IRS8965/ExcludedDependentCodesList</Data>
+                <UseStringAsKey>true</UseStringAsKey>
+            </MultiCopyCreateFromCSV>
+        </Gist>
+    </Node>
+    
+    
+
+
+    <!-- inputs -->
+    
+    <Node name="/Return/ReturnHeader/Filer/PrimaryResidentStatesInfoGrpPP/ResidentStateInfoPP/ResidentStateAbbreviationCdPP" type="multiCopyPrimitiveInput"/>
+    <Node name="/Return/ReturnHeader/Filer/SpouseResidentStatesInfoGrpPP/ResidentStateInfoPP/ResidentStateAbbreviationCdPP" type="multiCopyPrimitiveInput"/>
+    
+    <Node name="/Return/ReturnData/IRS1095A/TotalPlanPremiumAmtPP" type="multiCopyPrimitiveInput">
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>
+    </Node>
+    
+       
+    <Node name="/Return/ReturnData/IRS1040/TotalExemptionsCnt" type="input">
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS8962/TotalDependentsModifiedAGIAmt" type="input">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS1040/TaxExemptInterestAmt" type="input">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    <Node name="/Return/ReturnData/IRS1040/SocSecBnftAmt" type="input">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS1040/TaxableSocSecAmt" type="input">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS2555/TotalIncomeExclusionAmt" type="multiCopyPrimitiveInput">
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS2555/HousingDeductionAmt" type="multiCopyPrimitiveInput">
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>
+    </Node>
+    
+
+    <Node name="/Return/ReturnData/IRS8962/AltCalcForMarriageInputsPrimaryCalcGrpPP/FamilySizeCntPP" type="input">
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS8962/AltCalcForMarriageInputsSpouseCalcGrpPP/FamilySizeCntPP" type="input">
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS8962/MonthOfMarriagePP" type="input"/>
+    <Node name="/Return/ReturnData/IRS1040/DependentDetail/(DependentSSN)" type="multiCopyStructInput"/>
+    
+    <Node name="/Return/ReturnData/IRS1040/DependentDetail/(DependentLegalParentsPP)" type="multiCopyStructInput"/>
+    <Node name="/Return/ReturnData/IRS1040/DependentDetail/(DependentCodePP)" type="multiCopyStructInput"/>
+    
+    <!-- constants -->
+    <Node name="/Constants/Zero" type="constant"><RoundTo><Integer/></RoundTo></Node>
+    <Node name="/Constants/Two" type="constant"><RoundTo><Integer/></RoundTo></Node>
+    <Node name="/Constants/IRS8962/MinPovertyLevelPctForPTC" type="constant"><RoundTo><Integer/></RoundTo></Node>
+    
+    <Node name="/Constants/NumberMonthsInYear" type="constant">
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <Node name="/Constants/FiftyPercent" type="constant">
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <Node name="/Constants/IRS8962/RequiredContributionDecimalTable" type="constant"/>
+    
+    <Node name="/Constants/IRS8962/PovertyLevel/AlaskaFirstPerson" type="constant">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    <Node name="/Constants/IRS8962/PovertyLevel/AlaskaIncrement" type="constant">
+        <RoundTo><Dollars/></RoundTo>      
+    </Node>
+    
+    <Node name="/Constants/IRS8962/PovertyLevel/HawaiiFirstPerson" type="constant">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+
+    <Node name="/Constants/IRS8962/PovertyLevel/HawaiiIncrement" type="constant">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Constants/IRS8962/PovertyLevel/MainFirstPerson" type="constant">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Constants/IRS8962/PovertyLevel/MainIncrement" type="constant">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Constants/IRS8962/MaxPovertyLevelPctForPTC" type="constant">
+        <RoundTo><Integer/></RoundTo>        
+    </Node>
+
+    <Node name="/Constants/IRS1040/DependentDetail/DependentLegalParentsPP/DependentLegalParentsPPFieldName" type="constant"/>
+    <Node name="/Constants/IRS1040/DependentDetail/DependentLegalParentsPP/Taxpayer" type="constant"/>
+    <Node name="/Constants/IRS1040/DependentDetail/DependentLegalParentsPP/Spouse" type="constant"/>
+    <Node name="/Constants/IRS1040/DependentDetail/DependentLegalParentsPP/Both" type="constant"/>
+                
+    <!-- these constants are shared with 8965.  They should be moved to IRS1040 in the future
+        since they are about data on IRS1040, not 8965 nor 8962 -->
+    <Node name="/Constants/IRS8965/DependentCodePPFieldName" type="constant"/>
+    <Node name="/Constants/IRS8965/ExcludedDependentCodesList" type="constant"/>
+    
+</Nodes>
+

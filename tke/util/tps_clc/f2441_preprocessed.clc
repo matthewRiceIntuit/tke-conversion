@@ -1,0 +1,1621 @@
+
+FORM S2014US1040PER.F2441;
+CONSTANT
+	kLIMIT1 =	3000;
+		kLIMIT2 =	6000;
+	kMaxW2  =	5000;
+	kMaxW2MFS =	2500;
+	kEI1 =		250;
+	kEI2 =		500;
+VAR
+	hLine2c: FDollar;
+	totexp: FDollar;
+	totkids: FInteger;
+	totprov: FDollar;
+	tempexp: FDollar;
+	DCBProRate:FDollar;
+	hDCBProrate:FDollar;
+	hMDqualexp,
+	hMDSmlEI :FDollar;
+	kid: FInteger;
+	hL4			: FDollar;
+	hL5			: FDollar;
+	hL6			: FDollar;
+	hL7			: FDollar;
+	hL9			: FDollar;
+	hEFL9		: FDollar;
+	h41			: FDollar;
+	hStudent	: FInteger;
+	hDisabled 	: FInteger;
+	hSKIP		: FInteger;
+		_		: FText;
+	hcredit		: FDollar;
+	hEFcredit	: FDollar;
+	totact		: FDollar;
+
+
+
+	OPTOUT	: Boolean;
+	OPT2441	: Boolean;
+
+	Boxes	: Array[8] of Boolean;
+
+	RunCalc : Boolean;
+
+	hIntNotFinal : Boolean;
+
+	hlyL2:Array[999] of FDollar;
+	hlyL2F:Array[999] of FText;
+	hlyL10,hlyL12A,hlyL13,hlyS3,hlyS4 :FDollar;
+	hlyS1,hlyS2 :FInteger;
+	hLIMIT1,hLIMIT2,hMaxW2,hMaxW2MFS,hEI1,hEI2 :FInteger;
+
+	hNumNonStd	: Finteger;
+	hNSFName	:Array[999] of FText;
+	hNSNameAge	:Array[999] of FText;
+	hNSForm		:Array[999] of FInteger;
+	hNSCopyN	:Array[12] of Finteger;
+
+
+	TPNONTAX, SPNONTAX : FDollar;
+
+	hStdForm	:Array[999] of FInteger;
+	hStdCopyN	:Array[999] of Finteger;
+	hQualCopy	:Array[999] of FInteger;
+	hName		:Array[999] of FText;
+	hNameAge	:Array[999] of FText;
+	hPerName	:Array[999] of FText;
+	hPerLName	:Array[999] of FText;
+	hBusName	:Array[999] of FText;
+	hBusNmL2	:Array[999] of FText;
+	hProvAddr	:Array[999] of Ftext;
+	hProvCity	:Array[999] of Ftext;
+	hProvState	:Array[999] of FText;
+	hProvZIP	:Array[999] of FInteger;
+	hProvIDNo	:Array[999] of FEIN;
+	hProvAmtPd	:Array[999] of FInteger;
+
+    hMapTIN     :Array[999] of FText;
+
+	tREI : FDollar;
+
+	sREI : FDollar;
+
+	tDEI : FDollar;
+
+	sDEI : FDollar;
+
+	dcbBus : FDollar;
+
+	dcbEmp : FDollar;
+
+
+
+	tREI8839 : FDollar;
+
+	sREI8839 : FDollar;
+
+	ML178839 : FDollar;
+
+	ML198839 : FDollar;
+
+	ML298839 : FDollar;
+
+	F6251 : FDollar;
+
+
+	hL24 : FDollar;
+
+	hL25 : FDollar;
+
+	hL26 : FDollar;
+
+	hL27 : FDollar;
+
+
+	hF1116 : FDollar;
+	IgnNone	: boolean;
+	rueTPNoEarnInc,
+	rueSPNoEarnInc : boolean;
+SECTION SetDefines;
+Begin
+	hLIMIT1		:= 3000;
+	hLIMIT2		:= 6000;
+	hMaxW2		:= 5000;
+	hMaxW2MFS	:= 2500;
+	hEI1		:= 250;
+	hEI2		:= 500;
+End;
+Section CreditOptOut;
+Begin
+	RunCalc	:= 1;
+	If (OptOut) or (IsChecked(FOPTOUT.TEST2441)) then
+	Begin
+		RunCalc	:=0;
+		OPT2441 :=1;
+	End;
+
+End;
+SECTION DependentListForInterview;
+VAR
+
+	a : Index;
+
+	i : Index;
+
+	tNumPers,
+	tctr, nsctr : Finteger;
+
+	last: index;
+BEGIN
+	If (RunCalc) Then
+	Begin
+	tctr:= 0;
+	nsctr := 0;
+	tNumPers := NumCopies(FPERSWKS);
+	for a := 1 to tNumPers Do
+		begin
+
+		if (HasValue(FPERSWKS[a].CCEXP)) and (HasValue(FPERSWKS[a].CCEXP)) then
+				begin
+					tctr := tctr + 1;
+					hName[tctr] := FPERSWKS[a].FIRSTNAM;
+					IF (FPERSWKS[a].AGE > 0) THEN
+						hNameAge[tctr] := Concat(FPERSWKS[a].FIRSTNAM, " (age ", FPERSWKS[a].AGE, ")")
+					ELSE
+						hNameAge[tctr] := Concat(FPERSWKS[a].FIRSTNAM, " (age 0)");
+					hStdCopyN[tctr] := a;
+					hStdForm[tctr]  := 1;
+				end
+			else
+
+				begin
+					nsctr := nsctr + 1;
+					hNSFName[nsctr] := FPERSWKS[a].FIRSTNAM;
+					IF (FPERSWKS[a].AGE > 0) THEN
+						hNSNameAge[nsctr] := Concat(FPERSWKS[a].FIRSTNAM, " (age ", FPERSWKS[a].AGE, ")")
+					ELSE
+						hNSNameAge[nsctr] := Concat(FPERSWKS[a].FIRSTNAM, " (age 0)");
+					hNSCopyN[nsctr] := a;
+					hNSForm[nsctr] := 1;
+				end;
+		end;
+	tNumPers := NumCopies(FWDEPINF);
+	for a := 1 to tNumPers Do
+	begin
+
+		If
+			((FWDEPINF[a].CD = "L") or
+			(FWDEPINF[a].CD = "N") or
+			(FWDEPINF[a].CD = "Q") or
+			(FWDEPINF[a].CD  = "O")) then
+			begin
+
+						if (HasValue(FWDEPINF[a].CCEXP)) and (HasValue(FWDEPINF[a].CCEXP)) then
+					begin
+
+						tctr := tctr + 1;
+						hName[tctr]		:= FWDEPINF[a].FIRSTNAM;
+						IF (FWDEPINF[a].AGE > 0) THEN
+							hNameAge[tctr]	:= Concat(FWDEPINF[a].FIRSTNAM, " (age ", FWDEPINF[a].AGE, ")")
+						ELSE
+							hNameAge[tctr] := Concat(FWDEPINF[a].FIRSTNAM, " (age 0)");
+						hStdCopyN[tctr]	:= a;
+						hStdForm[tctr]	:= 2;
+					end
+				else
+
+
+				if (nsctr < 12) then
+					begin
+						nsctr := nsctr + 1;
+						hNSFName[nsctr] := FWDEPINF[a].FIRSTNAM;
+						IF (FWDEPINF[a].AGE > 0) THEN
+							hNSNameAge[nsctr] := Concat(FWDEPINF[a].FIRSTNAM, " (age ", FWDEPINF[a].AGE, ")")
+						ELSE
+							hNSNameAge[nsctr] := Concat(FWDEPINF[a].FIRSTNAM, " (age 0)");
+						hNSCopyN[nsctr] := a;
+						hNSForm[nsctr] := 2;
+					end;
+			end;
+	end;
+	hNumNonStd := nsctr;
+	End;
+END;
+SECTION Totals;
+	VAR
+	i: Index;
+		Begin
+			If (RunCalc) Then
+			Begin
+			i:= Lastindex(qual);
+			totkids:=i;
+			FOR i := 1 to totkids DO
+			BEGIN
+				hQualCopy[i] := i;
+			END;
+			totexp:= L2[1..i];
+			end;
+		end;
+SECTION ProvTotals;
+	Var
+	j:Index;
+		Begin
+			If (RunCalc) Then
+			Begin
+			j:=Lastindex(prov);
+			totprov:=L1D[1..j];
+			End;
+		End;
+SECTION Lines1to2;
+Var
+		tnumw2 : finteger;
+		i, j, last : index;
+		x : integer;
+		LPProvs: integer;
+		DLTCt 	: FInteger;
+Begin
+	If (RunCalc) Then
+	Begin
+		Name := FInfoWks.HName;
+		SSN  := FInfoWks.tSSN;
+		DLTCt := LastIndex(PROV);
+        FOR i := 1 to DLTCt DO
+	      Begin
+		    If IsChecked(TEBOX[i]) then
+              L1C2[i] := "TAXEXEMPT";
+		    If IsChecked(FGNBOX[i]) then
+              L1C2[i] := "LAFCP";
+			If IsChecked(REFUSE[i]) then
+              L1C2[i] := "SEE STMT";
+		    If IsChecked(UNKNOWN[i]) then
+              L1C2[i] := "SEE STMT";
+	      End;
+
+
+
+
+		If (FW2Sum.hDCBCount > 0) then
+		begin
+			tnumw2 := NumCopies(FW2);
+			For i := 1 to tnumw2 do
+				begin
+					If IsChecked(FW2[i].DCY) then
+						begin
+						x :=FirstAvailableIndex(prov);
+							L1A[x]:= FW2[i].CA;
+							L1B[x]:= "See W-2";
+							hProvIDNo[x] := FW2[i].EIN;
+							hProvAmtPd[x] := FW2[i].DCB;
+							x:= x + 1;
+						end;
+				end;
+		end;
+
+	End;
+End;
+SECTION HiddenMEFarray;
+VAR
+	DLTCt 	: FInteger;
+	i		: Index;
+Begin
+	If (RunCalc) Then
+	Begin
+		DLTCt := LastIndex(PROV);
+
+		FOR i := 1 to DLTCt DO
+		Begin
+			If HasValue(L1C2[i]) then
+			Begin
+				hBusName[i] := L1A[i];
+				hBusNmL2[i] := L1A2[i];
+			End
+			Else
+			Begin
+				hPerName[i]  := concat(L1A[i], " ", L1A2[i]);
+				hPerLName[i] := L1A2[i];
+			End;
+			hProvAddr[i]	:= L1B[i];
+			hProvCity[i]	:= L1B2[i];
+			hProvState[i]	:= ST[i];
+			hProvZIP[i]		:= ZIP[i];
+		End;
+	End;
+End;
+SECTION Line2c;
+	Begin
+		If (RunCalc) Then
+		Begin
+		If (L2a <> 0) or (L2b <> 0) or (L2aa<> 0 )then
+			begin
+				L2c:= totprov +L2aa + L2a - L2b;
+				hLine2c:= L2c;
+			end
+		else
+			hLine2c:= tempexp;
+		End;
+	End;
+SECTION QualExp;
+var
+i: index;
+LMax:FInteger;
+Begin
+	If (RunCalc) Then
+	Begin
+	LMax := LastIndex(depend,Finfowks);
+		for i := 1 to LMax do
+			begin
+				If HasValue(Finfowks.CCEXP[i]) then
+				tempexp:=tempexp + Finfowks.CCEXP[i];
+			end;
+	End;
+End;
+SECTION Totkid;
+VAR
+z,
+tmpMaxIndex : Index;
+Begin
+	If (RunCalc) Then
+	Begin
+	kid := 0;
+	tmpMaxIndex := NumCopies(FWDEPINF);
+	for z := 1 to tmpMaxIndex do
+		begin
+			IF HasValue (FWDEPINF[z].CCEXP) THEN
+				begin
+				kid := kid + 1;
+				end;
+		end;
+	tmpMaxIndex := NumCopies(FPERSWKS);
+	for z := 1 to tmpMaxIndex do
+		begin
+			IF HasValue (FPERSWKS[z].CCEXP) THEN
+				begin
+				kid := kid + 1;
+				end;
+		end;
+
+	End;
+End;
+Section TotalActivity;
+Begin
+	If (RunCalc) Then
+	Begin
+	TotAct:= DCBC + DCBE + DCBF + FSUMK1P.DEPCARBH + FSUMK1P.DEPCARBW;
+	End;
+End;
+Section DCBNotOnSite;
+	Var
+	CopyMax 		: FInteger;
+	i				: Index;
+	TotDCBNotOnSite	: FDollar;
+	hTotDCBNotOnSite: FDollar;
+	j				: Index;
+	begin
+	If (RunCalc) Then
+	Begin
+
+			CopyMax := NumCopies( FW2 );
+			for i := 1 to CopyMax do
+				begin
+					if not(IsChecked( FW2[i].DCY ) ) then
+						begin
+							hTotDCBNotOnSite := hTotDCBNotOnSite + FW2[i].DCB - FW2[i].DCBF;
+						end;
+				end;
+					TotDCBNotOnSite := hTotDCBNotOnSite + FSUMK1P.DEPCARBH + FSUMK1P.DEPCARBW
+									  + DCBC + DCBE + DCBF;
+
+
+
+		If HasValue(TotDCBNotOnSite) then
+			begin
+				hDCBProRate := min( TotDCBNotOnSite, kmaxW2 );
+				If (L10) > 5000 then
+				DCBProRate := hDCBProRate
+				else
+				DCBProRate := hDCBProRate - L19;
+			end;
+	end;
+End;
+SECTION TransDepPRO;
+	VAR
+	z,n,i,
+	tmpMaxIndex : Index;
+	ctr			: FInteger;
+	hL2			: FDollar;
+	begin
+	If (RunCalc) Then
+	Begin
+		ctr := 0;
+		hL2 := 0;
+
+		n := 0;
+		tmpMaxIndex := NumCopies(FPERSWKS);
+		for z := 1 to tmpMaxIndex do
+			begin
+				IF HasValue(FPERSWKS[z].CCEXP) and (FPERSWKS[z].CCEXP > -1 )THEN
+					begin
+						n := n + 1;
+						L2F[n]  := FPERSWKS[z].FIRSTNAM;
+						L2M[n]  := FPERSWKS[z].INITIAL;
+						L2L[n]  := FPERSWKS[z].LASTNAM;
+						L2SFX[n]:= FPERSWKS[z].SUFFIX;
+						L2SSN[n]:= FPERSWKS[z].SSN;
+						ctr := ctr + 1;
+						if ((kid=1) and (L18>=kLIMIT1)) or ((kid >=2) and (L18>=kLIMIT2))then
+							Begin
+								L2[n]:=FPERSWKS[z].CCEXP;
+							End
+						Else
+						Begin
+						if( ctr = kid ) then
+							begin
+								L2[n] := max( 0, ( ( tempexp - DCBProRate ) - hL2 ) );
+							end
+						else
+							begin
+								If (tempexp <> 0) then
+								  Begin
+									L2[n]   := max( 0, ((FPERSWKS[z].CCEXP) - ( ((FPERSWKS[z].CCEXP) / tempexp ) * DCBProRate ) ) );
+									hL2 := hL2 + L2[n];
+								  End;
+							end;
+						end;
+					end;
+		end;
+		tmpMaxIndex := NumCopies(FWDEPINF);
+		Begin
+		for z := 1 to tmpMaxIndex do
+			Begin
+			If
+			((FWDEPINF[z].CD = "L") or
+			(FWDEPINF[z].CD = "N") or
+			(FWDEPINF[z].CD = "Q") or
+			(FWDEPINF[z].CD  = "O")) then
+				begin
+				IF HasValue(FWDEPINF[z].CCEXP) and (FWDEPINF[z].CCEXP > -1 )THEN
+					begin
+						n := n + 1;
+						L2F[n]  := FWDEPINF[z].FIRSTNAM;
+						L2M[n]  := FWDEPINF[z].INITIAL;
+						L2L[n]  := FWDEPINF[z].LASTNAM;
+						L2SFX[n]:= FWDEPINF[z].SUFFIX;
+						L2SSN[n]:= FWDEPINF[z].SSN;
+						ctr := ctr + 1;
+						if ((kid=1) and (L18>=kLIMIT1)) or ((kid >=2) and (L18>=kLIMIT2))then
+							Begin
+								L2[n]:=FWDEPINF[z].CCEXP;
+							End
+						Else
+						Begin
+						if( ctr = kid ) then
+							begin
+								L2[n] := max( 0, ( ( tempexp - DCBProRate ) - hL2 ) );
+							end
+						else
+							begin
+								If (tempexp <> 0) then
+								  Begin
+									L2[n]   := max( 0, ((FWDEPINF[z].CCEXP) - ( ((FWDEPINF[z].CCEXP) / tempexp ) * DCBProRate ) ) );
+								    hL2 := hL2 + L2[n];
+								  End;
+							end;
+						end;
+				 end;
+			end;
+		end;
+	end;
+
+
+
+
+
+
+	end;
+end;
+Section Line14;
+Begin
+	If (RunCalc) Then
+		Begin
+			Nam2 := FInfoWks.HName;
+			SSN2 := FInfoWks.tSSN;
+
+			dcbBus := FSUMK1P.DEPCARBH + DCBC + DCBE + DCBF;
+			If IsChecked(FINFOWKS.FS2) then
+				dcbBus := dcbBus + FSUMK1P.DEPCARBW;
+
+			dcbEmp := FW2SUM.TP10;
+
+			If IsChecked(FINFOWKS.FS2) then
+				dcbEmp := dcbEmp + FW2SUM.SP10;
+			L10 := dcbEmp + dcbBus;
+		End;
+End;
+Section Lines15to19;
+Begin
+	If (RunCalc) Then
+		Begin
+
+
+
+			L11:= FW2SUM.hTPForfeit + FW2SUM.hSPForfeit;
+			If HasValue(L10) then
+				begin
+
+					L12:= Max(0, L10 + CRYOVER - L11);
+
+					L13:= hLine2c + L12a + FW2Sum.hTPDCB + FW2Sum.hSPDCB;
+
+					L14:= Min(L12, L13);
+				end;
+		End;
+End;
+SECTION OpenOther;
+BEGIN
+
+	OpenForm(FEARNINC);
+END;
+SECTION SetMFSCheckbox;
+BEGIN
+
+
+END;
+SECTION ActualEarnedIncome;
+BEGIN
+
+
+	If HasValue(FEARNINC.L9A) or
+	   HasValue(FSCHEICW.TDCBCMBT) then
+		tREI := Max(0, FEARNINC.L9A + FSCHEICW.TDCBCMBT);
+
+
+
+
+
+
+
+	If HasValue(FEARNINC.L9B) or
+	   HasValue(FSCHEICW.SDCBCMBT) then
+		sREI := Max(0, (FEARNINC.L9B + FSCHEICW.SDCBCMBT));
+
+
+END;
+
+
+
+
+SECTION StudentEarnedIncome;
+BEGIN
+
+	tDEI := DeemedEarnedIncome(S1, kid);
+
+	sDEI := DeemedEarnedIncome(S3, kid);
+END;
+SECTION EarnedIncomeForModAGI8839;
+VAR
+	tpSum : FDollar;
+	spSum : FDollar;
+BEGIN
+
+	tpSum :=
+
+			   FEARNINC.L5A +
+
+			   FEARNINC.L6A +
+
+
+			   FSCHEICW.TDCBCMBT +
+
+
+			   FW2SUM.hTP13T;
+
+
+	tREI8839 := Max(0, tpSum);
+
+	spSum :=
+
+			   FEARNINC.L5B +
+
+			   FEARNINC.L6B +
+
+
+			   FSCHEICW.SDCBCMBT +
+
+
+			   FW2SUM.hSP13T;
+
+	sREI8839 := Max(0, spSum);
+END;
+SECTION Line22YesNo;
+BEGIN
+	if (RunCalc) Then
+		Begin
+			if HasValue(L10) then
+				begin
+
+
+					if HasValue(dcbBus) then
+						begin
+							BOXSOLEY := Checked;
+						end
+					else
+						begin
+							BOXSOLEN := Checked;
+						end;
+				end;
+		End;
+END;
+
+SECTION Lines20to30;
+VAR
+
+	sum : FDollar;
+BEGIN
+	if (RunCalc) Then
+		Begin
+			if HasValue(L10) then
+				begin
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	L15 := tREI;
+
+	if IsChecked(FINFOWKS.FS2) then
+		begin
+
+
+
+
+
+
+			if (S1 > 0) or
+			   (S2 > 0) or
+                           IsChecked(DT) then
+				begin
+
+
+					L15 := tDEI + tREI - S2;
+				end;
+
+
+
+
+
+
+
+			if (S3 > 0) or
+			   (S4 > 0) or
+                           IsChecked(DS) then
+				begin
+
+
+					L16	:=sDEI + SREI - S4;
+				end
+			else
+				begin
+					L16 := sREI;
+				end;
+		end
+	else if IsChecked(FINFOWKS.FS3) and
+		 IsChecked(L16BX) then
+		begin
+
+
+			L16 := L16A;
+		end
+	else if IsChecked(FINFOWKS.FS3) and IsChecked(L16BXY) then
+		begin
+
+
+			L16 := L15;
+		end
+	else if not IsChecked(FINFOWKS.FS3) then
+		begin
+
+
+			L16 := L15;
+		end;
+
+
+        If (IsChecked(FINFOWKS.FS2) and HasValue(FINFOWKS.TDOD) and IsChecked(DT)) then
+          L17 := Min(L14, L16)
+         else if (IsChecked(FINFOWKS.FS2) and HasValue(FINFOWKS.SDOD) and IsChecked(DS)) then
+          L17 := Min(L14, L15)
+         else
+	L17 := Min(Min(L14, L15), L16);
+
+	If IsChecked(FINFOWKS.FS3) and
+	   IsChecked(L16BX) then
+		STD := 2500
+	else
+		STD := 5000;
+
+
+
+
+
+	If IsChecked(BOXSOLEN) then
+		hL24 := 0
+	else if IsChecked(BOXSOLEY) then
+		hL24 := Max(0, dcbBus);
+
+	hL25 := Max(0, L12 - hL24);
+
+
+
+	hL27 := Min(Min(L17, STD), hL24);
+
+	If IsChecked(BOXSOLEN) then
+		L18	:= 	Min(L17, STD)
+	Else if IsChecked(BOXSOLEY) then
+		L18 := Max(0, (min(L17,STD)) -hL27);
+
+	L19 := Max(0, hL25 - L18);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				end;
+		End;
+End;
+
+
+SECTION VisibleLines24Thru27;
+BEGIN
+
+	if IsChecked(BOXSOLEN) then
+		begin
+		FRPSHIP:=0;
+		end
+	else
+	if IsChecked(BOXSOLEY) then
+		begin
+
+
+			FRPSHIP := hL24;
+		end;
+	LSL12   := hL25;
+	DEDBENS := hL27;
+END;
+SECTION Lines20to30ForModAGI8839;
+VAR
+
+	ML148839 : FDollar;
+	ML158839 : FDollar;
+	ML168839 : FDollar;
+	ML188839 : FDollar;
+	ML208839 : FDollar;
+	ML218839 : FDollar;
+	ML228839 : FDollar;
+	ML238839 : FDollar;
+	ML248839 : FDollar;
+	ML258839 : FDollar;
+	ML268839 : FDollar;
+	ML278839 : FDollar;
+	ML288839 : FDollar;
+BEGIN
+	if HasValue(L10) then
+		begin
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	ML208839 := tREI8839;
+
+	if IsChecked(FINFOWKS.FS2) then
+		begin
+
+
+
+
+
+
+			if (S1 > 0) or
+			   (S2 > 0) or
+                           IsChecked(DT) then
+				begin
+
+
+					ML208839 := tDEI + tREI - S2;
+				end;
+
+
+
+
+
+
+
+			if (S3 > 0) or
+			   (S4 > 0) or
+                           IsChecked(DS) then
+				begin
+
+
+					ML218839	:=sDEI + SREI - S4;
+				end
+			else
+				begin
+					ML218839 := sREI8839;
+				end;
+		end
+	else if IsChecked(FINFOWKS.FS3) and
+		 IsChecked(L16BX) then
+		begin
+
+
+			ML218839 := L16A;
+		end
+	else if IsChecked(FINFOWKS.FS3) and IsChecked(L16BXY) then
+		begin
+
+
+			ML218839 := ML208839;
+		end
+	else if not IsChecked(FINFOWKS.FS3) then
+		begin
+
+
+			ML218839 := ML208839;
+		end;
+
+
+        If (IsChecked(FINFOWKS.FS2) and HasValue(FINFOWKS.TDOD) and IsChecked(DT)) then
+          ML228839 := Min(ML198839, ML218839)
+         else if (IsChecked(FINFOWKS.FS2) and HasValue(FINFOWKS.SDOD) and IsChecked(DS)) then
+          ML228839 := Min(ML198839, ML208839)
+         else
+	ML228839 := Min(Min(ML198839, ML208839), ML218839);
+
+	If IsChecked(FINFOWKS.FS3) and
+	   IsChecked(L16BX) then
+		ML238839 := 2500
+	else
+		ML238839 := 5000;
+
+
+
+
+
+	If IsChecked(BOXSOLEN) then
+		ML248839 := 0
+	else if IsChecked(BOXSOLEY) then
+		ML248839 := Max(0, dcbBus);
+
+	ML258839 := Max(0, ML178839 - ML248839);
+
+
+
+	ML278839 := Min(Min(ML228839, ML238839), ML248839);
+
+	If IsChecked(BOXSOLEN) then
+		ML288839	:= 	Min(ML228839, ML238839)
+	Else if IsChecked(BOXSOLEY) then
+		ML288839 := Max(0, (min(ML228839,ML238839)) -ML278839);
+
+	ML298839 := Max(0, ML258839 - ML288839);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		end;
+END;
+Section Line30_34;
+Begin
+
+
+	If (RunCalc) Then
+		Begin
+			If IsChecked(FINFOWKS.FS3) and (IsChecked(L16BX) or not HasValue(MFS)) then
+				begin
+					Blank(L20, L21, L22, L23, L24);
+				end
+			else if L17 > 0 then
+
+				begin
+
+					If (L13 > 0) then
+						L23 := totexp;
+					If totkids = 1  then
+						L20 := kLIMIT1
+					else if totkids >= 2  then
+						L20 := kLIMIT2;
+
+					L21 := hL27 + L18;
+					L22 := L20 - L21;
+
+					If L22 <= 0 then
+						Blank(L23, L24)
+					else
+						L24:= Min(L22, L23);
+				end;
+			if ( NumberOfRecords( DETAIL, FEXPL125 ) > 0 ) then
+				L26T:= "SEE STMT";
+		End;
+End;
+Section Line3;
+	Var
+	hLowAmt : Fdollar;
+Begin
+	If (RunCalc) Then
+	Begin
+		If ((IsChecked(FINFOWKS.FS3) and IsChecked(L16BX)) or
+		((HasValue(L22)) and (L22 <= 0))) then
+			begin
+				Blank(L3);
+				if HasValue(L24) then
+					begin
+						If totkids = 1  then
+							hMDqualexp:= min(L24, kLIMIT1)
+						else if totkids >= 2  then
+							hMDqualexp:= min(L24, kLIMIT2);
+					end
+				else if not HasValue(L24) then
+					begin
+						If totkids = 1  then
+							begin
+								hLowAmt := min( totexp, kLIMIT1 );
+									if( HasValue( L2C ) ) then
+										hMDqualexp:=min(hLowAmt,max(0,L2C))
+									else
+										hMDqualexp:= min(hLowAmt,max(0,totexp));
+							end
+						else
+						If totkids >= 2  then
+							begin
+								hLowAmt := min( totexp, kLIMIT2 );
+									if( HasValue( L2c ) ) then
+										hMDqualexp := min(hLowAmt,max(0, L2C) )
+									else
+										hMDqualexp:= min(hLowAmt,max(0,totexp));
+							end;
+					end;
+				end
+		else
+			begin
+				if HasValue(L24) then
+					begin
+						If totkids = 1  then
+							L3:= min(L24, kLIMIT1)
+						else if totkids >= 2  then
+							L3:= min(L24, kLIMIT2);
+					end
+				else if not HasValue(L24) then
+					begin
+						If totkids = 1  then
+							begin
+								hLowAmt := min( totexp, kLIMIT1 );
+									if( HasValue( L2C ) ) then
+										L3:=min(hLowAmt,max(0,L2C))
+									else
+										L3:= min(hLowAmt,max(0,totexp));
+							end
+						else
+						If totkids >= 2  then
+							begin
+								hLowAmt := min( totexp, kLIMIT2 );
+									if( HasValue( L2c ) ) then
+										L3 := min(hLowAmt,max(0, L2C) )
+									else
+										L3:= min(hLowAmt,max(0,totexp));
+							end;
+					end;
+			end;
+	End;
+End;
+Section Lines4to5;
+Begin
+	If (RunCalc) Then
+	Begin
+	If ((IsChecked(FINFOWKS.FS3) and IsChecked(L16BX)) or ((HasValue(L22)) and (L22 <= 0))) then
+		begin
+			Blank(L4, L5);
+			Blank(hL4, hL5);
+		end
+	else
+		begin
+			If HasValue(L3) then
+			begin
+					OpenForm(FEarnInc);
+
+
+
+
+
+
+
+
+
+
+					If IsChecked(FINFOWKS.FS2) and ((HasValue(FEarnInc.L11A))
+					or (HasValue(FEarnInc.L11B))) then
+						begin
+							If (S1 > 0) or (S2 > 0) then
+								begin
+
+								hL4:= max(0,FEarnInc.L11A);
+								L4 := hL4;
+									If totkids = 1  then
+										begin
+											hL4:= hL4 + ((S1 * kEI1) - S2);
+											L4 := hL4;
+										end
+									else
+									if totkids >= 2  then
+										begin
+											hL4 := hL4 +((S1 * kEI2) - S2);
+											L4 := hL4;
+										end;
+								end
+							else
+								begin
+									hL4:= max(0,FEarnInc.L11A);
+									L4 := hL4;
+								end;
+							If (S3 > 0) or (S4 > 0) then
+								begin
+									hL5:= max(0,FEarnInc.L11B);
+									L5 := hL5;
+									If totkids = 1  then
+										begin
+											hL5:= hL5 + ((S3 * kEI1) - S4);
+											L5 := hL5;
+										end
+									else
+									if totkids >= 2  then
+										begin
+											hL5:=hL5 + ((S3 * kEI2) - S4);
+											L5 := hL5;
+										end;
+								end
+							else
+								begin
+									hL5:= max(0,FEarnInc.L11B);
+									L5 := hL5;
+								end;
+						end
+					else
+					if not IsChecked(FINFOWKS.FS2) then
+						begin
+							hL4:= max(0,FEarnInc.L11A);
+							L4 := hL4;
+							hL5:= L4;
+							L5 := hL5;
+						end;
+
+			end;
+		end;
+	End;
+End;
+Section Lines6to7;
+Begin
+	If (RunCalc) Then
+	Begin
+	If (((IsChecked(FINFOWKS.FS3) and (IsChecked(L16BX) or not HasValue(MFS)))) or ((HasValue(L22)) and (L22 <= 0))) then
+		begin
+			Blank( L6, L7);
+			Blank( hL6, hL7 );
+
+		end
+	else
+		begin
+			If HasValue(L4) then
+
+
+
+
+				Begin
+					If (IsChecked(FINFOWKS.FS2) and HasValue(FINFOWKS.TDOD) and IsChecked(DT)) then
+					  hL6:= min(L3, L5)
+					 else if (IsChecked(FINFOWKS.FS2) and HasValue(FINFOWKS.SDOD) and IsChecked(DS)) then
+					  hL6:= min(L3, L4)
+					 else
+					  hL6:= min(min(L3, L4), L5);
+					L6 := hL6;
+
+						OpenForm(F1040);
+						hL7 := F1040.L34;
+						L7 := hL7;
+
+				end;
+
+		end;
+	End;
+End;
+Section Line8;
+	Var
+		AGI: FDollar;
+		credit: FDecimal2;
+Begin
+	If (RunCalc) Then
+	Begin
+		AGI:= 15000;
+		credit:= 0.35;
+		If (((IsChecked(FINFOWKS.FS3) and (IsChecked(L16BX) or not HasValue(MFS)))) or
+		((HasValue(L22)) and (L22 <= 0))) then
+			Blank(L8)
+		else
+			begin
+				If HasValue(L3) then
+					begin
+						If L7 <= 0 then
+							L8:= credit - credit
+						else if L7 <= AGI then
+							L8:= credit
+						else if L7 <= AGI + 2000 then
+							L8:= credit - .01
+						else if L7 <= AGI + 4000 then
+							L8:= credit - .02
+						else if L7 <= AGI + 6000 then
+							L8:= credit - .03
+						else if L7 <= AGI + 8000 then
+							L8:= credit - .04
+						else if L7 <= AGI + 10000 then
+							L8:= credit - .05
+						else if L7 <= AGI + 12000 then
+							L8:= credit - .06
+						else if L7 <= AGI + 14000 then
+							L8:= credit - .07
+						else if L7 <= AGI + 16000 then
+							L8:= credit - .08
+						else if L7 <= AGI + 18000 then
+							L8:= credit - .09
+						else if L7 <= AGI + 18000 then
+							L8:= credit - .09
+						else if L7 <= AGI + 20000 then
+							L8:= credit - .10
+						else if L7 <= AGI + 22000 then
+							L8:= credit - .11
+						else if L7 <= AGI + 24000 then
+							L8:= credit - .12
+						else if L7 <= AGI + 26000 then
+							L8:= credit - .13
+						else if L7 <= AGI + 28000 then
+							L8:= credit - .14
+						else if L7 <= 999999999 then
+							L8:= credit - .15;
+					end;
+			end;
+	End;
+End;
+Section Line9toLine11;
+Begin
+	If (RunCalc) Then
+	Begin
+
+		If	HasValue(L6) then
+			begin
+				L9W := FEXPL24.totCPYE;
+				hL9:= max(0,((L6 * L8) + L9W));
+				L9 := hL9;
+				hEFL9:= max(0,((L6 * L8) + L9W));
+			end
+		else
+			begin
+				L9W := FEXPL24.totCPYE;
+				hL9:=L9W;
+				L9 := hL9;
+				hEFL9 := L9W;
+			end;
+		If HasValue(L9) then
+		Begin
+
+
+
+
+				TAX1040 := F1040.L42;
+				hF1116 := F1040.L43;
+				F1116  := hF1116;
+				LIABLMT := max(0,(Tax1040 - hF1116));
+				h41:=F1040.L40;
+
+				hcredit:= max(0,min(L9,LIABLMT));
+
+				CRDT2441:= hcredit;
+				hEFcredit:= hcredit;
+		end;
+			If HasValue(L9W) then
+			L9T:= "CPYE";
+			If( NumberOfRecords( DETAIL, FEXPL24 ) > 0 ) then
+			L9WT:= "SEE STMT";
+
+
+
+
+	End;
+End;
+
+
+SECTION PrintSSNorEIN;
+Var
+	j : Index;
+	providers : Index;
+BEGIN
+  providers := Lastindex(prov);
+  For j := 1 to providers DO
+    Begin
+	  if (hasValue(L1C[j]) and not(hasValue(L1C2[j]))) then
+	    HMapTIN[j] := L1C[j]
+      else if (not(hasValue(L1C[j]) and hasValue(L1C2[j]))) then
+	    HMapTIN[j] := L1C2[j]
+      else if (hasValue(L1C[j]) and hasValue(L1C2[j]))
+	    then
+		  begin
+			If not HasValue(L1A2[j]) then
+		      HMapTIN[j] := L1C2[j]
+		      else HMapTIN[j] := L1C[j];
+		  end
+      else HMapTIN[j] := "";
+	End;
+END;
+
+
+
+SECTION STATE_ZIP_ERROR;
+Var
+z		:Index;
+LMax	: Index;
+Begin
+	If (RunCalc) Then
+	Begin
+	LMax := LastIndex( PROV );
+	for z:= 1 to LMax do
+		begin
+
+			if( UpperCase( L1C2[z] ) <> "LAFCP" ) and ( UpperCase( L1B[z] ) <> "SEE W-2" ) then
+				begin
+				Test( ST[z],  ShouldHaveAValue );
+				Test( ZIP[z], ShouldHaveAValue );
+			end;
+		 end;
+	End;
+End;
+SECTION ErrorChecks1;
+Var
+	z		: Index;
+	j		: Index;
+	LMax	: Index;
+	bNProv	: Boolean;
+	bNone	: Boolean;
+	QUALCNT	: FInteger;
+	totDaycare : fDollar;
+Begin
+	If (RunCalc) Then
+	Begin
+
+	totDaycare := Finfowks.CCEXP[1..LastIndex(DEPEND, FINFOWKS)];
+	bNProv := FALSE;
+	LMax := NumCopies( FW2 );
+	for z := 1 to LMax do
+		begin
+		If HasValue(totDaycare)then
+			begin
+
+				if( IsChecked( FW2[z].DCN ) ) and
+					( L12 > 0 )  then
+
+
+					begin
+						bNProv := TRUE;
+						BREAK;
+					end;
+
+
+
+
+
+
+
+			end;
+	if( bNProv = TRUE )  then
+		begin
+			LMax := Max(LastIndex(PROV), 1);
+			for z := 1 to LMax do
+				begin
+					if ( UpperCase( L1B[z] ) <> "SEE W-2" ) then
+						begin
+							Test( L1A[z], ShouldHaveAValue );
+							Test( L1B[z], ShouldHaveAValue );
+							Test( L1B2[z],ShouldHaveAValue );
+                            If (not HasValue(L1C[z])) and (not HasValue(L1C2[z])) then
+							  Begin
+								NonInteractiveError (L1C[z], "If the provider is an individual, please enter their SSN");
+								NonInteractiveError (L1C2[z], "If the provider is a business, please enter their EIN");
+							  End;
+							Test( L1D[z], ShouldHaveAValue );
+							hSKIP := z;
+							BREAK;
+						end;
+				end;
+		end
+
+
+
+
+
+
+
+
+	else
+		begin
+			QUALCNT := LastIndex( QUAL );
+			if( ( QUALCNT > 0 ) or
+				( HasValue( L2C ) ) ) and
+				( UpperCase( L1B[1] ) <> "SEE W-2" ) then
+				begin
+					Test( L1A[1], ShouldHaveAValue );
+					Test( L1B[1], ShouldHaveAValue );
+					Test( L1B2[1],ShouldHaveAValue );
+                    If (not HasValue(L1C[1])) and (not HasValue(L1C2[1])) then
+					  Begin
+						NonInteractiveError (L1C[1], "If the provider is an individual, please enter their SSN");
+						NonInteractiveError (L1C2[1], "If the provider is a business, please enter their EIN");
+					  End;
+
+					Test( L1D[1], ShouldHaveAValue );
+					hSKIP := 1;
+				end;
+		end;
+		If HasValue(L1C[1]) and HasValue(L1C2[1])  then
+		  Begin
+			Error (L1C[1], "Please remove either the EIN or SSN entry.  Do not enter both an EIN and SSN");
+		  End;
+	End;
+	End;
+End;
+SECTION ErrorChecks2;
+Var
+	LMax	: Index;
+	z		: Index;
+Begin
+	If (RunCalc) Then
+	Begin
+
+
+	LMax := LastIndex( PROV );
+	for z:= 1 to LMax do
+		begin
+			if ( UpperCase( L1B[z] ) <> "SEE W-2" ) then
+				begin
+					if( hSKIP <> z ) then
+						begin
+							if( HasValue( L1A2[z] ) ) then
+								begin
+									Test( L1A[z], ShouldHaveAValue );
+									Test( L1B[z], ShouldHaveAValue );
+									Test( L1B2[z],ShouldHaveAValue );
+									Test( L1D[z], ShouldHaveAValue );
+								end
+							else
+								begin
+
+									AllOrNoneShouldHaveValue( L1A[z], L1B[z], L1B2[z], L1D[z] );
+								end;
+                            If (not HasValue(L1C[z])) and (not HasValue(L1C2[z])) then
+							  Begin
+								NonInteractiveError (L1C[z], "If the provider is an individual, please enter their SSN");
+								NonInteractiveError (L1C2[z], "If the provider is a business, please enter their EIN");
+							  End;
+							If HasValue(L1C[z]) and HasValue(L1C2[z]) then
+								Begin
+								   Error (L1C[z], "Please remove the SSN or EIN entry.  Do not enter both an EIN and SSN");
+								End;
+
+						end;
+				end
+			else
+			if( UpperCase( L1B[z] ) = "SEE W-2" ) then
+				begin
+					if( HasValue( L1A2[z] ) ) then
+						begin
+							Error( L1A2[z], Concat( "should be blank since your employer ",
+													"furnished dependent care" ) );
+						end;
+					if( HasValue( L1B2[z] ) ) then
+						begin
+							Error( L1B2[z], Concat( "should be blank since your employer ",
+													"furnished dependent care" ) );
+						end;
+					if( HasValue( L1C[z] ) ) then
+						begin
+							Error( L1C[z], Concat( "should be blank since your employer ",
+													"furnished dependent care" ) );
+						end;
+					if( HasValue( L1C2[z] ) ) then
+						begin
+							Error( L1C2[z], Concat( "should be blank since your employer ",
+													"furnished dependent care" ) );
+						end;
+					if( HasValue( L1D[z] ) ) then
+						begin
+							Error( L1D[z], Concat( "should be blank since your employer ",
+													"furnished dependent care" ) );
+						end;
+				end;
+		end;
+	If (HasValue(S1) and HasValue(S3)) and (S1+S3 > 12) then
+		Error(S1, "sum of Taxpayer and Spouse months should not be greater than 12");
+
+
+
+	Test(s1, ShouldBeLessThan, 13);
+	Test(s3, ShouldBeLessThan, 13);
+	If IsChecked(L16BX) then
+		Test(L16A, ShouldHaveAValue);
+	If (IsChecked(FINFOWKS.FS3) and not HasValue(MFS)) and (HasValue(tempexp) or HasValue(totprov) or (L10 > 0 )) then
+	    Test(MFS, ShouldHaveAValue);
+	If HasValue(L9W) and (L9W > 2100) then
+		Error(L9W, "should be equal to or less than $2100. To update this info, you'll need to go back to the Child and Dependent Care section of Deductions & Credits");
+
+	If HasValue(L9W) and (L9W <= 0) then
+		Error(L9W, "must be greater than $0. To update this info, you'll need to go back to the Child and Dependent Care section of Deductions & Credits");
+
+	End;
+End;
+Section  LookForCCexp;
+Var
+	i,Last, LastNondep 	: index;
+	found	: boolean;
+	LastDepend : FInteger;
+Begin
+	found 	:= false;
+	Last := LastIndex(prov,F2441);
+	For i := 1 to Last do
+		begin
+			If (HasValue(F2441.L1A[i]) and (F2441.L1D[i] > 0)) then
+				begin
+				LastDepend := LastIndex(depend,finfowks);
+					For i := 1 to LastDepend do
+						begin
+							If (HasValue(finfowks.L6C1A[i]) and HasValue(finfowks.CCEXP[i]))
+								then
+								begin
+									found := true;
+									break;
+								end;
+						end;
+					If (found = false) then
+						begin
+							If (finfowks.hCCEXP = 0) then
+								Error(L2[1],"for at least one Qualifying Person must be entered or Form 2441 should be deleted. This can be done by first selecting Federal Taxes tab; then select Deductions & Credits, then Explore on My Own, then You and Your Family, then Child and Dependent Care and then follow the interview questions");
+						end;
+					break;
+				end;
+		end;
+End;
+SECTION ErrorChecks3;
+Var
+	LMax	: Index;
+	z		: Index;
+Begin
+	If (RunCalc) Then
+	Begin
+
+	LMax := LastIndex( PROV );
+	for z:= 1 to LMax do
+		begin
+			if( UpperCase( L1B[z] ) <> "SEE W-2" ) then
+				begin
+					if( HasValue(L1C[z]) and (Not(HasValue(L1A2[z])))) then
+						begin
+
+							NonInteractiveError(L1A2[z], "is invalid. If an individual SSN has been entered in column C, line 1, then the care provider's last name must be entered here.  If care provider is a business, then column C, line 1 should be blank and the provider's EIN should be entered in column C, line 2." );
+
+						end;
+
+
+				end;
+		end;
+	end;
+End;
+
+
+
+Section ErrorNoCheckBox;
+Var
+Lmax,z : Index;
+Begin
+	LMax := LastIndex(PROV);
+	for z:= 1 to LMax do
+	Begin
+		if (Not HasValue(DILIGBOX[z])) and Not(Valid_EIN(L1C2[z])) then
+			begin
+
+			Error(L1C2[z],"is not correct. Enter an employer identification number in 'nn-nnnnnnn' format or select Tax-Exempt, Foreign, Refused or Unavailable");
+			end;
+	end;
+end;
+Section PORFlag;
+Begin
+	If (RunCalc) Then
+	Begin
+		If (((FINFOWKS.Pr1040)or (FINFOWKS.Pr1040A)) and
+		((CRDT2441 > 0) or
+		(L10 > 0))) then
+			begin
+			FormIs(PartOfReturn);
+ 				If IsNonFinalError() then
+			begin if( (FEFHDSUM.EFSSN <> 1) ) then begin if TestFormIs(PartOfReturn) then begin Test( _, ShouldBeFinal ); end; end; end;
+
+			end;
+
+
+
+
+
+
+	End;
+End;
+
+

@@ -1,0 +1,498 @@
+<Nodes topic="StudentLoanInterest"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="TKE_Calc_Graph.xsd">
+    <Versions>
+        <Version id="TKE.Calc.Runtime">1</Version>
+        <Version id="TKE.Calc.FileFormat">2</Version>
+        <Version id="TKE.Gist">1</Version>
+        <Version id="TKE.MeF">1</Version>
+    </Versions>
+
+    <Node name="/Return/ReturnData/PPStudentLoanInterestWks/QualifiedStudentLoanPP">   
+        <Inputs>
+            <Input>/Temporary/isNotQualifiedStudentLoanPP</Input>
+        </Inputs>
+        <Gist>            
+		<Opposite>
+			<InputRoles>
+                <Value>/Temporary/isNotQualifiedStudentLoanPP</Value>
+			</InputRoles>
+        </Opposite>
+        </Gist>
+    </Node> 
+ 
+    <Node name="/Temporary/isNotQualifiedStudentLoanPP">   
+        <Inputs>
+            <Input>/Temporary/isMfs</Input>
+            <Input>/Temporary/TaxpayerIsOrCanBeDependent</Input> 
+            <Input>/Temporary/MfjAndSpouseIsOrCanBeDependent</Input> 
+            <Input>/Temporary/EndPhaseOutRangePreMerge</Input> 
+        </Inputs>
+        <Gist>
+            <AtLeastOneConditionTrue>
+                <InputRoles>
+                    <Condition>/Temporary/isMfs</Condition>
+                    <Condition>/Temporary/TaxpayerIsOrCanBeDependent</Condition>
+                    <Condition>/Temporary/MfjAndSpouseIsOrCanBeDependent</Condition>
+                    <Condition>/Temporary/EndPhaseOutRangePreMerge</Condition>
+                </InputRoles>          
+            </AtLeastOneConditionTrue>
+        </Gist>
+    </Node> 
+ 
+
+    <Node name="/Temporary/TaxpayerIsOrCanBeDependent">   
+        <Inputs>
+           <Input>/Return/ReturnHeader/Filer/PrimaryInfoDependentOnOtherReturnPP/FilerIsClaimedAsDependentIndPP</Input>
+          <Input>/Return/ReturnHeader/Filer/PrimaryInfoDependentOnOtherReturnPP/FilerCanBeClaimedAsDependentIndPP</Input>
+        </Inputs>
+        <Gist>
+            <AtLeastOneConditionTrue>
+                <InputRoles>
+                    <Condition>/Return/ReturnHeader/Filer/PrimaryInfoDependentOnOtherReturnPP/FilerIsClaimedAsDependentIndPP</Condition>
+                    <Condition>/Return/ReturnHeader/Filer/PrimaryInfoDependentOnOtherReturnPP/FilerCanBeClaimedAsDependentIndPP</Condition>
+                </InputRoles>          
+            </AtLeastOneConditionTrue>
+        </Gist>
+    </Node> 
+
+
+    <!--Sum Column e from Part I-->
+    
+    
+    <!-- helper node: exclude "mfs", "tp being dep", "mfj and sp being dep"  --> 
+    <Node name="/Temporary/isMfs">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</Input>
+            <Input>/Constants/IRS1040/FilingStatus/MarriedFilingSeparatelyCd</Input>
+        </Inputs>
+        <Gist>
+            <Equals>
+                <InputRoles>
+                    <Value>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</Value>
+                    <Value>/Constants/IRS1040/FilingStatus/MarriedFilingSeparatelyCd</Value>
+                </InputRoles>
+            </Equals>
+        </Gist>
+    </Node>     
+    <Node name="/Temporary/SpouseIsOrCanBeDependent">   
+        <Inputs>
+            <Input>/Return/ReturnHeader/Filer/SpouseInfoDependentOnOtherReturnPP/FilerIsClaimedAsDependentIndPP</Input>
+            <Input>/Return/ReturnHeader/Filer/SpouseInfoDependentOnOtherReturnPP/FilerCanBeClaimedAsDependentIndPP</Input> 
+        </Inputs>
+        <Gist>
+            <AtLeastOneConditionTrue>
+                <InputRoles>
+                    <Condition>/Return/ReturnHeader/Filer/SpouseInfoDependentOnOtherReturnPP/FilerIsClaimedAsDependentIndPP</Condition>
+                    <Condition>/Return/ReturnHeader/Filer/SpouseInfoDependentOnOtherReturnPP/FilerCanBeClaimedAsDependentIndPP</Condition>
+                </InputRoles>          
+            </AtLeastOneConditionTrue>
+        </Gist>
+    </Node> 
+    <Node name="/Temporary/MfjAndSpouseIsOrCanBeDependent">
+        <Inputs>
+            <Input>/Temporary/SpouseIsOrCanBeDependent</Input>
+            <Input>/Temporary/IsMFJ</Input> 
+        </Inputs>
+        <Gist>
+            <AllConditionsTrue>
+                <InputRoles>
+                    <Condition>/Temporary/SpouseIsOrCanBeDependent</Condition>
+                    <Condition>/Temporary/IsMFJ</Condition>
+                </InputRoles>          
+            </AllConditionsTrue>
+        </Gist>
+    </Node>
+    <!-- helper node: marital status --> 
+    <Node name="/Temporary/IsMFJ">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</Input>
+            <Input>/Constants/IRS1040/FilingStatus/MarriedFilingJointlyCd</Input> 
+        </Inputs>
+        <Gist>
+            <Equals>
+                <InputRoles>
+                    <Value>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</Value>
+                    <Value>/Constants/IRS1040/FilingStatus/MarriedFilingJointlyCd</Value>
+                </InputRoles>
+            </Equals>
+        </Gist>
+    </Node>    
+    
+    <!-- Line 1 -->
+    <Node name="/Return/ReturnData/PPStudentLoanInterestWks/QualifiedStudentLoansInterestAmtPP">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1098E/LoanInterestAmtPP</Input>
+        </Inputs>
+        <Gist>
+
+            <MultiCopyAccumulation>
+                <InputRoles>
+                    <Value>/Return/ReturnData/IRS1098E/LoanInterestAmtPP</Value>
+                </InputRoles>
+                <Configuration>
+                    <Type>Income</Type>
+                </Configuration>
+            </MultiCopyAccumulation>
+        </Gist>
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </Node>
+    
+    <!-- Line 2 -->
+    <Node name="/Return/ReturnData/PPStudentLoanInterestWks/SmallerOfLine1OrLimitAmtPP">
+        <Inputs>
+            <Input>/Constants/PPStudentLoanInterestWks/DeductionLimitbaseType</Input>
+            <Input>/Return/ReturnData/PPStudentLoanInterestWks/QualifiedStudentLoansInterestAmtPP</Input>
+        </Inputs>
+        <Gist>
+			<Minimum>
+				<InputRoles>
+					<Value>/Constants/PPStudentLoanInterestWks/DeductionLimitbaseType</Value>
+					<Value>/Return/ReturnData/PPStudentLoanInterestWks/QualifiedStudentLoansInterestAmtPP</Value>
+				</InputRoles>
+			</Minimum>
+        </Gist>
+       <RoundTo>
+          <Dollars/>
+       </RoundTo>
+    </Node>
+    
+    <!-- Line 3 -->
+    <InputNode name="/Return/ReturnData/PPStudentLoanInterestWks/ModifiedAGIAmtPP"/>
+    <!-- Is there more to do for maggie? -->
+    <Node name="/Temporary/AboveOrEqualToSingleThreshold">
+        <Inputs>
+            <Input>/Return/ReturnData/PPStudentLoanInterestWks/ModifiedAGIAmtPP</Input>
+            <Input>/Constants/PPStudentLoanInterestWks/ModifiedAGISingleThreshold</Input>
+        </Inputs>
+        <Gist>
+            <AboveOrEqualToThreshold>
+                <InputRoles>
+                    <Value>/Return/ReturnData/PPStudentLoanInterestWks/ModifiedAGIAmtPP</Value>
+                    <Threshold>/Constants/PPStudentLoanInterestWks/ModifiedAGISingleThreshold</Threshold>
+                </InputRoles>
+            </AboveOrEqualToThreshold>
+        </Gist>
+    </Node>    
+    <Node name="/Temporary/AboveOrEqualToMarriedThreshold">
+        <Inputs>
+            <Input>/Return/ReturnData/PPStudentLoanInterestWks/ModifiedAGIAmtPP</Input>
+            <Input>/Constants/PPStudentLoanInterestWks/ModifiedAGIMarriedThreshold</Input>
+        </Inputs>
+        <Gist>
+            <AboveOrEqualToThreshold>
+                <InputRoles>
+                    <Value>/Return/ReturnData/PPStudentLoanInterestWks/ModifiedAGIAmtPP</Value>
+                    <Threshold>/Constants/PPStudentLoanInterestWks/ModifiedAGIMarriedThreshold</Threshold>
+                </InputRoles>
+            </AboveOrEqualToThreshold>
+        </Gist>
+    </Node>
+        
+    <Node name="/Temporary/EndPhaseOutRangeSingle"> <!-- stop if true-->
+        <Inputs>
+            <Input>/Temporary/AboveOrEqualToSingleThreshold</Input>
+            <Input>/Temporary/IsMFJ</Input> <!-- true if single -->
+        </Inputs>
+        <Gist>
+            <AllConditionsTrue>
+                <InputRoles>
+                    <Condition>/Temporary/AboveOrEqualToSingleThreshold</Condition>
+                    <OppositeCondition>/Temporary/IsMFJ</OppositeCondition>
+                </InputRoles>          
+            </AllConditionsTrue>
+        </Gist>
+    </Node>
+    <Node name="/Temporary/EndPhaseOutRangeMarried"> <!-- stop if true--> 
+        <Inputs>
+            <Input>/Temporary/AboveOrEqualToMarriedThreshold</Input>
+            <Input>/Temporary/IsMFJ</Input> <!-- true if single -->
+        </Inputs>
+        <Gist>
+            <AllConditionsTrue>
+                <InputRoles>
+                    <Condition>/Temporary/AboveOrEqualToMarriedThreshold</Condition>
+                    <Condition>/Temporary/IsMFJ</Condition>
+                </InputRoles>          
+            </AllConditionsTrue>
+        </Gist>
+    </Node>
+    
+    
+    <Node name="/Temporary/EndPhaseOutRangePreMerge"> <!-- stop if true-->
+        <Inputs>
+            <Input>/Temporary/EndPhaseOutRangeSingle</Input>
+            <Input>/Temporary/EndPhaseOutRangeMarried</Input> <!-- true if single -->
+        </Inputs>
+        <Gist>
+            <AtLeastOneConditionTrue>
+                <InputRoles>
+                    <Condition>/Temporary/EndPhaseOutRangeSingle</Condition>
+                    <Condition>/Temporary/EndPhaseOutRangeMarried</Condition>
+                </InputRoles>          
+            </AtLeastOneConditionTrue>
+        </Gist>
+    </Node>
+    
+    
+    <Node name="/Temporary/FilteredModifiedAGI">
+        <Inputs>
+            <Input>/Temporary/EndPhaseOutRangePreMerge</Input>
+            <Input>/Return/ReturnData/PPStudentLoanInterestWks/ModifiedAGIAmtPP</Input> <!-- true if single -->
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <InputRoles>
+                    <BlankIfTrue>/Temporary/EndPhaseOutRangePreMerge</BlankIfTrue>
+                </InputRoles>
+                <Gist>
+                    <NumericCopy>
+                        <InputRoles>
+                            <Value>
+                                /Return/ReturnData/PPStudentLoanInterestWks/ModifiedAGIAmtPP
+                            </Value>
+                        </InputRoles>
+                    </NumericCopy>
+                </Gist>  
+            </BlankIfApplicable>
+        </Gist>
+       <RoundTo>
+          <Dollars/>
+       </RoundTo>
+    </Node>
+    
+    <!-- Line 4 -->    <!-- Viv: if/else nodes -->    
+    <Node name="/Return/ReturnData/PPStudentLoanInterestWks/IncomeLimitAmtPP">
+        <Inputs>
+            <Input>/Temporary/EndPhaseOutRangePreMerge</Input>
+            <Input>/Temporary/IsMFJ</Input>
+            <Input>/Constants/PPStudentLoanInterestWks/SingleHoHQWLimitbaseType</Input> 
+            <Input>/Constants/PPStudentLoanInterestWks/MFJIncomeLimitbaseType</Input>
+        </Inputs>
+        <Gist>      
+            <BlankIfApplicable>
+                <InputRoles>
+                    <BlankIfTrue>/Temporary/EndPhaseOutRangePreMerge</BlankIfTrue>
+                </InputRoles>
+                <Gist>
+                    <NumericChoice>                
+                        <InputRoles>
+                            <Choice>/Temporary/IsMFJ</Choice>
+                            <Possibility>/Constants/PPStudentLoanInterestWks/SingleHoHQWLimitbaseType</Possibility> 
+                            <Possibility>/Constants/PPStudentLoanInterestWks/MFJIncomeLimitbaseType</Possibility>
+                        </InputRoles>
+                        <Configuration>
+                            <ChoiceMapping>
+                                <Option>
+                                    <Value>false</Value> <!-- if single, head of household or widow(er) (Is there a constant i can use for it)-->
+                                    <ID>/Constants/PPStudentLoanInterestWks/SingleHoHQWLimitbaseType</ID>
+                                    <NoOtherOption>false</NoOtherOption>
+                                </Option>                     
+                                <DefaultOption>
+                                    <ID>/Constants/PPStudentLoanInterestWks/MFJIncomeLimitbaseType</ID>
+                                    <NoOtherOption>true</NoOtherOption>
+                                </DefaultOption>                    
+                            </ChoiceMapping>
+                        </Configuration>
+                    </NumericChoice>               
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </Node>
+    
+    <!-- Line 5 -->
+    <Node name="/Temporary/PreFlooredL5">
+        <Inputs>
+            <Input>/Temporary/FilteredModifiedAGI</Input> <!-- Line 7 -->
+            <Input>/Return/ReturnData/PPStudentLoanInterestWks/IncomeLimitAmtPP</Input>
+        </Inputs>
+        <Gist>
+            <Difference>
+                <InputRoles>
+                    <Left>/Temporary/FilteredModifiedAGI</Left>
+                    <Right>/Return/ReturnData/PPStudentLoanInterestWks/IncomeLimitAmtPP</Right>
+                </InputRoles>
+            </Difference>
+        </Gist>
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </Node>
+    <Node name="/Return/ReturnData/PPStudentLoanInterestWks/SubtractLine4FromLine3AmtPP">
+        <Inputs>
+            <Input>/Constants/Zero</Input>
+            <Input>/Temporary/PreFlooredL5</Input> 
+            <Input>/Temporary/EndPhaseOutRangePreMerge</Input>
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <InputRoles>
+                    <BlankIfTrue>/Temporary/EndPhaseOutRangePreMerge</BlankIfTrue>
+                </InputRoles>
+                <Gist>
+                    <Maximum>
+                        <InputRoles>
+                            <Value>/Temporary/PreFlooredL5</Value>
+                            <Value>/Constants/Zero</Value>
+                        </InputRoles>
+                    </Maximum>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </Node>
+    
+    
+    <!-- Line 6 -->
+    <Node name="/Temporary/HoHQwDivideAmtbaseTypeTemp">
+        <Inputs>
+            <Input>/Temporary/IsMFJ</Input>
+            <Input>/Constants/PPStudentLoanInterestWks/SingleHoHQwDivideAmtbaseType</Input> 
+            <Input>/Constants/PPStudentLoanInterestWks/MFJDivideAmtbaseType</Input>
+        </Inputs>
+        <Gist>            
+            <NumericChoice>                
+                <InputRoles>
+                    <Choice>/Temporary/IsMFJ</Choice>
+                    <Possibility>/Constants/PPStudentLoanInterestWks/SingleHoHQwDivideAmtbaseType</Possibility> 
+                    <Possibility>/Constants/PPStudentLoanInterestWks/MFJDivideAmtbaseType</Possibility>
+                </InputRoles>
+                <Configuration>
+                    <ChoiceMapping>
+                        <Option>
+                            <Value>false</Value> <!-- if single, head of household or widow(er)(Is there a constant i can use for it)-->
+                            <ID>/Constants/PPStudentLoanInterestWks/SingleHoHQwDivideAmtbaseType</ID>
+                            <NoOtherOption>false</NoOtherOption>
+                        </Option>                        
+                        <DefaultOption>
+                            <ID>/Constants/PPStudentLoanInterestWks/MFJDivideAmtbaseType</ID>
+                            <NoOtherOption>true</NoOtherOption>
+                        </DefaultOption>                    
+                    </ChoiceMapping>
+                </Configuration>
+            </NumericChoice>               
+        </Gist>
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </Node>
+    <Node name="/Return/ReturnData/PPStudentLoanInterestWks/DivideLine5RtPP">
+        <Inputs>
+            <Input>/Temporary/EndPhaseOutRangePreMerge</Input>
+            <Input>/Return/ReturnData/PPStudentLoanInterestWks/SubtractLine4FromLine3AmtPP</Input>
+            <!-- <Input>/Constants/PPStudentLoanInterestWks/SingleHoHQwDivideAmtbaseType</Input>-->
+            <Input>/Temporary/HoHQwDivideAmtbaseTypeTemp</Input>
+        </Inputs>
+        <Gist>
+           <BlankIfApplicable>
+              <InputRoles>
+                 <BlankIfTrue>/Temporary/EndPhaseOutRangePreMerge</BlankIfTrue>
+              </InputRoles>
+              <Gist>
+                 <Quotient>
+                    <InputRoles>
+                       <Numerator>/Return/ReturnData/PPStudentLoanInterestWks/SubtractLine4FromLine3AmtPP</Numerator>
+                       <!-- need a if/else condition-->
+                       <Denominator>/Temporary/HoHQwDivideAmtbaseTypeTemp</Denominator>
+                    </InputRoles>
+                 </Quotient>
+              </Gist>
+           </BlankIfApplicable>
+        </Gist>
+        <RoundTo>
+            <Dec>4</Dec>
+        </RoundTo>
+    </Node>
+    
+    <!-- Line 7 -->
+    <Node name="/Return/ReturnData/PPStudentLoanInterestWks/MultiplyLine2byLine6AmtPP">
+        <Inputs>
+            <Input>/Temporary/EndPhaseOutRangePreMerge</Input>
+            <Input>/Return/ReturnData/PPStudentLoanInterestWks/DivideLine5RtPP</Input>
+            <Input>/Return/ReturnData/PPStudentLoanInterestWks/SmallerOfLine1OrLimitAmtPP</Input>
+        </Inputs>
+        <Gist>
+           <BlankIfApplicable>
+              <InputRoles>
+                 <BlankIfTrue>/Temporary/EndPhaseOutRangePreMerge</BlankIfTrue>
+              </InputRoles>
+              <Gist>
+                 <Product>
+                    <InputRoles>
+                       <Product>/Return/ReturnData/PPStudentLoanInterestWks/DivideLine5RtPP</Product>
+                       <Product>/Return/ReturnData/PPStudentLoanInterestWks/SmallerOfLine1OrLimitAmtPP</Product>
+                    </InputRoles>
+                 </Product>
+              </Gist>
+           </BlankIfApplicable>
+        </Gist>
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </Node>
+    
+    
+    <!-- Line 8 -->
+    <Node name="/Return/ReturnData/PPStudentLoanInterestWks/StudentLoanInterestDeductionAmtPP">
+        <Inputs>
+            <Input>/Return/ReturnData/PPStudentLoanInterestWks/QualifiedStudentLoanPP</Input>
+            <Input>/Return/ReturnData/PPStudentLoanInterestWks/MultiplyLine2byLine6AmtPP</Input> <!-- Line 7 -->
+            <Input>/Return/ReturnData/PPStudentLoanInterestWks/SmallerOfLine1OrLimitAmtPP</Input>
+        </Inputs>        
+        <Gist>
+            <BlankIfApplicable>
+                <InputRoles>
+                    <BlankIfFalse>/Return/ReturnData/PPStudentLoanInterestWks/QualifiedStudentLoanPP</BlankIfFalse>
+                </InputRoles>
+                <Gist>
+                    <Difference>
+                        <InputRoles>
+                            <Left>/Return/ReturnData/PPStudentLoanInterestWks/SmallerOfLine1OrLimitAmtPP</Left>
+                            <Right>/Return/ReturnData/PPStudentLoanInterestWks/MultiplyLine2byLine6AmtPP</Right>
+                        </InputRoles>
+                    </Difference>
+                </Gist>
+            </BlankIfApplicable>
+            
+        </Gist>
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </Node>
+    
+    
+    <ConstantNode name="/Constants/True"/>
+    <ConstantNode name="/Constants/False"/>  
+    <ConstantNode name="/Constants/Zero"/>
+    <ConstantNode name="/Constants/IRS1040/FilingStatus/MarriedFilingJointlyCd"/>
+    <ConstantNode name="/Constants/IRS1040/FilingStatus/MarriedFilingSeparatelyCd"/>
+    <ConstantNode name="/Constants/PPStudentLoanInterestWks/DeductionLimitbaseType"/>
+    <ConstantNode name="/Constants/PPStudentLoanInterestWks/SingleHoHQwDivideAmtbaseType"/>
+    <ConstantNode name="/Constants/PPStudentLoanInterestWks/MFJDivideAmtbaseType"/>
+    <ConstantNode name="/Constants/PPStudentLoanInterestWks/ModifiedAGISingleThreshold"/>
+    <ConstantNode name="/Constants/PPStudentLoanInterestWks/ModifiedAGIMarriedThreshold"/>
+    <ConstantNode name="/Constants/PPStudentLoanInterestWks/SingleHoHQWLimitbaseType"/>
+    <ConstantNode name="/Constants/PPStudentLoanInterestWks/MFJIncomeLimitbaseType"/>
+    <InputNode name="/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd"/>
+    
+    <InputNode name="/Return/ReturnHeader/Filer/PrimaryInfoDependentOnOtherReturnPP/FilerIsClaimedAsDependentIndPP"/>
+    <InputNode name="/Return/ReturnHeader/Filer/PrimaryInfoDependentOnOtherReturnPP/FilerCanBeClaimedAsDependentIndPP"/>
+    <InputNode name="/Return/ReturnHeader/Filer/SpouseInfoDependentOnOtherReturnPP/FilerIsClaimedAsDependentIndPP"/>
+    <InputNode name="/Return/ReturnHeader/Filer/SpouseInfoDependentOnOtherReturnPP/FilerCanBeClaimedAsDependentIndPP"/>
+       
+    
+    <MultiCopyPrimitiveInputNode name="/Return/ReturnData/IRS1098E/LoanInterestAmtPP">
+        <RoundTo>
+            <Dollars/>
+        </RoundTo>
+    </MultiCopyPrimitiveInputNode>
+    
+
+
+</Nodes>

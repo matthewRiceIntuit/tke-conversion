@@ -1,0 +1,1008 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Nodes topic="EIC">
+	<Versions>
+		<Version id="TKE.Calc.FileFormat">3</Version>
+		<Version id="TKE.Calc.Runtime">1</Version>
+		<Version id="TKE.Gist">1</Version>
+		<Version id="TKE.MeF">1</Version>
+	</Versions>
+	<!--Line 6 Calcs-->
+	<Node name="/Return/ReturnData/EIC/EICWorksheetPP/EarnedIncomePP">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EICWorksheetPP/WagesSalariesAndTipsAdjPP</Input>
+			<Input>/Return/ReturnData/EIC/EICWorksheetPP/TotalNontaxableCombatPayPP</Input>
+			<Input>/Return/ReturnData/EIC/EICWorksheetPP/SEOrStatutoryEmployeeAmtPP</Input>
+		</Inputs>
+		<Gist>
+			<Accumulation>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EICWorksheetPP/WagesSalariesAndTipsAdjPP</Value>
+					<Value>/Return/ReturnData/EIC/EICWorksheetPP/TotalNontaxableCombatPayPP</Value>
+					<Value>/Return/ReturnData/EIC/EICWorksheetPP/SEOrStatutoryEmployeeAmtPP</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>Earned Income</Type>
+					<SkipToInputIfOnlyOneSet>true</SkipToInputIfOnlyOneSet>
+				</Configuration>
+			</Accumulation>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 6 Calcs-->
+	<!--Line 5 Calcs-->
+	<Node name="/Return/ReturnData/EIC/EICWorksheetPP/SEOrStatutoryEmployeeAmtPP">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksComputationTotalPP</Input>
+		</Inputs>
+		<Gist>
+			<NumericCopy>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksComputationTotalPP</Value>
+				</InputRoles>
+			</NumericCopy>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 5 Calcs-->
+	<!--Line 4 Calcs-->
+	<!--Line 4c Calcs-->
+	<Node name="/Return/ReturnData/IRS1040/NontxCombatPayElectionAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EICWorksheetPP/TotalNontaxableCombatPayPP</Input>
+			<Input>/Temporary/EIC/TotalNTCombatAboveZero</Input>
+		</Inputs>
+		<BlankCondition>
+			<BlankIfFalse>/Temporary/EIC/TotalNTCombatAboveZero</BlankIfFalse>
+		</BlankCondition>
+		<Gist>
+			<NumericCopy>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EICWorksheetPP/TotalNontaxableCombatPayPP</Value>
+				</InputRoles>
+			</NumericCopy>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/TotalNTCombatAboveZero">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EICWorksheetPP/TotalNontaxableCombatPayPP</Input>
+			<Input>/Constants/Zero</Input>
+		</Inputs>
+		<Gist>
+			<AboveThreshold>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EICWorksheetPP/TotalNontaxableCombatPayPP</Value>
+					<Threshold>/Constants/Zero</Threshold>
+				</InputRoles>
+			</AboveThreshold>
+		</Gist>
+	</Node>
+	<Node name="/Return/ReturnData/EIC/EICWorksheetPP/TotalNontaxableCombatPayPP">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EICWorksheetPP/SpouseNontaxableCombatPayPP</Input>
+			<Input>/Return/ReturnData/EIC/EICWorksheetPP/TaxpayerNontaxableCombatPayPP</Input>
+		</Inputs>
+		<Gist>
+			<Accumulation>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EICWorksheetPP/SpouseNontaxableCombatPayPP</Value>
+					<Value>/Return/ReturnData/EIC/EICWorksheetPP/TaxpayerNontaxableCombatPayPP</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>Taxpayer's nontaxable combat pay election for EIC</Type>
+					<Type>Spouse's nontaxable combat pay election for EIC</Type>
+				</Configuration>
+			</Accumulation>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 4c Calcs-->
+	<!--Line 4b-->
+	<Node name="/Return/ReturnData/EIC/EICWorksheetPP/SpouseNontaxableCombatPayPP">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/SpouseNontaxableCombatPayPP</Input>
+			<Input>/Temporary/EIC/SpouseCombatPayForEICInd</Input>
+		</Inputs>
+		<BlankCondition>
+			<BlankIfFalse>/Temporary/EIC/SpouseCombatPayForEICInd</BlankIfFalse>
+		</BlankCondition>
+		<Gist>
+			<NumericCopy>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/SpouseNontaxableCombatPayPP</Value>
+				</InputRoles>
+			</NumericCopy>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 4b-->
+	<!--Line 4a-->
+	<Node name="/Return/ReturnData/EIC/EICWorksheetPP/TaxpayerNontaxableCombatPayPP">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/TaxpayerNontaxableCombatPayPP</Input>
+			<Input>/Temporary/EIC/TaxpayerCombatPayForEICInd</Input>
+		</Inputs>
+		<BlankCondition>
+			<BlankIfFalse>/Temporary/EIC/TaxpayerCombatPayForEICInd</BlankIfFalse>
+		</BlankCondition>
+		<Gist>
+			<NumericCopy>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/TaxpayerNontaxableCombatPayPP</Value>
+				</InputRoles>
+			</NumericCopy>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 4a-->
+	<!--End Line 4 Calcs-->
+	<!--Line 3 Calcs-->
+	<Node name="/Return/ReturnData/EIC/EICWorksheetPP/WagesSalariesAndTipsAdjPP">
+		<Inputs>
+			<Input>/Temporary/EIC/EICWorksheetPP/IsWagesSalariesAndTipsBelowZero</Input>
+			<Input>/Temporary/EIC/EICWorksheetPP/WageAdjustmentsCalcd</Input>
+            <Input>/Constants/Zero</Input>
+		</Inputs>
+        <Gist>
+			<NumericChoice>
+				<InputRoles>
+					<Choice>/Temporary/EIC/EICWorksheetPP/IsWagesSalariesAndTipsBelowZero</Choice>
+					<Possibility>/Temporary/EIC/EICWorksheetPP/WageAdjustmentsCalcd</Possibility>
+                    <Possibility>/Constants/Zero</Possibility>
+				</InputRoles>
+				<Configuration>
+					<ChoiceMapping>
+						<Option>
+							<Value>true</Value>
+                            <ID>/Constants/Zero</ID>
+							<NoOtherOption>true</NoOtherOption>
+						</Option>
+						<DefaultOption>
+							<ID>/Temporary/EIC/EICWorksheetPP/WageAdjustmentsCalcd</ID>
+							<NoOtherOption>true</NoOtherOption>
+						</DefaultOption>
+					</ChoiceMapping>
+				</Configuration>
+			</NumericChoice>
+        </Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/EICWorksheetPP/IsWagesSalariesAndTipsBelowZero">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EICWorksheetPP/WagesSalariesAndTipsAmtPP</Input>
+			<Input>/Constants/Zero</Input>
+		</Inputs>
+		<Gist>
+			<BelowThreshold>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EICWorksheetPP/WagesSalariesAndTipsAmtPP</Value>
+					<Threshold>/Constants/Zero</Threshold>
+				</InputRoles>
+			</BelowThreshold>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/EICWorksheetPP/WageAdjustmentsCalcd">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EICWorksheetPP/WagesSalariesAndTipsAmtPP</Input>
+			<Input>/Temporary/EIC/EICWorksheetPP/Line2Sum</Input>
+		</Inputs>
+		<Gist>
+			<Difference>
+				<InputRoles>
+					<Left>/Return/ReturnData/EIC/EICWorksheetPP/WagesSalariesAndTipsAmtPP</Left>
+					<Right>/Temporary/EIC/EICWorksheetPP/Line2Sum</Right>
+				</InputRoles>
+				<Configuration>
+					<SkipToLeftIfRightIsBlank>true</SkipToLeftIfRightIsBlank>
+				</Configuration>
+			</Difference>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 3 Calcs-->
+	<!--Line 2 Calcs-->
+	<Node name="/Temporary/EIC/EICWorksheetPP/Line2Sum">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EICWorksheetPP/SelfEmploymentIncomeAmtPP</Input>
+			<Input>/Return/ReturnData/EIC/EICWorksheetPP/WagesNotConsideredEarnedPP</Input>
+			<Input>/Return/ReturnData/EIC/EICWorksheetPP/Section457AndNonqualPlansPP</Input>
+		</Inputs>
+		<Gist>
+			<Accumulation>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EICWorksheetPP/SelfEmploymentIncomeAmtPP</Value>
+					<Value>/Return/ReturnData/EIC/EICWorksheetPP/WagesNotConsideredEarnedPP</Value>
+					<Value>/Return/ReturnData/EIC/EICWorksheetPP/Section457AndNonqualPlansPP</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>Income reported as wages and as self-employment income</Type>
+					<Type>Prison wages and any amount earned that is treated as belonging to the taxpayer</Type>
+					<Type>Nonqualified plans reported on W-2</Type>
+				</Configuration>
+			</Accumulation>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--Line 2c Calcs-->
+	<Node name="/Return/ReturnData/EIC/EICWorksheetPP/Section457AndNonqualPlansPP">
+		<Inputs>
+			<Input>/Return/ReturnData/IRSW2/NonQualifiedPlansDistributionAmtPP</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyAccumulation>
+				<InputRoles>
+					<Value>/Return/ReturnData/IRSW2/NonQualifiedPlansDistributionAmtPP</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>Nonqualified Plans</Type>
+				</Configuration>
+			</MultiCopyAccumulation>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 2c Calcs-->
+	<!--Line 2b Calcs-->
+	<Node name="/Return/ReturnData/EIC/EICWorksheetPP/WagesNotConsideredEarnedPP">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EICWorksheetPP/NotEarnedIncomeSmartWorksheetPP/SpouseAmountsEarnedAsInmatePP</Input>
+			<Input>/Return/ReturnData/EIC/EICWorksheetPP/NotEarnedIncomeSmartWorksheetPP/TaxpayerAmountsEarnedAsInmatePP</Input>
+			<Input>/Return/ReturnData/EIC/EICWorksheetPP/NotEarnedIncomeSmartWorksheetPP/TaxpayerAmountEarnedBySpousePP</Input>
+		</Inputs>
+		<Gist>
+			<Accumulation>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EICWorksheetPP/NotEarnedIncomeSmartWorksheetPP/SpouseAmountsEarnedAsInmatePP</Value>
+					<Value>/Return/ReturnData/EIC/EICWorksheetPP/NotEarnedIncomeSmartWorksheetPP/TaxpayerAmountsEarnedAsInmatePP</Value>
+					<Value>/Return/ReturnData/EIC/EICWorksheetPP/NotEarnedIncomeSmartWorksheetPP/TaxpayerAmountEarnedBySpousePP</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>Taxpayer's amount earned as prison inmate</Type>
+					<Type>Spouse's amount earned as prison inmate</Type>
+					<Type>Amount earned by spouse treated as belonging to taxpayer</Type>
+				</Configuration>
+			</Accumulation>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 2b Calcs-->
+	<!--Line 2a Calcs-->
+	<Node name="/Return/ReturnData/EIC/EICWorksheetPP/SelfEmploymentIncomeAmtPP">
+		<Inputs>
+			<Input>/Temporary/EIC/EICWorksheetPP/WagesAccumulation</Input>
+			<Input>/Temporary/EIC/EICWorksheetPP/ClergyHousingAccumulation</Input>
+			<Input>/Return/ReturnData/ScheduleSEAdjustments/SpouseSEReportedIncomePP</Input>
+			<Input>/Return/ReturnData/ScheduleSEAdjustments/TaxpayerSEReportedIncomePP</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040LongScheduleSE/W2WagesFromChurchesAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040LongScheduleSE/W2WagesFromChurchesAmt</Input>
+		</Inputs>
+		<Gist>
+			<Accumulation>
+				<InputRoles>
+					<Value>/Temporary/EIC/EICWorksheetPP/WagesAccumulation</Value>
+					<Value>/Temporary/EIC/EICWorksheetPP/ClergyHousingAccumulation</Value>
+					<Value>/Return/ReturnData/ScheduleSEAdjustments/SpouseSEReportedIncomePP</Value>
+					<Value>/Return/ReturnData/ScheduleSEAdjustments/TaxpayerSEReportedIncomePP</Value>
+					<Value>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040LongScheduleSE/W2WagesFromChurchesAmt</Value>
+					<Value>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040LongScheduleSE/W2WagesFromChurchesAmt</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>Total self-employment income</Type>
+				</Configuration>
+			</Accumulation>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040LongScheduleSE/W2WagesFromChurchesAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/W2WagesFromChurchesAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseUUID</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopySelectNumericByID>
+				<InputRoles>
+					<Default>/Constants/NumericBlank</Default>
+					<MultiCopy>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/W2WagesFromChurchesAmt</MultiCopy>
+					<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseUUID</ID>
+				</InputRoles>
+			</MultiCopySelectNumericByID>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040LongScheduleSE/W2WagesFromChurchesAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/W2WagesFromChurchesAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerUUID</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopySelectNumericByID>
+				<InputRoles>
+					<Default>/Constants/NumericBlank</Default>
+					<MultiCopy>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/W2WagesFromChurchesAmt</MultiCopy>
+					<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerUUID</ID>
+				</InputRoles>
+			</MultiCopySelectNumericByID>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Return/ReturnData/IRS1040/ClergyEICLiteralPP">
+		<Inputs>
+			<Input>/Temporary/EIC/TotalWagesAmtAboveZero</Input>
+			<Input>/Constants/EIC/ClergyString</Input>
+		</Inputs>
+		<BlankCondition>
+			<BlankIfFalse>/Temporary/EIC/TotalWagesAmtAboveZero</BlankIfFalse>
+		</BlankCondition>
+		<Gist>
+			<StringCopy>
+				<InputRoles>
+					<Value>/Constants/EIC/ClergyString</Value>
+				</InputRoles>
+			</StringCopy>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/ClergyMoneyAboveZero">
+		<Inputs>
+			<Input>/Temporary/EIC/TotalHsgAmtAboveZero</Input>
+			<Input>/Temporary/EIC/TotalWagesAmtAboveZero</Input>
+		</Inputs>
+		<Gist>
+			<AtLeastOneConditionTrue>
+				<InputRoles>
+					<Condition>/Temporary/EIC/TotalHsgAmtAboveZero</Condition>
+					<Condition>/Temporary/EIC/TotalWagesAmtAboveZero</Condition>
+				</InputRoles>
+			</AtLeastOneConditionTrue>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/TotalHsgAmtAboveZero">
+		<Inputs>
+			<Input>/Temporary/EIC/EICWorksheetPP/ClergyHousingAccumulation</Input>
+			<Input>/Constants/Zero</Input>
+		</Inputs>
+		<Gist>
+			<AboveThreshold>
+				<InputRoles>
+					<Value>/Temporary/EIC/EICWorksheetPP/ClergyHousingAccumulation</Value>
+					<Threshold>/Constants/Zero</Threshold>
+				</InputRoles>
+			</AboveThreshold>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/TotalWagesAmtAboveZero">
+		<Inputs>
+			<Input>/Temporary/EIC/EICWorksheetPP/WagesAccumulation</Input>
+			<Input>/Constants/Zero</Input>
+		</Inputs>
+		<Gist>
+			<AboveThreshold>
+				<InputRoles>
+					<Value>/Temporary/EIC/EICWorksheetPP/WagesAccumulation</Value>
+					<Threshold>/Constants/Zero</Threshold>
+				</InputRoles>
+			</AboveThreshold>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/EICWorksheetPP/ClergyHousingAccumulation">
+		<Inputs>
+			<Input>/Temporary/EIC/EICWorksheetPP/ClergyHousingMCCombiner</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyAccumulation>
+				<InputRoles>
+					<Value>/Temporary/EIC/EICWorksheetPP/ClergyHousingMCCombiner</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>Clergy Housing</Type>
+				</Configuration>
+			</MultiCopyAccumulation>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/EICWorksheetPP/WagesAccumulation">
+		<Inputs>
+			<Input>/Temporary/EIC/EICWorksheetPP/WagesMCCombiner</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyAccumulation>
+				<InputRoles>
+					<Value>/Temporary/EIC/EICWorksheetPP/WagesMCCombiner</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>W2 Wages</Type>
+				</Configuration>
+			</MultiCopyAccumulation>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/EICWorksheetPP/WagesMCCombiner">
+		<Inputs>
+			<Input>/Temporary/EIC/EICWorksheetPP/IncludeWagesAmt</Input>
+			<Input>/Temporary/IRSW2/WagesAmt</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyMapper>
+				<List>/Temporary/EIC/EICWorksheetPP/IncludeWagesAmt</List>
+				<List>/Temporary/IRSW2/WagesAmt</List>
+				<Gist>
+					<NumericCopyIfApplicable>
+						<InputRoles>
+							<ApplicableCondition>/Temporary/EIC/EICWorksheetPP/IncludeWagesAmt</ApplicableCondition>
+							<Value>/Temporary/IRSW2/WagesAmt</Value>
+							<SkipToIfCopied>true</SkipToIfCopied>
+						</InputRoles>
+					</NumericCopyIfApplicable>
+				</Gist>
+			</MultiCopyMapper>
+		</Gist>
+		<RoundTo>
+			<MultiCopy>
+				<Dollars />
+			</MultiCopy>
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/EICWorksheetPP/ClergyHousingMCCombiner">
+		<Inputs>
+			<Input>/Temporary/EIC/EICWorksheetPP/IncludeClergyHousing</Input>
+			<Input>/Temporary/EIC/EICWorksheetPP/HousingDifferenceAmt</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyMapper>
+				<List>/Temporary/EIC/EICWorksheetPP/IncludeClergyHousing</List>
+				<List>/Temporary/EIC/EICWorksheetPP/HousingDifferenceAmt</List>
+				<Gist>
+					<NumericCopyIfApplicable>
+						<InputRoles>
+							<ApplicableCondition>/Temporary/EIC/EICWorksheetPP/IncludeClergyHousing</ApplicableCondition>
+							<Value>/Temporary/EIC/EICWorksheetPP/HousingDifferenceAmt</Value>
+							<SkipToIfCopied>true</SkipToIfCopied>
+						</InputRoles>
+					</NumericCopyIfApplicable>
+				</Gist>
+			</MultiCopyMapper>
+		</Gist>
+		<RoundTo>
+			<MultiCopy>
+				<Dollars />
+			</MultiCopy>
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/EICWorksheetPP/HousingDifferenceAmt">
+		<Inputs>
+			<Input>/Temporary/EIC/EICWorksheetPP/HousingDifferenceAmtRaw</Input>
+			<Input>/Constants/Zero</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyMapper>
+				<List>/Temporary/EIC/EICWorksheetPP/HousingDifferenceAmtRaw</List>
+				<Gist>
+					<Maximum>
+						<InputRoles>
+							<Value>/Temporary/EIC/EICWorksheetPP/HousingDifferenceAmtRaw</Value>
+							<Value>/Constants/Zero</Value>
+						</InputRoles>
+					</Maximum>
+				</Gist>
+			</MultiCopyMapper>
+		</Gist>
+		<RoundTo>
+			<MultiCopy>
+				<Dollars />
+			</MultiCopy>
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/EICWorksheetPP/HousingDifferenceAmtRaw">
+		<Inputs>
+			<Input>/Temporary/IRSW2/ClergyDesignatedHousingAmtPP</Input>
+			<Input>/Temporary/IRSW2/ClergySmallestHousingAmtPP</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyMapper>
+				<List>/Temporary/IRSW2/ClergyDesignatedHousingAmtPP</List>
+				<List>/Temporary/IRSW2/ClergySmallestHousingAmtPP</List>
+				<Gist>
+					<Difference>
+						<InputRoles>
+							<Left>/Temporary/IRSW2/ClergyDesignatedHousingAmtPP</Left>
+							<Right>/Temporary/IRSW2/ClergySmallestHousingAmtPP</Right>
+						</InputRoles>
+					</Difference>
+				</Gist>
+			</MultiCopyMapper>
+		</Gist>
+		<RoundTo>
+			<MultiCopy>
+				<Dollars />
+			</MultiCopy>
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/EICWorksheetPP/IncludeClergyHousing">
+		<Inputs>
+			<Input>/Temporary/IRSW2/ClergySelfEmploymentTaxCdPP</Input>
+			<Input>/Constants/IRSW2/IncludeClergyHousing</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyMapper>
+				<List>/Temporary/IRSW2/ClergySelfEmploymentTaxCdPP</List>
+				<Gist>
+					<MultiCopyHasSpecificValue>
+						<InputRoles>
+							<MultiCopy>/Constants/IRSW2/IncludeClergyHousing</MultiCopy>
+							<Value>/Temporary/IRSW2/ClergySelfEmploymentTaxCdPP</Value>
+						</InputRoles>
+					</MultiCopyHasSpecificValue>
+				</Gist>
+			</MultiCopyMapper>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/EICWorksheetPP/IncludeWagesAmt">
+		<Inputs>
+			<Input>/Temporary/IRSW2/ClergySelfEmploymentTaxCdPP</Input>
+			<Input>/Constants/IRSW2/IncludeWagesAmt</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyMapper>
+				<List>/Temporary/IRSW2/ClergySelfEmploymentTaxCdPP</List>
+				<Gist>
+					<MultiCopyHasSpecificValue>
+						<InputRoles>
+							<MultiCopy>/Constants/IRSW2/IncludeWagesAmt</MultiCopy>
+							<Value>/Temporary/IRSW2/ClergySelfEmploymentTaxCdPP</Value>
+						</InputRoles>
+					</MultiCopyHasSpecificValue>
+				</Gist>
+			</MultiCopyMapper>
+		</Gist>
+	</Node>
+	<!--End Line 2a Calcs-->
+	<!--End Line 2 Calcs-->
+	<!--Line 1 Calc-->
+	<Node name="/Return/ReturnData/EIC/EICWorksheetPP/WagesSalariesAndTipsAmtPP">
+		<Inputs>
+			<Input>/Temporary/EIC/IsWagesSalariesAndTipsBlank</Input>
+			<Input>/Temporary/EIC/AccumulationFromWagesSalariesAndTips</Input>
+			<Input>/Return/ReturnData/IRS1040/WagesSalariesAndTipsAmt</Input>
+		</Inputs>
+		<Gist>
+			<NumericChoice>
+				<InputRoles>
+					<Choice>/Temporary/EIC/IsWagesSalariesAndTipsBlank</Choice>
+					<Possibility>/Return/ReturnData/IRS1040/WagesSalariesAndTipsAmt</Possibility>
+					<Possibility>/Temporary/EIC/AccumulationFromWagesSalariesAndTips</Possibility>
+				</InputRoles>
+				<Configuration>
+					<ChoiceMapping>
+						<Option>
+							<Value>true</Value>
+							<ID>/Return/ReturnData/IRS1040/WagesSalariesAndTipsAmt</ID>
+							<NoOtherOption>false</NoOtherOption>
+						</Option>
+						<DefaultOption>
+							<ID>/Temporary/EIC/AccumulationFromWagesSalariesAndTips</ID>
+							<NoOtherOption>true</NoOtherOption>
+						</DefaultOption>
+					</ChoiceMapping>
+				</Configuration>
+			</NumericChoice>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/IsWagesSalariesAndTipsBlank">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalWagesSalariesAndTipsAmtPP</Input>
+		</Inputs>
+		<Gist>
+			<IsBlank>
+				<InputRoles>
+					<Value>/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalWagesSalariesAndTipsAmtPP</Value>
+				</InputRoles>
+			</IsBlank>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/IsWorksheetAccumulationBlank">
+		<Inputs>
+            <Input>/Temporary/EIC/AccumulationFromWorksheet</Input>
+		</Inputs>
+		<Gist>
+			<IsBlank>
+				<InputRoles>
+                    <Value>/Temporary/EIC/AccumulationFromWorksheet</Value>
+				</InputRoles>
+			</IsBlank>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/AccumulationFromWagesSalariesAndTips">
+		<Inputs>
+            <Input>/Temporary/EIC/IsWorksheetAccumulationBlank</Input>
+            <Input>/Temporary/EIC/AccumulationFromWorksheet</Input>
+            <Input>/Constants/Zero</Input>
+		</Inputs>
+		<Gist>
+			<NumericChoice>
+				<InputRoles>
+					<Choice>/Temporary/EIC/IsWorksheetAccumulationBlank</Choice>
+					<Possibility>/Temporary/EIC/AccumulationFromWorksheet</Possibility>
+                    <Possibility>/Constants/Zero</Possibility>
+				</InputRoles>
+				<Configuration>
+					<ChoiceMapping>
+						<Option>
+							<Value>true</Value>
+                            <ID>/Constants/Zero</ID>
+							<NoOtherOption>true</NoOtherOption>
+						</Option>
+						<DefaultOption>
+							<ID>/Temporary/EIC/AccumulationFromWorksheet</ID>
+							<NoOtherOption>true</NoOtherOption>
+						</DefaultOption>
+					</ChoiceMapping>
+				</Configuration>
+			</NumericChoice>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/AccumulationFromWorksheet">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalEarnedIncomePP</Input>
+			<Input>/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalEmployerProvidedDependentCareAmtPP</Input>
+			<Input>/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalEmployerProvidedAdoptionBenefitsAmtPP</Input>
+		</Inputs>
+		<Gist>
+			<Accumulation>
+				<InputRoles>
+					<Value>/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalEarnedIncomePP</Value>
+					<Value>/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalEmployerProvidedDependentCareAmtPP</Value>
+					<Value>/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalEmployerProvidedAdoptionBenefitsAmtPP</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>Total income earned for EIC</Type>
+		<!-- we probably want this in the future, when total earned income is calculated
+					<SkipToInputIfOnlyOneSet>true</SkipToInputIfOnlyOneSet>
+					-->
+				</Configuration>
+			</Accumulation>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 1 Calc-->
+
+  <Node name="/Temporary/EIC/SpouseCombatPayForEICInd">
+    <Inputs>
+      <Input>/Return/ReturnData/EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/SpouseCombatPayForEICIndPP</Input>
+      <Input>/Constants/True</Input>
+      <Input>/Constants/False</Input>
+    </Inputs>
+    <Gist>
+      <BooleanChoice>
+        <InputRoles>
+          <Choice>/Return/ReturnData/EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/SpouseCombatPayForEICIndPP</Choice>
+          <Possibility>/Constants/True</Possibility>
+          <Possibility>/Constants/False</Possibility>
+        </InputRoles>
+        <Configuration>
+          <ChoiceMapping>
+            <Option>
+              <Value>true</Value>
+              <ID>/Constants/True</ID>
+              <NoOtherOption>true</NoOtherOption>
+            </Option>
+            <DefaultOption>
+                <ID>/Constants/False</ID>
+              <NoOtherOption>true</NoOtherOption>
+            </DefaultOption>
+          </ChoiceMapping>
+        </Configuration>
+      </BooleanChoice>
+    </Gist>
+  </Node>
+  <Node name="/Temporary/EIC/TaxpayerCombatPayForEICInd">
+    <Inputs>
+      <Input>/Return/ReturnData/EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/TaxpayerCombatPayForEICIndPP</Input>
+      <Input>/Constants/True</Input>
+      <Input>/Constants/False</Input>
+    </Inputs>
+    <Gist>
+      <BooleanChoice>
+        <InputRoles>
+          <Choice>/Return/ReturnData/EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/TaxpayerCombatPayForEICIndPP</Choice>
+          <Possibility>/Constants/True</Possibility>
+          <Possibility>/Constants/False</Possibility>
+        </InputRoles>
+        <Configuration>
+          <ChoiceMapping>
+            <Option>
+              <Value>true</Value>
+              <ID>/Constants/True</ID>
+              <NoOtherOption>true</NoOtherOption>
+            </Option>
+            <DefaultOption>
+                <ID>/Constants/False</ID>
+              <NoOtherOption>true</NoOtherOption>
+            </DefaultOption>
+          </ChoiceMapping>
+        </Configuration>
+      </BooleanChoice>
+    </Gist>
+  </Node>
+	<!--Inputs-->
+	<!-- New fields -->
+	<InputNode name="/Return/ReturnData/ScheduleSEAdjustments/SpouseSEReportedIncomePP">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</InputNode>
+	<InputNode name="/Return/ReturnData/ScheduleSEAdjustments/TaxpayerSEReportedIncomePP">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</InputNode>
+	<MultiCopyPrimitiveInputNode name="/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/W2WagesFromChurchesAmt">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</MultiCopyPrimitiveInputNode>
+	<!-- End fields -->
+	<InputNode name="/Return/ReturnData/EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/SpouseCombatPayForEICIndPP">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</InputNode>
+	<InputNode name="/Return/ReturnData/EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/SpouseNontaxableCombatPayPP">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</InputNode>
+	<InputNode name="/Return/ReturnData/EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/TaxpayerCombatPayForEICIndPP">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</InputNode>
+	<InputNode name="/Return/ReturnData/EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/TaxpayerNontaxableCombatPayPP">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</InputNode>
+	<InputNode name="/Return/ReturnData/EIC/EICWorksheetPP/NotEarnedIncomeSmartWorksheetPP/SpouseAmountsEarnedAsInmatePP">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</InputNode>
+	<InputNode name="/Return/ReturnData/EIC/EICWorksheetPP/NotEarnedIncomeSmartWorksheetPP/TaxpayerAmountsEarnedAsInmatePP">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</InputNode>
+	<InputNode name="/Return/ReturnData/EIC/EICWorksheetPP/NotEarnedIncomeSmartWorksheetPP/TaxpayerAmountEarnedBySpousePP">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</InputNode>
+	<Node name="/Temporary/IRSW2/ClergySelfEmploymentTaxCdPP">
+		<Inputs>
+			<Input>/Return/ReturnData/IRSW2/(ClergySelfEmploymentTaxCdPP)</Input>
+			<Input>/Constants/IRSW2/ClergySelfEmploymentTaxCdPPFieldName</Input>
+			<Input>/Constants/StringBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyMapper>
+				<List>/Return/ReturnData/IRSW2/(ClergySelfEmploymentTaxCdPP)</List>
+				<Gist>
+					<MultiCopySelectStringByID>
+						<InputRoles>
+							<Default>/Constants/StringBlank</Default>
+							<MultiCopy>/Return/ReturnData/IRSW2/(ClergySelfEmploymentTaxCdPP)</MultiCopy>
+							<ID>/Constants/IRSW2/ClergySelfEmploymentTaxCdPPFieldName</ID>
+						</InputRoles>
+					</MultiCopySelectStringByID>
+				</Gist>
+			</MultiCopyMapper>
+		</Gist>
+	</Node>
+	<MultiCopyStructInputNode name="/Return/ReturnData/IRSW2/(ClergySelfEmploymentTaxCdPP)" />
+	<Node name="/Temporary/IRSW2/ClergySmallestHousingAmtPP">
+		<Inputs>
+			<Input>/Return/ReturnData/IRSW2/(ClergySmallestHousingAmtPP)</Input>
+			<Input>/Constants/IRSW2/ClergySmallestHousingAmtPPFieldName</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyMapper>
+				<List>/Return/ReturnData/IRSW2/(ClergySmallestHousingAmtPP)</List>
+				<Gist>
+					<MultiCopySelectNumericByID>
+						<InputRoles>
+							<Default>/Constants/NumericBlank</Default>
+							<MultiCopy>/Return/ReturnData/IRSW2/(ClergySmallestHousingAmtPP)</MultiCopy>
+							<ID>/Constants/IRSW2/ClergySmallestHousingAmtPPFieldName</ID>
+						</InputRoles>
+					</MultiCopySelectNumericByID>
+				</Gist>
+			</MultiCopyMapper>
+		</Gist>
+		<RoundTo>
+			<MultiCopy>
+				<Dollars />
+			</MultiCopy>
+		</RoundTo>
+	</Node>
+	<MultiCopyStructInputNode name="/Return/ReturnData/IRSW2/(ClergySmallestHousingAmtPP)">
+		<RoundTo>
+			<MultiCopy>
+				<Struct>
+					<Element>
+						<Name>ClergySmallestHousingAmtPP</Name>
+						<RoundTo>
+							<Dollars />
+						</RoundTo>
+					</Element>
+				</Struct>
+			</MultiCopy>
+		</RoundTo>
+	</MultiCopyStructInputNode>
+	<Node name="/Temporary/IRSW2/ClergyDesignatedHousingAmtPP">
+		<Inputs>
+			<Input>/Return/ReturnData/IRSW2/(ClergyDesignatedHousingAmtPP)</Input>
+			<Input>/Constants/IRSW2/ClergyDesignatedHousingAmtPPFieldName</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyMapper>
+				<List>/Return/ReturnData/IRSW2/(ClergyDesignatedHousingAmtPP)</List>
+				<Gist>
+					<MultiCopySelectNumericByID>
+						<InputRoles>
+							<Default>/Constants/NumericBlank</Default>
+							<MultiCopy>/Return/ReturnData/IRSW2/(ClergyDesignatedHousingAmtPP)</MultiCopy>
+							<ID>/Constants/IRSW2/ClergyDesignatedHousingAmtPPFieldName</ID>
+						</InputRoles>
+					</MultiCopySelectNumericByID>
+				</Gist>
+			</MultiCopyMapper>
+		</Gist>
+		<RoundTo>
+			<MultiCopy>
+				<Dollars />
+			</MultiCopy>
+		</RoundTo>
+	</Node>
+	<MultiCopyStructInputNode name="/Return/ReturnData/IRSW2/(ClergyDesignatedHousingAmtPP)">
+		<RoundTo>
+			<MultiCopy>
+				<Struct>
+					<Element>
+						<Name>ClergyDesignatedHousingAmtPP</Name>
+						<RoundTo>
+							<Dollars />
+						</RoundTo>
+					</Element>
+				</Struct>
+			</MultiCopy>
+		</RoundTo>
+	</MultiCopyStructInputNode>
+	<MultiCopyPrimitiveInputNode name="/Return/ReturnData/IRSW2/NonQualifiedPlansDistributionAmtPP">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</MultiCopyPrimitiveInputNode>
+	<Node name="/Temporary/IRSW2/WagesAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRSW2/(WagesAmt)</Input>
+			<Input>/Constants/IRSW2/WagesAmtFieldName</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyMapper>
+				<List>/Return/ReturnData/IRSW2/(WagesAmt)</List>
+				<Gist>
+					<MultiCopySelectNumericByID>
+						<InputRoles>
+							<Default>/Constants/NumericBlank</Default>
+							<MultiCopy>/Return/ReturnData/IRSW2/(WagesAmt)</MultiCopy>
+							<ID>/Constants/IRSW2/WagesAmtFieldName</ID>
+						</InputRoles>
+					</MultiCopySelectNumericByID>
+				</Gist>
+			</MultiCopyMapper>
+		</Gist>
+		<RoundTo>
+			<MultiCopy>
+				<Dollars />
+			</MultiCopy>
+		</RoundTo>
+	</Node>
+	<MultiCopyStructInputNode name="/Return/ReturnData/IRSW2/(WagesAmt)">
+		<RoundTo>
+			<MultiCopy>
+				<Struct>
+					<Element>
+						<Name>WagesAmt</Name>
+						<RoundTo>
+							<Dollars />
+						</RoundTo>
+					</Element>
+				</Struct>
+			</MultiCopy>
+		</RoundTo>
+	</MultiCopyStructInputNode>
+	<InputNode name="/Return/ReturnData/IRS1040/WagesSalariesAndTipsAmt">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</InputNode>
+	<InputNode name="/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalEarnedIncomePP">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</InputNode>
+	<InputNode name="/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalEmployerProvidedDependentCareAmtPP">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</InputNode>
+	<InputNode name="/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalEmployerProvidedAdoptionBenefitsAmtPP">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</InputNode>
+	<InputNode name="/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalWagesSalariesAndTipsAmtPP">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</InputNode>
+	<!--End Inputs-->
+	<!--Constants-->
+	<ConstantNode name="/Constants/Zero">
+		<RoundTo>
+			<Integer />
+		</RoundTo>
+	</ConstantNode>
+	<ConstantNode name="/Constants/EIC/ClergyString" />
+	<ConstantNode name="/Constants/IRSW2/WagesAmtFieldName" />
+	<ConstantNode name="/Constants/IRSW2/ClergyDesignatedHousingAmtPPFieldName" />
+	<ConstantNode name="/Constants/IRSW2/ClergySmallestHousingAmtPPFieldName" />
+	<ConstantNode name="/Constants/IRSW2/ClergySelfEmploymentTaxCdPPFieldName" />
+	<ConstantNode name="/Constants/IRSW2/IncludeWagesAmt" />
+	<ConstantNode name="/Constants/IRSW2/IncludeClergyHousing" />
+	<ConstantNode name="/Constants/StringBlank" />
+	<ConstantNode name="/Constants/NumericBlank" />
+	<!--End Constants-->
+</Nodes>

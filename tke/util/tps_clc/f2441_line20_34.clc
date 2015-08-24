@@ -1,0 +1,153 @@
+
+FORM S2014US1040PER.F2441;
+CONSTANT
+	kLIMIT1 =	3000;
+		kLIMIT2 =	6000;
+	kMaxW2  =	5000;
+	kMaxW2MFS =	2500;
+	kEI1 =		250;
+	kEI2 =		500;
+VAR
+	hLine2c: FDollar;
+	totexp: FDollar;
+	totkids: FInteger;
+	totprov: FDollar;
+	tempexp: FDollar;
+	DCBProRate:FDollar;
+	hDCBProrate:FDollar;
+	hMDqualexp,
+	hMDSmlEI :FDollar;
+	kid: FInteger;
+	hL4			: FDollar;
+	hL5			: FDollar;
+	hL6			: FDollar;
+	hL7			: FDollar;
+	hL9			: FDollar;
+	hEFL9		: FDollar;
+	h41			: FDollar;
+	hStudent	: FInteger;
+	hDisabled 	: FInteger;
+	hSKIP		: FInteger;
+		_		: FText;
+	hcredit		: FDollar;
+	hEFcredit	: FDollar;
+	totact		: FDollar;
+
+
+
+	OPTOUT	: Boolean;
+	OPT2441	: Boolean;
+
+	Boxes	: Array[8] of Boolean;
+
+	RunCalc : Boolean;
+
+	hIntNotFinal : Boolean;
+
+	hlyL2:Array[999] of FDollar;
+	hlyL2F:Array[999] of FText;
+	hlyL10,hlyL12A,hlyL13,hlyS3,hlyS4 :FDollar;
+	hlyS1,hlyS2 :FInteger;
+	hLIMIT1,hLIMIT2,hMaxW2,hMaxW2MFS,hEI1,hEI2 :FInteger;
+
+	hNumNonStd	: Finteger;
+	hNSFName	:Array[999] of FText;
+	hNSNameAge	:Array[999] of FText;
+	hNSForm		:Array[999] of FInteger;
+	hNSCopyN	:Array[12] of Finteger;
+
+
+	TPNONTAX, SPNONTAX : FDollar;
+
+	hStdForm	:Array[999] of FInteger;
+	hStdCopyN	:Array[999] of Finteger;
+	hQualCopy	:Array[999] of FInteger;
+	hName		:Array[999] of FText;
+	hNameAge	:Array[999] of FText;
+	hPerName	:Array[999] of FText;
+	hPerLName	:Array[999] of FText;
+	hBusName	:Array[999] of FText;
+	hBusNmL2	:Array[999] of FText;
+	hProvAddr	:Array[999] of Ftext;
+	hProvCity	:Array[999] of Ftext;
+	hProvState	:Array[999] of FText;
+	hProvZIP	:Array[999] of FInteger;
+	hProvIDNo	:Array[999] of FEIN;
+	hProvAmtPd	:Array[999] of FInteger;
+
+    hMapTIN     :Array[999] of FText;
+
+	tREI : FDollar;
+
+	sREI : FDollar;
+
+	tDEI : FDollar;
+
+	sDEI : FDollar;
+
+	dcbBus : FDollar;
+
+	dcbEmp : FDollar;
+
+
+
+	tREI8839 : FDollar;
+
+	sREI8839 : FDollar;
+
+	ML178839 : FDollar;
+
+	ML198839 : FDollar;
+
+	ML298839 : FDollar;
+
+	F6251 : FDollar;
+
+
+	hL24 : FDollar;
+
+	hL25 : FDollar;
+
+	hL26 : FDollar;
+
+	hL27 : FDollar;
+
+
+	hF1116 : FDollar;
+	IgnNone	: boolean;
+	rueTPNoEarnInc,
+	rueSPNoEarnInc : boolean;
+
+Section Line30_34;
+Begin
+
+
+	If (RunCalc) Then
+		Begin
+			If IsChecked(FINFOWKS.FS3) and (IsChecked(L16BX) or not HasValue(MFS)) then
+				begin
+					Blank(L20, L21, L22, L23, L24);
+				end
+			else if L17 > 0 then
+
+				begin
+
+					If (L13 > 0) then
+						L23 := totexp;
+					If totkids = 1  then
+						L20 := kLIMIT1;
+					else if totkids >= 2  then
+						L20 := kLIMIT2;
+
+					L21 := hL27 + L18;
+					L22 := L20 - L21;
+
+					If L22 <= 0 then
+						Blank(L23, L24);
+					else
+						L24:= Min(L22, L23);
+				end;
+			if ( NumberOfRecords( DETAIL, FEXPL125 ) > 0 ) then
+				L26T:= "SEE STMT";
+		End;
+End;

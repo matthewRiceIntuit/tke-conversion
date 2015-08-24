@@ -3,3 +3,6 @@ calc/tps_clc/*
 calc/mapping/*
 calc/resource/*
 calc/tke_gists/*
+*.sqlite3
+
+*.sqlite3

@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MappingData>
+
+    <!-- Begin Dirk's EIC information -->
+    <!-- Start FSCHEICW -->
+    <Context xpath="/Return/ReturnData/IRS1040ScheduleEIC/QualifyingChildInformation" corecopy="FDI$FSCHEICW" >
+        <Mapping xpath="ChildFirstAndLastName/PersonFirstNm" corecopy="L1A" />
+        <Mapping xpath="ChildFirstAndLastName/PersonLastNm" corecopy="L1C" />
+        <Mapping xpath="QualifyingChildSSN" corecopy="CHSSN" />
+        <Mapping xpath="ChildBirthYr" corecopy="BirthYr" />
+
+        <MapValueToAddress xpath="ChildIsAStudentUnder24Ind">
+            <Map xpath="true" corecopy="STUY"/>
+            <Map xpath="false" corecopy="STUN"/>
+        </MapValueToAddress>
+
+        <MapValueToAddress xpath="ChildPermanentlyDisabledInd">
+            <Map xpath="true" corecopy="DISY"/>
+            <Map xpath="false" corecopy="DISN"/>
+        </MapValueToAddress>
+
+        <Mapping xpath="ChildRelationshipCd" corecopy="RELATION" />
+        <Mapping xpath="MonthsChildLivedWithYouCnt" corecopy="LIVEUS" />
+    </Context>
+
+    <Context xpath="/Return/ReturnData/IRS1040ScheduleEIC" corecopy="FDI$FSCHEICW" >
+        <Mapping xpath="EICPreviouslyDisallowedAndNeed8862IndPP" corecopy="h8862Req" />
+    </Context>
+
+    <Context xpath="/Return/ReturnData/EIC" corecopy="FDI$FSCHEICW" >
+        <Mapping xpath="LiveWithChldInUSOverHalfYrIndPP" corecopy="hUSOvrHf" />
+        <Mapping xpath="DisqualifiedFromEICIndPP" corecopy="hDisqEIC" />
+        <Mapping xpath="PotentialQualifyingChildCntPP" corecopy="hEICPQC" />
+        <Mapping xpath="QualifyingChildCntPP" corecopy="hEICQCCt" />
+        <Mapping xpath="EICWorksheetPP/WagesSalariesAndTipsAmtPP" corecopy="L1" />
+        <Mapping xpath="EICWorksheetPP/SelfEmploymentIncomeAmtPP" corecopy="L2B" />
+        <Mapping xpath="EICWorksheetPP/WagesNotConsideredEarnedPP" corecopy="L2F" />
+        <Mapping xpath="EICWorksheetPP/Section457AndNonqualPlansPP" corecopy="L2G" />
+        <Mapping xpath="EICWorksheetPP/WagesSalariesAndTipsAdjPP" corecopy="L3" />
+        <Mapping xpath="EICWorksheetPP/TaxpayerNontaxableCombatPayPP" corecopy="TNTCMBAT" />
+        <Mapping xpath="EICWorksheetPP/SpouseNontaxableCombatPayPP" corecopy="SNTCMBAT" />
+        <Mapping xpath="EICWorksheetPP/TotalNontaxableCombatPayPP" corecopy="NTCOMBAT" />
+        <Mapping xpath="EICWorksheetPP/SEOrStatutoryEmployeeAmtPP" corecopy="L5" />
+        <Mapping xpath="EICWorksheetPP/EarnedIncomePP" corecopy="L6" />
+        <!-- Do these items below need additional coding? -->
+        <Mapping xpath="InvestmentIncomeOverLimitIndPP" corecopy="BX3" />
+        <Mapping xpath="TaxpayerFSMarriedFilingSepIndPP" corecopy="BX4" />
+        <Mapping xpath="EICEligClmQlfyChldOfOtherIndPP" corecopy="BX5" />
+        <Mapping xpath="MainHomeInUSOverHalfYrIndPP" corecopy="BX7" />
+        <Mapping xpath="TxpyerOrSpsAge25ButUnder65IndPP" corecopy="BX8" />
+        <Mapping xpath="ClaimedAsDependentIndPP" corecopy="BX9" />
+        <Mapping xpath="SSNInvalidForEmplmnOrEICPrpsIndPP" corecopy="BX10" />
+        <Mapping xpath="NotifiedByIRSNoEICIndPP" corecopy="BX12" />
+        <Mapping xpath="Form2555OrForm2555EZIndPP" corecopy="BX6" />
+        <Mapping xpath="FilerUSCitOrResAlienAllYrIndPP" corecopy="BX13" />
+        <!--<Mapping xpath="SpouseUSCitOrResAlienAllYearIndPP" corecopy="BX13" />-->
+        <MapValueToAddress xpath="DoNotGetEICFromAGIPP">
+            <Map xpath="true" corecopy="L9Y"/>
+            <Map xpath="false" corecopy="L9N"/>
+        </MapValueToAddress>
+    </Context>
+
+    <Context xpath="/Return/ReturnData/EIC/EICWorksheetPP/NotEarnedIncomeSmartWorksheetPP" corecopy="FDI$FSCHEICW" >
+        <Mapping xpath="TaxpayerAmountEarnedBySpousePP" corecopy="L2C" />
+        <Mapping xpath="TaxpayerAmountsEarnedAsInmatePP" corecopy="L2D"/>
+        <Mapping xpath="SpouseAmountsEarnedAsInmatePP" corecopy="L2DSP"/>
+    </Context>
+
+    <Context xpath="/Return/ReturnData/EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP" corecopy="FDI$FSCHEICW" >
+        <Mapping xpath="SpouseNontaxableCombatPayPP" corecopy="SCOMBAT"/>
+        <Mapping xpath="TaxpayerNontaxableCombatPayPP" corecopy="TCOMBAT" />
+
+        <MapValueToAddress xpath="TaxpayerCombatPayForEICIndPP">
+            <Map xpath="true" corecopy="YELECT"/>
+            <Map xpath="false" corecopy="NELECT"/>
+        </MapValueToAddress>
+
+        <MapValueToAddress xpath="SpouseCombatPayForEICIndPP">
+            <Map xpath="true" corecopy="SELECTY"/>
+            <Map xpath="false" corecopy="SELECTN"/>
+        </MapValueToAddress>
+
+    </Context>
+    <!-- End FSCHEICW -->
+    <!-- Start FEARNINC -->
+    <Context xpath="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP" corecopy="FDI$FEARNINC">
+        <Mapping xpath="TaxpayerEICWksNetSEIncomePP" corecopy="L1AA"/>
+        <Mapping xpath="TaxpayerEICWksOptMethodAmtPP" corecopy="L1AB"/>
+        <Mapping xpath="TaxpayerEICWksSumSEIncomePP" corecopy="L1AC"/>
+        <Mapping xpath="TaxpayerEICWksHalfSETaxPP" corecopy="L1AD"/>
+        <Mapping xpath="TaxpayerEICWksSETaxMinusIncomePP" corecopy="L1AE"/>
+        <Mapping xpath="TaxpayerEICWksNetFarmAmtPP" corecopy="L2AA"/>
+        <Mapping xpath="TaxpayerEICWksNetNonfarmAmtPP" corecopy="L2AB"/>
+        <Mapping xpath="TaxpayerEICWksNetProfitOrLossPP" corecopy="L2AC"/>
+        <Mapping xpath="TaxpayerEICWksGrossReceiptsAmtPP" corecopy="L3A"/>
+        <Mapping xpath="TaxpayerEICWksComputationTtlPP" corecopy="L4A"/>
+        <!-- <Mapping xpath="TaxpayerDependentCareNetSelfEmploymentEarningsPP" corecopy="L5A"/>
+        <Mapping xpath="TaxpayerDependentCareWagesSalariesAndTipsLessDistributionsFromNonqualifiedPlansPP" corecopy="L6A"/>
+        <Mapping xpath="TaxpayerDependentCareTaxableEmployerProvidedAdoptionBenefitsPP" corecopy="L7A"/>
+        <Mapping xpath="TaxpayerDependentCareSelfEmploymentIncomePP" corecopy="L9A"/>
+        <Mapping xpath="TaxpayerDependentCareTaxableDependentCareBenefitsPP" corecopy="L10A"/>
+        <Mapping xpath="TaxpayerDependentCareNontaxableCombatPayPP" corecopy="NCOMBATA"/>
+        <Mapping xpath="TaxpayerDependentCareEarnedIncomePP" corecopy="L11A"/>
+        <Mapping xpath="TaxpayerDependentCareScholarshipIncomePP" corecopy="L12A"/>
+        <Mapping xpath="TaxpayerDependentCareSEExemptEarningsPP" corecopy="L13A"/>
+        <Mapping xpath="TaxpayerDependentCareDistributionsFromNonqualifiedPlansPP" corecopy="S457A"/>
+        <Mapping xpath="TaxpayerDependentCareEarnedIncomePP" corecopy="L14A"/>
+        <Mapping xpath="TaxpayerIRADeductionComputationNetSelfEmploymentIncomeOrLossPP" corecopy="L15A"/>
+        <Mapping xpath="TaxpayerIRADeductionComputationWagesSalariesTipsPP" corecopy="L16A"/>
+        <Mapping xpath="TaxpayerIRADeductionComputationNetSelfEmploymentLossPP" corecopy="L17A"/>
+        <Mapping xpath="TaxpayerIRADeductionComputationAlimonyReceivedPP" corecopy="L18A"/>
+        <Mapping xpath="TaxpayerIRADeductionComputationNontaxableCombatPayPP" corecopy="RCOMBATA"/>
+        <Mapping xpath="TaxpayerIRADeductionComputationForeignEarnedIncomePP" corecopy="L19A"/>
+        <Mapping xpath="TaxpayerIRADeductionComputationKeoghDeductionPP" corecopy="L20A"/>
+        <Mapping xpath="TaxpayerIRADeductionComputationIRAEarnedIncomePP" corecopy="L22A"/>
+        <Mapping xpath="TaxpayerChildTaxCreditSelfEmployedEmployeesPP" corecopy="L23A"/>
+        <Mapping xpath="TaxpayerChildTaxCreditWagesSalariesTipsPP" corecopy="L24A"/>
+        <Mapping xpath="TaxpayerChildTaxCreditNontaxableCombatPayPP" corecopy="COMBATA"/>
+        <Mapping xpath="TaxpayerChildTaxCreditForeignEarnedIncomePP" corecopy="L25A"/>
+        <Mapping xpath="TaxpayerChildTaxCreditEarnedIncomePP" corecopy="L26A"/> -->
+        <Mapping xpath="SpouseEICWksNetSEIncomePP" corecopy="L1BA"/>
+        <Mapping xpath="SpouseEICWksOptMethodAmtPP" corecopy="L1BB"/>
+        <Mapping xpath="SpouseEICWksSumSEIncomePP" corecopy="L1BC"/>
+        <Mapping xpath="SpouseEICWksHalfSETaxPP" corecopy="L1BD"/>
+        <Mapping xpath="SpouseEICWksSETaxMinusIncomePP" corecopy="L1BE"/>
+        <Mapping xpath="SpouseEICWksFarmProfitOrLossPP" corecopy="L2BA"/>
+        <Mapping xpath="SpouseEICWksNetNonfarmAmtPP" corecopy="L2BB"/>
+        <Mapping xpath="SpouseEICWksNetProfitOrLossPP" corecopy="L2BC"/>
+        <Mapping xpath="SpouseEICWksGrossReceiptsAmtPP" corecopy="L3B"/>
+        <Mapping xpath="SpouseEICWksComputationTotalPP" corecopy="L4B"/>
+        <!-- <Mapping xpath="SpouseDependentCareNetSelfEmploymentEarningsPP" corecopy="L5B"/>
+        <Mapping xpath="SpouseDependentCareWagesSalariesAndTipsLessDistributionsFromNonqualifiedPlansPP" corecopy="L6B"/>
+        <Mapping xpath="SpouseDependentCareTaxableEmployerProvidedAdoptionBenefitsPP" corecopy="L7B"/>
+        <Mapping xpath="SpouseDependentCareSelfEmploymentIncomePP" corecopy="L9B"/>
+        <Mapping xpath="SpouseDependentCareTaxableDependentCareBenefitsPP" corecopy="L10B"/>
+        <Mapping xpath="SpouseDependentCareNontaxableCombatPayPP" corecopy="NCOMBATB"/>
+        <Mapping xpath="SpouseDependentCareEarnedIncomePP" corecopy="L11B"/>
+        <Mapping xpath="SpouseDependentCareScholarshipIncomePP" corecopy="L12B"/>
+        <Mapping xpath="SpouseDependentCareSEExemptEarningsPP" corecopy="L13B"/>
+        <Mapping xpath="SpouseDependentCareDistributionsFromNonqualifiedPlansPP" corecopy="S457B"/>
+        <Mapping xpath="SpouseDependentCareEarnedIncomePP" corecopy="L14B"/>
+        <Mapping xpath="SpouseIRADeductionComputationNetSelfEmploymentIncomeOrLossPP" corecopy="L15B"/>
+        <Mapping xpath="SpouseIRADeductionComputationWagesSalariesTipsPP" corecopy="L16B"/>
+        <Mapping xpath="SpouseIRADeductionComputationNetSelfEmploymentLossPP" corecopy="L17B"/>
+        <Mapping xpath="SpouseIRADeductionComputationAlimonyReceivedPP" corecopy="L18B"/>
+        <Mapping xpath="SpouseIRADeductionComputationNontaxableCombatPayPP" corecopy="RCOMBATB"/>
+        <Mapping xpath="SpouseIRADeductionComputationForeignEarnedIncomePP" corecopy="L19B"/>
+        <Mapping xpath="SpouseIRADeductionComputationKeoghDeductionPP" corecopy="L20B"/>
+        <Mapping xpath="SpouseIRADeductionComputationIRAEarnedIncomePP" corecopy="L22B"/>
+        <Mapping xpath="SpouseChildTaxCreditSelfEmployedEmployeesPP" corecopy="L23B"/>
+        <Mapping xpath="SpouseChildTaxCreditWagesSalariesTipsPP" corecopy="L24B"/>
+        <Mapping xpath="SpouseChildTaxCreditNontaxableCombatPayPP" corecopy="COMBATB"/>
+        <Mapping xpath="SpouseChildTaxCreditForeignEarnedIncomePP" corecopy="L25B"/>
+        <Mapping xpath="SpouseChildTaxCreditEarnedIncomePP" corecopy="L26B"/> -->
+        <Mapping xpath="TotalEICWksNetSEIncomePP" corecopy="L1CA"/>
+        <Mapping xpath="TotalEICWksOptMethodAmtPP" corecopy="L1CB"/>
+        <Mapping xpath="TotalEICWksSumSEIncomePP" corecopy="L1CC"/>
+        <Mapping xpath="TotalEICWksHalfSETaxPP" corecopy="L1CD"/>
+        <Mapping xpath="TotalEICWksSETaxMinusIncomePP" corecopy="L1CE"/>
+        <Mapping xpath="TotalEICWksFarmProfitOrLossPP" corecopy="L2CA"/>
+        <Mapping xpath="TotalEICWksNetNonfarmAmtPP" corecopy="L2CB"/>
+        <Mapping xpath="TotalEICWksSumNetProfitOrLossPP" corecopy="L2CC"/>
+        <Mapping xpath="TotalEICWksGrossReceiptsAmtPP" corecopy="L3C"/>
+        <Mapping xpath="TotalEICWksComputationTotalPP" corecopy="L4C"/>
+        <!-- <Mapping xpath="TotalDependentCareNetSelfEmploymentEarningsPP" corecopy="L5C"/>
+        <Mapping xpath="TotalDependentCareWagesSalariesAndTipsLessDistributionsFromNonqualifiedPlansPP" corecopy="L6C"/>
+        <Mapping xpath="TotalDependentCareTaxableEmployerProvidedAdoptionBenefitsPP" corecopy="L7C"/>
+        <Mapping xpath="TotalDependentCareSelfEmploymentIncomePP" corecopy="L9C"/>
+        <Mapping xpath="TotalDependentCareTaxableDependentCareBenefitsPP" corecopy="L10C"/>
+        <Mapping xpath="TotalDependentCareNontaxableCombatPayPP" corecopy="NCOMBATC"/>
+        <Mapping xpath="TotalDependentCareEarnedIncomePP" corecopy="L11C"/>
+        <Mapping xpath="TotalDependentCareScholarshipIncomePP" corecopy="L12C"/>
+        <Mapping xpath="TotalDependentCareSEExemptEarningsPP" corecopy="L13C"/>
+        <Mapping xpath="TotalDependentCareDistributionsFromNonqualifiedPlansPP" corecopy="S457C"/>
+        <Mapping xpath="TotalDependentCareEarnedIncomePP" corecopy="L14C"/>
+        <Mapping xpath="TotalIRADeductionComputationNetSelfEmploymentIncomeOrLossPP" corecopy="L15C"/>
+        <Mapping xpath="TotalIRADeductionComputationWagesSalariesTipsPP" corecopy="L16C"/>
+        <Mapping xpath="TotalIRADeductionComputationNetSelfEmploymentLossPP" corecopy="L17C"/>
+        <Mapping xpath="TotalIRADeductionComputationAlimonyReceivedPP" corecopy="L18C"/>
+        <Mapping xpath="TotalIRADeductionComputationNontaxableCombatPayPP" corecopy="RCOMBATC"/>
+        <Mapping xpath="TotalIRADeductionComputationForeignEarnedIncomePP" corecopy="L19C"/>
+        <Mapping xpath="TotalIRADeductionComputationKeoghDeductionPP" corecopy="L20C"/>
+        <Mapping xpath="TotalIRADeductionComputationIRAEarnedIncomePP" corecopy="L22C"/>
+        <Mapping xpath="TotalChildTaxCreditSelfEmployedEmployeesPP" corecopy="L23C"/>
+        <Mapping xpath="TotalChildTaxCreditWagesSalariesTipsPP" corecopy="L24C"/>
+        <Mapping xpath="TotalChildTaxCreditNontaxableCombatPayPP" corecopy="COMBATC"/>
+        <Mapping xpath="TotalChildTaxCreditForeignEarnedIncomePP" corecopy="L25C"/>
+        <Mapping xpath="TotalChildTaxCreditEarnedIncomePP" corecopy="L26C"/>-->
+    </Context>
+    <!-- End FEARNINC -->
+
+    <!-- Start FSEADJ -->
+    <Context xpath="/Return/ReturnData/ScheduleSEAdjustments" corecopy="FDI$FSEADJ" >
+        <Mapping xpath="TaxpayerUsingShortScheduleSEIndPP" corecopy="TPSTBX"/>
+        <Mapping xpath="SpouseUsingShortScheduleSEIndPP" corecopy="SPSTBX"/>
+        <Mapping xpath="TaxpayerScheduleSELine1TotalPP" corecopy="TOTLN1" />
+        <Mapping xpath="SpouseScheduleSELine1TotalPP" corecopy="TOTLN1" />
+        <Mapping xpath="TaxpayerCRPPaymentsTotalAmtPP" corecopy="CONSRES" />
+        <Mapping xpath="SpouseCRPPaymentsTotalAmtPP" corecopy="CONSRES" />
+        <Mapping xpath="TaxpayerScheduleSELine2TotalPP" corecopy="TOTLN2" />
+        <Mapping xpath="SpouseScheduleSELine2TotalPP" corecopy="TOTLN2" />
+        <Mapping xpath="TaxpayerExemptNotaryIncomePP" corecopy="EXNOTARY" />
+        <Mapping xpath="SpouseExemptNotaryIncomePP" corecopy="EXNOTARY" />
+    </Context>
+    <!-- End FSEADJ -->
+
+    <!-- Start Schedule SE -->
+    <Context xpath="/Return/ReturnData/IRS1040ScheduleSE" corecopy="FDI$FSCHSELT">
+        <Mapping xpath="SSN" corecopy="SSN"/>
+    </Context>
+
+    <Context xpath="/Return/ReturnData/IRS1040ScheduleSE" corecopy="FDI$FSCHSELS">
+        <Mapping xpath="SSN" corecopy="SSN"/>
+    </Context>
+
+    <Context xpath="/Return/ReturnData/IRS1040ScheduleSE" corecopy="FDI$FSCHSEST">
+        <Mapping xpath="SSN" corecopy="SSN"/>
+    </Context>
+
+    <Context xpath="/Return/ReturnData/IRS1040ScheduleSE" corecopy="FDI$FSCHSESS">
+        <Mapping xpath="SSN" corecopy="SSN"/>
+    </Context>
+    <!-- Form data Long Schedule Taxpayer -->
+    <Context xpath="/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE" corecopy="FDI$FSCHSELT">
+        <Mapping xpath="SETotalNetEarningsOrLossAmt" corecopy="L3"/>
+        <Mapping xpath="OptionalMethodAmt" corecopy="L4B"/>
+        <Mapping xpath="CombinedSEAmt" corecopy="L4C"/>
+        <Mapping xpath="W2WagesFromChurchesAmt" corecopy="L5A"/>
+        <Mapping xpath="SelfEmploymentTaxAmt" corecopy="L12"/>
+        <Mapping xpath="DeductibleSelfEmploymentTaxAmt" corecopy="L13"/>
+    </Context>
+    <!-- Form data Long Schedule Spouse -->
+    <Context xpath="/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE" corecopy="FDI$FSCHSELT">
+        <Mapping xpath="SETotalNetEarningsOrLossAmt" corecopy="L3"/>
+        <Mapping xpath="OptionalMethodAmt" corecopy="L4B"/>
+        <Mapping xpath="CombinedSEAmt" corecopy="L4C"/>
+        <Mapping xpath="W2WagesFromChurchesAmt" corecopy="L5A"/>
+        <Mapping xpath="SelfEmploymentTaxAmt" corecopy="L12"/>
+        <Mapping xpath="DeductibleSelfEmploymentTaxAmt" corecopy="L13"/>
+    </Context>
+    <!-- Form data Short Schedule Taxpayer -->
+    <Context xpath="/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE" corecopy="FDI$FSCHSEST">
+        <Mapping xpath="SETotalNetEarningsOrLossAmt" corecopy="L3"/>
+        <Mapping xpath="MinimumProfitForSETaxAmt" corecopy="L4"/>
+        <Mapping xpath="SelfEmploymentTaxAmt" corecopy="L5"/>
+        <Mapping xpath="DeductibleSelfEmploymentTaxAmt" corecopy="L6"/>
+    </Context>
+    <!-- Form data Short Schedule Spouse -->
+    <Context xpath="/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE" corecopy="FDI$FSCHSEST">
+        <Mapping xpath="SETotalNetEarningsOrLossAmt" corecopy="L3"/>
+        <Mapping xpath="MinimumProfitForSETaxAmt" corecopy="L4"/>
+        <Mapping xpath="SelfEmploymentTaxAmt" corecopy="L5"/>
+        <Mapping xpath="DeductibleSelfEmploymentTaxAmt" corecopy="L6"/>
+    </Context>
+    <!-- End Schedule SE -->
+
+    <!-- Schedule C-->
+    <Context xpath="/Return/ReturnData/IRS1040ScheduleC" corecopy="FDI$FSCHC">
+        <!-- computed -->
+        <MapValueToAddress xpath="BusinessOperatedByPP">
+            <Map xpath="Taxpayer" corecopy=""/>
+            <Map xpath="Spouse" corecopy="OWNS"/>
+            <Map xpath="Joint" corecopy="OWNJ"/>
+        </MapValueToAddress>
+
+        <Mapping xpath="StatutoryEmployeeFromW2Ind" corecopy="GROSSB"/>
+        <Mapping xpath="TotalGrossReceiptsAmt" corecopy="L1"/>
+    </Context>
+
+    <!-- Start F8862 -->
+    <Context xpath="/Return/ReturnData/IRS8862" corecopy="FDI$F8862">
+        <Mapping xpath="EICEligClmDaysLivedInUSCnt" corecopy="DAYSINUS"/>
+        <Mapping xpath="EICEligClmDaysSpsLivedInUSCnt" corecopy="DAYSSPUS"/>
+        <Mapping xpath="EICEligClmFilingYr" corecopy="L1"/>
+
+        <MapValueToAddress xpath="EICEligClmIncmIncorrectRptInd">
+            <!-- computed -->
+            <Map xpath="true" corecopy="INCXY"/>
+            <Map xpath="false" corecopy="INCXN"/>
+        </MapValueToAddress>
+
+        <Mapping xpath="EICEligClmLiveWithChld2AddrGrp/EICEligClmAddrSameAsChild1Ind" corecopy="CH2SAMEX"/>
+        <!--<Mapping xpath="EICEligClmLiveWithChld3AddrGrp/EICEligClmAddrSameAsChild1Ind2" corecopy="CH3SAMEX"/>-->
+        <Mapping xpath="EICEligClmLiveWithChld3AddrGrp/EICEligClmAddrSameAsChild2Ind" corecopy="CH1SAMEX"/>
+        <Mapping xpath="EICEligClmLiveWithPrsnChld2Grp/EICEligClmOthPrsnSameChild1Ind" corecopy="OTHSAME"/>
+        <!--<Mapping xpath="EICEligClmLiveWithPrsnChld3Grp/EICEligClmOthPrsnSameChild1Ind2" corecopy="OTHSAME2"/>-->
+        <Mapping xpath="EICEligClmLiveWithPrsnChld3Grp/EICEligClmOthPrsnSameChld2Ind" corecopy="OTHSAME3"/>
+
+        <MapValueToAddress xpath="EICEligClmLivedWithOthersInd">
+            <!-- computed -->
+            <Map xpath="true" corecopy="OTHERY"/>
+            <Map xpath="false" corecopy="OTHERN"/>
+        </MapValueToAddress>
+
+        <MapValueToAddress xpath="EICEligClmQlfyChldOfOtherInd">
+            <!-- computed -->
+            <Map xpath="true" corecopy="L2Y"/>
+            <Map xpath="false" corecopy="L2N"/>
+        </MapValueToAddress>
+
+        <!-- F8862.CHILDUS[1] IRS8862/EICEligClmQualifyingChildInfo/EICEligClmDaysChldLivedInUSCnt[x] -->
+        <!-- F8862.CHILDUS[2] IRS8862/EICEligClmQualifyingChildInfo/EICEligClmDaysChldLivedInUSCnt[x] -->
+        <!-- F8862.CHILDUS[3] IRS8862/EICEligClmQualifyingChildInfo/EICEligClmDaysChldLivedInUSCnt[x] -->
+
+    </Context>
+    <!-- End F8862 -->
+    <Context xpath="/Return/ReturnData/IRS1040" corecopy="FDI$F1040">
+        <Mapping xpath="NontxCombatPayElectionAmt" corecopy="NTCOMBAT"/>
+        <Mapping xpath="ClergyEICLiteralPP" corecopy="L60C"/>
+        <Mapping xpath="WagesSalariesAndTipsAmt" corecopy="L7"/>
+
+    </Context>
+
+    <Context xpath="/Return/ReturnData/IRSW2" corecopy="FDI$FW2">
+        <Mapping xpath="NonQualifiedPlansDistributionAmtPP" corecopy="NQPLANS"/>
+    </Context>
+    <Context xpath="/Return/ReturnData/ScheduleSEAdjustments" corecopy="FSEADJ">
+        <Mapping xpath="TaxpayerSEReportedIncomePP" corecopy="OTHWAGES(taxpayer)"/>
+        <Mapping xpath="SpouseSEReportedIncomePP" corecopy="OTHWAGES(spouse)"/>
+    </Context>
+
+
+    <Context xpath="/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet" corecopy="FDI$FW7">
+        <Mapping xpath="TotalEarnedIncomePP" corecopy="L10"/>
+        <Mapping xpath="TotalEmployerProvidedDependentCareAmtPP" corecopy="L11"/>
+        <Mapping xpath="TotalEmployerProvidedAdoptionBenefitsAmtPP" corecopy="L12"/>
+        <Mapping xpath="TotalWagesSalariesAndTipsAmtPP" corecopy="L15"/>
+    </Context>
+
+
+
+
+
+
+</MappingData>

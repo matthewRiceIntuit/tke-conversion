@@ -1,0 +1,257 @@
+<CALC>
+    <FORMSET val="FID">
+        <FORM val="FSCHEICW"/>
+    </FORMSET>
+    <Section val="Nontaxablecombatpay">
+        <Decl>
+            <DeclList>
+                <VarDecl val="DDCutoff"></VarDecl>
+                <Type val="FDate"></Type>
+            </DeclList>
+        </Decl>
+        <block>
+            <Stmt>
+                <Assign>
+                    <ID val="DDCutoff"/>
+                    <FunctionCall>
+                        <Call val="Date">
+                            <ArgList><Literal val=""10/05/2004""/>
+                            </ArgList>
+                        </Call>
+                    </FunctionCall>
+                </Assign>
+            </Stmt>
+            <Stmt>
+                <CtrlStruct>
+                    <IfStruct>
+                        <Parens>
+                            <Predicate val="&gt;">
+                                <VarRef>
+                                    <ID val="FW2SUM"/>
+                                    <Sub_ID val="TCOMBAT"/>
+                                </VarRef>
+                                <Literal val="0"/>
+                            </Predicate>
+                        </Parens>
+                        <block>
+                            <Stmt>
+                                <CtrlStruct>
+                                    <IfStruct>
+                                        <and>
+                                            <FunctionCall>
+                                                <Call val="HasValue">
+                                                    <ArgList>
+                                                        <VarRef>
+                                                            <ID val="Finfowks"/>
+                                                            <Sub_ID val="TDOD"/>
+                                                        </VarRef>
+                                                    </ArgList>
+                                                </Call>
+                                            </FunctionCall>
+                                            <Parens>
+                                                <Predicate val="&lt;">
+                                                    <VarRef>
+                                                        <ID val="Finfowks"/>
+                                                        <Sub_ID val="TDOD"/>
+                                                    </VarRef>
+                                                    <VarRef>
+                                                        <ID val="DDCutoff"/>
+                                                    </VarRef>
+                                                </Predicate>
+                                            </Parens>
+                                        </and>
+                                        <block></block>
+                                        <ElseStruct>
+                                            <Stmt>
+                                                <Assign>
+                                                    <ID val="TCOMBAT"/>
+                                                    <VarRef>
+                                                        <ID val="FW2SUM"/>
+                                                        <Sub_ID val="TCOMBAT"/>
+                                                    </VarRef>
+                                                </Assign>
+                                            </Stmt>
+                                        </ElseStruct>
+                                    </IfStruct>
+                                </CtrlStruct>
+                            </Stmt>
+                        </block>
+                    </IfStruct>
+                </CtrlStruct>
+            </Stmt>
+            <Stmt>
+                <CtrlStruct>
+                    <IfStruct>
+                        <and>
+                            <VarRef>
+                                <ID val="mJoint"/>
+                            </VarRef>
+                            <Parens>
+                                <Predicate val="&gt;">
+                                    <VarRef>
+                                        <ID val="FW2SUM"/>
+                                        <Sub_ID val="SCOMBAT"/>
+                                    </VarRef>
+                                    <Literal val="0"/>
+                                </Predicate>
+                            </Parens>
+                        </and>
+                        <block>
+                            <Stmt>
+                                <CtrlStruct>
+                                    <IfStruct>
+                                        <and>
+                                            <FunctionCall>
+                                                <Call val="HasValue">
+                                                    <ArgList>
+                                                        <VarRef>
+                                                            <ID val="Finfowks"/>
+                                                            <Sub_ID val="SDOD"/>
+                                                        </VarRef>
+                                                    </ArgList>
+                                                </Call>
+                                            </FunctionCall>
+                                            <Parens>
+                                                <Predicate val="&lt;">
+                                                    <VarRef>
+                                                        <ID val="Finfowks"/>
+                                                        <Sub_ID val="SDOD"/>
+                                                    </VarRef>
+                                                    <VarRef>
+                                                        <ID val="DDCutoff"/>
+                                                    </VarRef>
+                                                </Predicate>
+                                            </Parens>
+                                        </and>
+                                        <block></block>
+                                        <ElseStruct>
+                                            <Stmt>
+                                                <Assign>
+                                                    <ID val="SCOMBAT"/>
+                                                    <VarRef>
+                                                        <ID val="FW2SUM"/>
+                                                        <Sub_ID val="SCOMBAT"/>
+                                                    </VarRef>
+                                                </Assign>
+                                            </Stmt>
+                                        </ElseStruct>
+                                    </IfStruct>
+                                </CtrlStruct>
+                            </Stmt>
+                        </block>
+                    </IfStruct>
+                </CtrlStruct>
+            </Stmt>
+            <Stmt>
+                <CtrlStruct>
+                    <IfStruct>
+                        <FunctionCall>
+                            <Call val="IsChecked">
+                                <ArgList>
+                                    <VarRef>
+                                        <ID val="YELECT"/>
+                                    </VarRef>
+                                </ArgList>
+                            </Call>
+                        </FunctionCall>
+                        <Stmt>
+                            <Assign>
+                                <ID val="TNTCMBAT"/>
+                                <VarRef>
+                                    <ID val="TCOMBAT"/>
+                                </VarRef>
+                            </Assign>
+                        </Stmt>
+                    </IfStruct>
+                </CtrlStruct>
+            </Stmt>
+            <Stmt>
+                <CtrlStruct>
+                    <IfStruct>
+                        <and>
+                            <VarRef>
+                                <ID val="mJoint"/>
+                            </VarRef>
+                            <FunctionCall>
+                                <Call val="IsChecked">
+                                    <ArgList>
+                                        <VarRef>
+                                            <ID val="SELECTY"/>
+                                        </VarRef>
+                                    </ArgList>
+                                </Call>
+                            </FunctionCall>
+                        </and>
+                        <Stmt>
+                            <Assign>
+                                <ID val="SNTCMBAT"/>
+                                <VarRef>
+                                    <ID val="SCOMBAT"/>
+                                </VarRef>
+                            </Assign>
+                        </Stmt>
+                    </IfStruct>
+                </CtrlStruct>
+            </Stmt>
+            <Stmt>
+                <CtrlStruct>
+                    <IfStruct>
+                        <FunctionCall>
+                            <Call val="IsChecked">
+                                <ArgList>
+                                    <VarRef>
+                                        <ID val="YDCBELEC"/>
+                                    </VarRef>
+                                </ArgList>
+                            </Call>
+                        </FunctionCall>
+                        <Stmt>
+                            <Assign>
+                                <ID val="TDCBCMBT"/>
+                                <VarRef>
+                                    <ID val="TCOMBAT"/>
+                                </VarRef>
+                            </Assign>
+                        </Stmt>
+                    </IfStruct>
+                </CtrlStruct>
+            </Stmt>
+            <Stmt>
+                <CtrlStruct>
+                    <IfStruct>
+                        <FunctionCall>
+                            <Call val="IsChecked">
+                                <ArgList>
+                                    <VarRef>
+                                        <ID val="SDCBELEY"/>
+                                    </VarRef>
+                                </ArgList>
+                            </Call>
+                        </FunctionCall>
+                        <Stmt>
+                            <Assign>
+                                <ID val="SDCBCMBT"/>
+                                <VarRef>
+                                    <ID val="SCOMBAT"/>
+                                </VarRef>
+                            </Assign>
+                        </Stmt>
+                    </IfStruct>
+                </CtrlStruct>
+            </Stmt>
+            <Stmt>
+                <Assign>
+                    <ID val="NTCOMBAT"/>
+                    <AddSub val="+">
+                        <VarRef>
+                            <ID val="TNTCMBAT"/>
+                        </VarRef>
+                        <VarRef>
+                            <ID val="SNTCMBAT"/>
+                        </VarRef>
+                    </AddSub>
+                </Assign>
+            </Stmt>
+        </block>
+    </Section>
+</CALC>

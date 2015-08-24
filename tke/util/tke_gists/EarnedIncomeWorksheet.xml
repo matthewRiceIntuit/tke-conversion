@@ -1,0 +1,1693 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Nodes topic="EIC">
+	<Versions>
+		<Version id="TKE.Calc.FileFormat">3</Version>
+		<Version id="TKE.Calc.Runtime">1</Version>
+		<Version id="TKE.Gist">1</Version>
+		<Version id="TKE.MeF">1</Version>
+	</Versions>
+	<!--Line 4 Calcs-->
+	<!--Line 4 Total-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksComputationTotalPP">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksSETaxMinusIncomePP</Input>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksSumNetProfitOrLossPP</Input>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksGrossReceiptsAmtPP</Input>
+		</Inputs>
+		<Gist>
+			<Accumulation>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksSETaxMinusIncomePP</Value>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksSumNetProfitOrLossPP</Value>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksGrossReceiptsAmtPP</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>Total other earned income for EIC</Type>
+				</Configuration>
+			</Accumulation>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 4 Total-->
+	<!--Line 4 Spouse-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksComputationTotalPP">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksSETaxMinusIncomePP</Input>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksNetProfitOrLossPP</Input>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksGrossReceiptsAmtPP</Input>
+		</Inputs>
+		<Gist>
+			<Accumulation>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksSETaxMinusIncomePP</Value>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksNetProfitOrLossPP</Value>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksGrossReceiptsAmtPP</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>Spouse's total other earned income for EIC</Type>
+				</Configuration>
+			</Accumulation>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 4 Spouse-->
+	<!--Line 4 Taxpayer-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksComputationTtlPP">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksSETaxMinusIncomePP</Input>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksNetProfitOrLossPP</Input>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksGrossReceiptsAmtPP</Input>
+		</Inputs>
+		<Gist>
+			<Accumulation>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksSETaxMinusIncomePP</Value>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksNetProfitOrLossPP</Value>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksGrossReceiptsAmtPP</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>Taxpayer's total other earned income for EIC</Type>
+				</Configuration>
+			</Accumulation>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 4 Taxpayer-->
+	<!--End Line 4 Calcs-->
+	<!--Line 3 Calcs-->
+	<!--Line 3 Total-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksGrossReceiptsAmtPP">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksGrossReceiptsAmtPP</Input>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksGrossReceiptsAmtPP</Input>
+		</Inputs>
+		<Gist>
+			<Accumulation>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksGrossReceiptsAmtPP</Value>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksGrossReceiptsAmtPP</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>Total gross receipts or sales</Type>
+				</Configuration>
+			</Accumulation>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 3 Total-->
+	<!--Line 3 Spouse-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksGrossReceiptsAmtPP">
+		<Inputs>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/EICWksGrossReceiptsAmtPP</Input>
+			<Input>/Constants/IRS1040ScheduleC/SpouseFieldName</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopySelectNumericByID>
+				<InputRoles>
+					<Default>/Constants/NumericBlank</Default>
+					<MultiCopy>/Temporary/EIC/EarnedIncomeWorksheetPP/EICWksGrossReceiptsAmtPP</MultiCopy>
+					<ID>/Constants/IRS1040ScheduleC/SpouseFieldName</ID>
+				</InputRoles>
+			</MultiCopySelectNumericByID>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 3 Spouse-->
+	<!--Line 3 Taxpayer-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksGrossReceiptsAmtPP">
+		<Inputs>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/EICWksGrossReceiptsAmtPP</Input>
+			<Input>/Constants/IRS1040ScheduleC/TaxpayerFieldName</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopySelectNumericByID>
+				<InputRoles>
+					<Default>/Constants/NumericBlank</Default>
+					<MultiCopy>/Temporary/EIC/EarnedIncomeWorksheetPP/EICWksGrossReceiptsAmtPP</MultiCopy>
+					<ID>/Constants/IRS1040ScheduleC/TaxpayerFieldName</ID>
+				</InputRoles>
+			</MultiCopySelectNumericByID>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 3 Taxpayer-->
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/EICWksGrossReceiptsAmtPP">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleC/(TotalGrossReceiptsAmt | StatutoryEmployeeFromW2Ind | BusinessOperatedByPP)</Input>
+		</Inputs>
+		<Gist>
+			<EICTotalGrossReceiptsAccumulation>
+				<InputRoles>
+					<ScheduleC>/Return/ReturnData/IRS1040ScheduleC/(TotalGrossReceiptsAmt | StatutoryEmployeeFromW2Ind | BusinessOperatedByPP)</ScheduleC>
+				</InputRoles>
+			</EICTotalGrossReceiptsAccumulation>
+		</Gist>
+		<RoundTo>
+			<MultiCopy>
+				<Dollars />
+			</MultiCopy>
+		</RoundTo>
+	</Node>
+	<!--End Line 3 Calcs-->
+	<!--Line 2 Calcs-->
+	<!--Line 2c Total-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksSumNetProfitOrLossPP">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksNetProfitOrLossPP</Input>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksNetProfitOrLossPP</Input>
+		</Inputs>
+		<Gist>
+			<Accumulation>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksNetProfitOrLossPP</Value>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksNetProfitOrLossPP</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>Total net profit or loss</Type>
+				</Configuration>
+			</Accumulation>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 2c Total-->
+	<!--Line 2c Spouse-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksNetProfitOrLossPP">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksFarmProfitOrLossPP</Input>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksNetNonfarmAmtPP</Input>
+            <Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseDoesNotOweSETax</Input>
+		</Inputs>
+		<BlankCondition>
+			<BlankIfFalse>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseDoesNotOweSETax</BlankIfFalse>
+		</BlankCondition>
+		<Gist>
+			<Accumulation>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksFarmProfitOrLossPP</Value>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksNetNonfarmAmtPP</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>Spouse's net profit or loss</Type>
+				</Configuration>
+			</Accumulation>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 2c Spouse-->
+	<!--Line 2c Taxpayer-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksNetProfitOrLossPP">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksNetFarmAmtPP</Input>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksNetNonfarmAmtPP</Input>
+            <Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerDoesNotOweSETax</Input>
+		</Inputs>
+		<BlankCondition>
+			<BlankIfFalse>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerDoesNotOweSETax</BlankIfFalse>
+		</BlankCondition>
+		<Gist>
+			<Accumulation>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksNetFarmAmtPP</Value>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksNetNonfarmAmtPP</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>Taxpayer's net profit or loss</Type>
+				</Configuration>
+			</Accumulation>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 2c Taxpayer-->
+	<!--Line 2b Total-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksNetNonfarmAmtPP">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksNetNonfarmAmtPP</Input>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksNetNonfarmAmtPP</Input>
+		</Inputs>
+		<Gist>
+			<Accumulation>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksNetNonfarmAmtPP</Value>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksNetNonfarmAmtPP</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>Total net nonfarm profit or loss</Type>
+				</Configuration>
+			</Accumulation>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 2b Total-->
+	<!--Line 2b Spouse-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksNetNonfarmAmtPP">
+		<Inputs>
+			<Input>/Return/ReturnData/ScheduleSEAdjustments/SpouseScheduleSELine2TotalPP</Input>
+			<Input>/Return/ReturnData/ScheduleSEAdjustments/SpouseExemptNotaryIncomePP</Input>
+            <Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseDoesNotOweSETax</Input>
+		</Inputs>
+		<BlankCondition>
+			<BlankIfFalse>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseDoesNotOweSETax</BlankIfFalse>
+		</BlankCondition>
+		<Gist>
+			<Difference>
+				<InputRoles>
+					<Left>/Return/ReturnData/ScheduleSEAdjustments/SpouseScheduleSELine2TotalPP</Left>
+					<Right>/Return/ReturnData/ScheduleSEAdjustments/SpouseExemptNotaryIncomePP</Right>
+				</InputRoles>
+			</Difference>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 2b Spouse-->
+	<!--Line 2b Taxpayer-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksNetNonfarmAmtPP">
+		<Inputs>
+			<Input>/Return/ReturnData/ScheduleSEAdjustments/TaxpayerScheduleSELine2TotalPP</Input>
+			<Input>/Return/ReturnData/ScheduleSEAdjustments/TaxpayerExemptNotaryIncomePP</Input>
+            <Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerDoesNotOweSETax</Input>
+		</Inputs>
+		<BlankCondition>
+			<BlankIfFalse>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerDoesNotOweSETax</BlankIfFalse>
+		</BlankCondition>
+		<Gist>
+			<Difference>
+				<InputRoles>
+					<Left>/Return/ReturnData/ScheduleSEAdjustments/TaxpayerScheduleSELine2TotalPP</Left>
+					<Right>/Return/ReturnData/ScheduleSEAdjustments/TaxpayerExemptNotaryIncomePP</Right>
+				</InputRoles>
+			</Difference>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 2b Taxpayer-->
+	<!--Line 2a Total-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksFarmProfitOrLossPP">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksNetFarmAmtPP</Input>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksFarmProfitOrLossPP</Input>
+		</Inputs>
+		<Gist>
+			<Accumulation>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksNetFarmAmtPP</Value>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksFarmProfitOrLossPP</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>Total net farm profit or loss</Type>
+				</Configuration>
+			</Accumulation>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 2a Total-->
+	<!--Line 2a Spouse-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksFarmProfitOrLossPP">
+		<Inputs>
+			<Input>/Return/ReturnData/ScheduleSEAdjustments/SpouseScheduleSELine1TotalPP</Input>
+			<Input>/Return/ReturnData/ScheduleSEAdjustments/SpouseCRPPaymentsTotalAmtPP</Input>
+            <Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseDoesNotOweSETax</Input>
+		</Inputs>
+		<BlankCondition>
+			<BlankIfFalse>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseDoesNotOweSETax</BlankIfFalse>
+		</BlankCondition>
+		<Gist>
+			<Difference>
+				<InputRoles>
+					<Left>/Return/ReturnData/ScheduleSEAdjustments/SpouseScheduleSELine1TotalPP</Left>
+					<Right>/Return/ReturnData/ScheduleSEAdjustments/SpouseCRPPaymentsTotalAmtPP</Right>
+				</InputRoles>
+			</Difference>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 2a Spouse-->
+	<!--Line 2a Taxpayer-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksNetFarmAmtPP">
+		<Inputs>
+			<Input>/Return/ReturnData/ScheduleSEAdjustments/TaxpayerScheduleSELine1TotalPP</Input>
+			<Input>/Return/ReturnData/ScheduleSEAdjustments/TaxpayerCRPPaymentsTotalAmtPP</Input>
+            <Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerDoesNotOweSETax</Input>
+		</Inputs>
+		<BlankCondition>
+			<BlankIfFalse>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerDoesNotOweSETax</BlankIfFalse>
+		</BlankCondition>
+		<Gist>
+			<Difference>
+				<InputRoles>
+					<Left>/Return/ReturnData/ScheduleSEAdjustments/TaxpayerScheduleSELine1TotalPP</Left>
+					<Right>/Return/ReturnData/ScheduleSEAdjustments/TaxpayerCRPPaymentsTotalAmtPP</Right>
+				</InputRoles>
+			</Difference>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 2a Taxpayer-->
+	<!--End Line 2 Calcs-->
+	<!--Line 1 Calcs-->
+	<!--Line 1e Total-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksSETaxMinusIncomePP">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksSumSEIncomePP</Input>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksHalfSETaxPP</Input>
+		</Inputs>
+		<Gist>
+			<Difference>
+				<InputRoles>
+					<Left>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksSumSEIncomePP</Left>
+					<Right>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksHalfSETaxPP</Right>
+				</InputRoles>
+			</Difference>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 1e Total-->
+	<!--Line 1e Spouse-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksSETaxMinusIncomePP">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksSumSEIncomePP</Input>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksHalfSETaxPP</Input>
+            <Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseDoesNotOweSETax</Input>
+		</Inputs>
+		<BlankCondition>
+			<BlankIfTrue>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseDoesNotOweSETax</BlankIfTrue>
+		</BlankCondition>
+		<Gist>
+			<Difference>
+				<InputRoles>
+					<Left>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksSumSEIncomePP</Left>
+					<Right>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksHalfSETaxPP</Right>
+				</InputRoles>
+			</Difference>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 1e Spouse-->
+	<!--Line 1e Taxpayer-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksSETaxMinusIncomePP">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksSumSEIncomePP</Input>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksHalfSETaxPP</Input>
+            <Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerDoesNotOweSETax</Input>
+		</Inputs>
+		<BlankCondition>
+			<BlankIfTrue>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerDoesNotOweSETax</BlankIfTrue>
+		</BlankCondition>
+		<Gist>
+			<Difference>
+				<InputRoles>
+					<Left>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksSumSEIncomePP</Left>
+					<Right>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksHalfSETaxPP</Right>
+				</InputRoles>
+			</Difference>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 1e Taxpayer-->
+	<!--Line 1d Total-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksHalfSETaxPP">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksHalfSETaxPP</Input>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksHalfSETaxPP</Input>
+		</Inputs>
+		<Gist>
+			<Accumulation>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksHalfSETaxPP</Value>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksHalfSETaxPP</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>One half of self-employment tax</Type>
+				</Configuration>
+			</Accumulation>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 1d Total-->
+	<!--Line 1d Spouse-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksHalfSETaxPP">
+		<Inputs>
+			<Input>/Temporary/EIC/SpouseUsingShortScheduleSEInd</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040ShortScheduleSE/DeductibleSelfEmploymentTaxAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040LongScheduleSE/DeductibleSelfEmploymentTaxAmt</Input>
+            <Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseDoesNotOweSETax</Input>
+		</Inputs>
+		<BlankCondition>
+			<BlankIfTrue>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseDoesNotOweSETax</BlankIfTrue>
+		</BlankCondition>
+		<Gist>
+			<NumericChoice>
+				<InputRoles>
+					<Choice>/Temporary/EIC/SpouseUsingShortScheduleSEInd</Choice>
+					<Possibility>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040ShortScheduleSE/DeductibleSelfEmploymentTaxAmt</Possibility>
+					<Possibility>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040LongScheduleSE/DeductibleSelfEmploymentTaxAmt</Possibility>
+				</InputRoles>
+				<Configuration>
+					<ChoiceMapping>
+						<Option>
+							<Value>true</Value>
+							<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040ShortScheduleSE/DeductibleSelfEmploymentTaxAmt</ID>
+							<NoOtherOption>false</NoOtherOption>
+						</Option>
+						<DefaultOption>
+							<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040LongScheduleSE/DeductibleSelfEmploymentTaxAmt</ID>
+							<NoOtherOption>true</NoOtherOption>
+						</DefaultOption>
+					</ChoiceMapping>
+				</Configuration>
+			</NumericChoice>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040LongScheduleSE/DeductibleSelfEmploymentTaxAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/DeductibleSelfEmploymentTaxAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseUUID</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopySelectNumericByID>
+				<InputRoles>
+					<Default>/Constants/NumericBlank</Default>
+					<MultiCopy>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/DeductibleSelfEmploymentTaxAmt</MultiCopy>
+					<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseUUID</ID>
+				</InputRoles>
+			</MultiCopySelectNumericByID>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040ShortScheduleSE/DeductibleSelfEmploymentTaxAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE/DeductibleSelfEmploymentTaxAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseUUID</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopySelectNumericByID>
+				<InputRoles>
+					<Default>/Constants/NumericBlank</Default>
+					<MultiCopy>/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE/DeductibleSelfEmploymentTaxAmt</MultiCopy>
+					<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseUUID</ID>
+				</InputRoles>
+			</MultiCopySelectNumericByID>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 1d Spouse-->
+	<!--Line 1d Taxpayer-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksHalfSETaxPP">
+		<Inputs>
+			<Input>/Temporary/EIC/TaxpayerUsingShortScheduleSEInd</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040ShortScheduleSE/DeductibleSelfEmploymentTaxAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040LongScheduleSE/DeductibleSelfEmploymentTaxAmt</Input>
+            <Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerDoesNotOweSETax</Input>
+		</Inputs>
+		<BlankCondition>
+			<BlankIfTrue>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerDoesNotOweSETax</BlankIfTrue>
+		</BlankCondition>
+		<Gist>
+			<NumericChoice>
+				<InputRoles>
+					<Choice>/Temporary/EIC/TaxpayerUsingShortScheduleSEInd</Choice>
+					<Possibility>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040ShortScheduleSE/DeductibleSelfEmploymentTaxAmt</Possibility>
+					<Possibility>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040LongScheduleSE/DeductibleSelfEmploymentTaxAmt</Possibility>
+				</InputRoles>
+				<Configuration>
+					<ChoiceMapping>
+						<Option>
+							<Value>true</Value>
+							<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040ShortScheduleSE/DeductibleSelfEmploymentTaxAmt</ID>
+							<NoOtherOption>false</NoOtherOption>
+						</Option>
+						<DefaultOption>
+							<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040LongScheduleSE/DeductibleSelfEmploymentTaxAmt</ID>
+							<NoOtherOption>true</NoOtherOption>
+						</DefaultOption>
+					</ChoiceMapping>
+				</Configuration>
+			</NumericChoice>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040LongScheduleSE/DeductibleSelfEmploymentTaxAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/DeductibleSelfEmploymentTaxAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerUUID</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopySelectNumericByID>
+				<InputRoles>
+					<Default>/Constants/NumericBlank</Default>
+					<MultiCopy>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/DeductibleSelfEmploymentTaxAmt</MultiCopy>
+					<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerUUID</ID>
+				</InputRoles>
+			</MultiCopySelectNumericByID>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040ShortScheduleSE/DeductibleSelfEmploymentTaxAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE/DeductibleSelfEmploymentTaxAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerUUID</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopySelectNumericByID>
+				<InputRoles>
+					<Default>/Constants/NumericBlank</Default>
+					<MultiCopy>/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE/DeductibleSelfEmploymentTaxAmt</MultiCopy>
+					<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerUUID</ID>
+				</InputRoles>
+			</MultiCopySelectNumericByID>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 1d Taxpayer-->
+	<!--Line 1c Total-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksSumSEIncomePP">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksSumSEIncomePP</Input>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksSumSEIncomePP</Input>
+		</Inputs>
+		<Gist>
+			<Accumulation>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksSumSEIncomePP</Value>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksSumSEIncomePP</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>Total self-employment income</Type>
+				</Configuration>
+			</Accumulation>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 1c Total-->
+	<!--Line 1c Spouse-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksSumSEIncomePP">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksNetSEIncomePP</Input>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksOptMethodAmtPP</Input>
+            <Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseDoesNotOweSETax</Input>
+		</Inputs>
+		<BlankCondition>
+			<BlankIfTrue>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseDoesNotOweSETax</BlankIfTrue>
+		</BlankCondition>
+		<Gist>
+			<Accumulation>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksNetSEIncomePP</Value>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksOptMethodAmtPP</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>Spouse's net self-employment income</Type>
+				</Configuration>
+			</Accumulation>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 1c Spouse-->
+	<!--Line 1c Taxpayer-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksSumSEIncomePP">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksNetSEIncomePP</Input>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksOptMethodAmtPP</Input>
+            <Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerDoesNotOweSETax</Input>
+		</Inputs>
+		<BlankCondition>
+			<BlankIfTrue>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerDoesNotOweSETax</BlankIfTrue>
+		</BlankCondition>
+		<Gist>
+			<Accumulation>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksNetSEIncomePP</Value>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksOptMethodAmtPP</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>Taxpayer's net self-employment income</Type>
+				</Configuration>
+			</Accumulation>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 1c Taxpayer-->
+	<!--Line 1b Total-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksOptMethodAmtPP">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksOptMethodAmtPP</Input>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksOptMethodAmtPP</Input>
+		</Inputs>
+		<Gist>
+			<Accumulation>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksOptMethodAmtPP</Value>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksOptMethodAmtPP</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>Total optional method and church employee income</Type>
+				</Configuration>
+			</Accumulation>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 1b Total-->
+	<!--Line 1b Spouse-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksOptMethodAmtPP">
+		<Inputs>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040LongScheduleSE/OptionalMethodAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040LongScheduleSE/W2WagesFromChurchesAmt</Input>
+            <Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseDoesNotOweSETax</Input>
+		</Inputs>
+		<BlankCondition>
+			<BlankIfTrue>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseDoesNotOweSETax</BlankIfTrue>
+		</BlankCondition>
+		<Gist>
+			<Accumulation>
+				<InputRoles>
+					<Value>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040LongScheduleSE/OptionalMethodAmt</Value>
+					<Value>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040LongScheduleSE/W2WagesFromChurchesAmt</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>Spouse's optional method and church income</Type>
+				</Configuration>
+			</Accumulation>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040LongScheduleSE/OptionalMethodAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/OptionalMethodAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseUUID</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopySelectNumericByID>
+				<InputRoles>
+					<Default>/Constants/NumericBlank</Default>
+					<MultiCopy>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/OptionalMethodAmt</MultiCopy>
+					<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseUUID</ID>
+				</InputRoles>
+			</MultiCopySelectNumericByID>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 1b Spouse-->
+	<!--Line 1b Taxpayer-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksOptMethodAmtPP">
+		<Inputs>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040LongScheduleSE/OptionalMethodAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040LongScheduleSE/W2WagesFromChurchesAmt</Input>
+            <Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerDoesNotOweSETax</Input>
+		</Inputs>
+		<BlankCondition>
+			<BlankIfTrue>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerDoesNotOweSETax</BlankIfTrue>
+		</BlankCondition>
+		<Gist>
+			<Accumulation>
+				<InputRoles>
+					<Value>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040LongScheduleSE/OptionalMethodAmt</Value>
+					<Value>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040LongScheduleSE/W2WagesFromChurchesAmt</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>Taxpayer's optional method and church income</Type>
+				</Configuration>
+			</Accumulation>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040LongScheduleSE/OptionalMethodAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/OptionalMethodAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerUUID</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopySelectNumericByID>
+				<InputRoles>
+					<Default>/Constants/NumericBlank</Default>
+					<MultiCopy>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/OptionalMethodAmt</MultiCopy>
+					<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerUUID</ID>
+				</InputRoles>
+			</MultiCopySelectNumericByID>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 1b Taxpayer-->
+	<!--Line 1a Total-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksNetSEIncomePP">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksNetSEIncomePP</Input>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksNetSEIncomePP</Input>
+		</Inputs>
+		<Gist>
+			<Accumulation>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksNetSEIncomePP</Value>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksNetSEIncomePP</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>Total net self-employment income</Type>
+				</Configuration>
+			</Accumulation>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 1a Total-->
+	<!--Line 1a Spouse-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksNetSEIncomePP">
+		<Inputs>
+			<Input>/Temporary/EIC/SpouseUsingShortScheduleSEInd</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040ShortScheduleSE/SETotalNetEarningsOrLossAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040LongScheduleSE/SETotalNetEarningsOrLossAmt</Input>
+            <Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseDoesNotOweSETax</Input>
+		</Inputs>
+		<BlankCondition>
+			<BlankIfTrue>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseDoesNotOweSETax</BlankIfTrue>
+		</BlankCondition>
+		<Gist>
+			<NumericChoice>
+				<InputRoles>
+					<Choice>/Temporary/EIC/SpouseUsingShortScheduleSEInd</Choice>
+					<Possibility>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040ShortScheduleSE/SETotalNetEarningsOrLossAmt</Possibility>
+					<Possibility>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040LongScheduleSE/SETotalNetEarningsOrLossAmt</Possibility>
+				</InputRoles>
+				<Configuration>
+					<ChoiceMapping>
+						<Option>
+							<Value>true</Value>
+							<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040ShortScheduleSE/SETotalNetEarningsOrLossAmt</ID>
+							<NoOtherOption>false</NoOtherOption>
+						</Option>
+						<DefaultOption>
+							<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040LongScheduleSE/SETotalNetEarningsOrLossAmt</ID>
+							<NoOtherOption>true</NoOtherOption>
+						</DefaultOption>
+					</ChoiceMapping>
+				</Configuration>
+			</NumericChoice>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040LongScheduleSE/SETotalNetEarningsOrLossAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/SETotalNetEarningsOrLossAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseUUID</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopySelectNumericByID>
+				<InputRoles>
+					<Default>/Constants/NumericBlank</Default>
+					<MultiCopy>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/SETotalNetEarningsOrLossAmt</MultiCopy>
+					<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseUUID</ID>
+				</InputRoles>
+			</MultiCopySelectNumericByID>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040ShortScheduleSE/SETotalNetEarningsOrLossAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE/SETotalNetEarningsOrLossAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseUUID</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopySelectNumericByID>
+				<InputRoles>
+					<Default>/Constants/NumericBlank</Default>
+					<MultiCopy>/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE/SETotalNetEarningsOrLossAmt</MultiCopy>
+					<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseUUID</ID>
+				</InputRoles>
+			</MultiCopySelectNumericByID>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 1a Spouse-->
+	<!--Line 1a Taxpayer-->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksNetSEIncomePP">
+		<Inputs>
+			<Input>/Temporary/EIC/TaxpayerUsingShortScheduleSEInd</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040ShortScheduleSE/SETotalNetEarningsOrLossAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040LongScheduleSE/SETotalNetEarningsOrLossAmt</Input>
+            <Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerDoesNotOweSETax</Input>
+		</Inputs>
+		<BlankCondition>
+			<BlankIfTrue>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerDoesNotOweSETax</BlankIfTrue>
+		</BlankCondition>
+		<Gist>
+			<NumericChoice>
+				<InputRoles>
+					<Choice>/Temporary/EIC/TaxpayerUsingShortScheduleSEInd</Choice>
+					<Possibility>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040ShortScheduleSE/SETotalNetEarningsOrLossAmt</Possibility>
+					<Possibility>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040LongScheduleSE/SETotalNetEarningsOrLossAmt</Possibility>
+				</InputRoles>
+				<Configuration>
+					<ChoiceMapping>
+						<Option>
+							<Value>true</Value>
+							<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040ShortScheduleSE/SETotalNetEarningsOrLossAmt</ID>
+							<NoOtherOption>false</NoOtherOption>
+						</Option>
+						<DefaultOption>
+							<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040LongScheduleSE/SETotalNetEarningsOrLossAmt</ID>
+							<NoOtherOption>true</NoOtherOption>
+						</DefaultOption>
+					</ChoiceMapping>
+				</Configuration>
+			</NumericChoice>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040LongScheduleSE/SETotalNetEarningsOrLossAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/SETotalNetEarningsOrLossAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerUUID</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopySelectNumericByID>
+				<InputRoles>
+					<Default>/Constants/NumericBlank</Default>
+					<MultiCopy>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/SETotalNetEarningsOrLossAmt</MultiCopy>
+					<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerUUID</ID>
+				</InputRoles>
+			</MultiCopySelectNumericByID>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040ShortScheduleSE/SETotalNetEarningsOrLossAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE/SETotalNetEarningsOrLossAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerUUID</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopySelectNumericByID>
+				<InputRoles>
+					<Default>/Constants/NumericBlank</Default>
+					<MultiCopy>/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE/SETotalNetEarningsOrLossAmt</MultiCopy>
+					<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerUUID</ID>
+				</InputRoles>
+			</MultiCopySelectNumericByID>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Line 1a Taxpayer-->
+	<!--End Line 1 Calcs-->
+	<!--Multiple Use Data-->
+	<!--Does spouse not owe self-employment tax-->
+    <!-- TODO: Use this as a blanking condition for Line 2 -->
+    <Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseOwesSETax">
+        <Inputs>
+            <Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseDoesNotOweSETax</Input>
+        </Inputs>
+        <Gist>
+            <Opposite>
+                <InputRoles>
+                    <Value>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseDoesNotOweSETax</Value>
+                </InputRoles>
+            </Opposite>
+        </Gist>
+    </Node>
+    <!-- TODO: Use this as a blanking condition for Line 1 -->
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseDoesNotOweSETax">
+		<Inputs>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseEligibleForNoSETax</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseHasSETax</Input>
+		</Inputs>
+		<Gist>
+			<AllConditionsTrue>
+				<InputRoles>
+					<Condition>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseEligibleForNoSETax</Condition>
+					<OppositeCondition>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseHasSETax</OppositeCondition>
+				</InputRoles>
+			</AllConditionsTrue>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseEligibleForNoSETax">
+		<Inputs>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseMeetsLSERequirements</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/IsSpouseMinimumProfitBelowLimit</Input>
+		</Inputs>
+		<Gist>
+			<AtLeastOneConditionTrue>
+				<InputRoles>
+					<Condition>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseMeetsLSERequirements</Condition>
+					<Condition>/Temporary/EIC/EarnedIncomeWorksheetPP/IsSpouseMinimumProfitBelowLimit</Condition>
+				</InputRoles>
+			</AtLeastOneConditionTrue>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseMeetsLSERequirements">
+		<Inputs>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/IsSpouseCombinedSEAmtBelowLimit</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/IsSpouseW2WagesFromChurchesAmtBelowLimit</Input>
+		</Inputs>
+		<Gist>
+			<AllConditionsTrue>
+				<InputRoles>
+					<Condition>/Temporary/EIC/EarnedIncomeWorksheetPP/IsSpouseCombinedSEAmtBelowLimit</Condition>
+					<Condition>/Temporary/EIC/EarnedIncomeWorksheetPP/IsSpouseW2WagesFromChurchesAmtBelowLimit</Condition>
+				</InputRoles>
+			</AllConditionsTrue>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/IsSpouseW2WagesFromChurchesAmtBelowLimit">
+		<Inputs>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040LongScheduleSE/W2WagesFromChurchesAmt</Input>
+			<Input>/Constants/IRS1040ScheduleSE/MinChurchEmployeeIncAmt</Input>
+		</Inputs>
+		<Gist>
+			<BelowThreshold>
+				<InputRoles>
+					<Threshold>/Constants/IRS1040ScheduleSE/MinChurchEmployeeIncAmt</Threshold>
+					<Value>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040LongScheduleSE/W2WagesFromChurchesAmt</Value>
+				</InputRoles>
+			</BelowThreshold>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/IsSpouseCombinedSEAmtBelowLimit">
+		<Inputs>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040LongScheduleSE/CombinedSEAmt</Input>
+			<Input>/Constants/IRS1040ScheduleSE/MinCombinedSEAmt</Input>
+		</Inputs>
+		<Gist>
+			<BelowThreshold>
+				<InputRoles>
+					<Threshold>/Constants/IRS1040ScheduleSE/MinCombinedSEAmt</Threshold>
+					<Value>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040LongScheduleSE/CombinedSEAmt</Value>
+				</InputRoles>
+			</BelowThreshold>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/IsSpouseMinimumProfitBelowLimit">
+		<Inputs>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040ShortScheduleSE/MinimumProfitForSETaxAmt</Input>
+			<Input>/Constants/IRS1040ScheduleSE/MinCombinedSEAmt</Input>
+		</Inputs>
+		<Gist>
+			<BelowThreshold>
+				<InputRoles>
+					<Threshold>/Constants/IRS1040ScheduleSE/MinCombinedSEAmt</Threshold>
+					<Value>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040ShortScheduleSE/MinimumProfitForSETaxAmt</Value>
+				</InputRoles>
+			</BelowThreshold>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040LongScheduleSE/W2WagesFromChurchesAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/W2WagesFromChurchesAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseUUID</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopySelectNumericByID>
+				<InputRoles>
+					<Default>/Constants/NumericBlank</Default>
+					<MultiCopy>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/W2WagesFromChurchesAmt</MultiCopy>
+					<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseUUID</ID>
+				</InputRoles>
+			</MultiCopySelectNumericByID>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040LongScheduleSE/CombinedSEAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/CombinedSEAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseUUID</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopySelectNumericByID>
+				<InputRoles>
+					<Default>/Constants/NumericBlank</Default>
+					<MultiCopy>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/CombinedSEAmt</MultiCopy>
+					<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseUUID</ID>
+				</InputRoles>
+			</MultiCopySelectNumericByID>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040ShortScheduleSE/MinimumProfitForSETaxAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE/MinimumProfitForSETaxAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseUUID</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopySelectNumericByID>
+				<InputRoles>
+					<Default>/Constants/NumericBlank</Default>
+					<MultiCopy>/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE/MinimumProfitForSETaxAmt</MultiCopy>
+					<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseUUID</ID>
+				</InputRoles>
+			</MultiCopySelectNumericByID>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End does spouse not owe self-employment tax-->
+	<!--Does taxpayer not owe self-employment tax-->
+    <Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerOwesSETax">
+        <Inputs>
+            <Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerDoesNotOweSETax</Input>
+        </Inputs>
+        <Gist>
+            <Opposite>
+                <InputRoles>
+                    <Value>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerDoesNotOweSETax</Value>
+                </InputRoles>
+            </Opposite>
+        </Gist>
+    </Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerDoesNotOweSETax">
+		<Inputs>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerEligibleForNoSETax</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerHasSETax</Input>
+		</Inputs>
+		<Gist>
+			<AllConditionsTrue>
+				<InputRoles>
+					<Condition>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerEligibleForNoSETax</Condition>
+					<OppositeCondition>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerHasSETax</OppositeCondition>
+				</InputRoles>
+			</AllConditionsTrue>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerEligibleForNoSETax">
+		<Inputs>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerMeetsLSERequirements</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/IsTaxpayerMinimumProfitBelowLimit</Input>
+		</Inputs>
+		<Gist>
+			<AtLeastOneConditionTrue>
+				<InputRoles>
+					<Condition>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerMeetsLSERequirements</Condition>
+					<Condition>/Temporary/EIC/EarnedIncomeWorksheetPP/IsTaxpayerMinimumProfitBelowLimit</Condition>
+				</InputRoles>
+			</AtLeastOneConditionTrue>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerMeetsLSERequirements">
+		<Inputs>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/IsTaxpayerCombinedSEAmtBelowLimit</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/IsTaxpayerW2WagesFromChurchesAmtBelowLimit</Input>
+		</Inputs>
+		<Gist>
+			<AllConditionsTrue>
+				<InputRoles>
+					<Condition>/Temporary/EIC/EarnedIncomeWorksheetPP/IsTaxpayerCombinedSEAmtBelowLimit</Condition>
+					<Condition>/Temporary/EIC/EarnedIncomeWorksheetPP/IsTaxpayerW2WagesFromChurchesAmtBelowLimit</Condition>
+				</InputRoles>
+			</AllConditionsTrue>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/IsTaxpayerW2WagesFromChurchesAmtBelowLimit">
+		<Inputs>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040LongScheduleSE/W2WagesFromChurchesAmt</Input>
+			<Input>/Constants/IRS1040ScheduleSE/MinChurchEmployeeIncAmt</Input>
+		</Inputs>
+		<Gist>
+			<BelowThreshold>
+				<InputRoles>
+					<Threshold>/Constants/IRS1040ScheduleSE/MinChurchEmployeeIncAmt</Threshold>
+					<Value>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040LongScheduleSE/W2WagesFromChurchesAmt</Value>
+				</InputRoles>
+			</BelowThreshold>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/IsTaxpayerCombinedSEAmtBelowLimit">
+		<Inputs>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040LongScheduleSE/CombinedSEAmt</Input>
+			<Input>/Constants/IRS1040ScheduleSE/MinCombinedSEAmt</Input>
+		</Inputs>
+		<Gist>
+			<BelowThreshold>
+				<InputRoles>
+					<Threshold>/Constants/IRS1040ScheduleSE/MinCombinedSEAmt</Threshold>
+					<Value>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040LongScheduleSE/CombinedSEAmt</Value>
+				</InputRoles>
+			</BelowThreshold>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/IsTaxpayerMinimumProfitBelowLimit">
+		<Inputs>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040ShortScheduleSE/MinimumProfitForSETaxAmt</Input>
+			<Input>/Constants/IRS1040ScheduleSE/MinCombinedSEAmt</Input>
+		</Inputs>
+		<Gist>
+			<BelowThreshold>
+				<InputRoles>
+					<Threshold>/Constants/IRS1040ScheduleSE/MinCombinedSEAmt</Threshold>
+					<Value>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040ShortScheduleSE/MinimumProfitForSETaxAmt</Value>
+				</InputRoles>
+			</BelowThreshold>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040LongScheduleSE/W2WagesFromChurchesAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/W2WagesFromChurchesAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerUUID</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopySelectNumericByID>
+				<InputRoles>
+					<Default>/Constants/NumericBlank</Default>
+					<MultiCopy>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/W2WagesFromChurchesAmt</MultiCopy>
+					<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerUUID</ID>
+				</InputRoles>
+			</MultiCopySelectNumericByID>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040LongScheduleSE/CombinedSEAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/CombinedSEAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerUUID</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopySelectNumericByID>
+				<InputRoles>
+					<Default>/Constants/NumericBlank</Default>
+					<MultiCopy>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/CombinedSEAmt</MultiCopy>
+					<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerUUID</ID>
+				</InputRoles>
+			</MultiCopySelectNumericByID>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040ShortScheduleSE/MinimumProfitForSETaxAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE/MinimumProfitForSETaxAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerUUID</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopySelectNumericByID>
+				<InputRoles>
+					<Default>/Constants/NumericBlank</Default>
+					<MultiCopy>/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE/MinimumProfitForSETaxAmt</MultiCopy>
+					<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerUUID</ID>
+				</InputRoles>
+			</MultiCopySelectNumericByID>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Does taxpayer not owe self-employment tax-->
+	<!--Check Spouse SE tax for Line 1-->
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseHasSETax">
+		<Inputs>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseShortSESelfEmploymentTaxAmtNotBlank</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseLongSESelfEmploymentTaxAmtNotBlank</Input>
+		</Inputs>
+		<Gist>
+			<AtLeastOneConditionTrue>
+				<InputRoles>
+					<Condition>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseShortSESelfEmploymentTaxAmtNotBlank</Condition>
+					<Condition>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseLongSESelfEmploymentTaxAmtNotBlank</Condition>
+				</InputRoles>
+			</AtLeastOneConditionTrue>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseShortSESelfEmploymentTaxAmtNotBlank">
+		<Inputs>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040ShortScheduleSE/SelfEmploymentTaxAmt</Input>
+		</Inputs>
+		<Gist>
+			<IsNotBlank>
+				<InputRoles>
+					<Value>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040ShortScheduleSE/SelfEmploymentTaxAmt</Value>
+				</InputRoles>
+			</IsNotBlank>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseLongSESelfEmploymentTaxAmtNotBlank">
+		<Inputs>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040LongScheduleSE/SelfEmploymentTaxAmt</Input>
+		</Inputs>
+		<Gist>
+			<IsNotBlank>
+				<InputRoles>
+					<Value>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040LongScheduleSE/SelfEmploymentTaxAmt</Value>
+				</InputRoles>
+			</IsNotBlank>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040LongScheduleSE/SelfEmploymentTaxAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/SelfEmploymentTaxAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseUUID</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopySelectNumericByID>
+				<InputRoles>
+					<Default>/Constants/NumericBlank</Default>
+					<MultiCopy>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/SelfEmploymentTaxAmt</MultiCopy>
+					<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseUUID</ID>
+				</InputRoles>
+			</MultiCopySelectNumericByID>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseIRS1040ShortScheduleSE/SelfEmploymentTaxAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE/SelfEmploymentTaxAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseUUID</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopySelectNumericByID>
+				<InputRoles>
+					<Default>/Constants/NumericBlank</Default>
+					<MultiCopy>/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE/SelfEmploymentTaxAmt</MultiCopy>
+					<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseUUID</ID>
+				</InputRoles>
+			</MultiCopySelectNumericByID>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Check Spouse SE tax for Line 1-->
+	<!--Check Taxpayer SE tax for Line 1-->
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerHasSETax">
+		<Inputs>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerShortSESelfEmploymentTaxAmtNotBlank</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerLongSESelfEmploymentTaxAmtNotBlank</Input>
+		</Inputs>
+		<Gist>
+			<AtLeastOneConditionTrue>
+				<InputRoles>
+					<Condition>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerShortSESelfEmploymentTaxAmtNotBlank</Condition>
+					<Condition>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerLongSESelfEmploymentTaxAmtNotBlank</Condition>
+				</InputRoles>
+			</AtLeastOneConditionTrue>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerShortSESelfEmploymentTaxAmtNotBlank">
+		<Inputs>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040ShortScheduleSE/SelfEmploymentTaxAmt</Input>
+		</Inputs>
+		<Gist>
+			<IsNotBlank>
+				<InputRoles>
+					<Value>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040ShortScheduleSE/SelfEmploymentTaxAmt</Value>
+				</InputRoles>
+			</IsNotBlank>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerLongSESelfEmploymentTaxAmtNotBlank">
+		<Inputs>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040LongScheduleSE/SelfEmploymentTaxAmt</Input>
+		</Inputs>
+		<Gist>
+			<IsNotBlank>
+				<InputRoles>
+					<Value>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040LongScheduleSE/SelfEmploymentTaxAmt</Value>
+				</InputRoles>
+			</IsNotBlank>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040LongScheduleSE/SelfEmploymentTaxAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/SelfEmploymentTaxAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerUUID</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopySelectNumericByID>
+				<InputRoles>
+					<Default>/Constants/NumericBlank</Default>
+					<MultiCopy>/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/SelfEmploymentTaxAmt</MultiCopy>
+					<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerUUID</ID>
+				</InputRoles>
+			</MultiCopySelectNumericByID>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerIRS1040ShortScheduleSE/SelfEmploymentTaxAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE/SelfEmploymentTaxAmt</Input>
+			<Input>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerUUID</Input>
+			<Input>/Constants/NumericBlank</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopySelectNumericByID>
+				<InputRoles>
+					<Default>/Constants/NumericBlank</Default>
+					<MultiCopy>/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE/SelfEmploymentTaxAmt</MultiCopy>
+					<ID>/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerUUID</ID>
+				</InputRoles>
+			</MultiCopySelectNumericByID>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!--End Check Taxpayer SE tax for Line 1-->
+	<!--Get Spouse's Schedule SE UUID-->
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/SpouseUUID">
+		<Inputs>
+			<Input>/Return/ReturnHeader/Filer/SpouseSSN</Input>
+			<Input>/Return/ReturnData/IRS1040ScheduleSE/SSN</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyFindIDForValue>
+				<InputRoles>
+					<MultiCopy>/Return/ReturnData/IRS1040ScheduleSE/SSN</MultiCopy>
+					<Value>/Return/ReturnHeader/Filer/SpouseSSN</Value>
+				</InputRoles>
+			</MultiCopyFindIDForValue>
+		</Gist>
+	</Node>
+	<!--End Get Spouse's Schedule SE UUID-->
+	<!--Get Taxpayer's Long and Short Schedule SEs-->
+	<Node name="/Temporary/EIC/EarnedIncomeWorksheetPP/TaxpayerUUID">
+		<Inputs>
+			<Input>/Return/ReturnHeader/Filer/PrimarySSN</Input>
+			<Input>/Return/ReturnData/IRS1040ScheduleSE/SSN</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyFindIDForValue>
+				<InputRoles>
+					<MultiCopy>/Return/ReturnData/IRS1040ScheduleSE/SSN</MultiCopy>
+					<Value>/Return/ReturnHeader/Filer/PrimarySSN</Value>
+				</InputRoles>
+			</MultiCopyFindIDForValue>
+		</Gist>
+	</Node>
+	<!--End Get Taxpayer's Long and Short Schedule SEs-->
+	<!--End Multiple Use Data-->
+  <Node name="/Temporary/EIC/TaxpayerUsingShortScheduleSEInd">
+    <Inputs>
+      <Input>/Return/ReturnData/ScheduleSEAdjustments/TaxpayerUsingShortScheduleSEIndPP</Input>
+      <Input>/Constants/True</Input>
+      <Input>/Constants/False</Input>
+    </Inputs>
+    <Gist>
+      <BooleanChoice>
+        <InputRoles>
+          <Choice>/Return/ReturnData/ScheduleSEAdjustments/TaxpayerUsingShortScheduleSEIndPP</Choice>
+          <Possibility>/Constants/True</Possibility>
+          <Possibility>/Constants/False</Possibility>
+        </InputRoles>
+        <Configuration>
+          <ChoiceMapping>
+            <Option>
+              <Value>true</Value>
+              <ID>/Constants/True</ID>
+              <NoOtherOption>true</NoOtherOption>
+            </Option>
+            <DefaultOption>
+                <ID>/Constants/False</ID>
+              <NoOtherOption>true</NoOtherOption>
+            </DefaultOption>
+          </ChoiceMapping>
+        </Configuration>
+      </BooleanChoice>
+    </Gist>
+  </Node>
+  <Node name="/Temporary/EIC/SpouseUsingShortScheduleSEInd">
+    <Inputs>
+      <Input>/Return/ReturnData/ScheduleSEAdjustments/SpouseUsingShortScheduleSEIndPP</Input>
+      <Input>/Constants/True</Input>
+      <Input>/Constants/False</Input>
+    </Inputs>
+    <Gist>
+      <BooleanChoice>
+        <InputRoles>
+          <Choice>/Return/ReturnData/ScheduleSEAdjustments/SpouseUsingShortScheduleSEIndPP</Choice>
+          <Possibility>/Constants/True</Possibility>
+          <Possibility>/Constants/False</Possibility>
+        </InputRoles>
+        <Configuration>
+          <ChoiceMapping>
+            <Option>
+              <Value>true</Value>
+              <ID>/Constants/True</ID>
+              <NoOtherOption>true</NoOtherOption>
+            </Option>
+            <DefaultOption>
+                <ID>/Constants/False</ID>
+              <NoOtherOption>true</NoOtherOption>
+            </DefaultOption>
+          </ChoiceMapping>
+        </Configuration>
+      </BooleanChoice>
+    </Gist>
+  </Node>
+	<!--Inputs-->
+	<!--IRS1040 Schedule SE-->
+	<MultiCopyPrimitiveInputNode name="/Return/ReturnData/IRS1040ScheduleSE/SSN" />
+	<!--IRS1040 Long Schedule SE-->
+	<MultiCopyPrimitiveInputNode name="/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/SelfEmploymentTaxAmt">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</MultiCopyPrimitiveInputNode>
+	<MultiCopyPrimitiveInputNode name="/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/SETotalNetEarningsOrLossAmt">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</MultiCopyPrimitiveInputNode>
+	<MultiCopyPrimitiveInputNode name="/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/OptionalMethodAmt">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</MultiCopyPrimitiveInputNode>
+	<MultiCopyPrimitiveInputNode name="/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/CombinedSEAmt">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</MultiCopyPrimitiveInputNode>
+	<MultiCopyPrimitiveInputNode name="/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/W2WagesFromChurchesAmt">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</MultiCopyPrimitiveInputNode>
+	<MultiCopyPrimitiveInputNode name="/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE/DeductibleSelfEmploymentTaxAmt">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</MultiCopyPrimitiveInputNode>
+	<!--End IRS1040 Long Schedule SE-->
+	<!--IRS1040 Short Schedule SE-->
+	<MultiCopyPrimitiveInputNode name="/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE/SelfEmploymentTaxAmt">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</MultiCopyPrimitiveInputNode>
+	<MultiCopyPrimitiveInputNode name="/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE/SETotalNetEarningsOrLossAmt">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</MultiCopyPrimitiveInputNode>
+	<MultiCopyPrimitiveInputNode name="/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE/DeductibleSelfEmploymentTaxAmt">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</MultiCopyPrimitiveInputNode>
+	<MultiCopyPrimitiveInputNode name="/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE/MinimumProfitForSETaxAmt">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</MultiCopyPrimitiveInputNode>
+	<!--End IRS1040 Short Schedule SE-->
+	<!--End IRS1040-->
+	<!--Schedule SE Adjustments Worksheet-->
+	<InputNode name="/Return/ReturnData/ScheduleSEAdjustments/TaxpayerScheduleSELine1TotalPP">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</InputNode>
+	<InputNode name="/Return/ReturnData/ScheduleSEAdjustments/SpouseScheduleSELine1TotalPP">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</InputNode>
+	<InputNode name="/Return/ReturnData/ScheduleSEAdjustments/TaxpayerCRPPaymentsTotalAmtPP">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</InputNode>
+	<InputNode name="/Return/ReturnData/ScheduleSEAdjustments/SpouseCRPPaymentsTotalAmtPP">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</InputNode>
+	<InputNode name="/Return/ReturnData/ScheduleSEAdjustments/TaxpayerExemptNotaryIncomePP">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</InputNode>
+	<InputNode name="/Return/ReturnData/ScheduleSEAdjustments/SpouseExemptNotaryIncomePP">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</InputNode>
+	<InputNode name="/Return/ReturnData/ScheduleSEAdjustments/TaxpayerUsingShortScheduleSEIndPP">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</InputNode>
+	<InputNode name="/Return/ReturnData/ScheduleSEAdjustments/SpouseUsingShortScheduleSEIndPP">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</InputNode>
+	<InputNode name="/Return/ReturnData/ScheduleSEAdjustments/TaxpayerScheduleSELine2TotalPP">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</InputNode>
+	<InputNode name="/Return/ReturnData/ScheduleSEAdjustments/SpouseScheduleSELine2TotalPP">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</InputNode>
+	<!--End Schedule SE Adjustments Worksheet-->
+	<!--IRS1040 Schedule C-->
+	<MultiCopyStructInputNode name="/Return/ReturnData/IRS1040ScheduleC/(TotalGrossReceiptsAmt | StatutoryEmployeeFromW2Ind | BusinessOperatedByPP)">
+		<RoundTo>
+			<MultiCopy>
+				<Struct>
+					<Element>
+						<Name>TotalGrossReceiptsAmt</Name>
+						<RoundTo>
+							<Dollars />
+						</RoundTo>
+					</Element>
+				</Struct>
+			</MultiCopy>
+		</RoundTo>
+	</MultiCopyStructInputNode>
+	<MultiCopyPrimitiveInputNode name="/Return/ReturnData/IRS1040ScheduleC/TotalGrossReceiptsAmt">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</MultiCopyPrimitiveInputNode>
+	<MultiCopyPrimitiveInputNode name="/Return/ReturnData/IRS1040ScheduleC/StatutoryEmployeeFromW2Ind" />
+	<MultiCopyPrimitiveInputNode name="/Return/ReturnData/IRS1040ScheduleC/BusinessOperatedByPP" />
+	<MultiCopyPrimitiveInputNode name="/Return/ReturnData/IRS1040ScheduleC/BusinessOperatedByPP" />
+	<!--End IRS1040 Schedule C-->
+	<!--SSNs-->
+	<InputNode name="/Return/ReturnHeader/Filer/PrimarySSN" />
+	<InputNode name="/Return/ReturnHeader/Filer/SpouseSSN" />
+	<!--End SSNs-->
+	<!--End Inputs-->
+	<!--Constants-->
+	<ConstantNode name="/Constants/IRS1040ScheduleSE/MinCombinedSEAmt">
+		<RoundTo>
+			<Integer />
+		</RoundTo>
+	</ConstantNode>
+	<ConstantNode name="/Constants/IRS1040ScheduleSE/MinChurchEmployeeIncAmt">
+		<RoundTo>
+			<Dec>2</Dec>
+		</RoundTo>
+	</ConstantNode>
+	<ConstantNode name="/Constants/NumericBlank" />
+	<ConstantNode name="/Constants/IRS1040ScheduleC/TaxpayerFieldName" />
+	<ConstantNode name="/Constants/IRS1040ScheduleC/SpouseFieldName" />
+	<!--End Constants-->
+</Nodes>

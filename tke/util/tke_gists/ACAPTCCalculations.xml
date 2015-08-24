@@ -1,0 +1,1907 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Nodes topic="Form8962Subsidy">
+	<Versions>
+		<Version id="TKE.Calc.FileFormat">1</Version>        
+        <Version id="TKE.Calc.Runtime">1</Version>
+        <Version id="TKE.Gist">1</Version>
+        <Version id="TKE.MeF">1</Version>
+	</Versions>
+
+    <!-- standard annual calculation -->
+    <Node name="/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualPremiumTaxCreditAllwAmt">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualMaxPremiumAssistanceAmt</Input>
+            <Input>/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualPremiumAmt</Input>
+            <Input>/Temporary/IRS8962/NoAnnualPTC</Input>
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8962/NoAnnualPTC</BlankIfTrue>
+                <Gist>
+                    <Cap>
+                        <Value>/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualMaxPremiumAssistanceAmt</Value>
+                        <Cap>/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualPremiumAmt</Cap>
+                        <ValueType>credit</ValueType>
+                    </Cap>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+
+    <Node name="/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualMaxPremiumAssistanceAmt">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8962/AnnualContributionAmt</Input>
+            <Input>/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualPremiumSLCSPAmt</Input>
+            <Input>/Temporary/IRS8962/AnnualDisqualification</Input>
+            <Input>/Temporary/IRS8962/NoAnnualPTC</Input>
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8962/NoAnnualPTC</BlankIfTrue>
+                <Gist>
+                    <Subsidy>
+                        <RequiredPayment>/Return/ReturnData/IRS8962/AnnualContributionAmt</RequiredPayment>
+                        <Cost>/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualPremiumSLCSPAmt</Cost>
+                        <Disqualified>/Temporary/IRS8962/AnnualDisqualification</Disqualified>
+                    </Subsidy>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+
+    <!-- Line 11 b -->
+    <Node name="/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualPremiumSLCSPAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AnnualPremiumSLCSPValues</Input>
+            <Input>/Temporary/IRS8962/NoAnnualPTC</Input>
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8962/NoAnnualPTC</BlankIfTrue>
+                <Gist>
+                    <MultiCopyAccumulation>
+                        <Type>premium</Type>
+                        <Value>/Temporary/IRS8962/AnnualPremiumSLCSPValues</Value>
+                    </MultiCopyAccumulation>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+
+    <Node name="/Temporary/IRS8962/AnnualPremiumSLCSPValues">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AnnualPremiumSLCSPDuplicatesRemoved</Input>
+            <Input>/Constants/IRS8962/SLCSPFieldLabel</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AnnualPremiumSLCSPDuplicatesRemoved</List>
+                <Gist>
+                    <MultiCopySelectNumericByID>
+                        <MultiCopy>/Temporary/IRS8962/AnnualPremiumSLCSPDuplicatesRemoved</MultiCopy>
+                        <ID>/Constants/IRS8962/SLCSPFieldLabel</ID>
+                    </MultiCopySelectNumericByID>                    
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AnnualPremiumSLCSPDuplicatesRemoved">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AnnualSLCSPAndMarketplaceIdentifier</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyRemoveDuplicates>
+                <MultiCopyValue>/Temporary/IRS8962/AnnualSLCSPAndMarketplaceIdentifier</MultiCopyValue>
+            </MultiCopyRemoveDuplicates>
+        </Gist>
+        <RoundTo>
+            <MultiCopy>
+                <Struct>
+                    <Element>
+                        <Name>TotalPremiumSLCSPAmtPP</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                </Struct>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+
+
+    <Node name="/Temporary/IRS8962/AnnualDisqualification">
+        <Inputs>
+            <Input>/Temporary/IRS8962/DisqualifiedDueToBelowMinPovertyLevel</Input>
+            <Input>/Temporary/IRS8962/OverFPLThreshold</Input>
+            <Input>/Temporary/IRS8962/DisqualifiedDueToFilingStatus</Input>            
+        </Inputs>
+        <Gist>
+            <AtLeastOneConditionTrue>
+                <Condition>/Temporary/IRS8962/DisqualifiedDueToBelowMinPovertyLevel</Condition>
+                <Condition>/Temporary/IRS8962/OverFPLThreshold</Condition>
+                <Condition>/Temporary/IRS8962/DisqualifiedDueToFilingStatus</Condition>
+            </AtLeastOneConditionTrue>
+        </Gist>
+    </Node>
+    
+    <!--Find if the Primary is over the FPL-->
+    <Node name="/Temporary/IRS8962/AltPrimaryOverFPLThreshold">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltPrimaryFederalPovertyLevelPct</Input>
+            <Input>/Constants/IRS8962/LowestFPLForDisqualification</Input>            
+        </Inputs>
+        <Gist>
+            <DisqualifiedDueToIncome>
+                <Income>/Temporary/IRS8962/AltPrimaryFederalPovertyLevelPct</Income>
+                <Threshold>/Constants/IRS8962/LowestFPLForDisqualification</Threshold>
+                <SubsidyType>premium tax credit</SubsidyType>
+            </DisqualifiedDueToIncome>        
+        </Gist>
+    </Node>
+    
+    <!--Find if Primary is disqualified during alt calculation-->
+    <Node name="/Temporary/IRS8962/AltPrimaryDisqualification">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltPrimaryOverFPLThreshold</Input>
+            <Input>/Temporary/IRS8962/DisqualifiedDueToBelowMinPovertyLevel</Input>
+            <Input>/Temporary/IRS8962/DisqualifiedDueToFilingStatus</Input>                        
+        </Inputs>
+        <Gist>
+            <AtLeastOneConditionTrue>
+                <Condition>/Temporary/IRS8962/AltPrimaryOverFPLThreshold</Condition>
+                <Condition>/Temporary/IRS8962/DisqualifiedDueToBelowMinPovertyLevel</Condition>
+                <Condition>/Temporary/IRS8962/DisqualifiedDueToFilingStatus</Condition>                        
+            </AtLeastOneConditionTrue>
+        </Gist>
+    </Node>
+    
+    
+    <!--Find if the spouse is over the FPL-->
+    <Node name="/Temporary/IRS8962/AltSpouseOverFPLThreshold">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltSpouseFederalPovertyLevelPct</Input>
+            <Input>/Constants/IRS8962/LowestFPLForDisqualification</Input>            
+        </Inputs>
+        <Gist>
+            <DisqualifiedDueToIncome>
+                <Income>/Temporary/IRS8962/AltSpouseFederalPovertyLevelPct</Income>
+                <Threshold>/Constants/IRS8962/LowestFPLForDisqualification</Threshold>
+                <SubsidyType>premium tax credit</SubsidyType>
+            </DisqualifiedDueToIncome>        
+        </Gist>
+    </Node>
+    
+    <!--Find if spouse is disqualified during alt calculation-->
+    <Node name="/Temporary/IRS8962/AltSpouseDisqualification">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltSpouseOverFPLThreshold</Input>          
+            <Input>/Temporary/IRS8962/DisqualifiedDueToBelowMinPovertyLevel</Input>
+            <Input>/Temporary/IRS8962/DisqualifiedDueToFilingStatus</Input>            
+        </Inputs>
+        <Gist>
+            <AtLeastOneConditionTrue>
+                <Condition>/Temporary/IRS8962/AltSpouseOverFPLThreshold</Condition>
+                <Condition>/Temporary/IRS8962/DisqualifiedDueToBelowMinPovertyLevel</Condition>
+                <Condition>/Temporary/IRS8962/DisqualifiedDueToFilingStatus</Condition>            
+            </AtLeastOneConditionTrue>
+        </Gist>
+    </Node>
+   
+    <Node name="/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualContributionAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8962/NoAnnualPTC</Input>
+            <Input>/Return/ReturnData/IRS8962/AnnualContributionAmt</Input>
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8962/NoAnnualPTC</BlankIfTrue>
+                <Gist>
+                    <NumericCopy>
+                        <Value>/Return/ReturnData/IRS8962/AnnualContributionAmt</Value>
+                    </NumericCopy>
+                </Gist>                
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualPremiumAmt">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1095A/TotalPlanPremiumAmtPP</Input>
+            <Input>/Temporary/IRS8962/NoAnnualPTC</Input>
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8962/NoAnnualPTC</BlankIfTrue>
+                <Gist>
+                    <MultiCopyAccumulation>
+                        <Type>premium</Type>
+                        <Value>/Return/ReturnData/IRS1095A/TotalPlanPremiumAmtPP</Value>
+                    </MultiCopyAccumulation>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+
+    <Node name="/Temporary/IRS8962/NoAnnualPTC">
+        <Inputs>
+            <Input>/Temporary/IRS8962/NotUsingAnnualCalculation</Input>
+            <Input>/Temporary/IRS8962/AnnualDisqualification</Input>
+        </Inputs>
+        <Gist>
+            <AtLeastOneConditionTrue>
+                <Condition>/Temporary/IRS8962/NotUsingAnnualCalculation</Condition>
+                <Condition>/Temporary/IRS8962/AnnualDisqualification</Condition>
+            </AtLeastOneConditionTrue>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/NotUsingAnnualCalculation">
+        <Inputs>
+            <Input>/Temporary/IRS8962/CalculationTypeChoice</Input>
+            <Input>/Constants/True</Input>
+            <Input>/Constants/False</Input>
+        </Inputs>
+        <Gist>
+            <BooleanChoice>
+                <Choice>/Temporary/IRS8962/CalculationTypeChoice</Choice>
+                <Possibility>/Constants/True</Possibility>
+                <Possibility>/Constants/False</Possibility>
+                <ChoiceMapping>
+                    <Option>
+                        <Value>ALTERNATE</Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_ALLOCATIONS_ALT_IS_WORSE</Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095A_ALT_IS_WORSE</Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095C_OFFER_OF_COVERAGE_ALT_IS_WORSE</Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>ANNUAL_ALT_IS_WORSE</Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>                    
+                    <Option>
+                        <Value>MONTHLY_ALLOCATIONS</Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095A</Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095C_OFFER_OF_COVERAGE</Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>ANNUAL</Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>    
+                    <Option>
+                        <Value></Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                </ChoiceMapping>
+            </BooleanChoice>
+        </Gist>
+    </Node>
+    
+    
+
+    <!-- the constant /Constants/IRS8962/LowestFPLForDisqualification is 401, since this gist checks if income is >= threshold -->
+    <Node name="/Temporary/IRS8962/OverFPLThreshold">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8962/FederalPovertyLevelPct</Input>
+            <Input>/Constants/IRS8962/LowestFPLForDisqualification</Input>            
+        </Inputs>
+        <Gist>
+            <DisqualifiedDueToIncome>
+                <Income>/Return/ReturnData/IRS8962/FederalPovertyLevelPct</Income>
+                <Threshold>/Constants/IRS8962/LowestFPLForDisqualification</Threshold>
+                <SubsidyType>premium tax credit</SubsidyType>
+            </DisqualifiedDueToIncome>        
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/DisqualifiedDueToFilingStatus">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</Input>
+            <Input>/Return/ReturnData/IRS8962/ReliefInd</Input>
+        </Inputs>
+        <Gist>
+            <ACADisqualifiedFromPTCDueToFilingStatus>
+                <FilingStatus>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</FilingStatus>
+                <ReliefInd>/Return/ReturnData/IRS8962/ReliefInd</ReliefInd>
+            </ACADisqualifiedFromPTCDueToFilingStatus>
+        </Gist>
+    </Node>
+    
+    <!-- ReliefInd can only be true if the filing status is MFS -->
+    <Node name="/Return/ReturnData/IRS8962/ReliefInd">
+        <Inputs>
+            <Input>/Temporary/IRS8962/IsMarriedFilingSeparately</Input>
+            <Input>/Return/ReturnData/IRS8962/SpousalAbuseIndPP</Input>            
+        </Inputs>
+        <Gist>
+            <AllConditionsTrue>
+                <Condition>/Temporary/IRS8962/IsMarriedFilingSeparately</Condition>
+                <Condition>/Return/ReturnData/IRS8962/SpousalAbuseIndPP</Condition>
+            </AllConditionsTrue>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/IsMarriedFilingSeparately">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</Input>
+            <Input>/Constants/True</Input>
+            <Input>/Constants/False</Input>
+        </Inputs>
+        <Gist>
+            <BooleanChoice>
+                <Choice>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</Choice>
+                <Possibility>/Constants/True</Possibility>
+                <Possibility>/Constants/False</Possibility>
+                <ChoiceMapping>
+                    <Option>
+                        <Value>3</Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <DefaultOption>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </DefaultOption>
+                </ChoiceMapping>
+            </BooleanChoice>
+        </Gist>
+    </Node>
+    
+    
+    <!-- standard monthly calculation -->
+
+    <Node name="/Temporary/IRS8962/MonthlyPremiumTaxCreditAllwAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8962/MonthlyMaxPremiumAssistanceAmt</Input>
+            <Input>/Temporary/IRS8962/TotalMonthlyPlanPremiumAmt</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/MonthlyMaxPremiumAssistanceAmt</List>
+                <List>/Temporary/IRS8962/TotalMonthlyPlanPremiumAmt</List>
+                <Gist>
+                    <Cap>
+                        <Value>/Temporary/IRS8962/MonthlyMaxPremiumAssistanceAmt</Value>
+                        <Cap>/Temporary/IRS8962/TotalMonthlyPlanPremiumAmt</Cap>
+                        <ValueType>credit</ValueType>
+                    </Cap>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>
+    </Node>
+
+    <Node name="/Temporary/IRS8962/MonthlyMaxPremiumAssistanceAmt">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8962/MonthlyContriHealthCareCvrAmt</Input>
+            <Input>/Temporary/IRS8962/TotalMonthlyPremiumSLCSPAmt</Input>
+            <Input>/Temporary/IRS8962/AnnualDisqualification</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/TotalMonthlyPremiumSLCSPAmt</List>
+                <Gist>
+                    <Subsidy>
+                        <RequiredPayment>/Return/ReturnData/IRS8962/MonthlyContriHealthCareCvrAmt</RequiredPayment>
+                        <Cost>/Temporary/IRS8962/TotalMonthlyPremiumSLCSPAmt</Cost>
+                        <Disqualified>/Temporary/IRS8962/AnnualDisqualification</Disqualified>
+                    </Subsidy>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>
+    </Node>
+
+    <Node name="/Temporary/IRS8962/TotalMonthlyPremiumSLCSPAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8962/FinalAllocatedMonthlySLCSPAmt</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/FinalAllocatedMonthlySLCSPAmt</List>
+                <Gist>
+                    <MultiCopyAccumulation>
+                        <Type>premium</Type>
+                        <Value>/Temporary/IRS8962/FinalAllocatedMonthlySLCSPAmt</Value>
+                    </MultiCopyAccumulation>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>
+    </Node>
+
+    <!-- This node selects if the standard marriage SLCSP or the normal monthly SLCSP values should be used.
+        If the taxpayer was married during the year, SLCSPs from the same exchange should not be removed for the 
+        months before marriage.  The standard marriage SLCSP handles this, but the AllocatedMonthlySLCSPAmtDuplicatesRemoved
+        does not.  Ideally we could always use the standard marriage one, since it matches the AllocatedMonthlySLCSPAmtDuplicatesRemoved
+        when there was no marriage during the year.  However, since it was added late, this was isolated into a separate code
+        path and only used when there was a marriage in the year.
+        -->
+    <Node name="/Temporary/IRS8962/FinalAllocatedMonthlySLCSPAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8962/ShouldUseStandardMarriageSLCSC</Input>
+            <Input>/Temporary/IRS8962/AllocatedMonthlySLCSPAmtDuplicatesRemoved</Input>
+            <Input>/Temporary/IRS8962/StandardMarriageAllocatedMonthlySLCSPAmtDuplicatesRemoved</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyChoice>
+                <Choice>/Temporary/IRS8962/ShouldUseStandardMarriageSLCSC</Choice>
+                <Possibility>/Temporary/IRS8962/AllocatedMonthlySLCSPAmtDuplicatesRemoved</Possibility>
+                <Possibility>/Temporary/IRS8962/StandardMarriageAllocatedMonthlySLCSPAmtDuplicatesRemoved</Possibility>
+                <ChoiceMapping>
+                    <Option>
+                        <Value>true</Value>
+                        <ID>/Temporary/IRS8962/StandardMarriageAllocatedMonthlySLCSPAmtDuplicatesRemoved</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <DefaultOption>
+                        <ID>/Temporary/IRS8962/AllocatedMonthlySLCSPAmtDuplicatesRemoved</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </DefaultOption>
+                </ChoiceMapping>
+            </MultiCopyChoice>
+        </Gist>
+    </Node>
+    
+    <!-- This node takes the data that has duplicates removed and puts it into a form that can be accumulated by
+         pulling out just the SLCSP.  The end result is a list of months.  Each month has a list of SCLSP values.
+         The end result is just like the list of allocated values in /Temporary/IRS8962/AllocatedMonthlyPremiumSLCSPAmt,
+         except that any duplicate (state, SLCSP) pairs have been removed. -->
+    <Node name="/Temporary/IRS8962/AllocatedMonthlySLCSPAmtDuplicatesRemoved">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AllocatedMonthlySLCSPAndMarketplaceIdentifierDuplicatesRemoved</Input>
+            <Input>/Constants/IRS8962/SLCSPFieldLabel</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AllocatedMonthlySLCSPAndMarketplaceIdentifierDuplicatesRemoved</List>
+                <Gist>
+                    <MultiCopyMapper>
+                        <List>/Temporary/IRS8962/AllocatedMonthlySLCSPAndMarketplaceIdentifierDuplicatesRemoved</List>
+                        <Gist>
+                            <MultiCopySelectNumericByID>
+                                <MultiCopy>/Temporary/IRS8962/AllocatedMonthlySLCSPAndMarketplaceIdentifierDuplicatesRemoved</MultiCopy>
+                                <ID>/Constants/IRS8962/SLCSPFieldLabel</ID>  <!-- this matches the SLCSP used in the MultiCopyCombiner below -->
+                            </MultiCopySelectNumericByID>
+                        </Gist>
+                    </MultiCopyMapper>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><MultiCopy><Dollars/></MultiCopy></MultiCopy></RoundTo>
+    </Node>
+
+<!-- if there are multiple 1095As from the same state for the same month, they should have the same value.  Here we remove 
+        any such 1095As so that they are not mistakenly added together.  1095As from different states should be added together.
+        This node removes any (duplicate state, SLCSP) pairs. -->
+    <Node name="/Temporary/IRS8962/AllocatedMonthlySLCSPAndMarketplaceIdentifierDuplicatesRemoved">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AllocatedMonthlySLCSPAndMarketplaceIdentifier</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AllocatedMonthlySLCSPAndMarketplaceIdentifier</List>
+                <Gist>
+                    <MultiCopyRemoveDuplicates>
+                        <MultiCopyValue>/Temporary/IRS8962/AllocatedMonthlySLCSPAndMarketplaceIdentifier</MultiCopyValue>
+                    </MultiCopyRemoveDuplicates>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo>
+            <MultiCopy>
+                <MultiCopy>
+                    <Struct>
+                        <Element>
+                            <Name>SLCSP</Name>
+                            <RoundTo><Dollars/></RoundTo>
+                        </Element>
+                    </Struct>
+                </MultiCopy>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    <!-- This node adds the marketplace identifier to the SLCSP for the monthly calculation so that we look for duplicate items from the same state -->
+    <Node name="/Temporary/IRS8962/AllocatedMonthlySLCSPAndMarketplaceIdentifier">
+        <Inputs>
+            <Input>/Temporary/IRS8962/MarketplaceIdentifierIncludingBlanksInUpperCase</Input>
+            <Input>/Temporary/IRS8962/AllocatedMonthlyPremiumSLCSPAmt</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AllocatedMonthlyPremiumSLCSPAmt</List>
+                <Gist>
+                    <MultiCopyCombiner>
+                        <MultiCopyValue>/Temporary/IRS8962/MarketplaceIdentifierIncludingBlanksInUpperCase</MultiCopyValue>
+                        <MultiCopyValue>/Temporary/IRS8962/AllocatedMonthlyPremiumSLCSPAmt</MultiCopyValue>
+                        <Config>
+                            <Elements>
+                                <Element>
+                                    <ID>/Temporary/IRS8962/MarketplaceIdentifierIncludingBlanksInUpperCase</ID>
+                                    <Name>MarketplaceIdentifer</Name>
+                                </Element>
+                                <Element>
+                                    <ID>/Temporary/IRS8962/AllocatedMonthlyPremiumSLCSPAmt</ID>
+                                    <Name>SLCSP</Name>
+                                </Element>
+                            </Elements>
+                        </Config>
+                    </MultiCopyCombiner>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo>
+            <MultiCopy>
+                <MultiCopy>
+                    <Struct>
+                        <Element>
+                            <Name>SLCSP</Name>
+                            <RoundTo><Dollars/></RoundTo>
+                        </Element>
+                    </Struct>
+                </MultiCopy>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    <!-- This node adds the marketplace identifier to the SLCSP for the annual calculation so that we look for duplicate items from the same state -->
+    <Node name="/Temporary/IRS8962/AnnualSLCSPAndMarketplaceIdentifier">
+        <Inputs>
+            <Input>/Temporary/IRS8962/MarketplaceIdentifierIncludingBlanksInUpperCase</Input>
+            <Input>/Temporary/IRS8962/TotalPremiumSLCSPAmtPPIncludingBlanks</Input>            
+        </Inputs>
+            <Gist>
+                <MultiCopyCombiner>
+                    <MultiCopyValue>/Temporary/IRS8962/MarketplaceIdentifierIncludingBlanksInUpperCase</MultiCopyValue>
+                    <MultiCopyValue>/Temporary/IRS8962/TotalPremiumSLCSPAmtPPIncludingBlanks</MultiCopyValue>
+                    <Config>
+                        <Elements>
+                            <Element>
+                                <ID>/Temporary/IRS8962/MarketplaceIdentifierIncludingBlanksInUpperCase</ID>
+                                <Name>MarketplaceIdentifer</Name>
+                            </Element>
+                            <Element>
+                                <ID>/Temporary/IRS8962/TotalPremiumSLCSPAmtPPIncludingBlanks</ID>
+                                <Name>SLCSP</Name>
+                            </Element>
+                        </Elements>
+                    </Config>
+                </MultiCopyCombiner>
+            </Gist>
+        <RoundTo>
+                <MultiCopy>
+                    <Struct>
+                        <Element>
+                            <Name>SLCSP</Name>
+                            <RoundTo><Dollars/></RoundTo>
+                        </Element>
+                    </Struct>
+                </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    <!-- this creates a list, one for 1095A, that has the TotalPremiumSLCSPAmtPP.
+        We can't use multiCopyPrimitiveInput to read the TotalPremiumSLCSPAmtPP, since there could be blanks. -->
+    <Node name="/Temporary/IRS8962/TotalPremiumSLCSPAmtPPIncludingBlanks">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1095A/(TotalPremiumSLCSPAmtPP)</Input>
+            <Input>/Constants/IRS8962/AnnualPremiumSLCSPFieldName</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Return/ReturnData/IRS1095A/(TotalPremiumSLCSPAmtPP)</List>
+                <Gist>
+                    <MultiCopySelectNumericByID>
+                        <MultiCopy>/Return/ReturnData/IRS1095A/(TotalPremiumSLCSPAmtPP)</MultiCopy>
+                        <ID>/Constants/IRS8962/AnnualPremiumSLCSPFieldName</ID>
+                    </MultiCopySelectNumericByID>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+    
+    
+    <!-- this creates a list, one for 1095A, that has the marketplace identifier.
+        We can't use multiCopyPrimitiveInput to read the marketplace identifier, since there could be blanks. -->
+    <Node name="/Temporary/IRS8962/MarketplaceIdentifierIncludingBlanks">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1095A/(MarketplaceIdentiferPP)</Input>
+            <Input>/Constants/IRS8962/MarketPlaceIdentifierFieldName</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Return/ReturnData/IRS1095A/(MarketplaceIdentiferPP)</List>
+                <Gist>
+                    <MultiCopySelectStringByID>
+                        <MultiCopy>/Return/ReturnData/IRS1095A/(MarketplaceIdentiferPP)</MultiCopy>
+                        <ID>/Constants/IRS8962/MarketPlaceIdentifierFieldName</ID>
+                    </MultiCopySelectStringByID>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+    
+    <!-- Convert the list of MarketPlace identifier to upper case-->
+    <Node name="/Temporary/IRS8962/MarketplaceIdentifierIncludingBlanksInUpperCase">
+        <Inputs>
+            <Input>/Temporary/IRS8962/MarketplaceIdentifierIncludingBlanks</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/MarketplaceIdentifierIncludingBlanks</List>
+                <Gist>
+                    <ChangeStringToAllCaps>
+                        <StringToConvert>/Temporary/IRS8962/MarketplaceIdentifierIncludingBlanks</StringToConvert>
+                    </ChangeStringToAllCaps>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AllocatedMonthlyPremiumSLCSPAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8962/MonthlyPremiumSLCSPAmt</Input>
+            <Input>/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp/(PolicyNum | StartMonthNumberCd | EndMonthNumberCd | MonthlyPremiumSLCSPPct)</Input>
+            <Input>/Return/ReturnData/IRS1095A/MarketAssignedPolicyNumberPP</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/MonthlyPremiumSLCSPAmt</List>
+                <Gist>
+                    <ACA1095AAllocation>
+                        <Values>/Temporary/IRS8962/MonthlyPremiumSLCSPAmt</Values>
+                        <Allocations>/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp/(PolicyNum | StartMonthNumberCd | EndMonthNumberCd | MonthlyPremiumSLCSPPct)</Allocations>
+                        <PolicyNumbers>/Return/ReturnData/IRS1095A/MarketAssignedPolicyNumberPP</PolicyNumbers>
+                        <Month>/MultiCopyMapper/MultiCopy</Month>
+                        <ValueName>MonthlyPremiumSLCSPPct</ValueName>
+                    </ACA1095AAllocation>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><MultiCopy><Dollars/></MultiCopy></MultiCopy></RoundTo>
+    </Node>
+
+
+    <Node name="/Temporary/IRS8962/MonthlyPremiumSLCSPAmt">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1095A/(MonthlyPTCInformationGrpPP/(MonthCdPP | MonthlyPremiumSLCSPAmtPP))</Input>
+        </Inputs>
+        <Gist>
+            <ACAFilter1095AMonthlyValues>
+                <Data>/Return/ReturnData/IRS1095A/(MonthlyPTCInformationGrpPP/(MonthCdPP | MonthlyPremiumSLCSPAmtPP))</Data>
+                <ValueName>MonthlyPremiumSLCSPAmtPP</ValueName>
+            </ACAFilter1095AMonthlyValues>
+        </Gist>
+        <RoundTo><MultiCopy><MultiCopy><Dollars/></MultiCopy></MultiCopy></RoundTo>
+    </Node>
+
+    <Node name="/Temporary/IRS8962/TotalMonthlyPlanPremiumAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AllocatedMonthlyPlanPremiumAmt</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AllocatedMonthlyPlanPremiumAmt</List>
+                <Gist>
+                    <MultiCopyAccumulation>
+                        <Value>/Temporary/IRS8962/AllocatedMonthlyPlanPremiumAmt</Value>
+                        <Type>premium</Type>
+                    </MultiCopyAccumulation>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>
+    </Node>
+
+    <Node name="/Temporary/IRS8962/AllocatedMonthlyPlanPremiumAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8962/MonthlyPlanPremiumAmt</Input>
+            <Input>/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp/(PolicyNum | StartMonthNumberCd | EndMonthNumberCd | MonthlyPremiumPct)</Input>
+            <Input>/Return/ReturnData/IRS1095A/MarketAssignedPolicyNumberPP</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/MonthlyPlanPremiumAmt</List>
+                <Gist>
+                    <ACA1095AAllocation>
+                        <Values>/Temporary/IRS8962/MonthlyPlanPremiumAmt</Values>
+                        <Allocations>/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp/(PolicyNum | StartMonthNumberCd | EndMonthNumberCd | MonthlyPremiumPct)</Allocations>
+                        <PolicyNumbers>/Return/ReturnData/IRS1095A/MarketAssignedPolicyNumberPP</PolicyNumbers>
+                        <Month>/MultiCopyMapper/MultiCopy</Month>
+                        <ValueName>MonthlyPremiumPct</ValueName>
+                    </ACA1095AAllocation>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><MultiCopy><Dollars/></MultiCopy></MultiCopy></RoundTo>
+    </Node>
+
+    <Node name="/Temporary/IRS8962/MonthlyPlanPremiumAmt">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1095A/(MonthlyPTCInformationGrpPP/(MonthCdPP | MonthlyPlanPremiumAmtPP))</Input>
+        </Inputs>
+        <Gist>
+            <ACAFilter1095AMonthlyValues>
+                <Data>/Return/ReturnData/IRS1095A/(MonthlyPTCInformationGrpPP/(MonthCdPP | MonthlyPlanPremiumAmtPP))</Data>
+                <ValueName>MonthlyPlanPremiumAmtPP</ValueName>
+            </ACAFilter1095AMonthlyValues>
+        </Gist>
+        <RoundTo><MultiCopy><MultiCopy><Dollars/></MultiCopy></MultiCopy></RoundTo>
+    </Node>
+
+
+
+    <!--- Alternate Calculations -->
+
+    <!-- this combines the primary and spouse alternate calculations for the months before marriage and copies the standard calcs for the months where they were married -->
+    <Node name="/Temporary/IRS8962/AltMonthlyPremiumTaxCreditAllwAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltPrimaryMonthlyPremiumTaxCreditAllwAmt</Input>
+            <Input>/Temporary/IRS8962/AltSpouseMonthlyPremiumTaxCreditAllwAmt</Input>
+            <Input>/Temporary/IRS8962/MonthlyPremiumTaxCreditAllwAmt</Input>
+            <Input>/Return/ReturnData/IRS8962/MonthOfMarriagePP</Input>
+            <Input>/Temporary/IRS8962/CopyOfMonthOfMarriage</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/MonthlyPremiumTaxCreditAllwAmt</List>
+                <Gist>
+                    <ACAAltPTC>
+                        <AltPrimaryPTC>/Temporary/IRS8962/AltPrimaryMonthlyPremiumTaxCreditAllwAmt</AltPrimaryPTC>
+                        <AltSpousePTC>/Temporary/IRS8962/AltSpouseMonthlyPremiumTaxCreditAllwAmt</AltSpousePTC>
+                        <StandardPTC>/Temporary/IRS8962/MonthlyPremiumTaxCreditAllwAmt</StandardPTC>
+
+                        <PrimaryEndMonthNumberCd>/Return/ReturnData/IRS8962/MonthOfMarriagePP</PrimaryEndMonthNumberCd>
+                        <SpouseEndMonthNumberCd>/Temporary/IRS8962/CopyOfMonthOfMarriage</SpouseEndMonthNumberCd>
+
+                        <Month>/MultiCopyMapper/MultiCopy</Month>
+                    </ACAAltPTC>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>
+    </Node>
+
+
+
+    <!-- Primary Alternate Calculations -->
+    
+    <Node name="/Temporary/IRS8962/AltPrimaryMonthlyPremiumTaxCreditAllwAmt">
+        <Inputs> 
+            <Input>/Temporary/IRS8962/AltPrimaryMonthlyMaxPremiumAssistanceAmt</Input>
+            <Input>/Temporary/IRS8962/AltPrimaryTotalMonthlyPlanPremiumAmt</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AltPrimaryMonthlyMaxPremiumAssistanceAmt</List>
+                <List>/Temporary/IRS8962/AltPrimaryTotalMonthlyPlanPremiumAmt</List>
+                <Gist>
+                    <Cap>
+                        <Value>/Temporary/IRS8962/AltPrimaryMonthlyMaxPremiumAssistanceAmt</Value>
+                        <Cap>/Temporary/IRS8962/AltPrimaryTotalMonthlyPlanPremiumAmt</Cap>
+                        <ValueType>credit</ValueType>                            
+                    </Cap>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>
+    </Node>
+
+    <Node name="/Temporary/IRS8962/AltPrimaryMonthlyMaxPremiumAssistanceAmt">
+        <Inputs> 
+            <Input>/Temporary/IRS8962/AltPrimaryMonthlyContriHealthCareCvrAmt</Input>
+            <Input>/Temporary/IRS8962/AltPrimaryTotalMonthlyPremiumSLCSPAmt</Input>
+            <Input>/Temporary/IRS8962/AltPrimaryDisqualification</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AltPrimaryTotalMonthlyPremiumSLCSPAmt</List>
+                <Gist>
+                    <Subsidy>
+                        <RequiredPayment>/Temporary/IRS8962/AltPrimaryMonthlyContriHealthCareCvrAmt</RequiredPayment>
+                        <Cost>/Temporary/IRS8962/AltPrimaryTotalMonthlyPremiumSLCSPAmt</Cost>
+                        <Disqualified>/Temporary/IRS8962/AltPrimaryDisqualification</Disqualified>
+                    </Subsidy>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>
+    </Node>
+
+    <Node name="/Temporary/IRS8962/AltPrimaryTotalMonthlyPremiumSLCSPAmt">
+        <Inputs> 
+            <Input>/Temporary/IRS8962/AltPrimaryAllocatedMonthlySLCSPAmtDuplicatesRemoved</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AltPrimaryAllocatedMonthlySLCSPAmtDuplicatesRemoved</List>
+                <Gist>
+                    <MultiCopyAccumulation>
+                        <Type>premium</Type>
+                        <Value>/Temporary/IRS8962/AltPrimaryAllocatedMonthlySLCSPAmtDuplicatesRemoved</Value>
+                    </MultiCopyAccumulation>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>
+    </Node>
+
+
+    <!-- This node takes the data that has duplicates removed and puts it into a form that can be accumulated by
+         pulling out just the SLCSP.  The end result is a list of months.  Each month has a list of SCLSP values.
+         The end result is just like the list of allocated values in /Temporary/IRS8962/AltPrimaryAllocatedMonthlyPremiumSLCSPAmt,
+         except that any duplicate (state, SLCSP) pairs have been removed. -->
+    <Node name="/Temporary/IRS8962/AltPrimaryAllocatedMonthlySLCSPAmtDuplicatesRemoved">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltPrimaryAllocatedMonthlySLCSPAndMarketplaceIdentifierDuplicatesRemoved</Input>
+            <Input>/Constants/IRS8962/SLCSPFieldLabel</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AltPrimaryAllocatedMonthlySLCSPAndMarketplaceIdentifierDuplicatesRemoved</List>
+                <Gist>
+                    <MultiCopyMapper>
+                        <List>/Temporary/IRS8962/AltPrimaryAllocatedMonthlySLCSPAndMarketplaceIdentifierDuplicatesRemoved</List>
+                        <Gist>
+                            <MultiCopySelectNumericByID>
+                                <MultiCopy>/Temporary/IRS8962/AltPrimaryAllocatedMonthlySLCSPAndMarketplaceIdentifierDuplicatesRemoved</MultiCopy>
+                                <ID>/Constants/IRS8962/SLCSPFieldLabel</ID>  <!-- this matches the SLCSP used in the MultiCopyCombiner below -->
+                            </MultiCopySelectNumericByID>
+                        </Gist>
+                    </MultiCopyMapper>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><MultiCopy><Dollars/></MultiCopy></MultiCopy></RoundTo>
+    </Node>
+    
+    <!-- if there are multiple 1095As from the same state for the same month, they should have the same value.  Here we remove 
+        any such 1095As so that they are not mistakenly added together.  1095As from different states should be added together.
+        This node removes any (duplicate state, SLCSP) pairs. -->
+    <Node name="/Temporary/IRS8962/AltPrimaryAllocatedMonthlySLCSPAndMarketplaceIdentifierDuplicatesRemoved">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltPrimaryAllocatedMonthlySLCSPAndMarketplaceIdentifier</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AltPrimaryAllocatedMonthlySLCSPAndMarketplaceIdentifier</List>
+                <Gist>
+                    <MultiCopyRemoveDuplicates>
+                        <MultiCopyValue>/Temporary/IRS8962/AltPrimaryAllocatedMonthlySLCSPAndMarketplaceIdentifier</MultiCopyValue>
+                    </MultiCopyRemoveDuplicates>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo>
+            <MultiCopy>
+                <MultiCopy>
+                    <Struct>
+                        <Element>
+                            <Name>SLCSP</Name>
+                            <RoundTo><Dollars/></RoundTo>
+                        </Element>
+                    </Struct>
+                </MultiCopy>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    <!-- This node adds the marketplace identifier to the SLCSP so that we look for duplicate items from the same state -->
+    <Node name="/Temporary/IRS8962/AltPrimaryAllocatedMonthlySLCSPAndMarketplaceIdentifier">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltPrimaryMarketplaceIdentifiers</Input>
+            <Input>/Temporary/IRS8962/AltPrimaryAllocatedMonthlyPremiumSLCSPAmt</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AltPrimaryAllocatedMonthlyPremiumSLCSPAmt</List>
+                <Gist>
+                    <MultiCopyCombiner>
+                        <MultiCopyValue>/Temporary/IRS8962/AltPrimaryMarketplaceIdentifiers</MultiCopyValue>
+                        <MultiCopyValue>/Temporary/IRS8962/AltPrimaryAllocatedMonthlyPremiumSLCSPAmt</MultiCopyValue>
+                        <Config>
+                            <Elements>
+                                <Element>
+                                    <ID>/Temporary/IRS8962/AltPrimaryMarketplaceIdentifiers</ID>
+                                    <Name>MarketplaceIdentifer</Name>
+                                </Element>
+                                <Element>
+                                    <ID>/Temporary/IRS8962/AltPrimaryAllocatedMonthlyPremiumSLCSPAmt</ID>
+                                    <Name>SLCSP</Name>
+                                </Element>
+                            </Elements>
+                        </Config>
+                    </MultiCopyCombiner>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo>
+            <MultiCopy>
+                <MultiCopy>
+                    <Struct>
+                        <Element>
+                            <Name>SLCSP</Name>
+                            <RoundTo><Dollars/></RoundTo>
+                        </Element>
+                    </Struct>
+                </MultiCopy>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    <!-- This is a list of all the marketplace identifiers for policies belonging to the primary taxpayer -->
+    <Node name="/Temporary/IRS8962/AltPrimaryMarketplaceIdentifiers">
+        <Inputs>
+            <Input>/Temporary/IRS8962/MarketplaceIdentifierIncludingBlanksInUpperCase</Input>
+            <Input>/Temporary/IRS8962/AltPrimaryPolicyUUIDs</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AltPrimaryPolicyUUIDs</List>
+                <Gist>
+                    <MultiCopySelectStringByID>
+                        <MultiCopy>/Temporary/IRS8962/MarketplaceIdentifierIncludingBlanksInUpperCase</MultiCopy>
+                        <ID>/Temporary/IRS8962/AltPrimaryPolicyUUIDs</ID>
+                    </MultiCopySelectStringByID>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+
+    <Node name="/Temporary/IRS8962/AltPrimaryPolicyUUIDs">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1095A/RecipientSSNPP</Input>
+            <Input>/Return/ReturnHeader/Filer/PrimarySSN</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyFindAllIDsForValue>
+                <MultiCopy>/Return/ReturnData/IRS1095A/RecipientSSNPP</MultiCopy>
+                <Value>/Return/ReturnHeader/Filer/PrimarySSN</Value>
+            </MultiCopyFindAllIDsForValue>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltPrimaryAllocatedMonthlyPremiumSLCSPAmt">
+        <Inputs> 
+            <Input>/Temporary/IRS8962/AltPrimaryMonthlyPremiumSLCSPAmt</Input>
+            <Input>/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp/(PolicyNum | StartMonthNumberCd | EndMonthNumberCd | MonthlyPremiumSLCSPPct)</Input>
+            <Input>/Return/ReturnData/IRS1095A/MarketAssignedPolicyNumberPP</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AltPrimaryMonthlyPremiumSLCSPAmt</List>                
+                <Gist>
+                    <ACA1095AAllocation>
+                        <Values>/Temporary/IRS8962/AltPrimaryMonthlyPremiumSLCSPAmt</Values>
+                        <Allocations>/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp/(PolicyNum | StartMonthNumberCd | EndMonthNumberCd | MonthlyPremiumSLCSPPct)</Allocations>
+                        <PolicyNumbers>/Return/ReturnData/IRS1095A/MarketAssignedPolicyNumberPP</PolicyNumbers>
+                        <Month>/MultiCopyMapper/MultiCopy</Month>
+                        <ValueName>MonthlyPremiumSLCSPPct</ValueName>
+                    </ACA1095AAllocation>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><MultiCopy><Dollars/></MultiCopy></MultiCopy></RoundTo>
+    </Node>    
+
+    <Node name="/Temporary/IRS8962/AltPrimaryMonthlyPremiumSLCSPAmt">
+        <Inputs>            
+            <Input>/Return/ReturnData/IRS1095A/(RecipientSSNPP | MonthlyPTCInformationGrpPP/(MonthCdPP | MonthlyPremiumSLCSPAmtPP))</Input>
+            <Input>/Return/ReturnHeader/Filer/PrimarySSN</Input>
+            <Input>/Constants/MonthNumberCd/JanuaryMonthNumberCd</Input>
+            <Input>/Return/ReturnData/IRS8962/MonthOfMarriagePP</Input>
+        </Inputs>
+        <Gist>
+            <ACAFilter1095AMonthlyValues>
+                <Data>/Return/ReturnData/IRS1095A/(RecipientSSNPP | MonthlyPTCInformationGrpPP/(MonthCdPP | MonthlyPremiumSLCSPAmtPP))</Data>
+                <SSNFilter>/Return/ReturnHeader/Filer/PrimarySSN</SSNFilter>
+                <StartMonthNumberCdFilter>/Constants/MonthNumberCd/JanuaryMonthNumberCd</StartMonthNumberCdFilter>
+                <EndMonthNumberCdFilter>/Return/ReturnData/IRS8962/MonthOfMarriagePP</EndMonthNumberCdFilter>
+                <ValueName>MonthlyPremiumSLCSPAmtPP</ValueName>
+            </ACAFilter1095AMonthlyValues>            
+        </Gist>
+        <RoundTo><MultiCopy><MultiCopy><Dollars/></MultiCopy></MultiCopy></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltPrimaryTotalMonthlyPlanPremiumAmt">
+        <Inputs> 
+            <Input>/Temporary/IRS8962/AltPrimaryAllocatedMonthlyPlanPremiumAmt</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AltPrimaryAllocatedMonthlyPlanPremiumAmt</List>                
+                <Gist>
+                    <MultiCopyAccumulation>
+                        <Value>/Temporary/IRS8962/AltPrimaryAllocatedMonthlyPlanPremiumAmt</Value>
+                        <Type>premium</Type>
+                    </MultiCopyAccumulation>                
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>
+    </Node>    
+    
+    
+    <Node name="/Temporary/IRS8962/AltPrimaryAllocatedMonthlyPlanPremiumAmt">
+        <Inputs> 
+            <Input>/Temporary/IRS8962/AltPrimaryMonthlyPlanPremiumAmt</Input>
+            <Input>/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp/(PolicyNum | StartMonthNumberCd | EndMonthNumberCd | MonthlyPremiumPct)</Input>
+            <Input>/Return/ReturnData/IRS1095A/MarketAssignedPolicyNumberPP</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AltPrimaryMonthlyPlanPremiumAmt</List>                
+                <Gist>
+                    <ACA1095AAllocation>
+                        <Values>/Temporary/IRS8962/AltPrimaryMonthlyPlanPremiumAmt</Values>
+                        <Allocations>/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp/(PolicyNum | StartMonthNumberCd | EndMonthNumberCd | MonthlyPremiumPct)</Allocations>
+                        <PolicyNumbers>/Return/ReturnData/IRS1095A/MarketAssignedPolicyNumberPP</PolicyNumbers>
+                        <Month>/MultiCopyMapper/MultiCopy</Month>
+                        <ValueName>MonthlyPremiumPct</ValueName>                        
+                    </ACA1095AAllocation>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><MultiCopy><Dollars/></MultiCopy></MultiCopy></RoundTo>
+    </Node>    
+    
+    
+    <Node name="/Temporary/IRS8962/AltPrimaryMonthlyPlanPremiumAmt">
+        <Inputs>            
+            <Input>/Return/ReturnData/IRS1095A/(RecipientSSNPP | MonthlyPTCInformationGrpPP/(MonthCdPP | MonthlyPlanPremiumAmtPP))</Input>
+            <Input>/Return/ReturnHeader/Filer/PrimarySSN</Input>
+            <Input>/Constants/MonthNumberCd/JanuaryMonthNumberCd</Input>
+            <Input>/Return/ReturnData/IRS8962/MonthOfMarriagePP</Input>
+        </Inputs>
+        <Gist>            
+            <ACAFilter1095AMonthlyValues>
+                <Data>/Return/ReturnData/IRS1095A/(RecipientSSNPP | MonthlyPTCInformationGrpPP/(MonthCdPP | MonthlyPlanPremiumAmtPP))</Data>
+                <SSNFilter>/Return/ReturnHeader/Filer/PrimarySSN</SSNFilter>
+                <StartMonthNumberCdFilter>/Constants/MonthNumberCd/JanuaryMonthNumberCd</StartMonthNumberCdFilter>
+                <EndMonthNumberCdFilter>/Return/ReturnData/IRS8962/MonthOfMarriagePP</EndMonthNumberCdFilter>
+                <ValueName>MonthlyPlanPremiumAmtPP</ValueName>                
+            </ACAFilter1095AMonthlyValues>
+        </Gist>
+        <RoundTo><MultiCopy><MultiCopy><Dollars/></MultiCopy></MultiCopy></RoundTo>
+    </Node>
+    
+    <!-- Alt Spouse Calculations -->
+    
+    <Node name="/Temporary/IRS8962/AltSpouseMonthlyPremiumTaxCreditAllwAmt">
+        <Inputs> 
+            <Input>/Temporary/IRS8962/AltSpouseMonthlyMaxPremiumAssistanceAmt</Input>
+            <Input>/Temporary/IRS8962/AltSpouseTotalMonthlyPlanPremiumAmt</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AltSpouseMonthlyMaxPremiumAssistanceAmt</List>
+                <List>/Temporary/IRS8962/AltSpouseTotalMonthlyPlanPremiumAmt</List>
+                <Gist>
+                    <Cap>
+                        <Value>/Temporary/IRS8962/AltSpouseMonthlyMaxPremiumAssistanceAmt</Value>
+                        <Cap>/Temporary/IRS8962/AltSpouseTotalMonthlyPlanPremiumAmt</Cap>
+                        <ValueType>credit</ValueType>
+                    </Cap>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>
+    </Node>    
+    
+    
+    <Node name="/Temporary/IRS8962/AltSpouseMonthlyMaxPremiumAssistanceAmt">
+        <Inputs> 
+            <Input>/Temporary/IRS8962/AltSpouseMonthlyContriHealthCareCvrAmt</Input>
+            <Input>/Temporary/IRS8962/AltSpouseTotalMonthlyPremiumSLCSPAmt</Input>
+            <Input>/Temporary/IRS8962/AltSpouseDisqualification</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AltSpouseTotalMonthlyPremiumSLCSPAmt</List>
+                <Gist>
+                    <Subsidy>
+                        <RequiredPayment>/Temporary/IRS8962/AltSpouseMonthlyContriHealthCareCvrAmt</RequiredPayment>
+                        <Cost>/Temporary/IRS8962/AltSpouseTotalMonthlyPremiumSLCSPAmt</Cost>
+                        <Disqualified>/Temporary/IRS8962/AltSpouseDisqualification</Disqualified>
+                    </Subsidy>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>
+    </Node>    
+    
+    <Node name="/Temporary/IRS8962/AltSpouseTotalMonthlyPremiumSLCSPAmt">
+        <Inputs> 
+            <Input>/Temporary/IRS8962/AltSpouseAllocatedMonthlySLCSPAmtDuplicatesRemoved</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AltSpouseAllocatedMonthlySLCSPAmtDuplicatesRemoved</List>
+                <Gist>
+                    <MultiCopyAccumulation>
+                        <Type>premium</Type>
+                        <Value>/Temporary/IRS8962/AltSpouseAllocatedMonthlySLCSPAmtDuplicatesRemoved</Value>
+                    </MultiCopyAccumulation>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>
+    </Node>    
+    
+    <!-- This node takes the data that has duplicates removed and puts it into a form that can be accumulated by
+         pulling out just the SLCSP.  The end result is a list of months.  Each month has a list of SCLSP values.
+         The end result is just like the list of allocated values in /Temporary/IRS8962/AltSpouseAllocatedMonthlyPremiumSLCSPAmt,
+         except that any duplicate (state, SLCSP) pairs have been removed. -->
+    <Node name="/Temporary/IRS8962/AltSpouseAllocatedMonthlySLCSPAmtDuplicatesRemoved">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltSpouseAllocatedMonthlySLCSPAndMarketplaceIdentifierDuplicatesRemoved</Input>
+            <Input>/Constants/IRS8962/SLCSPFieldLabel</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AltSpouseAllocatedMonthlySLCSPAndMarketplaceIdentifierDuplicatesRemoved</List>
+                <Gist>
+                    <MultiCopyMapper>
+                        <List>/Temporary/IRS8962/AltSpouseAllocatedMonthlySLCSPAndMarketplaceIdentifierDuplicatesRemoved</List>
+                        <Gist>
+                            <MultiCopySelectNumericByID>
+                                <MultiCopy>/Temporary/IRS8962/AltSpouseAllocatedMonthlySLCSPAndMarketplaceIdentifierDuplicatesRemoved</MultiCopy>
+                                <ID>/Constants/IRS8962/SLCSPFieldLabel</ID>  <!-- this matches the SLCSP used in the MultiCopyCombiner below -->
+                            </MultiCopySelectNumericByID>
+                        </Gist>
+                    </MultiCopyMapper>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><MultiCopy><Dollars/></MultiCopy></MultiCopy></RoundTo>
+    </Node>
+    
+    <!-- if there are multiple 1095As from the same state for the same month, they should have the same value.  Here we remove 
+        any such 1095As so that they are not mistakenly added together.  1095As from different states should be added together.
+        This node removes any (duplicate state, SLCSP) pairs. -->
+    <Node name="/Temporary/IRS8962/AltSpouseAllocatedMonthlySLCSPAndMarketplaceIdentifierDuplicatesRemoved">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltSpouseAllocatedMonthlySLCSPAndMarketplaceIdentifier</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AltSpouseAllocatedMonthlySLCSPAndMarketplaceIdentifier</List>
+                <Gist>
+                    <MultiCopyRemoveDuplicates>
+                        <MultiCopyValue>/Temporary/IRS8962/AltSpouseAllocatedMonthlySLCSPAndMarketplaceIdentifier</MultiCopyValue>
+                    </MultiCopyRemoveDuplicates>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo>
+            <MultiCopy>
+                <MultiCopy>
+                    <Struct>
+                        <Element>
+                            <Name>SLCSP</Name>
+                            <RoundTo><Dollars/></RoundTo>
+                        </Element>
+                    </Struct>
+                </MultiCopy>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    <!-- This node adds the marketplace identifier to the SLCSP so that we look for duplicate items from the same state -->
+    <Node name="/Temporary/IRS8962/AltSpouseAllocatedMonthlySLCSPAndMarketplaceIdentifier">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltSpouseMarketplaceIdentifiers</Input>
+            <Input>/Temporary/IRS8962/AltSpouseAllocatedMonthlyPremiumSLCSPAmt</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AltSpouseAllocatedMonthlyPremiumSLCSPAmt</List>
+                <Gist>
+                    <MultiCopyCombiner>
+                        <MultiCopyValue>/Temporary/IRS8962/AltSpouseMarketplaceIdentifiers</MultiCopyValue>
+                        <MultiCopyValue>/Temporary/IRS8962/AltSpouseAllocatedMonthlyPremiumSLCSPAmt</MultiCopyValue>
+                        <Config>
+                            <Elements>
+                                <Element>
+                                    <ID>/Temporary/IRS8962/AltSpouseMarketplaceIdentifiers</ID>
+                                    <Name>MarketplaceIdentifer</Name>
+                                </Element>
+                                <Element>
+                                    <ID>/Temporary/IRS8962/AltSpouseAllocatedMonthlyPremiumSLCSPAmt</ID>
+                                    <Name>SLCSP</Name>
+                                </Element>
+                            </Elements>
+                        </Config>
+                    </MultiCopyCombiner>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo>
+            <MultiCopy>
+                <MultiCopy>
+                    <Struct>
+                        <Element>
+                            <Name>SLCSP</Name>
+                            <RoundTo><Dollars/></RoundTo>
+                        </Element>
+                    </Struct>
+                </MultiCopy>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    <!-- This is a list of all the marketplace identifiers for policies belonging to the spouse -->
+    <Node name="/Temporary/IRS8962/AltSpouseMarketplaceIdentifiers">
+        <Inputs>
+            <Input>/Temporary/IRS8962/MarketplaceIdentifierIncludingBlanksInUpperCase</Input>
+            <Input>/Temporary/IRS8962/AltSpousePolicyUUIDs</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AltSpousePolicyUUIDs</List>
+                <Gist>
+                    <MultiCopySelectStringByID>
+                        <MultiCopy>/Temporary/IRS8962/MarketplaceIdentifierIncludingBlanksInUpperCase</MultiCopy>
+                        <ID>/Temporary/IRS8962/AltSpousePolicyUUIDs</ID>
+                    </MultiCopySelectStringByID>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltSpousePolicyUUIDs">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1095A/RecipientSSNPP</Input>
+            <Input>/Return/ReturnHeader/Filer/SpouseSSN</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyFindAllIDsForValue>
+                <MultiCopy>/Return/ReturnData/IRS1095A/RecipientSSNPP</MultiCopy>
+                <Value>/Return/ReturnHeader/Filer/SpouseSSN</Value>
+            </MultiCopyFindAllIDsForValue>
+        </Gist>
+    </Node>
+    
+    
+    <Node name="/Temporary/IRS8962/AltSpouseAllocatedMonthlyPremiumSLCSPAmt">
+        <Inputs> 
+            <Input>/Temporary/IRS8962/AltSpouseMonthlyPremiumSLCSPAmt</Input>
+            <Input>/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp/(PolicyNum | StartMonthNumberCd | EndMonthNumberCd | MonthlyPremiumSLCSPPct)</Input>
+            <Input>/Return/ReturnData/IRS1095A/MarketAssignedPolicyNumberPP</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AltSpouseMonthlyPremiumSLCSPAmt</List>
+                <Gist>
+                    <ACA1095AAllocation>
+                        <Values>/Temporary/IRS8962/AltSpouseMonthlyPremiumSLCSPAmt</Values>
+                        <Allocations>/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp/(PolicyNum | StartMonthNumberCd | EndMonthNumberCd | MonthlyPremiumSLCSPPct)</Allocations>
+                        <PolicyNumbers>/Return/ReturnData/IRS1095A/MarketAssignedPolicyNumberPP</PolicyNumbers>
+                        <Month>/MultiCopyMapper/MultiCopy</Month>
+                        <ValueName>MonthlyPremiumSLCSPPct</ValueName>                        
+                    </ACA1095AAllocation>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><MultiCopy><Dollars/></MultiCopy></MultiCopy></RoundTo>
+    </Node>    
+    
+    <Node name="/Temporary/IRS8962/AltSpouseMonthlyPremiumSLCSPAmt">
+        <Inputs>            
+            <Input>/Return/ReturnData/IRS1095A/(RecipientSSNPP | MonthlyPTCInformationGrpPP/(MonthCdPP | MonthlyPremiumSLCSPAmtPP))</Input>
+            <Input>/Return/ReturnHeader/Filer/SpouseSSN</Input>
+            <Input>/Constants/MonthNumberCd/JanuaryMonthNumberCd</Input>
+            <Input>/Return/ReturnData/IRS8962/MonthOfMarriagePP</Input>
+        </Inputs>
+        <Gist>       
+            <ACAFilter1095AMonthlyValues>
+                <Data>/Return/ReturnData/IRS1095A/(RecipientSSNPP | MonthlyPTCInformationGrpPP/(MonthCdPP | MonthlyPremiumSLCSPAmtPP))</Data>
+                <SSNFilter>/Return/ReturnHeader/Filer/SpouseSSN</SSNFilter>
+                <StartMonthNumberCdFilter>/Constants/MonthNumberCd/JanuaryMonthNumberCd</StartMonthNumberCdFilter>
+                <EndMonthNumberCdFilter>/Return/ReturnData/IRS8962/MonthOfMarriagePP</EndMonthNumberCdFilter>
+                <ValueName>MonthlyPremiumSLCSPAmtPP</ValueName>
+            </ACAFilter1095AMonthlyValues>                        
+        </Gist>
+        <RoundTo><MultiCopy><MultiCopy><Dollars/></MultiCopy></MultiCopy></RoundTo>
+    </Node>
+    
+    
+    <Node name="/Temporary/IRS8962/AltSpouseTotalMonthlyPlanPremiumAmt">
+        <Inputs> 
+            <Input>/Temporary/IRS8962/AltSpouseAllocatedMonthlyPlanPremiumAmt</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AltSpouseAllocatedMonthlyPlanPremiumAmt</List>
+                <Gist>
+                    <MultiCopyAccumulation>
+                        <Value>/Temporary/IRS8962/AltSpouseAllocatedMonthlyPlanPremiumAmt</Value>
+                        <Type>premium</Type>
+                    </MultiCopyAccumulation>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>
+    </Node>    
+    
+    <Node name="/Temporary/IRS8962/AltSpouseAllocatedMonthlyPlanPremiumAmt">
+        <Inputs> 
+            <Input>/Temporary/IRS8962/AltSpouseMonthlyPlanPremiumAmt</Input>
+            <Input>/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp/(PolicyNum | StartMonthNumberCd | EndMonthNumberCd | MonthlyPremiumPct)</Input>
+            <Input>/Return/ReturnData/IRS1095A/MarketAssignedPolicyNumberPP</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AltSpouseMonthlyPlanPremiumAmt</List>
+                <Gist>
+                    <ACA1095AAllocation>
+                        <Values>/Temporary/IRS8962/AltSpouseMonthlyPlanPremiumAmt</Values>
+                        <Allocations>/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp/(PolicyNum | StartMonthNumberCd | EndMonthNumberCd | MonthlyPremiumPct)</Allocations>
+                        <PolicyNumbers>/Return/ReturnData/IRS1095A/MarketAssignedPolicyNumberPP</PolicyNumbers>
+                        <Month>/MultiCopyMapper/MultiCopy</Month>
+                        <ValueName>MonthlyPremiumPct</ValueName>                        
+                    </ACA1095AAllocation>                    
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><MultiCopy><Dollars/></MultiCopy></MultiCopy></RoundTo>
+    </Node>    
+   
+    <Node name="/Temporary/IRS8962/AltSpouseMonthlyPlanPremiumAmt">
+        <Inputs>            
+            <Input>/Return/ReturnData/IRS1095A/(RecipientSSNPP | MonthlyPTCInformationGrpPP/(MonthCdPP | MonthlyPlanPremiumAmtPP))</Input>
+            <Input>/Return/ReturnHeader/Filer/SpouseSSN</Input>
+            <Input>/Constants/MonthNumberCd/JanuaryMonthNumberCd</Input>
+            <Input>/Return/ReturnData/IRS8962/MonthOfMarriagePP</Input>
+        </Inputs>
+        <Gist>            
+            <ACAFilter1095AMonthlyValues>
+                <Data>/Return/ReturnData/IRS1095A/(RecipientSSNPP | MonthlyPTCInformationGrpPP/(MonthCdPP | MonthlyPlanPremiumAmtPP))</Data>
+                <SSNFilter>/Return/ReturnHeader/Filer/SpouseSSN</SSNFilter>
+                <StartMonthNumberCdFilter>/Constants/MonthNumberCd/JanuaryMonthNumberCd</StartMonthNumberCdFilter>
+                <EndMonthNumberCdFilter>/Return/ReturnData/IRS8962/MonthOfMarriagePP</EndMonthNumberCdFilter>
+                <ValueName>MonthlyPlanPremiumAmtPP</ValueName>                
+            </ACAFilter1095AMonthlyValues>
+        </Gist>
+        <RoundTo><MultiCopy><MultiCopy><Dollars/></MultiCopy></MultiCopy></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/ShouldUseStandardMarriageSLCSC">
+        <Inputs>
+            <Input>/Temporary/IRS8962/MarriedDuringYear</Input>            
+            <Input>/Temporary/IRS8962/HasStandardMarriageSLCSPData</Input>
+            <Input>/Temporary/IRS8962/StandardMarriageSLCSPDataIsNotBlank</Input>
+            <Input>/Temporary/IRS8962/StandardMarriageCombinerSuccess</Input>
+        </Inputs>
+        <Gist>
+            <AllConditionsTrue>
+                <Condition>/Temporary/IRS8962/MarriedDuringYear</Condition>
+                <Condition>/Temporary/IRS8962/HasStandardMarriageSLCSPData</Condition>
+                <Condition>/Temporary/IRS8962/StandardMarriageSLCSPDataIsNotBlank</Condition>
+                <Condition>/Temporary/IRS8962/StandardMarriageCombinerSuccess</Condition>
+            </AllConditionsTrue>
+        </Gist>
+    </Node>
+    
+    <!-- this is a failsafe test to make sure the standard marriage calculation succeeded. -->
+    <Node name="/Temporary/IRS8962/HasStandardMarriageSLCSPData">
+        <Inputs>
+            <Input>/Temporary/IRS8962/StandardMarriageAllocatedMonthlySLCSPAmtDuplicatesRemoved</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyHasValues>
+                <MultiCopyValue>/Temporary/IRS8962/StandardMarriageAllocatedMonthlySLCSPAmtDuplicatesRemoved</MultiCopyValue>
+            </MultiCopyHasValues>
+        </Gist>
+    </Node>
+    
+    <!-- this is a failsafe test to make sure the standard marriage calculation succeeded. -->
+    <Node name="/Temporary/IRS8962/StandardMarriageSLCSPDataIsNotBlank">
+        <Inputs>
+            <Input>/Temporary/IRS8962/StandardMarriageAllocatedMonthlySLCSPAmtDuplicatesRemoved</Input>
+        </Inputs>
+        <Gist>
+            <IsNotBlank>                  
+                <Value>/Temporary/IRS8962/StandardMarriageAllocatedMonthlySLCSPAmtDuplicatesRemoved</Value>
+            </IsNotBlank>
+        </Gist>
+    </Node>
+    
+    <!-- this is a failsafe test to make sure the standard marriage calculation succeeded. -->
+    <Node name="/Temporary/IRS8962/StandardMarriageCombinerSuccess">
+        <Inputs>
+            <Input>/Temporary/IRS8962/StandardMarriageAllocatedMonthlySLCSPMarketPlaceIdentifierAndFlag</Input>
+        </Inputs>
+        <Gist>
+            <IsNotBlank>
+                <Value>/Temporary/IRS8962/StandardMarriageAllocatedMonthlySLCSPMarketPlaceIdentifierAndFlag</Value>
+            </IsNotBlank>
+        </Gist>
+    </Node>
+    
+    <!-- this is the SLCSP for the standard monthly calculation with any duplicates SLCSP values from the same exchange removed.
+        This is just like /Temporary/IRS8962/AllocatedMonthlySLCSPAmtDuplicatesRemoved, except this node also considers the month
+        of marriage.  If the taxpayer and spouse have the same SLCSP and same exchange for months prior to marriage, the SLCSPs are 
+        NOT removed.  This is the standard behavior.  However, since this was a late addition to the calculation it was isolated into
+        a separate node so that it could never affect taxpayers not married during the year. -->
+    <Node name="/Temporary/IRS8962/StandardMarriageAllocatedMonthlySLCSPAmtDuplicatesRemoved">
+        <Inputs>
+            <Input>/Temporary/IRS8962/StandardMarriageAllocatedMonthlySLCSPMarketPlaceIdentifierAndFlagDuplicatesRemoved</Input>
+            <Input>/Constants/IRS8962/SLCSPFieldLabel</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/StandardMarriageAllocatedMonthlySLCSPMarketPlaceIdentifierAndFlagDuplicatesRemoved</List>
+                <Gist>
+                    <MultiCopyMapper>
+                        <List>/Temporary/IRS8962/StandardMarriageAllocatedMonthlySLCSPMarketPlaceIdentifierAndFlagDuplicatesRemoved</List>
+                        <Gist>
+                            <MultiCopySelectNumericByID>
+                                <MultiCopy>/Temporary/IRS8962/StandardMarriageAllocatedMonthlySLCSPMarketPlaceIdentifierAndFlagDuplicatesRemoved</MultiCopy>
+                                <ID>/Constants/IRS8962/SLCSPFieldLabel</ID>
+                            </MultiCopySelectNumericByID>
+                        </Gist>
+                    </MultiCopyMapper>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo>
+            <MultiCopy>
+                <MultiCopy>
+                    <Dollars/>
+                </MultiCopy>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    
+    <!-- for each month, remove any duplicate SLCSP values 
+         (where the marketplace id, SLCSP value, and primary flags are same) -->
+    <Node name="/Temporary/IRS8962/StandardMarriageAllocatedMonthlySLCSPMarketPlaceIdentifierAndFlagDuplicatesRemoved">
+        <Inputs>
+            <Input>/Temporary/IRS8962/StandardMarriageAllocatedMonthlySLCSPMarketPlaceIdentifierAndFlag</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/StandardMarriageAllocatedMonthlySLCSPMarketPlaceIdentifierAndFlag</List>
+                <Gist>
+                    <MultiCopyRemoveDuplicates>
+                        <MultiCopyValue>/Temporary/IRS8962/StandardMarriageAllocatedMonthlySLCSPMarketPlaceIdentifierAndFlag</MultiCopyValue>
+                    </MultiCopyRemoveDuplicates>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>    
+        <RoundTo>
+            <MultiCopy>
+                <MultiCopy>
+                    <Struct>
+                        <Element>
+                            <Name>SLCSP</Name>
+                            <RoundTo><Dollars/></RoundTo>
+                        </Element>
+                    </Struct>
+                </MultiCopy>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    <!-- 
+    When the taxpayer was married during the year, we can't simply remove any two SLCSP from the
+    same exchange, since for the months before marriage, these values must be added.  Thus, we add a new
+    boolean value to the SLCSP in addition to the exchange identifier.  This boolean indicates if it is a policy
+    for the spouse for a month before marriage.  That way if both taxpayer and spouse have the same exchange,
+    and same SLCSP, we won't remove them as duplicates for the months before marriage, since the taxpayer has false
+    and the spouse has true for this new flag.
+    -->
+    <Node name="/Temporary/IRS8962/StandardMarriageAllocatedMonthlySLCSPMarketPlaceIdentifierAndFlag">
+        <Inputs>
+            <Input>/Temporary/IRS8962/MarketplaceIdentifierIncludingBlanksInUpperCase</Input>
+            <Input>/Temporary/IRS8962/AllocatedMonthlyPremiumSLCSPAmt</Input>
+            <Input>/Temporary/IRS8962/PolicyBelongsToPrimaryBeforeMarriage</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>    <!-- these lists have months as the key -->
+                <List>/Temporary/IRS8962/AllocatedMonthlyPremiumSLCSPAmt</List>
+                <List>/Temporary/IRS8962/PolicyBelongsToPrimaryBeforeMarriage</List>
+                <Gist>
+                    <MultiCopyCombiner>
+                        <MultiCopyValue>/Temporary/IRS8962/MarketplaceIdentifierIncludingBlanksInUpperCase</MultiCopyValue>
+                        <MultiCopyValue>/Temporary/IRS8962/AllocatedMonthlyPremiumSLCSPAmt</MultiCopyValue>
+                        <MultiCopyValue>/Temporary/IRS8962/PolicyBelongsToPrimaryBeforeMarriage</MultiCopyValue>
+                        <Config>
+                            <Elements>
+                                <Element>
+                                    <ID>/Temporary/IRS8962/MarketplaceIdentifierIncludingBlanksInUpperCase</ID>
+                                    <Name>MarketplaceIdentifer</Name>
+                                </Element>
+                                <Element>
+                                    <ID>/Temporary/IRS8962/AllocatedMonthlyPremiumSLCSPAmt</ID>
+                                    <Name>SLCSP</Name>
+                                </Element>
+                                <Element>
+                                    <ID>/Temporary/IRS8962/PolicyBelongsToPrimaryBeforeMarriage</ID>
+                                    <Name>Primary</Name>
+                                </Element>
+                            </Elements>
+                        </Config>
+                    </MultiCopyCombiner>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo>
+            <MultiCopy>
+                <MultiCopy>
+                    <Struct>
+                        <Element>
+                            <Name>SLCSP</Name>
+                            <RoundTo><Dollars/></RoundTo>
+                        </Element>
+                    </Struct>
+                </MultiCopy>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    <!-- this builds a grid of each month and each 1095A.  It determines if the policy is for the spouse and if the month
+        is before marriage. -->
+    <Node name="/Temporary/IRS8962/PolicyBelongsToPrimaryBeforeMarriage">
+        <Inputs>
+            <Input>/Temporary/IRS8962/IsBeforeMarriage</Input>
+            <Input>/Temporary/IRS8962/PolicyBelongsToPrimary</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/IsBeforeMarriage</List>
+                <Gist>
+                    <MultiCopyMapper>
+                        <List>/Temporary/IRS8962/PolicyBelongsToPrimary</List>
+                        <Gist>
+                            <AllConditionsTrue>
+                                <Condition>/Temporary/IRS8962/IsBeforeMarriage</Condition>
+                                <Condition>/Temporary/IRS8962/PolicyBelongsToPrimary</Condition>
+                            </AllConditionsTrue>
+                        </Gist>
+                    </MultiCopyMapper>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+    
+    <!-- for each 1095A, contains a boolean that indicates if it belongs to the spouse or not -->
+    <Node name="/Temporary/IRS8962/PolicyBelongsToPrimary">
+        <Inputs>
+            <Input>/Temporary/IRS8962/RecipientSSNWithBlanks</Input>
+            <Input>/Return/ReturnHeader/Filer/PrimarySSN</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/RecipientSSNWithBlanks</List>
+                <Gist>
+                    <Equals>
+                        <Value>/Temporary/IRS8962/RecipientSSNWithBlanks</Value>
+                        <Value>/Return/ReturnHeader/Filer/PrimarySSN</Value>
+                    </Equals>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+
+    <Node name="/Temporary/IRS8962/RecipientSSNWithBlanks">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1095A/(RecipientSSNPP)</Input>
+            <Input>/Constants/IRS8962/RecipientSSNFieldName</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Return/ReturnData/IRS1095A/(RecipientSSNPP)</List>             
+                <Gist>
+                    <MultiCopySelectStringByID>
+                        <MultiCopy>/Return/ReturnData/IRS1095A/(RecipientSSNPP)</MultiCopy>
+                        <ID>/Constants/IRS8962/RecipientSSNFieldName</ID>
+                    </MultiCopySelectStringByID>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+    
+    
+  
+    
+    <!-- this determines if the month is before marriage or not.  Since there is no specific gist for this
+        we use the ACAAltPTC gist to generate a value for each month of either 1 (if before marriage) or 0 (if after marriage)
+        This node converts that into a boolean by checking if it is above the threshold of 0.
+        Clearly we need a better gist, but this will work for now to avoid an engine change. -->
+    <Node name="/Temporary/IRS8962/IsBeforeMarriage">
+        <Inputs>
+            <Input>/Temporary/IRS8962/OneIfBeforeMarriage</Input>
+            <Input>/Constants/Zero</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/OneIfBeforeMarriage</List>
+                <Gist>
+                    <AboveThreshold>
+                        <Value>/Temporary/IRS8962/OneIfBeforeMarriage</Value>
+                        <Threshold>/Constants/Zero</Threshold>
+                    </AboveThreshold>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>    
+    </Node>
+    
+    
+    <!-- this has a 1 if the month is before marriage, or 0 otherwise.  We are using teh ACAAltPTC gist in a strange 
+        fashion since it is the easiest way to determine if a month is before or after the marriage month.
+        we create fake inputs so that the standard value and taxpayer values are always 0.  The spouse always has a 1.  
+        Thus any month before marriage will get taxpayer + spouse which will be 1 and months after marriage get the standard
+        value of 0. -->
+    <Node name="/Temporary/IRS8962/OneIfBeforeMarriage">
+        <Inputs>
+            <Input>/Temporary/IRS8962/ZeroPerMonth2</Input>
+            <Input>/Temporary/IRS8962/OnePerMonth</Input>
+            <Input>/Temporary/IRS8962/ZeroPerMonth</Input>
+            <Input>/Return/ReturnData/IRS8962/MonthOfMarriagePP</Input>
+            <Input>/Temporary/IRS8962/CopyOfMonthOfMarriage</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/ZeroPerMonth</List>
+                <Gist>
+                    <ACAAltPTC>
+                        <AltPrimaryPTC>/Temporary/IRS8962/ZeroPerMonth2</AltPrimaryPTC>
+                        <AltSpousePTC>/Temporary/IRS8962/OnePerMonth</AltSpousePTC>
+                        <StandardPTC>/Temporary/IRS8962/ZeroPerMonth</StandardPTC>
+                        <PrimaryEndMonthNumberCd>/Return/ReturnData/IRS8962/MonthOfMarriagePP</PrimaryEndMonthNumberCd>
+                        <SpouseEndMonthNumberCd>/Temporary/IRS8962/CopyOfMonthOfMarriage</SpouseEndMonthNumberCd>
+                        <Month>/MultiCopyMapper/MultiCopy</Month>
+                    </ACAAltPTC>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo>
+            <MultiCopy>
+                <Integer/>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    
+    <Node name="/Temporary/IRS8962/ZeroPerMonth">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AllocatedMonthlyPremiumSLCSPAmt</Input>
+            <Input>/Constants/Zero</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AllocatedMonthlyPremiumSLCSPAmt</List>
+                <Gist>
+                    <NumericCopy>
+                        <Value>/Constants/Zero</Value>
+                    </NumericCopy>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/ZeroPerMonth2">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AllocatedMonthlyPremiumSLCSPAmt</Input>
+            <Input>/Constants/Zero</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AllocatedMonthlyPremiumSLCSPAmt</List>
+                <Gist>
+                    <NumericCopy>
+                        <Value>/Constants/Zero</Value>
+                    </NumericCopy>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/OnePerMonth">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AllocatedMonthlyPremiumSLCSPAmt</Input>
+            <Input>/Constants/One</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AllocatedMonthlyPremiumSLCSPAmt</List>
+                <Gist>
+                    <NumericCopy>
+                        <Value>/Constants/One</Value>
+                    </NumericCopy>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+    
+    <!-- inputs -->
+    
+    <Node name="/Return/ReturnHeader/Filer/PrimarySSN" type="input"/>
+    <Node name="/Return/ReturnHeader/Filer/SpouseSSN" type="input"/>
+    
+    <Node name="/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd" type="input"/>
+    
+    
+    <Node name="/Return/ReturnData/IRS1095A/MarketAssignedPolicyNumberPP" type="multiCopyPrimitiveInput"/>
+    <Node name="/Return/ReturnData/IRS1095A/(MarketplaceIdentiferPP)" type="multiCopyStructInput"/>
+    
+    <Node name="/Return/ReturnData/IRS1095A/RecipientSSNPP" type="multiCopyPrimitiveInput"/>
+    
+    <!-- we need this version to keep blank SSNs in the list -->
+    <Node name="/Return/ReturnData/IRS1095A/(RecipientSSNPP)" type="multiCopyStructInput"/>
+    
+    <Node name="/Return/ReturnData/IRS1095A/(TotalPremiumSLCSPAmtPP)" type="multiCopyStructInput">
+        <RoundTo>
+            <MultiCopy>
+                <Struct>
+                    <Element>
+                        <Name>TotalPremiumSLCSPAmtPP</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                </Struct>
+            </MultiCopy>
+        </RoundTo>        
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS1095A/(MonthlyPTCInformationGrpPP/(MonthCdPP | MonthlyPlanPremiumAmtPP))" type="multiCopyStructInput">
+        <RoundTo>
+            <MultiCopy>
+                <Struct>
+                    <Element>
+                        <Name>MonthlyPTCInformationGrpPP</Name>
+                        <RoundTo>
+                            <MultiCopy>
+                                <Struct>
+                                    <Element>
+                                        <Name>MonthlyPlanPremiumAmtPP</Name>
+                                        <RoundTo><Dollars/></RoundTo>
+                                    </Element>
+                                </Struct>
+                            </MultiCopy>                            
+                        </RoundTo>
+                    </Element>                
+                </Struct>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS1095A/(MonthlyPTCInformationGrpPP/(MonthCdPP | MonthlyPremiumSLCSPAmtPP))" type="multiCopyStructInput">
+        <RoundTo>
+            <MultiCopy>
+                <Struct>
+                    <Element>
+                        <Name>MonthlyPTCInformationGrpPP</Name>
+                        <RoundTo>
+                            <MultiCopy>
+                                <Struct>
+                                    <Element>
+                                        <Name>MonthlyPremiumSLCSPAmtPP</Name>
+                                        <RoundTo><Dollars/></RoundTo>
+                                    </Element>
+                                </Struct>
+                            </MultiCopy>
+                        </RoundTo>
+                    </Element>                
+                </Struct>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS1095A/(RecipientSSNPP | MonthlyPTCInformationGrpPP/(MonthCdPP | MonthlyPlanPremiumAmtPP))" type="multiCopyStructInput">
+        <RoundTo>
+            <MultiCopy>
+                <Struct>
+                    <Element>
+                        <Name>MonthlyPTCInformationGrpPP</Name>
+                        <RoundTo>
+                            <MultiCopy>
+                                <Struct>
+                                    <Element>
+                                        <Name>MonthlyPlanPremiumAmtPP</Name>
+                                        <RoundTo><Dollars/></RoundTo>
+                                    </Element>
+                                </Struct>
+                            </MultiCopy>                            
+                        </RoundTo>
+                    </Element>                
+                </Struct>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS1095A/(RecipientSSNPP | MonthlyPTCInformationGrpPP/(MonthCdPP | MonthlyPremiumSLCSPAmtPP))" type="multiCopyStructInput">
+        <RoundTo>
+            <MultiCopy>
+                <Struct>
+                    <Element>
+                        <Name>MonthlyPTCInformationGrpPP</Name>
+                        <RoundTo>
+                            <MultiCopy>
+                                <Struct>
+                                    <Element>
+                                        <Name>MonthlyPremiumSLCSPAmtPP</Name>
+                                        <RoundTo><Dollars/></RoundTo>
+                                    </Element>
+                                </Struct>
+                            </MultiCopy>                            
+                        </RoundTo>
+                    </Element>                
+                </Struct>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    
+    <Node name="/Return/ReturnData/IRS8962/SpousalAbuseIndPP" type="input"/>
+    
+    <Node name="/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp/(PolicyNum | StartMonthNumberCd | EndMonthNumberCd | MonthlyPremiumPct)" 
+        type="multiCopyStructInput">
+        <RoundTo>
+            <MultiCopy>
+                <Struct>
+                    <Element>
+                        <Name>MonthlyPremiumPct</Name>
+                        <RoundTo><Dec>2</Dec></RoundTo>
+                    </Element>
+                </Struct>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp/(PolicyNum | StartMonthNumberCd | EndMonthNumberCd | MonthlyPremiumSLCSPPct)" 
+        type="multiCopyStructInput">
+        <RoundTo>
+            <MultiCopy>
+                <Struct>
+                    <Element>
+                        <Name>MonthlyPremiumSLCSPPct</Name>
+                        <RoundTo><Dec>2</Dec></RoundTo>
+                    </Element>
+                </Struct>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+
+    
+    <!-- constants -->
+    <Node name="/Constants/IRS8962/LowestFPLForDisqualification" type="constant"><RoundTo><Integer/></RoundTo></Node>
+    <Node name="/Constants/IRS8962/AnnualPremiumSLCSPFieldName" type="constant"/>
+    <Node name="/Constants/IRS8962/SLCSPFieldLabel" type="constant"/>
+    <Node name="/Constants/IRS8962/MarketPlaceIdentifierFieldName" type="constant"/>
+    <Node name="/Constants/IRS8962/RecipientSSNFieldName" type="constant"/>
+</Nodes>

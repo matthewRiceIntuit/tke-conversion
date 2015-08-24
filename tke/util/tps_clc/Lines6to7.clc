@@ -1,0 +1,40 @@
+FORM S2014US1040PER.F2441;
+
+Section Lines6to7;
+Begin
+	If (RunCalc) Then
+	Begin
+	If (((IsChecked(FINFOWKS.FS3) and (IsChecked(L16BX) or not HasValue(MFS)))) or ((HasValue(L22)) and (L22 <= 0))) then
+		begin
+			Blank( L6, L7);
+			Blank( hL6, hL7 );
+
+		end
+	else
+		begin
+			If HasValue(L4) then
+
+
+
+
+				Begin
+					If (IsChecked(FINFOWKS.FS2) and HasValue(FINFOWKS.TDOD) and IsChecked(DT)) then
+					  hL6:= min(L3, L5)
+					 else
+					 Begin
+                         if (IsChecked(FINFOWKS.FS2) and HasValue(FINFOWKS.SDOD) and IsChecked(DS)) then
+                          hL6:= min(L3, L4)
+                         else
+                          hL6:= min(min(L3, L4), L5);
+                     end;
+					L6 := hL6;
+
+						OpenForm(F1040);
+						hL7 := F1040.L34;
+						L7 := hL7;
+
+				end;
+
+		end;
+	End;
+End;

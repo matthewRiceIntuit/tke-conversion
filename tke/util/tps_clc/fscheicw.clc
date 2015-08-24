@@ -1,0 +1,864 @@
+/* ******************************************** */
+/*												 */
+/*	Copyright 1984-2011 Intuit Inc.				 */
+/*	All rights reserved							 */
+/*												 */
+/* ******************************************** */
+
+#include "../../../../../common/incometax/comall/comps/fed.h"
+
+#if defined(FS1040)
+	FORM mFS1040.FSCHEICW;
+#elif defined(FS1040NR)
+	FORM mFS1040NR.FSCHEICW;
+#endif
+
+VAR
+	tempL10         : FDollar;	// moved to global
+	FromEIC         : FInteger;	// for Interview
+	DQIncOverLimit  : Boolean;	// true if DQI exceeds kDQIncome
+	n8814   		: FInteger;	// number of copies
+	tRoyInc 		: FDollar;	// Royalties with income
+	tRoyLoss 		: FDollar;	// Royalties with losses
+	h8814Ex			: FDollar;	// 8814 Exempt Interest
+	hmpinc			: FDollar;
+	hDQY			: FInteger;
+	hDQN			: FInteger;
+	L8L				: FDollar;	// was line of wks for modagi. keep as variable
+								// for NGI but set to AGI
+								// Also now used for reason to check boxes (BX2A, BX2B, BX2C)
+								// when not qualified for EIC because AGI is above the limit
+								// jam 4/30/08
+	FileStat		: FInteger;
+	EZalone			: Boolean;
+	hEICNF			: Boolean;
+	hTY06OneOver	: Boolean;	// Added TY06 because the max AGI for the credit for having 1 kid was $1 over the
+								// lower end of the bracket and the IRS instructions said the EIC was allowed but
+								// was a $0 amount I set this in FSCHEICW and use to allow assignment F1040.L60 when
+								// FSCHEICW.L10 = 0  and not put a "No" in L60W - TY06 is the first year this
+								// situation has occurred. dpd 9/29/06	
+			_:FText;													
+
+	hEIC0	: FDollar;
+	hEIC1	: FDollar;
+	hEIC2	: FDollar;
+	hEIC3	: FDollar;	//new variable needed to capture for three children AARA NEW tax law jam 7/24/09
+
+	hMinAGI : FDollar;
+	hMinAGI0: FDollar;
+	hMaxAGI : FDollar;
+
+
+
+	TDCBCMBT, SDCBCMBT : FDollar; // nontaxable combat pay election for DCB
+
+
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+//Constants must be updated each year
+#include "../../../../../common/incometax/comind/comps/fscheicw.h"
+
+
+#ifdef FS1040
+	#include "efschecw.inc"
+#endif
+/*****************************************************************************/		
+#ifdef PRO
+Section ForProEZ;
+Begin
+	EZalone := False;
+	If Not HasValue(Finfowks.FS) then
+		begin
+		If HasValue(F1040EZ.Name) then
+			begin
+				EZalone := True;
+				If HasValue(F1040EZ.SNAM) then
+					FileStat := 2
+				else
+					FileStat := 1;
+			end;
+		end;	
+End;
+#endif
+
+/*****************************************************************************/				
+Section SetVariables;
+Begin
+	If IsChecked(Finfowks.FS2)
+		#ifdef PRO
+		or (FileStat = 2)
+		#endif
+		then
+		begin// married filing jointly
+			// AGI or earned income at which EIC completely phased out
+			hEIC0 := kFS2EIC0;
+			hEIC1 := kFS2EIC1;
+			hEIC2 := kFS2EIC2;
+			hEIC3 := kFS2EIC3;	//NEW for addition of third child jam 7/24/09
+			
+			If (FSchEIC.kids = 0) then
+				hMaxAGI := kFS2EIC0
+			else
+			If (FSchEIC.kids = 1) then
+				hMaxAGI := kFS2EIC1
+
+			else
+			If (FSchEIC.kids = 2) then	//adjusted for addition of third child jam 7/24/09
+				hMaxAGI := kFS2EIC2
+
+			else
+			If (FSchEIC.kids > 2) then	//NEW for addition of third child jam 7/24/09
+				hMaxAGI := kFS2EIC3;
+
+			// bracket in EIC table at which EIC phaseout begins
+			hMinAGI 			:= FS2MinAGI;	
+			hMinAGI0 			:= FS2Min0AGI;	
+		end
+	else // all other filing status
+		begin
+			// AGI or earned income at which EIC completely phased out
+			hEIC0 := kEIC0;
+			hEIC1 := kEIC1;
+			hEIC2 := kEIC2;
+			hEIC3 := kEIC3;	//NEW for addition of third child jam 7/24/09
+			
+			If (FSchEIC.kids = 0) then
+				hMaxAGI := kEIC0
+			else
+			If (FSchEIC.kids = 1) then
+				hMaxAGI := kEIC1
+			else
+			If (FSchEIC.kids = 2) then	//adjusted for addition of third child jam 7/24/09
+				hMaxAGI := kEIC2
+
+			else
+			If (FSchEIC.kids > 2) then	//NEW for addition of third child jam 7/24/09
+				hMaxAGI := kEIC3;
+
+			// bracket in EIC table at which EIC phaseout begins
+			hMinAGI				:= MinAGI;	
+			hMinAGI0			:= MinAGI0;	
+		end;
+End;
+//Function TableA moved to include file below to
+// calculate the credit
+//The function which is in the include file is where the calculations must
+//be adjusted each year for the breakpoints in the table.  When the IRS issues
+//the tables they determine how much of the credit you get at the breakpoints
+//the function must then be fine tuned so that it agrees with the table dpd 11/06/06
+#include "..\..\..\..\..\common\incometax\comind\comps\fscheicw.f"
+
+/*****************************************************************************/				
+Section Mpoint;
+begin
+	hMPInc := MidPoint(L6, 50);
+end;
+
+/*****************************************************************************/					
+SECTION Header;
+BEGIN
+	//add the link if user directly input on 1040EZ
+	if HasValue(FInfoWks.TLN) then
+	  Name:= FInfoWks.HName
+	else 
+	  if (HasValue(F1040EZ.NAME)) then
+	    Name:= F1040EZ.NAM2;
+
+	if HasValue(Finfowks.TSSN) then
+	  SSN:= FInfoWks.Tssn
+	else
+	  if HasValue(F1040EZ.SSN) then
+	    SSN:= F1040EZ.SSN;
+END;
+
+/*****************************************************************************/				
+// 10/7/04 WFTRA Act allows election to include nontaxable combat pay
+// as earned income for EIC
+// taxpayer who died before enactment of act (10/5/2004) cannot elect
+SECTION Nontaxablecombatpay;
+VAR
+	DDCutoff : FDate;
+BEGIN
+	DDCutoff := Date("10/05/2004"); 
+
+	// taxpayer
+	If (FW2SUM.TCOMBAT > 0) then
+		begin 
+		If HasValue(Finfowks.TDOD) and (Finfowks.TDOD < DDCutoff) then
+			begin
+			// if taxpayer died before date of enactment then cannot make election
+			end
+		else 
+			TCOMBAT := FW2SUM.TCOMBAT;
+		end;
+
+	// spouse
+	If mJoint and (FW2SUM.SCOMBAT > 0) then
+		begin
+		If HasValue(Finfowks.SDOD) and (Finfowks.SDOD < DDCutoff) then
+			begin
+			// if spouse died before date of enactment then cannot make election
+			end
+		else
+			SCOMBAT := FW2SUM.SCOMBAT;
+		end;
+
+	//if election box is checked then include in earned income
+	If IsChecked(YELECT) then
+		TNTCMBAT := TCOMBAT;
+	If mJoint and IsChecked(SELECTY) then
+		SNTCMBAT := SCOMBAT;
+
+	// if election box for DCB is checked then include in earned income for Form 2441
+	If IsChecked(YDCBELEC) then
+		TDCBCMBT := TCOMBAT;
+	If IsChecked(SDCBELEY) then
+		SDCBCMBT := SCOMBAT;
+
+	//global vars are not needed for the new checkboxes for electing to use nontaxable combat pay
+	//for child and dependent care credit since those calcs to add the nontaxable combat pay
+	//are using whether or not the yes box on the smart worksheet is checked and then calced or not calced
+	//on the Earned Income worksheet line 9b (FEARNINC.NCOMBATA) jam 11/12/08
+
+	// total elected
+	NTCOMBAT := TNTCMBAT + SNTCMBAT;	
+END;
+
+/*****************************************************************************/				
+SECTION Lines1to5;					
+BEGIN
+
+   OpenForm(FSchEIC);
+	
+//  Calc earned income even if FSchEIC.qualified not true, interview needs earned income amount		  		  							 
+//  Deducting Scholarships and Unearned income entered on Line 7 Wkst on line 1   
+	   begin
+		    If HasValue(FW7.L15) then
+				begin
+			   		L1:= FW7.L15 - FW7.L13 - FW7.HL14;	// 1040, Line 7 less scholarships not on W-2 & other nonearned income
+				end
+			else								// else if nothing on L7 Worksheet
+				begin
+					#if defined FS1040			// if wages entered directly on 1040,et al
+					If HasValue(F1040.L7) then
+						begin
+							L1:= F1040.L7;
+						end
+					else if HasValue(F1040A.L7) then
+						begin
+							L1:= F1040A.L7;
+						end
+					else
+						begin
+						   L1:= F1040EZ.L1;
+						end;
+					#elif defined FS1040NR
+					If HasValue(F1040N12.L8) then
+						L1:= F1040N12.L8;
+					#endif
+				end;
+			
+			L2b:= Fw2sum.hTPCL1		// W-2 clergy
+			    + Fw2sum.hSPCL1
+			    // 1099-MISC nonemployee compensation now flows to Form 4137 if
+			    // SS tax is owed
+			    + FSEAdj.OthWages[1]	// Other SE wages
+			    + FSEAdj.OthWages[2]
+			    + FSchSELT.L5A			// Church Employee Wages reported on SE
+			    + FSchSELS.L5A
+			    + Fw2sum.hTPCLUH		// clergy housing subject to SE 
+			    + Fw2sum.hSPCLUH;
+
+			L2F := L2C + L2D + L2DSP;		
+															
+
+			L2G := FW2SUM.TOT11;							
+
+			If (L1 > 0) then	
+				begin
+					L3:= max(0, (L1 - L2B - L2F - L2G));	
+				end;
+
+			OpenForm(FEarnInc);
+
+			L5:= FEarnInc.L4C;
+
+	//dpd 12/8/05 moved to Line6 section below to eliminate cycle caused by katrina election
+	//L6:= L3 + L5 + NTCOMBAT;
+
+		end;
+END;
+
+//DELETE all three sections in TY10 - no longer needed jam 7/24/09
+/*****************************************************************************/				
+//SECTION PYTransMidwest;//New for Midwestern disaster victims jam 10/14/08
+//BEGIN
+	//If (FirstTime = FALSE) and HasValue(hEICW6PY) then
+	//Begin
+		//FirstTime #= True;
+		//EI2007 #= hEICW6PY;	//change to drop assign for field deleting after transfer when it is default assign jam 3/19/09
+		//EI2007 ?= hEICW6PY;	//hEICW6PY is prior year L6 from EICW
+							//transfers from last year or through ORG for PRO
+							//jam 10/14/08
+	//End;
+//END;
+/*****************************************************************************/				
+//SECTION Midwest;//New for Midwestern disaster victims jam 10/14/08
+//BEGIN
+	//EI2008 := L3 + NTCOMBAT + L5;
+	//If (IsChecked (PYEIEY) and IsChecked(PYEIIY)) and (EI2007 > EI2008) then
+	//Begin
+	//hKetra2007EIUsed := True;
+	//End;
+//END;
+/*****************************************************************************/				
+//SECTION MidwestElection_Effect;//New for Midwestern disaster victims jam 10/14/08
+//BEGIN
+	//E2008EIO := F1040.L66;	//Current year overpaid
+	//E2008EID := F1040.L69;	//Current year amount you owe
+//END;
+
+
+/*****************************************************************************/				
+SECTION Line6;	
+									
+BEGIN
+	//If hKetra2007EIUsed then
+	//Begin
+		//L6 := EI2007;
+		//U2007EI := "2007 Earned Income Used ";	//Delete this in Ty10 jam 7/24/09
+	//End
+	//else
+		L6:= L3 + L5 + NTCOMBAT;
+END;
+
+/*****************************************************************************/				
+Section ChildsIncome;
+/*  To add exempt interest income on Form 8814 for Investment Inc and EIC Modagi
+   and to allocate investment income if there are Alaska Permanent Fund dividends
+   for Investment Income calc.  */																		
+VAR
+q         : index;
+tKidsInc  : Fdollar;
+
+BEGIN
+ /*Add tax exempt interest on Forms 8814 for Investment Income and EIC Modagi 
+    & Kids Investment income, not including portion that is Alaska Permanent
+    Fund dividends.   */
+	   	
+	   	n8814 := NumCopies (F8814);
+		For q := 1 to n8814 do
+	    Begin 
+	     If (( TestFormIs( PartOfReturn, F8814[q] ) = TRUE ) and
+	           HasValue (F8814[q].L1B))  then   
+	       	begin
+		        h8814Ex := h8814Ex + F8814[q].L1B; 
+		    end;
+		 If (F8814[q].APFD > 0) and (F8814[q].L6 > 0) and (F8814[q].L4 > 0) then
+			Begin
+				tKidsInc := tKidsInc + 
+				(F8814[q].L6 - (F8814[q].L6 *(F8814[q].APFD/(F8814[q].L2 - F8814[q].QDIV + F8814[q].L1A))));
+			end
+			else
+				If F8814[q].L6 > 0 then
+				tKidsInc := tKidsInc + F8814[q].L6;
+		End;
+			OpenForm(F4952W);
+			KidsInc := tKidsInc;	//Kids investment income used by EIC & 4952 Wkst  11/8/00 hw
+END;
+
+/*****************************************************************************/				
+Section DisQualifiedInc;
+ //  Calc investment income even if not qualified for EIC, interview needs investment income amount
+
+BEGIN
+	OpenForm(FSchEIC);
+
+   	begin
+		if (HasValue(F1040.L8a) or HasValue(F1040.L8b) or HasValue (h8814Ex)) then     // Interest income
+				begin
+					IIA := F1040.L8a + F1040.L8b + h8814Ex;	  
+				end
+			else
+			  if (HasValue(F1040EZ.L2) or HasValue(F1040EZ.L2WA)) then
+				begin
+					IIA := F1040EZ.L2 + F1040EZ.L2WA;
+				end;
+
+			If HasValue(F1040.L9) then		  // dividend income
+				Begin
+					IIB := F1040.L9;
+				end;
+
+			if HasValue(F1040.L13) then		// Capital gains
+			  begin						   // hw 12/7/98 back out Sec 1231 gain per regs
+			    if HasValue(F4797.L10G) then    
+					begin
+					   	IIC := max(0,(F1040.L13 - F4797.L10G));       
+					end
+				else	  
+				If (F4797.L7G > 0) then   
+				    begin
+					   IIC := max(0,(F1040.L13 - F4797.L7G));
+					end
+				else
+					begin
+						IIC := max(F1040.L13,0);
+					end;
+			  end;
+ /* 10/11/99 hw  Calcing tRoyInc & tRoyLoss in EICMODAGI section instead of on FModagi */
+ /*	Added personal property rental to royalty line   11/2/99 hw */	
+			if HasValue(tRoyInc) or
+			   HasValue(tRoyLoss) or
+			   HasValue(FOthInc.L14T) or
+			   HasValue(FOthInc.L14S) or
+			   HasValue(FOthInc.PERPROPT) or
+			   HasValue(FOthInc.PERPROPS)
+			   then
+				begin
+					IID := max((tRoyInc + tRoyLoss + FOthInc.PERPROPT + FOthInc.PERPROPS + FOthInc.L14T + FOthInc.L14S - F1040.L32F),0); //TD105432 3/20/13 dpd tax accuracy added two new 
+				end;                                                                                                                      //other income personal property rental fields to total 
+                                                                                                                                          //FothInc.PERPROPT + FothInc.PERPROPS    
+		    IIE1:= FMODAGI.hEICWRentals;		 // Passive Rentals
+			IIE2:= FMODAGI.hEICW4835;			 // Passive 4835s
+			IIE3:= FSchE2.L28AH - FSchE2.L28BG;	 // Passive Partnerships
+			IIE4:= FSchE2.L33AD - FSchE2.L33BC;	 // Passive Estate and Trusts
+		    IIE5:= IIE1 + IIE2 + IIE3 + IIE4;
+			if (HasValue(IIE5)) then
+			  begin
+			    IIE := max(IIE5,0);
+			  end;
+		   
+			IITOT := Max(0,(IIA + IIB + IIC + IID + IIE + KidsInc + IIF));
+			If (IITOT > kDQIncome) then
+			  DQIncOverLimit := true;
+
+		    If (DQIncOverLimit = true) then      
+			begin
+		        DQY := checked;
+				hDQY := 1;
+			end
+		else
+			begin
+		        DQN := checked;
+				hDQN := 1;
+			end;
+   	end;
+END;
+
+// use AGI instead of modified AGI IRC sec 32(a)(2)(B)
+
+/*****************************************************************************/				
+SECTION EICMODAGI;
+VAR
+	x, n               : index;
+	tRRE			   : FDollar; // all Sch E non royalty
+	tNumberE           : Finteger;
+
+//   added this as a separate section, outside SECTION Lines7to10.
+//   If we know modagi disqualifies them before line 7, we can eliminate
+//   some need checks and interview screens for some users.
+
+BEGIN
+ 		   tNumberE := NumCopies(FSchE1WS);		  // rewrote due to Sch E redesign 5/22/00 hw
+		
+			FOR X := 1 TO tNumberE DO
+			Begin
+				//IF	(FSchE1WS[x].ROYY) or (Hasvalue(FSchE1WS[x].L4)) then
+				//L4 is now rental and royalty whereas previously it was only royalty income
+				//so it is no longer needed
+				IF	(FSchE1WS[x].ROYY) then
+					begin
+						If (FSchE1WS[x].L22 > 0) then
+							tRoyInc := tRoyInc + FSchE1WS[x].L22
+						else If (FSchE1WS[x].L22 < 0) then
+							tRoyLoss := tRoyLoss + FSchE1WS[x].L22;
+					end
+		        else    // Non royalty activities
+		   			begin
+		   				If FSchE1WS[x].L22 >= 0 THEN
+		   	     			 tRRE := tRRE + FSCHE1WS[x].L22 
+		   	     			 			  + FSchE1WS[x].L23
+		   				else tRRE := tRRE + FSchE1WS[x].L23;
+						end;
+			End;
+				
+			// AGI
+			If HasValue(F1040.L33) then
+				  L8L := F1040.L33	  
+			else
+				If HasValue(F1040EZ.L4) then
+				   	L8L := F1040EZ.L4;  
+END;
+
+/*****************************************************************************/				
+SECTION Lines7to10;
+BEGIN
+	/*vvv Added below TY06 CR TD034054 because of max AGI being $1 over bracket and IRS said it was $0 EIC rather than being disallowed vv*/
+	hTY06OneOver := false;//sets default value to false set to true below if conditions are met
+	/*^^^ Added above TY06 because of max AGI being $1 over bracket and IRS said it was $0 EIC rather than being disallowed ^^^*/
+
+	If IsChecked(DQN) and
+	   (FSchEIC.qualified = true) then
+		begin
+ 		// line 6, will only calc if all EIC boxes on infowks or 1040EZ are correctly checked   
+
+		If (FSchEIC.kids > 0) and
+		   (IsChecked(FInfoWks.AN)) then   
+			begin
+			   	OpenForm(FSchEIC);
+			   	If (L6 < hMaxAGI) then	
+					L7:= max (0, (TableA(L6, FSchEIC.kids, Finfowks.FS, hMaxAGI)))
+				else
+					L7 := 0;
+		   	end
+		else
+		if (FSchEIC.kids = 0) then
+		   	begin		 
+		      	If (IsChecked(FInfoWks.AN) and
+				     IsChecked(FInfoWks.BY)) or
+				     (IsChecked(F1040EZ.AN) and
+					 IsChecked(F1040EZ.BY)) then
+						begin
+							OpenForm(FSchEIC);
+							If (L6 < hMaxAGI) then
+								begin
+								#ifdef PRO
+								If EZalone then
+								L7:= max (0, (TableA(L6, FSchEIC.kids, Filestat, hMaxAGI)))
+								else
+								#endif	
+								L7:= max (0, (TableA(L6, FSchEIC.kids, Finfowks.FS, hMaxAGI)));
+								end
+							else
+								L7 := 0;
+						end;
+
+			end;	
+
+ 		//add if user directly input on 1040EZ
+		If (L7 > 0) then
+			L8 := L8L;
+
+		If ((FSchEIC.kids = 0) and (L8 >= hMinAGI0))
+			or ((FSchEIC.kids > 0) and (L8 >= hMinAGI)) Then
+			begin
+				If (L8 < hMaxAGI) then
+						begin
+							#ifdef PRO
+			   				If EZalone then
+			   				L9:= max (0, (TableA(L8, FSchEIC.kids, Filestat, hMaxAGI)))
+			   				else
+			   				#endif
+							L9:= max(0, TableA(L8, FSchEIC.kids, Finfowks.FS, hMaxAGI));
+						end
+				else
+					begin
+						L9 := 0;
+					end;
+
+				tempL10:= min(L7,L9);
+				L9N := checked;
+			end
+		else
+			begin
+				tempL10:= L7;
+				L9Y := checked;
+			end;
+
+		If HasValue(tempL10) then
+			begin
+				L10 := tempL10;
+				If (L10 > 0) and
+					IsChecked(FInfowks.FM8862) then
+						OpenForm(F8862);	
+		#ifdef PRO
+				If (L10 > 0) then	// Open Preparer's checklist
+					OpenForm(F8867);
+		#endif	 //Pro  
+	/*vvv Added below TY06 because of max AGI being $1 over bracket and IRS said it was $0 EIC rather than being disallowed vv*/
+				If (tempL10 = 0) and 
+				(
+					(
+						IsChecked(Finfowks.FS2) and 
+						(FSchEIC.kids = 1)  and 
+						(max(L6,L8) = (kFS2EIC1 - 1)) 
+					) 
+					or 
+					(
+						Not(IsChecked(Finfowks.FS2)) and  
+						(FSchEIC.kids = 1)  and 
+						(max(L6,L8) = (kEIC1 - 1)) 
+					)
+				) then
+						hTY06OneOver := true;
+	/*^^^ Added above TY06 because of max AGI being $1 over bracket and IRS said it was $0 EIC rather than being disallowed ^^^*/
+			end;//if hasvalue(tempL10)
+
+		end;//if DQN is checked
+END;//end of section
+
+/*****************************************************************************/				
+SECTION Election_effect;
+BEGIN
+	Yrefund:= F1040.L66;
+	YOwed  := F1040.L69;
+END;
+
+/*****************************************************************************/				
+SECTION Page2Reasons;
+VAR 
+	Q1, Q2, Q3 : FInteger;	// index for DQkids - added Q3 for tax law change jam 7/27/09
+
+BEGIN	/*Added condition of DQkids = 0, on boxes 1a,2a,7,8 & 9   10/29/99 hw  */
+		//Changed agikids to DQkids 5/17/00  hw
+
+	NAM2 := NAME;
+	SSN2 := SSN;
+
+	if ((L6 >= hEIC0) and (FSchEIC.kids = 0) and (FSchEIC.DQkids = 0)) then
+	  BX1A := checked;		
+	if ((L6 >= hEIC1) and (FSchEIC.kids = 1)) then
+	  BX1B := checked;
+	if ((L6 >= hEIC2) and (FSchEIC.kids = 2)) then
+	  BX1C := checked;
+	if ((L6 >= hEIC3) and (FSchEIC.kids > 2)) then	//new check box for line 1 added jam 7/27/09
+	  BX1D := checked;
+
+
+	//Changed to using L8L (instead of L8) so that the Line 2 checkboxes will check
+	//if the AGI is greater than or equal to the range amounts even if the FINFO
+	//error messages do not pop and the boxes for EIC on the FINFO are not checked jam 04/30/08
+	if ((L8L >= hEIC0) and (FSchEIC.kids = 0) and (FSchEIC.DQkids = 0)) then
+	  BX2A := checked;
+	if ((L8L >= hEIC1) and (FSchEIC.kids = 1)) then
+	  BX2B := checked;
+	if ((L8L >= hEIC2) and (FSchEIC.kids = 2)) then
+	  BX2C := checked;
+	if ((L8L >= hEIC3) and (FSchEIC.kids > 2)) then	//new check box for line 2 added jam 7/27/09
+	  BX2D := checked;
+
+	if (DQIncOverLimit = true) then
+	  BX3 := checked;
+
+	if IsChecked(Finfowks.FS3) then
+	  BX4 := checked;
+
+	
+	if IsChecked(FInfoWks.AY) or IsChecked(F1040EZ.AY) then	
+	  BX5 := checked;
+	
+	if ((F25553T.L43>0) or (F25553T.L48 >0) or (F25553S.L43 >0)
+		or (F25553S.L48>0)) then
+		  BX6 := checked;
+		
+	// Removed Kids and DQKids since TP will alwasy be disqualified if lived in the US for 6 months or less.
+	// brendanM 7/21/2015
+	if( ( Ischecked( FINFOWKS.BN ) ) or ( IsChecked( F1040EZ.BN ) ) ) then
+	  BX7 := checked;
+
+	if ((FSchEIC.kids = 0) and (FSchEIC.DQkids = 0) and (FSchEIC.youngold = true)) then
+	  BX8 := checked;
+	
+	if ((FSchEIC.kids = 0) and (FSchEIC.DQkids = 0)) then
+	  begin
+	    if Ischecked(Finfowks.DXT) or 		//TP eligible to be dependent of another
+	       IsChecked(FInfowks.DEPTY) or		//TP claimed as a dependent of another	  10/24/00 hw
+	      ((mJoint)and (Ischecked(Finfowks.DXS) or 	//SP eligible to be dependent of another 
+	       IsChecked(FInfowks.DEPSY))) or	//SP claimed as a depedent of another	10/24/00 hw
+	      IsChecked(F1040EZ.DXT) or
+	      (HasValue(F1040EZ.SNAM) and IsChecked(F1040EZ.DXS))
+	      	then
+	        BX9 := checked;	
+	  end;
+
+	if (FSchEIC.HaveSSN = False) or
+	   (FSchEIC.SpecialSSN = False) then
+			BX10 := checked;
+
+	If (FSchEIC.kids = 0) and			// rewrote for additional condition of invalid SSN 5/19/00 hw 
+		(FSchEIC.DQkids > 0) then
+		Begin
+			Q1 := FSchEIC.Q1;
+		
+			If (Finfowks.EIC[Q1] = "H") then	// 1st DQ kid is qual of another w/higher AGI
+				BX11 := checked
+			Else
+			If (FSchEIC.B2 = 1) then	// Is there 2nd DQ kid
+			Begin
+				Q2 := FSchEIC.Q2;
+				If (Finfowks.EIC[Q2] = "H") then// 2nd DQ kid is qual of another w/higher AGI
+				BX11 := checked;
+			End
+			Else
+			If (FSchEIC.B3 = 1) then	// Is there 3rd DQ kid - new jam 7/28/09
+			Begin
+				Q3 := FSchEIC.Q3;
+				If (Finfowks.EIC[Q3] = "H") then// 3rd DQ kid is qual of another w/higher AGI
+				BX11 := checked;				//new jam 7/28/09
+			End;
+		
+			If (
+				(FSchEIC.DQ1SSN = False) or		// one or both DQ kids have invalid SSN
+				(FSchEIC.DQ2SSN = False) or
+				(FSchEIC.DQ3SSN = False)		//added for third child jam 7/28/09
+				) then
+				BX11B := Checked;
+					
+		End;// DQkids > 0
+
+	if Ischecked (FInfowks.NOEICX) or IsChecked(F1040EZ.NOEICX) then
+		BX12 := checked;   	
+
+	if Ischecked (FInfowks.PDR) 	
+	#ifdef PRO
+	   or Ischecked(FInfowks.PDS)
+	#endif
+	   then
+	   BX13 := checked;
+
+	if Ischecked (FInfowks.FS4) and	//HoH living with NR alien spouse
+	   IsChecked (FInfowks.CY) then
+	   BX14 := checked;
+
+END;
+
+/*****************************************************************************/				
+SECTION ErrorChecks;
+BEGIN
+	//#ifdef PER
+	//If FSCHEIC.hIntNotFinal = NOT (TRUE) then
+	//Begin	//Hard Stop False
+	//#endif
+
+	If HasValue(L2C) and Not IsChecked(F1040.FS4) then
+		Error(L2C,"should be blank, because filing status is not Head of Household");
+	
+	//New need check added for Interview purposes Task CR TD072385 jam 12/17/09
+	//Line B for taxpayer and/or spouse in the smart worksheet between lines 2 and 3 on the FSCHEICW
+	//should have a value if the inmate wages boxed is checked on any of the W2's
+
+	//Same boolean for Per and Pro
+	If (FW2SUM.InmateT) then
+	Test(L2D,ShouldHaveAValue);		//taxpayer has amounts earned as an inmate
+	If (FW2SUM.InmateS) then
+	Test(L2DSP,ShouldHaveAValue);	//spouse has amounts earned as an inmate
+	
+	
+
+	//Move this error messages out of the mJoint condition as they are fields for the taxpayer jam 03/09/11
+	
+	If ((FW7.T15 - FW7.T13 - FW7.HT14) <= 0) and (L2D > 0) then
+		Error(L2D,"should be blank, because the taxpayer has no earned income from wages");
+
+
+	If mJoint then
+		begin
+			If ((FW7.S15 - FW7.S13 - FW7.HS14) <= 0) and (L2DSP > 0) then
+				Error(L2DSP,"should be blank, because the spouse has no earned income from wages");
+
+		end;	
+	
+	// modified for 1040EZ direct input
+    If (not (mJoint) and (HasValue(FInfowks.FS))) then 	 
+ 	   Begin
+	   If HasValue(L2DSP)then
+	   	  Error(L2DSP,"should be blank, because filing status is not Married Filing Jointly");
+	   End
+	   else
+	   If Not HasValue(FInfowks.FS) and 
+	         (HasValue(F1040EZ.NAME) and 
+	         Not HasValue(F1040EZ.SNAM)) then
+		  Begin
+		  If HasValue(L2DSP)then
+	   	  	  Error(L2DSP,"should be blank, because filing status is not Married Filing Jointly");	
+	  	  End;
+	
+	// if earned income and AGI within EIC limits and there's combat pay
+	// error on combat pay election checkbox	
+	If ((FScheic.Qualified = true) and (((L3 + L5) < hMaxAGI) and (L8 < hMaxAGI))) 
+		then
+		begin							
+			If HasValue(TCombat) then
+				Test(ELECTBX,ShouldHaveAValue);
+			If mJoint and HasValue(SCombat) then
+				Test(SELECT,ShouldHaveAValue);
+		end;
+
+	If (F2441.L10 > 0) and
+		((F2441.L15 < F2441.L14) or (F2441.L16 < F2441.L14)) then
+		begin				
+		If HasValue(TCombat) then
+			Test(DCBELECT,ShouldHaveAValue);
+		If mJoint and HasValue(SCombat) then
+			Test(SDCBELEC,ShouldHaveAValue);
+		end;
+
+	//New boxsets for T and S to elect to use nontaxable combat pay for child dependent and care credit
+	//If line 6 is greater than zero AND either line 3 is greater than line 4 or line 5
+	//and if the nontaxable combat pay field has value then the need checks apply to fill out the new boxsets jam 11/12/08
+	If (F2441.L6 > 0) and
+		((F2441.L3 > F2441.L4) or (F2441.L3 > F2441.L5)) then
+		Begin
+		If HasValue(TCOMBAT) then
+			Test(CRDELECT,ShouldHaveAValue);
+		If mJoint and HasValue(SCombat) then
+			Test(SCRDELEC,ShouldHaveAValue);
+		End;
+//#ifdef PER
+//End;//Hard stop FALSE
+//#endif			
+END;
+
+
+
+
+SECTION PORFlag;
+VAR
+	hTempEI : FDollar;
+BEGIN
+	hEICNF := 0;
+
+	If (L10 > 0) then
+		Begin
+			FormIs(PartOfReturn);
+		End;
+
+/*------------------------------------------------------------------------------------------------------------------------**
+**                                                                                                                        **
+** #ifdef outahere	//This was used to comment out code but retain for reference I am putting in comment box 11/22/05 dpd **
+** // error message first release PER                                                                                     **
+** 	hTempEI := Max(0,(L6 - NTCOMBAT));	                                                                                  **
+** 	If (HasValue(Tcombat) or (mJoint and HasValue(Scombat))) and                                                          **
+** 		((F2441.L15 < F2441.L14) or (F2441.L16 < F2441.L14)) then                                                         **
+** 	begin                                                                                                                 **
+** 		If not(HasValue(BXS2))and                                                                                         **
+** 			not(HasValue(BX3)) and not(HasValue(BX4)) and                                                                 **
+** 			not(HasValue(BX5)) and not(HasValue(BX7)) and                                                                 **
+** 			not(HasValue(BX8)) and not(HasValue(BX9)) and                                                                 **
+** 			not(HasValue(BX10)) and not(HasValue(BX11)) and                                                               **
+** 			not(HasValue(BX11B)) and not(HasValue(BX12)) and                                                              **
+** 			not(HasValue(BX6)) and not(HasValue(BX13)) and                                                                **
+** 			not(HasValue(BX14)) then                                                                                      **
+** 			Begin                                                                                                         **
+** 				If ((hTempEI < hEIC0) and (FSchEIC.kids = 0) and (FSchEIC.DQkids = 0))		                              **
+** 				or ((hTempEI < hEIC1) and (FSchEIC.kids = 1))                                                             **
+** 				or ((hTempEI < hEIC2) and (FSchEIC.kids > 1)) then                                                        **
+** 				begin                                                                                                     **
+** 					FormIs(PartOfReturn);                                                                                 **
+** 					//hEICNF := 1; // nonfinal flag for EF                                                                **
+** 					#if !defined(WEB)                                                                                     **
+** 					//mShouldBeFinal;                                                                                     **
+** 					#endif                                                                                                **
+** 				end;                                                                                                      **
+** 			end;                                                                                                          **
+** 	end;		                                                                                                          **
+** #endif                                                                                                                 **
+**                                                                                                                        **
+**------------------------------------------------------------------------------------------------------------------------*/
+END;
+
+				
+
+
+

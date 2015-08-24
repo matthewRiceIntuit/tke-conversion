@@ -1,0 +1,2628 @@
+<Nodes topic="Form8965Penalty">
+	<Versions>
+		<Version id="TKE.Calc.FileFormat">1</Version>
+        <Version id="TKE.Calc.Runtime">1</Version>
+        <Version id="TKE.Gist">1</Version>
+        <Version id="TKE.MeF">1</Version>
+	</Versions>
+
+    <Node name="/Return/ReturnData/IRS8965/PartOfReturnPP">
+        <Inputs>
+            <Input>/Temporary/IRS8965/HasAnyTypeOfExemption</Input>
+            <Input>/Temporary/IRS8965/WasNotCoveredAllYear</Input>            
+            <Input>/Temporary/IRS8965/NotClaimedAsDependentOnOtherReturn</Input>            
+        </Inputs>
+        <Gist>
+            <AllConditionsTrue>
+                <Condition>/Temporary/IRS8965/HasAnyTypeOfExemption</Condition>
+                <Condition>/Temporary/IRS8965/WasNotCoveredAllYear</Condition>
+                <Condition>/Temporary/IRS8965/NotClaimedAsDependentOnOtherReturn</Condition>
+            </AllConditionsTrue>
+        </Gist>
+    </Node>
+
+    <Node name="/Temporary/IRS8965/NotClaimedAsDependentOnOtherReturn">
+        <Inputs>
+            <Input>/Temporary/IRS8965/ClaimedAsDependentOnOtherReturn</Input>
+        </Inputs>
+        <Gist>
+            <Opposite>
+                <Value>/Temporary/IRS8965/ClaimedAsDependentOnOtherReturn</Value>
+            </Opposite>
+        </Gist>
+    </Node>
+
+    <Node name="/Temporary/IRS8965/HasAnyTypeOfExemption">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8965/HsldIncmBelowFlngThresholdInd</Input>
+            <Input>/Return/ReturnData/IRS8965/GrossIncmBelowFlngThresholdInd</Input>
+            <Input>/Temporary/IRS8965/HasRequestedExemptions</Input>
+            <Input>/Temporary/IRS8965/HasObtainedExemptions</Input>            
+        </Inputs>
+        <Gist>
+            <AtLeastOneConditionTrue>
+                <Condition>/Return/ReturnData/IRS8965/HsldIncmBelowFlngThresholdInd</Condition>
+                <Condition>/Return/ReturnData/IRS8965/GrossIncmBelowFlngThresholdInd</Condition>
+                <Condition>/Temporary/IRS8965/HasRequestedExemptions</Condition>
+                <Condition>/Temporary/IRS8965/HasObtainedExemptions</Condition>
+            </AtLeastOneConditionTrue>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/HasRequestedExemptions">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8965/RequestExemptCvrTaxHsldGrp</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyHasValues>
+                <MultiCopyValue>/Return/ReturnData/IRS8965/RequestExemptCvrTaxHsldGrp</MultiCopyValue>
+            </MultiCopyHasValues>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/HasObtainedExemptions">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8965/ObtndExemptCvrTaxHsldGrp/(SSN | StartMonthNumberCdPP | EndMonthNumberCdPP)</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyHasValues>
+                <MultiCopyValue>/Return/ReturnData/IRS8965/ObtndExemptCvrTaxHsldGrp/(SSN | StartMonthNumberCdPP | EndMonthNumberCdPP)</MultiCopyValue>
+            </MultiCopyHasValues>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/WasNotCoveredAllYear">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8965/HealthCareRspnsCoverageIndPP</Input>
+        </Inputs>
+        <Gist>
+            <Opposite>
+                <Value>/Return/ReturnData/IRS8965/HealthCareRspnsCoverageIndPP</Value>
+            </Opposite>
+        </Gist>
+    </Node>
+        
+    <Node name="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/PenaltyAmountPP"> 
+        <Inputs>
+            <Input>/Temporary/IRS8965/AnyDeficitInCoverage</Input>
+            <Input>/Temporary/IRS8965/ExemptFromACAPenaltyForEntireYear</Input>
+            <Input>/Temporary/IRS8965/CappedACAPenaltyAmt</Input>
+            <Input>/Temporary/IRS8965/LeaveOutputsBlank</Input>
+        </Inputs>
+        <Aliases>
+            <Alias>/Return/ReturnData/IRS1040/HealthCareRspnsPenaltyAmt</Alias>
+        </Aliases>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8965/LeaveOutputsBlank</BlankIfTrue>
+                <Gist>
+                    <PenaltyIfApplicable>
+                        <PenaltyApplies>/Temporary/IRS8965/AnyDeficitInCoverage</PenaltyApplies>
+                        <IsExempt>/Temporary/IRS8965/ExemptFromACAPenaltyForEntireYear</IsExempt>
+                        <PenaltyAmt>/Temporary/IRS8965/CappedACAPenaltyAmt</PenaltyAmt>
+                    </PenaltyIfApplicable>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>   
+    </Node>
+    
+   
+        
+    <Node name="/Temporary/IRS8965/AnyDeficitInCoverage">
+        <Inputs>
+            <Input>/Temporary/IRS8965/DeficitInCoveragePerPersonPerMonth</Input>
+        </Inputs>
+        <Gist>
+            <ACADeficitInCoverage>
+                <DeficitData>/Temporary/IRS8965/DeficitInCoveragePerPersonPerMonth</DeficitData>
+            </ACADeficitInCoverage>
+        </Gist>
+    </Node>
+
+    <Node name="/Temporary/IRS8965/DeficitInCoveragePerPersonPerMonth">
+        <Inputs>
+            <Input>/Temporary/IRS8965/CoveragePerPersonPerMonth</Input>
+            <Input>/Constants/IRS8965/AutoGExemptionMode</Input>
+            <Input>/Temporary/IRS8965/CoveragePerPersonPerMonthExcludingExemptions</Input>
+            <Input>/Temporary/IRS8965/EligibleForMedicaidGapExemption</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8965/CoveragePerPersonPerMonth</List>
+                <Gist>
+                    <MultiCopyMapper>
+                        <List>/Temporary/IRS8965/CoveragePerPersonPerMonth</List>
+                        <List>/Temporary/IRS8965/EligibleForMedicaidGapExemption</List>
+                        <Gist>
+                            <ACADeficitInCoveragePerPersonPerMonth>
+                                <ThisPersonThisMonth>/Temporary/IRS8965/CoveragePerPersonPerMonth</ThisPersonThisMonth>
+                                <AllData>/MultiCopyMapper/CompletelyUnmappedInputs/Temporary/IRS8965/CoveragePerPersonPerMonth</AllData>
+                                <MultiCopy>/MultiCopyMapper/MultiCopy</MultiCopy>
+                                <AutoGLimitedCoverageData>/Temporary/IRS8965/CoveragePerPersonPerMonthExcludingExemptions</AutoGLimitedCoverageData>
+                                <AutoGExemptionMode>/Constants/IRS8965/AutoGExemptionMode</AutoGExemptionMode>
+                                <AutoGAcceptableCoverageGapLastPossibleMonth>APRIL</AutoGAcceptableCoverageGapLastPossibleMonth>
+                                <EligibleForMedicaidGapExemption>/Temporary/IRS8965/EligibleForMedicaidGapExemption</EligibleForMedicaidGapExemption>
+                            </ACADeficitInCoveragePerPersonPerMonth>    
+                        </Gist>
+                    </MultiCopyMapper>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+
+    <Node name="/Temporary/IRS8965/CoveragePerPersonPerMonth">
+        <Inputs>
+            <Input>/Return/ReturnHeader/Filer/PrimarySSN</Input>
+            <Input>/Return/ReturnHeader/SelfSelectPINGrp/PrimaryBirthDt</Input>
+            <Input>/Return/ReturnData/IRS1040/PrimaryDeathDt</Input>
+            <Input>/Return/ReturnHeader/Filer/SpouseSSN</Input>
+            <Input>/Return/ReturnHeader/SelfSelectPINGrp/SpouseBirthDt</Input>
+            <Input>/Return/ReturnData/IRS1040/SpouseDeathDt</Input>
+            <Input>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</Input>
+            <Input>/Temporary/IRS8965/ACADependentDetails</Input>
+            <Input>/Return/ReturnData/IRS8965/HealthCareRspnsCoverageIndInputPP</Input>
+            <Input>/Return/ReturnData/IRS1095A/CoveredIndivInformationPP/(CoveredIndivSSNPP | CoveredIndivStartDtPP | CoveredIndivEndDtPP)</Input>
+            <Input>/Return/ReturnData/IRS1095B/CoveredIndivGrpPP/(SSNPP | AllYearIndPP | JanuaryIndPP | FebruaryIndPP | MarchIndPP | AprilIndPP | MayIndPP | JuneIndPP | JulyIndPP | AugustIndPP | SeptemberIndPP | OctoberIndPP | NovemberIndPP | DecemberIndPP)</Input>
+            <Input>/Return/ReturnData/IRS1095C/CoveredIndivGrpPP/(SSNPP | AllYearIndPP | JanuaryIndPP | FebruaryIndPP | MarchIndPP | AprilIndPP | MayIndPP | JuneIndPP | JulyIndPP | AugustIndPP | SeptemberIndPP | OctoberIndPP | NovemberIndPP | DecemberIndPP)</Input>
+            <Input>/Return/ReturnData/IRS8965/NonCalculatedExemptCvrTaxHsldGrpPP/(SSNPP | AllYearIndPP | MonthIndicatorGrpPP/JanuaryIndPP | MonthIndicatorGrpPP/FebruaryIndPP | MonthIndicatorGrpPP/MarchIndPP | MonthIndicatorGrpPP/AprilIndPP | MonthIndicatorGrpPP/MayIndPP | MonthIndicatorGrpPP/JuneIndPP | MonthIndicatorGrpPP/JulyIndPP | MonthIndicatorGrpPP/AugustIndPP | MonthIndicatorGrpPP/SeptemberIndPP | MonthIndicatorGrpPP/OctoberIndPP | MonthIndicatorGrpPP/NovemberIndPP | MonthIndicatorGrpPP/DecemberIndPP)</Input>
+            <Input>/Return/ReturnData/IRS1095Other/CoveredIndivGrpPP/(SSNPP | AllYearIndPP | JanuaryIndPP | FebruaryIndPP | MarchIndPP | AprilIndPP | MayIndPP | JuneIndPP | JulyIndPP | AugustIndPP | SeptemberIndPP | OctoberIndPP | NovemberIndPP | DecemberIndPP)</Input>
+            <Input>/Constants/FilingYear</Input>
+            <Input>/Return/ReturnData/IRS8965/ObtndExemptCvrTaxHsldGrp/(SSN | StartMonthNumberCdPP | EndMonthNumberCdPP)</Input>
+        </Inputs>
+        <Gist>
+            <ACACoverageCollector>
+                <PrimarySSN>/Return/ReturnHeader/Filer/PrimarySSN</PrimarySSN>
+                <PrimaryBirthDt>/Return/ReturnHeader/SelfSelectPINGrp/PrimaryBirthDt</PrimaryBirthDt>
+                <PrimaryDeathDt>/Return/ReturnData/IRS1040/PrimaryDeathDt</PrimaryDeathDt>
+                <SpouseSSN>/Return/ReturnHeader/Filer/SpouseSSN</SpouseSSN>
+                <SpouseBirthDt>/Return/ReturnHeader/SelfSelectPINGrp/SpouseBirthDt</SpouseBirthDt>
+                <SpouseDeathDt>/Return/ReturnData/IRS1040/SpouseDeathDt</SpouseDeathDt>
+                <FilingStatus>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</FilingStatus>
+                <DependentDetail>/Temporary/IRS8965/ACADependentDetails</DependentDetail>
+                <EntireFamilyCoveredAllYear>/Return/ReturnData/IRS8965/HealthCareRspnsCoverageIndInputPP</EntireFamilyCoveredAllYear>
+                <CoverageFrom1095A>/Return/ReturnData/IRS1095A/CoveredIndivInformationPP/(CoveredIndivSSNPP | CoveredIndivStartDtPP | CoveredIndivEndDtPP)</CoverageFrom1095A>
+                <CoverageFrom1095B>/Return/ReturnData/IRS1095B/CoveredIndivGrpPP/(SSNPP | AllYearIndPP | JanuaryIndPP | FebruaryIndPP | MarchIndPP | AprilIndPP | MayIndPP | JuneIndPP | JulyIndPP | AugustIndPP | SeptemberIndPP | OctoberIndPP | NovemberIndPP | DecemberIndPP)</CoverageFrom1095B>
+                <CoverageFrom1095C>/Return/ReturnData/IRS1095C/CoveredIndivGrpPP/(SSNPP | AllYearIndPP | JanuaryIndPP | FebruaryIndPP | MarchIndPP | AprilIndPP | MayIndPP | JuneIndPP | JulyIndPP | AugustIndPP | SeptemberIndPP | OctoberIndPP | NovemberIndPP | DecemberIndPP)</CoverageFrom1095C>
+                <CoverageFrom1095Other>/Return/ReturnData/IRS1095Other/CoveredIndivGrpPP/(SSNPP | AllYearIndPP | JanuaryIndPP | FebruaryIndPP | MarchIndPP | AprilIndPP | MayIndPP | JuneIndPP | JulyIndPP | AugustIndPP | SeptemberIndPP | OctoberIndPP | NovemberIndPP | DecemberIndPP)</CoverageFrom1095Other>
+                <RequestedExemptions>/Return/ReturnData/IRS8965/NonCalculatedExemptCvrTaxHsldGrpPP/(SSNPP | AllYearIndPP | MonthIndicatorGrpPP/JanuaryIndPP | MonthIndicatorGrpPP/FebruaryIndPP | MonthIndicatorGrpPP/MarchIndPP | MonthIndicatorGrpPP/AprilIndPP | MonthIndicatorGrpPP/MayIndPP | MonthIndicatorGrpPP/JuneIndPP | MonthIndicatorGrpPP/JulyIndPP | MonthIndicatorGrpPP/AugustIndPP | MonthIndicatorGrpPP/SeptemberIndPP | MonthIndicatorGrpPP/OctoberIndPP | MonthIndicatorGrpPP/NovemberIndPP | MonthIndicatorGrpPP/DecemberIndPP)</RequestedExemptions>
+                <FilingYear>/Constants/FilingYear</FilingYear>
+                <ObtainedExemptionsWithStartAndEndMonths>/Return/ReturnData/IRS8965/ObtndExemptCvrTaxHsldGrp/(SSN | StartMonthNumberCdPP | EndMonthNumberCdPP)</ObtainedExemptionsWithStartAndEndMonths>
+            </ACACoverageCollector>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/CappedACAPenaltyAmt">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/IncmOrFlatDollarAmtPP</Input>
+            <Input>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzeCapAmtPP</Input>
+        </Inputs>
+        <Gist>
+            <Cap>
+                <ValueType>penalty</ValueType>
+                <Value>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/IncmOrFlatDollarAmtPP</Value>
+                <Cap>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzeCapAmtPP</Cap>
+            </Cap>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>   
+    </Node>
+   
+    <Node name="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzeCapAmtPP">
+        <Inputs>
+            <Input>/Temporary/IRS8965/BronzePlanCount</Input>
+            <Input>/Constants/IRS8965/BronzePlanPerPersonAmt</Input>
+            <Input>/Temporary/IRS8965/LeaveOutputsBlank</Input>            
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8965/LeaveOutputsBlank</BlankIfTrue>
+                <Gist>
+                    <ACATotalBronzePlan>
+                        <PersonCount>/Temporary/IRS8965/BronzePlanCount</PersonCount>
+                        <BronzePlanPerPersonAmt>/Constants/IRS8965/BronzePlanPerPersonAmt</BronzePlanPerPersonAmt>
+                    </ACATotalBronzePlan>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+   
+    <Node name="/Temporary/IRS8965/BronzePlanCount">
+        <Inputs>
+            <Input>/Temporary/IRS8965/DeficitInCoveragePerPersonPerMonth</Input>
+            <Input>/Constants/IRS8965/MaxPeopleForBronzePlanPerMonth</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8965/DeficitInCoveragePerPersonPerMonth</List>
+                <Gist>
+                    <ACABronzePlanCount>
+                        <DeficitData>/Temporary/IRS8965/DeficitInCoveragePerPersonPerMonth</DeficitData>
+                        <MaxPeoplePerMonth>/Constants/IRS8965/MaxPeopleForBronzePlanPerMonth</MaxPeoplePerMonth>
+                    </ACABronzePlanCount>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo>
+            <MultiCopy><Integer/></MultiCopy>
+        </RoundTo>
+        
+    </Node>
+
+    <Node name="/Temporary/IRS8965/BronzePlanMonthlyAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8965/BronzePlanCount</Input>
+            <Input>/Constants/IRS8965/BronzePlanPerPersonAmt</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8965/BronzePlanCount</List>
+                <Gist>
+                    <Product>
+                        <Product>/Temporary/IRS8965/BronzePlanCount</Product>
+                        <Product>/Constants/IRS8965/BronzePlanPerPersonAmt</Product>
+                    </Product>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo>
+            <MultiCopy>
+                <Dollars/>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/TotalBronzePlanCountPP">
+        <Inputs>
+            <Input>/Temporary/IRS8965/BronzePlanCount</Input>
+            <Input>/Temporary/IRS8965/LeaveOutputsBlank</Input>            
+        </Inputs>            
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8965/LeaveOutputsBlank</BlankIfTrue>
+                <Gist>
+                    <MultiCopyAccumulation>
+                        <Type>count</Type>
+                        <Value>/Temporary/IRS8965/BronzePlanCount</Value>
+                    </MultiCopyAccumulation>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP">
+        <Inputs>
+            <Input>/Temporary/IRS8965/BronzePlanCount</Input>
+            <Input>/Temporary/IRS8965/LeaveOutputsBlank</Input>            
+        </Inputs>
+        <MultiCopyOutputElements>
+            <Element>MonthCdPP</Element>
+            <Element>CountPP</Element>
+        </MultiCopyOutputElements>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8965/LeaveOutputsBlank</BlankIfTrue>
+                <Gist>
+                    <MultiCopyCombiner>
+                        <MultiCopyValue>/Temporary/IRS8965/BronzePlanCount</MultiCopyValue>
+                        <Config>
+                            <Elements>
+                                <Element>
+                                    <ID>/MultiCopyCombiner/MultiCopyID</ID>
+                                    <Name>MonthCdPP</Name>
+                                </Element>
+                                <Element>
+                                    <ID>/Temporary/IRS8965/BronzePlanCount</ID>
+                                    <Name>CountPP</Name>
+                                </Element>
+                            </Elements>
+                        </Config>
+                    </MultiCopyCombiner>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo>
+            <MultiCopy>
+                <Struct>
+                    <Element>
+                        <Name>CountPP</Name>
+                        <RoundTo><Integer/></RoundTo>
+                    </Element>
+                </Struct>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    
+    <Node name="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/IncmOrFlatDollarAmtPP">
+        <Inputs>
+            <Input>/Temporary/IRS8965/IncomeOrFlatDollarPenaltyPerMonthIfApplicableAmt</Input>            
+            <Input>/Temporary/IRS8965/LeaveOutputsBlank</Input>            
+        </Inputs>
+        <ExtraValuesForFiling>            
+            <ExtraValue>
+                <ID>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/IncmOrFlatDollarX12AmtPP</ID>
+                <RoundTo><Dollars/></RoundTo>
+            </ExtraValue>
+        </ExtraValuesForFiling>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8965/LeaveOutputsBlank</BlankIfTrue>
+                <Gist>
+                    <ACAIncomeFlatDollarPenalty>
+                        <MonthlyPenalty>/Temporary/IRS8965/IncomeOrFlatDollarPenaltyPerMonthIfApplicableAmt</MonthlyPenalty>
+                        <PenaltyX12>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/IncmOrFlatDollarX12AmtPP</PenaltyX12>
+                    </ACAIncomeFlatDollarPenalty>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>   
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/IncomeOrFlatDollarPenaltyPerMonthIfApplicableAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8965/FlatDollarAmt</Input>
+            <Input>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/ExcessHshldIncmPenaltyAmtPP</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8965/FlatDollarAmt</List>
+                <Gist>
+                    <ACAPenaltyMustBeAtLeast>
+                        <FlatDollarMinimum>/Temporary/IRS8965/FlatDollarAmt</FlatDollarMinimum>
+                        <IncomePenalty>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/ExcessHshldIncmPenaltyAmtPP</IncomePenalty>
+                    </ACAPenaltyMustBeAtLeast>
+                </Gist>                
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>   
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/FlatDollarAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8965/DeficitInCoveragePerPersonPerMonth</Input>
+            <Input>/Constants/IRS8965/FlatDollarPerPersonAmt</Input>
+            <Input>/Constants/IRS8965/MaxFlatDollarAmt</Input>
+            <Input>/Return/ReturnHeader/SelfSelectPINGrp/PrimaryBirthDt</Input>
+            <Input>/Return/ReturnHeader/SelfSelectPINGrp/SpouseBirthDt</Input>
+            <Input>/Return/ReturnData/IRS1040/DependentDetail/DependentBirthDtPP</Input>
+            <Input>/Constants/FilingYear</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8965/DeficitInCoveragePerPersonPerMonth</List>
+                <Gist>
+                    <ACAFlatDollarAmount>
+                        <DeficitData>/Temporary/IRS8965/DeficitInCoveragePerPersonPerMonth</DeficitData>
+                        <FlatDollarPerPersonAmt>/Constants/IRS8965/FlatDollarPerPersonAmt</FlatDollarPerPersonAmt>
+                        <MaxFlatDollarAmt>/Constants/IRS8965/MaxFlatDollarAmt</MaxFlatDollarAmt>
+                        <PrimaryBirthDt>/Return/ReturnHeader/SelfSelectPINGrp/PrimaryBirthDt</PrimaryBirthDt>
+                        <SpouseBirthDt>/Return/ReturnHeader/SelfSelectPINGrp/SpouseBirthDt</SpouseBirthDt>
+                        <DependentsBirthDts>/Return/ReturnData/IRS1040/DependentDetail/DependentBirthDtPP</DependentsBirthDts>
+                        <FilingYear>/Constants/FilingYear</FilingYear>
+                        <Month>/MultiCopyMapper/MultiCopy</Month>
+                    </ACAFlatDollarAmount>                                    
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>   
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP">
+       <Inputs>
+           <Input>/Temporary/IRS8965/FlatDollarAmt</Input>           
+           <Input>/Temporary/IRS8965/LeaveOutputsBlank</Input>            
+       </Inputs>
+        <MultiCopyOutputElements>
+            <Element>MonthCdPP</Element>
+            <Element>AmountPP</Element>
+        </MultiCopyOutputElements>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8965/LeaveOutputsBlank</BlankIfTrue>
+                <Gist>
+                    <MultiCopyCombiner>
+                        <MultiCopyValue>/Temporary/IRS8965/FlatDollarAmt</MultiCopyValue>
+                        <Config>
+                            <Elements>
+                                <Element>
+                                    <ID>/MultiCopyCombiner/MultiCopyID</ID>
+                                    <Name>MonthCdPP</Name>
+                                </Element>
+                                <Element>
+                                    <ID>/Temporary/IRS8965/FlatDollarAmt</ID>
+                                    <Name>AmountPP</Name>
+                                </Element>
+                            </Elements>
+                        </Config>
+                    </MultiCopyCombiner>
+                </Gist>
+            </BlankIfApplicable>
+       </Gist>
+   </Node>
+    
+    <!-- line 10 -->
+    <Node name="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/ExcessHshldIncmPenaltyAmtPP">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/ExcessHshldIncmAmtPP</Input>
+            <Input>/Constants/IRS8965/ACAIncomePenaltyPercentage</Input>
+            <Input>/Temporary/IRS8965/LeaveOutputsBlank</Input>            
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8965/LeaveOutputsBlank</BlankIfTrue>
+                <Gist>
+                    <PercentageOf>
+                        <ValueType>income</ValueType>
+                        <OutputType>penalty</OutputType>
+                        <Value>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/ExcessHshldIncmAmtPP</Value>
+                        <Percentage>/Constants/IRS8965/ACAIncomePenaltyPercentage</Percentage>
+                    </PercentageOf>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    
+    <Node name="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/ExcessHshldIncmAmtPP">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HshldIncmAmtPP</Input>
+            <Input>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlngThresholdAmtPP</Input>
+            <Input>/Temporary/IRS8965/LeaveOutputsBlank</Input>            
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8965/LeaveOutputsBlank</BlankIfTrue>
+                <Gist>                    
+                    <TaxableIncome>
+                        <Income>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HshldIncmAmtPP</Income>
+                        <Deductions>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlngThresholdAmtPP</Deductions>
+                    </TaxableIncome>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>           
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/PenaltyOnlyHshldIncmIndPP">
+        <Inputs>            
+            <Input>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/ExcessHshldIncmPenaltyAmtPP</Input>
+            <Input>/Constants/IRS8965/MaxFlatDollarAmt</Input>
+            <Input>/Temporary/IRS8965/LeaveOutputsBlank</Input>            
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8965/LeaveOutputsBlank</BlankIfTrue>
+                <Gist>                    
+                    <AboveThreshold>
+                        <Value>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/ExcessHshldIncmPenaltyAmtPP</Value>
+                        <Threshold>/Constants/IRS8965/MaxFlatDollarAmt</Threshold>
+                    </AboveThreshold>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HshldIncmAmtPP">
+        <Inputs>
+            <Input>/Temporary/IRS8965/ACAPenaltyModAGI</Input>
+            <Input>/Return/ReturnData/IRS8965/TotalDependentsModifiedAGIAmtPP</Input>            
+            <Input>/Temporary/IRS8965/LeaveOutputsBlank</Input>            
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8965/LeaveOutputsBlank</BlankIfTrue>
+                <Gist>
+                    <Accumulation>
+                        <Type>income</Type>
+                        <Value>/Temporary/IRS8965/ACAPenaltyModAGI</Value>
+                        <Value>/Return/ReturnData/IRS8965/TotalDependentsModifiedAGIAmtPP</Value>
+                    </Accumulation>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>           
+    </Node>
+                
+    
+    <Node name="/Temporary/IRS8965/ExemptFromACAPenaltyForEntireYear">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8965/GrossIncmBelowFlngThresholdInd</Input>
+            <Input>/Return/ReturnData/IRS8965/HsldIncmBelowFlngThresholdInd</Input>
+            <Input>/Temporary/IRS8965/ClaimedAsDependentOnOtherReturn</Input>
+        </Inputs>
+        <Gist>
+            <ExemptDueToAtLeastOneReason>
+                <ExemptFromWhat>ACAPenalty</ExemptFromWhat>
+                <Reason>/Return/ReturnData/IRS8965/GrossIncmBelowFlngThresholdInd</Reason>
+                <Reason>/Return/ReturnData/IRS8965/HsldIncmBelowFlngThresholdInd</Reason>
+                <Reason>/Temporary/IRS8965/ClaimedAsDependentOnOtherReturn</Reason> 
+            </ExemptDueToAtLeastOneReason>
+        </Gist>
+    </Node>
+
+    <Node name="/Temporary/IRS8965/ClaimedAsDependentOnOtherReturn">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</Input>
+            <Input>/Temporary/IRS8965/NonBlankTotalExemptionsCnt</Input>            
+        </Inputs>
+        <Gist>
+            <ACAExemptDueToDependentOnOtherReturn>
+                <FilingStatus>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</FilingStatus>
+                <TotalExemptionsCount>/Temporary/IRS8965/NonBlankTotalExemptionsCnt</TotalExemptionsCount>
+            </ACAExemptDueToDependentOnOtherReturn>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/NonBlankTotalExemptionsCnt">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1040/TotalExemptionsCnt</Input>
+            <Input>/Temporary/IRS8965/TotalExemptionsCntCopy</Input>
+            <Input>/Constants/Zero</Input>            
+        </Inputs>
+        <Gist>
+            <NumericChoice>
+                <Choice>/Return/ReturnData/IRS1040/TotalExemptionsCnt</Choice>
+                <Possibility>/Temporary/IRS8965/TotalExemptionsCntCopy</Possibility>
+                <Possibility>/Constants/Zero</Possibility>
+                <ChoiceMapping>
+                    <Option>
+                        <Value></Value> <!-- if it is blank, make it zero -->
+                        <ID>/Constants/Zero</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <DefaultOption>  
+                        <!-- if it is not blank, then keep the value.  We need to make a copy since an input to a node
+                            cannot be used for multipe roles -->
+                        <ID>/Temporary/IRS8965/TotalExemptionsCntCopy</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </DefaultOption>
+                </ChoiceMapping>
+            </NumericChoice>
+        </Gist>
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <!-- this makes a copy of the total exemptions count, since we need two instances of it in the above node -->
+    <Node name="/Temporary/IRS8965/TotalExemptionsCntCopy">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1040/TotalExemptionsCnt</Input>
+        </Inputs>
+        <Gist>
+            <NumericCopy>
+                <Value>/Return/ReturnData/IRS1040/TotalExemptionsCnt</Value>
+            </NumericCopy>
+        </Gist>
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+
+  
+
+
+
+    <Node name="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlngThresholdAmtPP">
+       <Inputs>
+            <Input>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</Input>
+            <Input>/Return/ReturnHeader/Filer/PrimarySSN</Input>
+            <Input>/Return/ReturnHeader/SelfSelectPINGrp/PrimaryBirthDt</Input>
+            <Input>/Return/ReturnHeader/Filer/SpouseSSN</Input>
+            <Input>/Return/ReturnHeader/SelfSelectPINGrp/SpouseBirthDt</Input>
+            <Input>/Constants/IRS1040/FilingStatus/AgeLimit</Input>
+            <Input>/Constants/FilingYear</Input>
+           
+            <Input>/Constants/IRS1040/FilingStatus/SingleStandardDeduction</Input>
+            <Input>/Constants/IRS1040/FilingStatus/SingleExemption</Input>
+            <Input>/Constants/IRS1040/FilingStatus/SingleReachedAgeLimitAmt</Input>
+            
+            <Input>/Constants/IRS1040/FilingStatus/MarriedFilingJointlyStandardDeduction</Input>
+            <Input>/Constants/IRS1040/FilingStatus/MarriedFilingJointlyExemption</Input>
+            <Input>/Constants/IRS1040/FilingStatus/MarriedFilingJointlyReachedAgeLimitAmt</Input>
+            
+            <Input>/Constants/IRS1040/FilingStatus/MarriedFilingSeparatelyStandardDeduction</Input>
+            <Input>/Constants/IRS1040/FilingStatus/MarriedFilingSeparatelyExemption</Input>
+            <Input>/Constants/IRS1040/FilingStatus/MarriedFilingSeparatelyReachedAgeLimitAmt</Input>
+            
+            <Input>/Constants/IRS1040/FilingStatus/HeadOfHouseholdStandardDeduction</Input>
+            <Input>/Constants/IRS1040/FilingStatus/HeadOfHouseholdExemption</Input>
+            <Input>/Constants/IRS1040/FilingStatus/HeadOfHouseholdReachedAgeLimitAmt</Input>
+            
+            <Input>/Constants/IRS1040/FilingStatus/WidowerStandardDeduction</Input>
+            <Input>/Constants/IRS1040/FilingStatus/WidowerExemption</Input>
+            <Input>/Constants/IRS1040/FilingStatus/WidowerReachedAgeLimitAmt</Input>
+            
+           <Input>/Temporary/IRS8965/LeaveOutputsBlank</Input>            
+       </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8965/LeaveOutputsBlank</BlankIfTrue>
+                <Gist>
+                    <FilingThreshold>
+                        <FilingStatus>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</FilingStatus>
+                        <PrimarySSN>/Return/ReturnHeader/Filer/PrimarySSN</PrimarySSN>
+                        <PrimaryBirthDt>/Return/ReturnHeader/SelfSelectPINGrp/PrimaryBirthDt</PrimaryBirthDt>
+                        <SpouseSSN>/Return/ReturnHeader/Filer/SpouseSSN</SpouseSSN>
+                        <SpouseBirthDt>/Return/ReturnHeader/SelfSelectPINGrp/SpouseBirthDt</SpouseBirthDt>
+                        <AgeLimit>/Constants/IRS1040/FilingStatus/AgeLimit</AgeLimit>
+                        
+                        <FilingYear>/Constants/FilingYear</FilingYear>
+                        
+                        <SingleStandardDeduction>/Constants/IRS1040/FilingStatus/SingleStandardDeduction</SingleStandardDeduction>
+                        <SingleExemption>/Constants/IRS1040/FilingStatus/SingleExemption</SingleExemption>
+                        <SingleReachedAgeLimitAmt>/Constants/IRS1040/FilingStatus/SingleReachedAgeLimitAmt</SingleReachedAgeLimitAmt>
+                        
+                        <MarriedFilingJointlyStandardDeduction>/Constants/IRS1040/FilingStatus/MarriedFilingJointlyStandardDeduction</MarriedFilingJointlyStandardDeduction>
+                        <MarriedFilingJointlyExemption>/Constants/IRS1040/FilingStatus/MarriedFilingJointlyExemption</MarriedFilingJointlyExemption>
+                        <MarriedFilingJointlyReachedAgeLimitAmt>/Constants/IRS1040/FilingStatus/MarriedFilingJointlyReachedAgeLimitAmt</MarriedFilingJointlyReachedAgeLimitAmt>
+                        
+                        <MarriedFilingSeparatelyStandardDeduction>/Constants/IRS1040/FilingStatus/MarriedFilingSeparatelyStandardDeduction</MarriedFilingSeparatelyStandardDeduction>
+                        <MarriedFilingSeparatelyExemption>/Constants/IRS1040/FilingStatus/MarriedFilingSeparatelyExemption</MarriedFilingSeparatelyExemption>
+                        <MarriedFilingSeparatelyReachedAgeLimitAmt>/Constants/IRS1040/FilingStatus/MarriedFilingSeparatelyReachedAgeLimitAmt</MarriedFilingSeparatelyReachedAgeLimitAmt>
+                        
+                        <HeadOfHouseholdStandardDeduction>/Constants/IRS1040/FilingStatus/HeadOfHouseholdStandardDeduction</HeadOfHouseholdStandardDeduction>
+                        <HeadOfHouseholdExemption>/Constants/IRS1040/FilingStatus/HeadOfHouseholdExemption</HeadOfHouseholdExemption>
+                        <HeadOfHouseholdReachedAgeLimitAmt>/Constants/IRS1040/FilingStatus/HeadOfHouseholdReachedAgeLimitAmt</HeadOfHouseholdReachedAgeLimitAmt>
+                        
+                        <WidowerStandardDeduction>/Constants/IRS1040/FilingStatus/WidowerStandardDeduction</WidowerStandardDeduction>
+                        <WidowerExemption>/Constants/IRS1040/FilingStatus/WidowerExemption</WidowerExemption>
+                        <WidowerReachedAgeLimitAmt>/Constants/IRS1040/FilingStatus/WidowerReachedAgeLimitAmt</WidowerReachedAgeLimitAmt>
+                        
+                    </FilingThreshold>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>                   
+    </Node>
+    
+   
+    
+
+    <Node name="/Return/ReturnData/IRS8965/HsldIncmBelowFlngThresholdInd">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HshldIncmAmtPP</Input>
+            <Input>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlngThresholdAmtPP</Input>
+            <Input>/Temporary/IRS8965/LeaveOutputsBlank</Input>            
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8965/LeaveOutputsBlank</BlankIfTrue>
+                <Gist>
+                    <ExemptDueToLowIncome>
+                        <Income>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HshldIncmAmtPP</Income>
+                        <Threshold>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlngThresholdAmtPP</Threshold>
+                        <ExemptFromWhat>ACAPenalty</ExemptFromWhat>
+                    </ExemptDueToLowIncome>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+    </Node>
+    
+
+    <Node name="/Temporary/IRS8965/ACAPenaltyModAGI">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1040/AdjustedGrossIncomeAmt</Input>
+            <Input>/Return/ReturnData/IRS1040/TaxExemptInterestAmt</Input>
+            <Input>/Temporary/IRS8965/TotalTotalIncomeExclusionAmt</Input>
+            <Input>/Temporary/IRS8965/TotalHousingDeductionAmt</Input>
+        </Inputs>
+        <Gist>
+            <ModAGI>
+                <AGI>/Return/ReturnData/IRS1040/AdjustedGrossIncomeAmt</AGI>
+                <ItemToAdd>/Return/ReturnData/IRS1040/TaxExemptInterestAmt</ItemToAdd>
+                <ItemToAdd>/Temporary/IRS8965/TotalTotalIncomeExclusionAmt</ItemToAdd>
+                <ItemToAdd>/Temporary/IRS8965/TotalHousingDeductionAmt</ItemToAdd>
+            </ModAGI>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>           
+    </Node>
+
+   
+
+    <Node name="/Temporary/IRS8965/TotalTotalIncomeExclusionAmt">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS2555/TotalIncomeExclusionAmt</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyAccumulation>
+                <Type>income</Type>
+                <Value>/Return/ReturnData/IRS2555/TotalIncomeExclusionAmt</Value>
+            </MultiCopyAccumulation>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>                   
+    </Node>
+    
+   
+    <Node name="/Temporary/IRS8965/TotalHousingDeductionAmt">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS2555/HousingDeductionAmt</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyAccumulation>
+                <Type>deduction</Type>
+                <Value>/Return/ReturnData/IRS2555/HousingDeductionAmt</Value>
+            </MultiCopyAccumulation>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>           
+    </Node>
+    
+    
+    
+    <Node name="/Return/ReturnData/IRS8965/RequestExemptCvrTaxHsldGrp">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8965/NonCalculatedExemptCvrTaxHsldGrpPP/(PersonNmPP | SSNPP | ExemptionReasonCdPP | AllYearIndPP | MonthIndicatorGrpPP/JanuaryIndPP | MonthIndicatorGrpPP/FebruaryIndPP | MonthIndicatorGrpPP/MarchIndPP | MonthIndicatorGrpPP/AprilIndPP | MonthIndicatorGrpPP/MayIndPP | MonthIndicatorGrpPP/JuneIndPP | MonthIndicatorGrpPP/JulyIndPP | MonthIndicatorGrpPP/AugustIndPP | MonthIndicatorGrpPP/SeptemberIndPP | MonthIndicatorGrpPP/OctoberIndPP | MonthIndicatorGrpPP/NovemberIndPP | MonthIndicatorGrpPP/DecemberIndPP)</Input>
+            <Input>/Temporary/IRS8965/DeficitInCoveragePerPersonPerMonth</Input>
+            <Input>/Return/ReturnHeader/Filer/PrimarySSN</Input>
+            <Input>/Return/ReturnHeader/Filer/PrimaryFullNamePP/PersonFirstNm</Input>
+            <Input>/Return/ReturnHeader/Filer/PrimaryFullNamePP/PersonLastNm</Input>
+            <Input>/Return/ReturnHeader/Filer/SpouseSSN</Input>
+            <Input>/Return/ReturnHeader/Filer/SpouseFullNamePP/PersonFirstNm</Input>
+            <Input>/Return/ReturnHeader/Filer/SpouseFullNamePP/PersonLastNm</Input>
+            <Input>/Return/ReturnData/IRS1040/DependentDetail/(DependentFirstNm | DependentLastNm | DependentSSN)</Input>
+            <Input>/Temporary/IRS8965/EligibleForMedicaidGapExemption</Input>
+            <Input>/Temporary/IRS8965/LeaveOutputsBlank</Input>            
+        </Inputs>
+        <MultiCopyOutputElements>
+            <Element>PersonNm</Element>
+            <Element>SSN</Element>
+            <Element>ExemptionReasonCd</Element>
+            <Element>AllYearInd</Element>
+            <Element>MonthIndicatorGrp/JanuaryInd</Element>
+            <Element>MonthIndicatorGrp/FebruaryInd</Element>
+            <Element>MonthIndicatorGrp/MarchInd</Element>
+            <Element>MonthIndicatorGrp/AprilInd</Element>
+            <Element>MonthIndicatorGrp/MayInd</Element>
+            <Element>MonthIndicatorGrp/JuneInd</Element>
+            <Element>MonthIndicatorGrp/JulyInd</Element>
+            <Element>MonthIndicatorGrp/AugustInd</Element>
+            <Element>MonthIndicatorGrp/SeptemberInd</Element>
+            <Element>MonthIndicatorGrp/OctoberInd</Element>
+            <Element>MonthIndicatorGrp/NovemberInd</Element>
+            <Element>MonthIndicatorGrp/DecemberInd</Element>
+        </MultiCopyOutputElements>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8965/LeaveOutputsBlank</BlankIfTrue>
+                <Gist>
+                    <ACAExemptionRequest>
+                        <UserRequests>/Return/ReturnData/IRS8965/NonCalculatedExemptCvrTaxHsldGrpPP/(PersonNmPP | SSNPP | ExemptionReasonCdPP | AllYearIndPP | MonthIndicatorGrpPP/JanuaryIndPP | MonthIndicatorGrpPP/FebruaryIndPP | MonthIndicatorGrpPP/MarchIndPP | MonthIndicatorGrpPP/AprilIndPP | MonthIndicatorGrpPP/MayIndPP | MonthIndicatorGrpPP/JuneIndPP | MonthIndicatorGrpPP/JulyIndPP | MonthIndicatorGrpPP/AugustIndPP | MonthIndicatorGrpPP/SeptemberIndPP | MonthIndicatorGrpPP/OctoberIndPP | MonthIndicatorGrpPP/NovemberIndPP | MonthIndicatorGrpPP/DecemberIndPP)</UserRequests>
+                        <DeficitData>/Temporary/IRS8965/DeficitInCoveragePerPersonPerMonth</DeficitData>
+                        <PrimarySSN>/Return/ReturnHeader/Filer/PrimarySSN</PrimarySSN>
+                        <PrimaryFirstNm>/Return/ReturnHeader/Filer/PrimaryFullNamePP/PersonFirstNm</PrimaryFirstNm>
+                        <PrimaryLastNm>/Return/ReturnHeader/Filer/PrimaryFullNamePP/PersonLastNm</PrimaryLastNm>
+                        <SpouseSSN>/Return/ReturnHeader/Filer/SpouseSSN</SpouseSSN>
+                        <SpouseFirstNm>/Return/ReturnHeader/Filer/SpouseFullNamePP/PersonFirstNm</SpouseFirstNm>
+                        <SpouseLastNm>/Return/ReturnHeader/Filer/SpouseFullNamePP/PersonLastNm</SpouseLastNm>
+                        <DependentDetail>/Return/ReturnData/IRS1040/DependentDetail/(DependentFirstNm | DependentLastNm | DependentSSN)</DependentDetail>
+                        <MedicaidGapData>/Temporary/IRS8965/EligibleForMedicaidGapExemption</MedicaidGapData>
+                    </ACAExemptionRequest>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP">
+        <Inputs>
+            <Input>/Temporary/IRS8965/DeficitInCoveragePerPersonPerMonth</Input>
+            <Input>/Return/ReturnHeader/Filer/PrimarySSN</Input>
+            <Input>/Return/ReturnHeader/Filer/PrimaryFullNamePP/PersonFirstNm</Input>
+            <Input>/Return/ReturnHeader/SelfSelectPINGrp/PrimaryBirthDt</Input>
+            <Input>/Return/ReturnHeader/Filer/SpouseSSN</Input>
+            <Input>/Return/ReturnHeader/Filer/SpouseFullNamePP/PersonFirstNm</Input>
+            <Input>/Return/ReturnHeader/SelfSelectPINGrp/SpouseBirthDt</Input>
+            <Input>/Return/ReturnData/IRS1040/DependentDetail/(DependentFirstNm | DependentSSN | DependentBirthDtPP)</Input>            
+            <Input>/Temporary/IRS8965/LeaveOutputsBlank</Input>            
+        </Inputs>
+        <MultiCopyOutputElements>
+            <Element>PersonFirstNamePP</Element>
+            <Element>PersonSSNPP</Element>
+            <Element>PersonBirthDtPP</Element>
+            <Element>PersonIdPP</Element>
+            <Element>MonthlyStatusGrpPP/MonthPP</Element>
+            <Element>MonthlyStatusGrpPP/MonthPP/MonthCdPP</Element>
+            <Element>MonthlyStatusGrpPP/MonthPP/StatusPP</Element>
+        </MultiCopyOutputElements>        
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8965/LeaveOutputsBlank</BlankIfTrue>
+                <Gist>
+                    <ACACreateHealthCareCoverageAndExemptionTable>
+                        <DeficitData>/Temporary/IRS8965/DeficitInCoveragePerPersonPerMonth</DeficitData>
+                        <PrimarySSN>/Return/ReturnHeader/Filer/PrimarySSN</PrimarySSN>
+                        <PrimaryFirstNm>/Return/ReturnHeader/Filer/PrimaryFullNamePP/PersonFirstNm</PrimaryFirstNm>
+                        <PrimaryBirthDt>/Return/ReturnHeader/SelfSelectPINGrp/PrimaryBirthDt</PrimaryBirthDt>
+                        <SpouseSSN>/Return/ReturnHeader/Filer/SpouseSSN</SpouseSSN>
+                        <SpouseFirstNm>/Return/ReturnHeader/Filer/SpouseFullNamePP/PersonFirstNm</SpouseFirstNm>
+                        <SpouseBirthDt>/Return/ReturnHeader/SelfSelectPINGrp/SpouseBirthDt</SpouseBirthDt>
+                        <DependentDetail>/Return/ReturnData/IRS1040/DependentDetail/(DependentFirstNm | DependentSSN | DependentBirthDtPP)</DependentDetail>
+                    </ACACreateHealthCareCoverageAndExemptionTable>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP">
+        <Inputs>
+            <Input>/Temporary/IRS8965/DeficitInCoveragePerPersonPerMonth</Input>
+            <Input>/Return/ReturnHeader/Filer/PrimaryFullNamePP/PersonFirstNm</Input>
+            <Input>/Return/ReturnHeader/Filer/SpouseFullNamePP/PersonFirstNm</Input>
+            <Input>/Return/ReturnData/IRS1040/DependentDetail/(DependentFirstNm)</Input>
+            <Input>/Temporary/IRS8965/LeaveOutputsBlank</Input>            
+        </Inputs>
+        <MultiCopyOutputElements>
+            <Element>PersonNamePP</Element>
+            <Element>MonthlyCoverageGrpPP</Element>
+            <Element>MonthlyCoverageGrpPP/MonthCdPP</Element>
+            <Element>MonthlyCoverageGrpPP/NoCoverageIndPP</Element>
+        </MultiCopyOutputElements>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8965/LeaveOutputsBlank</BlankIfTrue>
+                <Gist>
+                    <ACACreateCoverageTable>
+                        <Flag>ACACreateSharedRespHsldCoverage</Flag>
+                        <DeficitData>/Temporary/IRS8965/DeficitInCoveragePerPersonPerMonth</DeficitData>
+                        <PrimaryFirstNm>/Return/ReturnHeader/Filer/PrimaryFullNamePP/PersonFirstNm</PrimaryFirstNm>
+                        <SpouseFirstNm>/Return/ReturnHeader/Filer/SpouseFullNamePP/PersonFirstNm</SpouseFirstNm>
+                        <DependentDetail>/Return/ReturnData/IRS1040/DependentDetail/(DependentFirstNm)</DependentDetail>
+                        <MultiCopyOutputMappings>
+                            <PersonName>PersonNamePP</PersonName>
+                            <MonthGroup>MonthlyCoverageGrpPP</MonthGroup>
+                            <MonthCode>MonthlyCoverageGrpPP/MonthCdPP</MonthCode>
+                            <Status>MonthlyCoverageGrpPP/NoCoverageIndPP</Status>
+                        </MultiCopyOutputMappings>
+                    </ACACreateCoverageTable>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+    </Node>
+    
+    <!-- Flat Dollar Worksheet line 14 -->
+    <Node name="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/TotalExcessHshldIncmAndFlatDollarAmtPP">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/TotalExcessHshldIncmAmtPP</Input>
+            <Input>/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/TotalFlatDollarAmtPP</Input>            
+            <Input>/Temporary/IRS8965/LeaveOutputsBlank</Input>            
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8965/LeaveOutputsBlank</BlankIfTrue>
+                <Gist>
+                    <Accumulation>
+                        <Type>penalty</Type>
+                        <Value>/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/TotalExcessHshldIncmAmtPP</Value>
+                        <Value>/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/TotalFlatDollarAmtPP</Value>
+                    </Accumulation>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <!-- Flat Dollar Worksheet line 13 (yes column)-->
+    <Node name="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/TotalExcessHshldIncmAmtPP">
+        <Inputs>
+            <Input>/Temporary/IRS8965/FlatDollarWksIncome</Input>            
+            <Input>/Temporary/IRS8965/LeaveOutputsBlank</Input>            
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8965/LeaveOutputsBlank</BlankIfTrue>
+                <Gist>
+                    <MultiCopyAccumulation>
+                        <Type>penalty</Type>
+                        <Value>/Temporary/IRS8965/FlatDollarWksIncome</Value>
+                    </MultiCopyAccumulation>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <!-- outputs a list, one per month.  It will contain the annual income based penalty if that is what was used for
+        that month's penalty calculation -->
+    <Node name="/Temporary/IRS8965/FlatDollarWksIncome">
+        <Inputs>
+            <Input>/Temporary/IRS8965/FlatDollarWksUseIncome</Input>
+            <Input>/Temporary/IRS8965/IncomePenaltyIfUninsured</Input>
+            <Input>/Temporary/IRS8965/BlankNumericValue</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8965/FlatDollarWksUseIncome</List>
+                <List>/Temporary/IRS8965/IncomePenaltyIfUninsured</List>
+                <Gist>
+                    <NumericChoice>
+                        <Choice>/Temporary/IRS8965/FlatDollarWksUseIncome</Choice>
+                        <Possibility>/Temporary/IRS8965/IncomePenaltyIfUninsured</Possibility>
+                        <Possibility>/Temporary/IRS8965/BlankNumericValue</Possibility>
+                        <ChoiceMapping>
+                            <Option>
+                                <Value>true</Value>
+                                <ID>/Temporary/IRS8965/IncomePenaltyIfUninsured</ID>
+                                <NoOtherOption>false</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>false</Value>
+                                <ID>/Temporary/IRS8965/BlankNumericValue</ID>
+                                <NoOtherOption>false</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value></Value>
+                                <ID>/Temporary/IRS8965/BlankNumericValue</ID>
+                                <NoOtherOption>false</NoOtherOption>
+                            </Option>
+                        </ChoiceMapping>
+                    </NumericChoice>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>
+    </Node>
+    
+    <!-- outputs a list, one per month.  It will contain the annual income based penalty if anyone was uninsured that month.  -->        
+    <Node name="/Temporary/IRS8965/IncomePenaltyIfUninsured">
+        <Inputs>
+            <Input>/Temporary/IRS8965/OneIfAnyoneUninsured</Input>
+            <Input>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/ExcessHshldIncmPenaltyAmtPP</Input>
+            <Input>/Temporary/IRS8965/BlankNumericValue</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8965/OneIfAnyoneUninsured</List>
+                <Gist>
+                    <NumericChoice>
+                        <Choice>/Temporary/IRS8965/OneIfAnyoneUninsured</Choice>
+                        <Possibility>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/ExcessHshldIncmPenaltyAmtPP</Possibility>
+                        <Possibility>/Temporary/IRS8965/BlankNumericValue</Possibility>
+                        <ChoiceMapping>
+                            <Option>
+                                <Value>1</Value>
+                                <ID>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/ExcessHshldIncmPenaltyAmtPP</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>0</Value>
+                                <ID>/Temporary/IRS8965/BlankNumericValue</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value></Value>
+                                <ID>/Temporary/IRS8965/BlankNumericValue</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                        </ChoiceMapping>
+                    </NumericChoice>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>
+    </Node>
+    
+    <!-- outputs a list of integers, one per month.  It will be a 1 if there was anyone uninsured this month or blank if all were insured.
+        This is combined with a choice above to output a penalty on each month where there was someone uninsured.
+        We are reusing the bronze plan count with a max of 1 to do this calculation.  It would be nice to have a gist that outputs boolean,
+        but this is good enough for now.  It is unlikely this will ever need explanations. -->
+    <Node name="/Temporary/IRS8965/OneIfAnyoneUninsured">
+        <Inputs>
+            <Input>/Temporary/IRS8965/DeficitInCoveragePerPersonPerMonth</Input>
+            <Input>/Constants/One</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8965/DeficitInCoveragePerPersonPerMonth</List>
+                <Gist>
+                    <ACABronzePlanCount>
+                        <DeficitData>/Temporary/IRS8965/DeficitInCoveragePerPersonPerMonth</DeficitData>
+                        <MaxPeoplePerMonth>/Constants/One</MaxPeoplePerMonth>
+                    </ACABronzePlanCount>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Integer/></MultiCopy></RoundTo>        
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/BlankNumericValue">
+        <Inputs>
+            <Input>/Constants/True</Input>
+            <Input>/Constants/Zero</Input>            
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Constants/True</BlankIfTrue>
+                <Gist>
+                    <NumericCopy>
+                        <Value>/Constants/Zero</Value>
+                    </NumericCopy>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <!-- Flat dollar worksheet line 13 (no column) -->
+    <Node name="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/TotalFlatDollarAmtPP">
+        <Inputs>
+            <Input>/Temporary/IRS8965/FlatDollarWksFlatDollar</Input>
+            <Input>/Temporary/IRS8965/LeaveOutputsBlank</Input>            
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8965/LeaveOutputsBlank</BlankIfTrue>
+                <Gist>
+                    <MultiCopyAccumulation>
+                        <Type>penalty</Type>
+                        <Value>/Temporary/IRS8965/FlatDollarWksFlatDollar</Value>
+                    </MultiCopyAccumulation>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/FlatDollarWksFlatDollar">
+        <Inputs>
+            <Input>/Temporary/IRS8965/FlatDollarWksUseIncome</Input>
+            <Input>/Temporary/IRS8965/BlankNumericValue</Input>
+            <Input>/Temporary/IRS8965/FlatDollarAmt</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8965/FlatDollarWksUseIncome</List>
+                <List>/Temporary/IRS8965/FlatDollarAmt</List>
+                <Gist>
+                    <NumericChoice>
+                        <Choice>/Temporary/IRS8965/FlatDollarWksUseIncome</Choice>
+                        <Possibility>/Temporary/IRS8965/BlankNumericValue</Possibility>
+                        <Possibility>/Temporary/IRS8965/FlatDollarAmt</Possibility>
+                        <ChoiceMapping>
+                            <Option>
+                                <Value>true</Value>
+                                <ID>/Temporary/IRS8965/BlankNumericValue</ID>
+                                <NoOtherOption>false</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>false</Value>
+                                <ID>/Temporary/IRS8965/FlatDollarAmt</ID>
+                                <NoOtherOption>false</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value></Value>
+                                <ID>/Temporary/IRS8965/BlankNumericValue</ID>
+                                <NoOtherOption>false</NoOtherOption>
+                            </Option>
+                        </ChoiceMapping>
+                    </NumericChoice>
+                </Gist>   
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>        
+    </Node>
+    
+    <!-- Flat Dollar Worksheet lines 1-12 -->
+    <Node name="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP">
+        <Inputs>
+            <Input>/Temporary/IRS8965/FlatDollarWksIncome</Input>
+            <Input>/Temporary/IRS8965/FlatDollarWksFlatDollar</Input>
+            <Input>/Temporary/IRS8965/LeaveOutputsBlank</Input>            
+        </Inputs>
+        <MultiCopyOutputElements>
+            <Element>MonthCdPP</Element>
+            <Element>ExcessHshldIncmAmtPP</Element>
+            <Element>FlatDollarAmtPP</Element>
+        </MultiCopyOutputElements>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8965/LeaveOutputsBlank</BlankIfTrue>
+                <Gist>
+                    <MultiCopyCombiner>
+                        <MultiCopyValue>/Temporary/IRS8965/FlatDollarWksIncome</MultiCopyValue>
+                        <MultiCopyValue>/Temporary/IRS8965/FlatDollarWksFlatDollar</MultiCopyValue>
+                        <Config>
+                            <Elements>
+                                <Element>
+                                    <ID>/MultiCopyCombiner/MultiCopyID</ID>
+                                    <Name>MonthCdPP</Name>
+                                </Element>
+                                <Element>
+                                    <ID>/Temporary/IRS8965/FlatDollarWksIncome</ID>
+                                    <Name>ExcessHshldIncmAmtPP</Name>
+                                </Element>
+                                <Element>
+                                    <ID>/Temporary/IRS8965/FlatDollarWksFlatDollar</ID>
+                                    <Name>FlatDollarAmtPP</Name>
+                                </Element>
+                            </Elements>
+                        </Config>        
+                    </MultiCopyCombiner>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo>
+            <MultiCopy>
+                <Struct>
+                    <Element>
+                        <Name>ExcessHshldIncmAmtPP</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                    <Element>
+                        <Name>FlatDollarAmtPP</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                </Struct>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    <!-- for each month determines if the flat dollar or income penalty is used -->
+    <Node name="/Temporary/IRS8965/FlatDollarWksUseIncome">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/ExcessHshldIncmPenaltyAmtPP</Input>
+            <Input>/Temporary/IRS8965/FlatDollarAmt</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8965/FlatDollarAmt</List>
+                <Gist>
+                    <BelowThreshold>
+                        <Threshold>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/ExcessHshldIncmPenaltyAmtPP</Threshold>
+                        <Value>/Temporary/IRS8965/FlatDollarAmt</Value>
+                    </BelowThreshold>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+    
+    
+    <Node name="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP">
+        <Inputs>
+            <Input>/Temporary/IRS8965/PeopleCount</Input>
+            <Input>/Temporary/IRS8965/LeaveOutputsBlank</Input>            
+        </Inputs>
+        <MultiCopyOutputElements>
+            <Element>MonthCdPP</Element>
+            <Element>CountPP</Element>
+        </MultiCopyOutputElements>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8965/LeaveOutputsBlank</BlankIfTrue>
+                <Gist>                    
+                    <MultiCopyCombiner>
+                        <MultiCopyValue>/Temporary/IRS8965/PeopleCount</MultiCopyValue>
+                        <Config>
+                            <Elements>
+                                <Element>
+                                    <ID>/MultiCopyCombiner/MultiCopyID</ID>      
+                                    <Name>MonthCdPP</Name>
+                                </Element>
+                                <Element>
+                                    <ID>/Temporary/IRS8965/PeopleCount</ID>
+                                    <Name>CountPP</Name>
+                                </Element>
+                            </Elements>
+                        </Config>
+                    </MultiCopyCombiner>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo>
+            <MultiCopy>
+                <Struct>
+                    <Element>
+                        <Name>CountPP</Name>
+                        <RoundTo><Dec>1</Dec></RoundTo>
+                    </Element>
+                </Struct>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/PeopleCount">
+        <Inputs>
+            <Input>/Temporary/IRS8965/AdultCount</Input>
+            <Input>/Temporary/IRS8965/HalfMinorCount</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8965/AdultCount</List>
+                <List>/Temporary/IRS8965/HalfMinorCount</List>
+                <Gist>
+                    <Accumulation>
+                        <Type>count</Type>
+                        <Value>/Temporary/IRS8965/AdultCount</Value>
+                        <Value>/Temporary/IRS8965/HalfMinorCount</Value>
+                    </Accumulation>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dec>1</Dec></MultiCopy></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/AdultCount">
+        <Inputs>
+            <Input>/Temporary/IRS8965/DeficitInCoveragePerPersonPerMonth</Input>
+            <Input>/Return/ReturnHeader/SelfSelectPINGrp/PrimaryBirthDt</Input>
+            <Input>/Return/ReturnHeader/SelfSelectPINGrp/SpouseBirthDt</Input>
+            <Input>/Return/ReturnData/IRS1040/DependentDetail/DependentBirthDtPP</Input>
+            <Input>/Constants/FilingYear</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8965/DeficitInCoveragePerPersonPerMonth</List>                
+                <Gist>
+                    <ACAFlatDollarCount>
+                        <DeficitData>/Temporary/IRS8965/DeficitInCoveragePerPersonPerMonth</DeficitData>
+                        <PrimaryBirthDt>/Return/ReturnHeader/SelfSelectPINGrp/PrimaryBirthDt</PrimaryBirthDt>
+                        <SpouseBirthDt>/Return/ReturnHeader/SelfSelectPINGrp/SpouseBirthDt</SpouseBirthDt>
+                        <DependentsBirthDts>/Return/ReturnData/IRS1040/DependentDetail/DependentBirthDtPP</DependentsBirthDts>
+                        <FilingYear>/Constants/FilingYear</FilingYear>
+                        <Month>/MultiCopyMapper/MultiCopy</Month>
+                        <CountType>Adults</CountType>
+                    </ACAFlatDollarCount>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Integer/></MultiCopy></RoundTo>
+    </Node>
+    
+   
+    
+    <Node name="/Temporary/IRS8965/HalfMinorCount">
+        <Inputs>
+            <Input>/Temporary/IRS8965/DeficitInCoveragePerPersonPerMonth</Input>
+            <Input>/Return/ReturnHeader/SelfSelectPINGrp/PrimaryBirthDt</Input>
+            <Input>/Return/ReturnHeader/SelfSelectPINGrp/SpouseBirthDt</Input>
+            <Input>/Return/ReturnData/IRS1040/DependentDetail/DependentBirthDtPP</Input>
+            <Input>/Constants/FilingYear</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8965/DeficitInCoveragePerPersonPerMonth</List>                
+                <Gist>
+                    <ACAFlatDollarCount>
+                        <DeficitData>/Temporary/IRS8965/DeficitInCoveragePerPersonPerMonth</DeficitData>
+                        <PrimaryBirthDt>/Return/ReturnHeader/SelfSelectPINGrp/PrimaryBirthDt</PrimaryBirthDt>
+                        <SpouseBirthDt>/Return/ReturnHeader/SelfSelectPINGrp/SpouseBirthDt</SpouseBirthDt>
+                        <DependentsBirthDts>/Return/ReturnData/IRS1040/DependentDetail/DependentBirthDtPP</DependentsBirthDts>
+                        <FilingYear>/Constants/FilingYear</FilingYear>
+                        <Month>/MultiCopyMapper/MultiCopy</Month>
+                        <CountType>HalfOfMinors</CountType>
+                    </ACAFlatDollarCount>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dec>1</Dec></MultiCopy></RoundTo>
+    </Node>
+
+
+    <Node name="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP">
+        <Inputs>
+            <Input>/Temporary/IRS8965/AdultCount</Input>            
+            <Input>/Temporary/IRS8965/LeaveOutputsBlank</Input>            
+        </Inputs>
+        <MultiCopyOutputElements>
+            <Element>MonthCdPP</Element>
+            <Element>CountPP</Element>
+        </MultiCopyOutputElements>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8965/LeaveOutputsBlank</BlankIfTrue>
+                <Gist>
+                    <MultiCopyCombiner>
+                        <MultiCopyValue>/Temporary/IRS8965/AdultCount</MultiCopyValue>
+                        <Config>
+                            <Elements>
+                                <Element>
+                                    <ID>/MultiCopyCombiner/MultiCopyID</ID>
+                                    <Name>MonthCdPP</Name>
+                                </Element>
+                                <Element>
+                                    <ID>/Temporary/IRS8965/AdultCount</ID>
+                                    <Name>CountPP</Name>
+                                </Element>
+                            </Elements>
+                        </Config>
+                    </MultiCopyCombiner>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo>
+            <MultiCopy>
+                <Struct>
+                    <Element>
+                        <Name>CountPP</Name>
+                        <RoundTo><Integer/></RoundTo>
+                    </Element>
+                </Struct>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP">
+        <Inputs>
+            <Input>/Temporary/IRS8965/HalfMinorCount</Input>            
+            <Input>/Temporary/IRS8965/LeaveOutputsBlank</Input>            
+        </Inputs>
+        <MultiCopyOutputElements>
+            <Element>MonthCdPP</Element>
+            <Element>CountPP</Element>
+        </MultiCopyOutputElements>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8965/LeaveOutputsBlank</BlankIfTrue>
+                <Gist>                
+                    <MultiCopyCombiner>
+                        <MultiCopyValue>/Temporary/IRS8965/HalfMinorCount</MultiCopyValue>
+                        <Config>
+                            <Elements>
+                                <Element>
+                                    <ID>/MultiCopyCombiner/MultiCopyID</ID>
+                                    <Name>MonthCdPP</Name>
+                                </Element>
+                                <Element>
+                                    <ID>/Temporary/IRS8965/HalfMinorCount</ID>
+                                    <Name>CountPP</Name>
+                                </Element>
+                            </Elements>
+                        </Config>
+                    </MultiCopyCombiner>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo>
+            <MultiCopy>
+                <Struct>
+                    <Element>
+                        <Name>CountPP</Name>
+                        <RoundTo><Dec>1</Dec></RoundTo>
+                    </Element>
+                </Struct>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    <!-- determines if the entire family was covered for all months they were alive.
+        This is suitable for checking the HealthCareRspnsCoverageInd on the 1040 form. -->
+    <Node name="/Return/ReturnData/IRS8965/HealthCareRspnsCoverageIndPP">
+        <Inputs>
+            <Input>/Temporary/IRS8965/CoveragePerPersonPerMonthExcludingExemptions</Input>
+            <Input>/Temporary/IRS8965/LeaveOutputsBlank</Input>            
+        </Inputs>
+        <Aliases>
+            <Alias>/Return/ReturnData/IRS1040/HealthCareRspnsCoverageInd</Alias>
+        </Aliases>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8965/LeaveOutputsBlank</BlankIfTrue>
+                <Gist>
+                    <ACAAllMonthsHaveStatus>
+                        <MonthlyStatuses>/Temporary/IRS8965/CoveragePerPersonPerMonthExcludingExemptions</MonthlyStatuses>
+                        <WhatIsBeingChecked>covered</WhatIsBeingChecked>
+                        <AcceptableStatuses>
+                            <Status>COVERED</Status>
+                            <Status>BEFORE_BIRTH</Status>
+                            <Status>DECEASED</Status>
+                        </AcceptableStatuses>
+                    </ACAAllMonthsHaveStatus>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>                
+    </Node>
+    
+  
+    <Node name="/Temporary/IRS8965/CoveragePerPersonPerMonthExcludingExemptions">
+        <Inputs>
+            <Input>/Return/ReturnHeader/Filer/PrimarySSN</Input>
+            <Input>/Return/ReturnHeader/SelfSelectPINGrp/PrimaryBirthDt</Input>
+            <Input>/Return/ReturnData/IRS1040/PrimaryDeathDt</Input>
+            <Input>/Return/ReturnHeader/Filer/SpouseSSN</Input>
+            <Input>/Return/ReturnHeader/SelfSelectPINGrp/SpouseBirthDt</Input>
+            <Input>/Return/ReturnData/IRS1040/SpouseDeathDt</Input>
+            <Input>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</Input>
+            <Input>/Temporary/IRS8965/ACADependentDetails</Input>
+            <Input>/Return/ReturnData/IRS8965/HealthCareRspnsCoverageIndInputPP</Input>
+            <Input>/Return/ReturnData/IRS1095A/CoveredIndivInformationPP/(CoveredIndivSSNPP | CoveredIndivStartDtPP | CoveredIndivEndDtPP)</Input>
+            <Input>/Return/ReturnData/IRS1095B/CoveredIndivGrpPP/(SSNPP | AllYearIndPP | JanuaryIndPP | FebruaryIndPP | MarchIndPP | AprilIndPP | MayIndPP | JuneIndPP | JulyIndPP | AugustIndPP | SeptemberIndPP | OctoberIndPP | NovemberIndPP | DecemberIndPP)</Input>
+            <Input>/Return/ReturnData/IRS1095C/CoveredIndivGrpPP/(SSNPP | AllYearIndPP | JanuaryIndPP | FebruaryIndPP | MarchIndPP | AprilIndPP | MayIndPP | JuneIndPP | JulyIndPP | AugustIndPP | SeptemberIndPP | OctoberIndPP | NovemberIndPP | DecemberIndPP)</Input>
+            <Input>/Return/ReturnData/IRS1095Other/CoveredIndivGrpPP/(SSNPP | AllYearIndPP | JanuaryIndPP | FebruaryIndPP | MarchIndPP | AprilIndPP | MayIndPP | JuneIndPP | JulyIndPP | AugustIndPP | SeptemberIndPP | OctoberIndPP | NovemberIndPP | DecemberIndPP)</Input>
+            <Input>/Temporary/IRS8965/BlankMultiCopyForCoveragePerPersonPerMonthExcludingExemptions1</Input>
+            <Input>/Constants/FilingYear</Input>
+            <Input>/Temporary/IRS8965/BlankMultiCopyForCoveragePerPersonPerMonthExcludingExemptions2</Input>
+        </Inputs>
+        <Gist>
+            <ACACoverageCollector>
+                <PrimarySSN>/Return/ReturnHeader/Filer/PrimarySSN</PrimarySSN>
+                <PrimaryBirthDt>/Return/ReturnHeader/SelfSelectPINGrp/PrimaryBirthDt</PrimaryBirthDt>
+                <PrimaryDeathDt>/Return/ReturnData/IRS1040/PrimaryDeathDt</PrimaryDeathDt>
+                <SpouseSSN>/Return/ReturnHeader/Filer/SpouseSSN</SpouseSSN>
+                <SpouseBirthDt>/Return/ReturnHeader/SelfSelectPINGrp/SpouseBirthDt</SpouseBirthDt>
+                <SpouseDeathDt>/Return/ReturnData/IRS1040/SpouseDeathDt</SpouseDeathDt>
+                <FilingStatus>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</FilingStatus>
+                <DependentDetail>/Temporary/IRS8965/ACADependentDetails</DependentDetail>
+                <EntireFamilyCoveredAllYear>/Return/ReturnData/IRS8965/HealthCareRspnsCoverageIndInputPP</EntireFamilyCoveredAllYear>
+                <CoverageFrom1095A>/Return/ReturnData/IRS1095A/CoveredIndivInformationPP/(CoveredIndivSSNPP | CoveredIndivStartDtPP | CoveredIndivEndDtPP)</CoverageFrom1095A>
+                <CoverageFrom1095B>/Return/ReturnData/IRS1095B/CoveredIndivGrpPP/(SSNPP | AllYearIndPP | JanuaryIndPP | FebruaryIndPP | MarchIndPP | AprilIndPP | MayIndPP | JuneIndPP | JulyIndPP | AugustIndPP | SeptemberIndPP | OctoberIndPP | NovemberIndPP | DecemberIndPP)</CoverageFrom1095B>
+                <CoverageFrom1095C>/Return/ReturnData/IRS1095C/CoveredIndivGrpPP/(SSNPP | AllYearIndPP | JanuaryIndPP | FebruaryIndPP | MarchIndPP | AprilIndPP | MayIndPP | JuneIndPP | JulyIndPP | AugustIndPP | SeptemberIndPP | OctoberIndPP | NovemberIndPP | DecemberIndPP)</CoverageFrom1095C>
+                <CoverageFrom1095Other>/Return/ReturnData/IRS1095Other/CoveredIndivGrpPP/(SSNPP | AllYearIndPP | JanuaryIndPP | FebruaryIndPP | MarchIndPP | AprilIndPP | MayIndPP | JuneIndPP | JulyIndPP | AugustIndPP | SeptemberIndPP | OctoberIndPP | NovemberIndPP | DecemberIndPP)</CoverageFrom1095Other>
+                <RequestedExemptions>/Temporary/IRS8965/BlankMultiCopyForCoveragePerPersonPerMonthExcludingExemptions1</RequestedExemptions>
+                <FilingYear>/Constants/FilingYear</FilingYear>
+                <ObtainedExemptionsWithStartAndEndMonths>/Temporary/IRS8965/BlankMultiCopyForCoveragePerPersonPerMonthExcludingExemptions2</ObtainedExemptionsWithStartAndEndMonths>
+            </ACACoverageCollector>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/BlankMultiCopyForCoveragePerPersonPerMonthExcludingExemptions1">
+        <Inputs>
+            <Input>/Constants/True</Input>
+            <Input>/Constants/False</Input>
+            <Input>/Return/ReturnData/IRS1040/DependentDetail/(DependentSSN | DependentBirthDtPP | DependentDeathDtPP)</Input>            
+        </Inputs>
+        <MultiCopyOutputElements>            
+        </MultiCopyOutputElements>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Constants/True</BlankIfTrue>
+                <Gist>
+                    <MultiCopyChoice>
+                        <Choice>/Constants/False</Choice>
+                        <Possibility>/Return/ReturnData/IRS1040/DependentDetail/(DependentSSN | DependentBirthDtPP | DependentDeathDtPP)</Possibility>
+                        <ChoiceMapping>
+                            <Option>
+                                <Value>false</Value>
+                                <ID>/Return/ReturnData/IRS1040/DependentDetail/(DependentSSN | DependentBirthDtPP | DependentDeathDtPP)</ID>
+                                <NoOtherOption>false</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value></Value>
+                                <ID>/Return/ReturnData/IRS1040/DependentDetail/(DependentSSN | DependentBirthDtPP | DependentDeathDtPP)</ID>
+                                <NoOtherOption>false</NoOtherOption>
+                            </Option>
+                        </ChoiceMapping>
+                    </MultiCopyChoice>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/BlankMultiCopyForCoveragePerPersonPerMonthExcludingExemptions2">
+        <Inputs>
+            <Input>/Constants/True</Input>
+            <Input>/Constants/False</Input>
+            <Input>/Return/ReturnData/IRS1040/DependentDetail/(DependentSSN | DependentBirthDtPP | DependentDeathDtPP)</Input>            
+        </Inputs>
+        <MultiCopyOutputElements>            
+        </MultiCopyOutputElements>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Constants/True</BlankIfTrue>
+                <Gist>
+                    <MultiCopyChoice>
+                        <Choice>/Constants/False</Choice>
+                        <Possibility>/Return/ReturnData/IRS1040/DependentDetail/(DependentSSN | DependentBirthDtPP | DependentDeathDtPP)</Possibility>
+                        <ChoiceMapping>
+                            <Option>
+                                <Value>false</Value>
+                                <ID>/Return/ReturnData/IRS1040/DependentDetail/(DependentSSN | DependentBirthDtPP | DependentDeathDtPP)</ID>
+                                <NoOtherOption>false</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value></Value>
+                                <ID>/Return/ReturnData/IRS1040/DependentDetail/(DependentSSN | DependentBirthDtPP | DependentDeathDtPP)</ID>
+                                <NoOtherOption>false</NoOtherOption>
+                            </Option>
+                        </ChoiceMapping>
+                    </MultiCopyChoice>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+    </Node>
+    
+    <!-- if the filing status is blank, then leave everything blank in the outputs.  We can't calculate -->
+    <Node name="/Temporary/IRS8965/LeaveOutputsBlank">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</Input>
+            <Input>/Constants/True</Input>
+            <Input>/Constants/False</Input>            
+        </Inputs>
+        <Gist>
+            <BooleanChoice>
+                <Choice>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</Choice>
+                <Possibility>/Constants/True</Possibility>
+                <Possibility>/Constants/False</Possibility>
+                <ChoiceMapping>
+                    <Option>
+                        <Value></Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <DefaultOption>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </DefaultOption>                    
+                </ChoiceMapping>
+            </BooleanChoice>
+        </Gist>
+    </Node>
+
+    <!-- medicaid gap -->
+    
+    <!-- creates a multicopy from person ID to a boolean indicating if the person is eligible for the exemption -->
+    <Node name="/Temporary/IRS8965/EligibleForMedicaidGapExemption">
+        <Inputs>
+            <Input>/Temporary/IRS8965/IncomeQualifiesForMedicaidGapExemption</Input>
+            <Input>/Temporary/IRS8965/LivedInStateThatDidNotExpandMedicaid</Input>
+            <Input>/Temporary/IRS8965/WasNotCoveredAllYear</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8965/LivedInStateThatDidNotExpandMedicaid</List>
+                <Gist>
+                    <AllConditionsTrue>
+                        <Condition>/Temporary/IRS8965/IncomeQualifiesForMedicaidGapExemption</Condition>
+                        <Condition>/Temporary/IRS8965/LivedInStateThatDidNotExpandMedicaid</Condition>
+                        <Condition>/Temporary/IRS8965/WasNotCoveredAllYear</Condition>
+                    </AllConditionsTrue>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+
+    <Node name="/Temporary/IRS8965/IncomeQualifiesForMedicaidGapExemption">
+        <Inputs>
+            <Input>/Temporary/IRS8965/HouseholdIncomeForMedicaidGapExemption</Input>
+            <Input>/Temporary/IRS8965/MedicaidGapIncomeThreshold</Input>
+        </Inputs>
+        <Gist>
+            <BelowThreshold>
+                <Value>/Temporary/IRS8965/HouseholdIncomeForMedicaidGapExemption</Value>
+                <Threshold>/Temporary/IRS8965/MedicaidGapIncomeThreshold</Threshold>
+            </BelowThreshold>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/HouseholdIncomeForMedicaidGapExemption">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HshldIncmAmtPP</Input>
+            <Input>/Temporary/IRS8965/NonTaxableSocialSecurityBenefits</Input>
+        </Inputs>
+        <Gist>
+            <Accumulation>
+                <Value>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HshldIncmAmtPP</Value>
+                <Value>/Temporary/IRS8965/NonTaxableSocialSecurityBenefits</Value>
+                <Type>income</Type>
+            </Accumulation>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/NonTaxableSocialSecurityBenefits">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1040/SocSecBnftAmt</Input>
+            <Input>/Return/ReturnData/IRS1040/TaxableSocSecAmt</Input>            
+        </Inputs>
+        <Gist>
+            <Difference>
+                <Left>/Return/ReturnData/IRS1040/SocSecBnftAmt</Left>
+                <Right>/Return/ReturnData/IRS1040/TaxableSocSecAmt</Right>
+            </Difference>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/MedicaidGapIncomeThreshold">
+        <Inputs>
+            <Input>/Temporary/IRS8965/PovertyLevel</Input>
+            <Input>/Constants/IRS8965/MedicaidGapPovertyLevelPctThreshold</Input>
+        </Inputs>
+        <Gist>
+            <PercentageOf>
+                <Value>/Temporary/IRS8965/PovertyLevel</Value>
+                <Percentage>/Constants/IRS8965/MedicaidGapPovertyLevelPctThreshold</Percentage>
+                <ValueType>poverty level</ValueType>
+                <OutputType>threshold</OutputType>
+            </PercentageOf>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/PovertyLevel">
+        <Inputs>
+            <Input>/Temporary/IRS8965/HighestPovertyLevelStateOfResidenceWithoutMedicaidExpansion</Input>
+            <Input>/Return/ReturnData/IRS1040/TotalExemptionsCnt</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/AlaskaFirstPerson</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/AlaskaIncrement</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/HawaiiFirstPerson</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/HawaiiIncrement</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/MainFirstPerson</Input>
+            <Input>/Constants/IRS8962/PovertyLevel/MainIncrement</Input>            
+        </Inputs>
+        <Gist>
+            <PovertyLevel>
+                <StateAbbreviationCd>/Temporary/IRS8965/HighestPovertyLevelStateOfResidenceWithoutMedicaidExpansion</StateAbbreviationCd>
+                <FamilySize>/Return/ReturnData/IRS1040/TotalExemptionsCnt</FamilySize>
+                <AlaskaFirstPerson>/Constants/IRS8962/PovertyLevel/AlaskaFirstPerson</AlaskaFirstPerson>
+                <AlaskaIncrement>/Constants/IRS8962/PovertyLevel/AlaskaIncrement</AlaskaIncrement>
+                <HawaiiFirstPerson>/Constants/IRS8962/PovertyLevel/HawaiiFirstPerson</HawaiiFirstPerson>
+                <HawaiiIncrement>/Constants/IRS8962/PovertyLevel/HawaiiIncrement</HawaiiIncrement>
+                <MainFirstPerson>/Constants/IRS8962/PovertyLevel/MainFirstPerson</MainFirstPerson>
+                <MainIncrement>/Constants/IRS8962/PovertyLevel/MainIncrement</MainIncrement>
+            </PovertyLevel>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <!-- Alaska has a higher poverty level than other states that did not expand medicaid.  
+        So use Alaska if it is one of the states of residence for the year.  Otherwise use any state
+        that qualifies for the exemption.
+        
+        Note that Hawaii did expand medicaid, so we don't need to worry about it. -->
+    <Node name="/Temporary/IRS8965/HighestPovertyLevelStateOfResidenceWithoutMedicaidExpansion">
+        <Inputs>
+            <Input>/Temporary/IRS8965/WasResidentOfAlaska</Input>      
+            <Input>/Constants/IRS8965/Alaska</Input>
+            <Input>/Temporary/IRS8965/StateOfResidenceWithoutMedicaidExpansion</Input>
+        </Inputs>
+        <Gist>
+            <StringChoice>
+                <Choice>/Temporary/IRS8965/WasResidentOfAlaska</Choice>      
+                <Possibility>/Constants/IRS8965/Alaska</Possibility>
+                <Possibility>/Temporary/IRS8965/StateOfResidenceWithoutMedicaidExpansion</Possibility>
+                <ChoiceMapping>
+                    <Option>
+                        <Value>true</Value>
+                        <ID>/Constants/IRS8965/Alaska</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <DefaultOption>
+                        <ID>/Temporary/IRS8965/StateOfResidenceWithoutMedicaidExpansion</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </DefaultOption>
+                </ChoiceMapping>
+            </StringChoice>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/WasResidentOfAlaska">
+        <Inputs>
+            <Input>/Temporary/IRS8965/AllStatesOfResidence</Input>
+            <Input>/Constants/IRS8965/Alaska</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyHasSpecificValue>
+                <MultiCopy>/Temporary/IRS8965/AllStatesOfResidence</MultiCopy>
+                <Value>/Constants/IRS8965/Alaska</Value>
+            </MultiCopyHasSpecificValue>
+        </Gist>
+    </Node>
+    
+    <!-- finds a state that the taxpayer resided in that did not expand medicaid (or blank if no such state) -->
+    <Node name="/Temporary/IRS8965/StateOfResidenceWithoutMedicaidExpansion">
+        <Inputs>
+            <Input>/Temporary/IRS8965/StateDidNotExpandMedicaid</Input>
+            <Input>/Constants/True</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyFindIDForValue>
+                <MultiCopy>/Temporary/IRS8965/StateDidNotExpandMedicaid</MultiCopy>
+                <Value>/Constants/True</Value>
+            </MultiCopyFindIDForValue>
+        </Gist>
+    </Node>
+    
+    <!-- for each state of residence, did it expand medicaid or not -->
+    <Node name="/Temporary/IRS8965/StateDidNotExpandMedicaid">
+        <Inputs>
+            <Input>/Temporary/IRS8965/AllStatesOfResidence</Input>
+            <Input>/Temporary/IRS8965/StatesThatDidNotExpandMedicaid</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8965/AllStatesOfResidence</List>
+                <Gist>
+                    <MultiCopyHasSpecificValue>
+                        <Value>/Temporary/IRS8965/AllStatesOfResidence</Value>
+                        <MultiCopy>/Temporary/IRS8965/StatesThatDidNotExpandMedicaid</MultiCopy>
+                    </MultiCopyHasSpecificValue>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/StatesThatDidNotExpandMedicaid">
+        <Inputs>
+            <Input>/Constants/IRS8965/StatesThatDidNotExpandMedicaid</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyCreateFromCSV>
+                <Data>/Constants/IRS8965/StatesThatDidNotExpandMedicaid</Data>
+                <UseStringAsKey>true</UseStringAsKey>
+            </MultiCopyCreateFromCSV>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/AllStatesOfResidence">
+        <Inputs>
+            <Input>/Return/ReturnHeader/Filer/PrimaryResidentStatesInfoGrpPP/ResidentStateInfoPP/ResidentStateAbbreviationCdPP</Input>
+            <Input>/Temporary/IRS8965/SpouseStatesOfResidenceIfApplicable</Input>            
+        </Inputs>
+        <Gist>
+            <MergeStringLists>
+                <StringList>/Return/ReturnHeader/Filer/PrimaryResidentStatesInfoGrpPP/ResidentStateInfoPP/ResidentStateAbbreviationCdPP</StringList>
+                <StringList>/Temporary/IRS8965/SpouseStatesOfResidenceIfApplicable</StringList>
+            </MergeStringLists>
+        </Gist>
+    </Node>
+    
+    <!-- the spouse's states of residence can only be used if married filing jointly.  Otherwise they must be filtered out. -->
+    <Node name="/Temporary/IRS8965/SpouseStatesOfResidenceIfApplicable">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</Input>
+            <Input>/Return/ReturnHeader/Filer/SpouseResidentStatesInfoGrpPP/ResidentStateInfoPP/ResidentStateAbbreviationCdPP</Input>
+            <Input>/Temporary/IRS8965/BlankStatesOfResidence</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyChoice>
+                <Choice>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</Choice>
+                <Possibility>/Return/ReturnHeader/Filer/SpouseResidentStatesInfoGrpPP/ResidentStateInfoPP/ResidentStateAbbreviationCdPP</Possibility>
+                <Possibility>/Temporary/IRS8965/BlankStatesOfResidence</Possibility>
+                <ChoiceMapping>
+                    <Option>
+                        <Value>2</Value>
+                        <ID>/Return/ReturnHeader/Filer/SpouseResidentStatesInfoGrpPP/ResidentStateInfoPP/ResidentStateAbbreviationCdPP</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <DefaultOption>
+                        <ID>/Temporary/IRS8965/BlankStatesOfResidence</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </DefaultOption>
+                </ChoiceMapping>
+            </MultiCopyChoice>
+        </Gist>
+    </Node>
+    
+    <!-- this creates a blank multicopy list that can be used as the output of the spouse states of residence if it is not married filing jointly.
+        By using the spouse states of residences as an input to MultiCopyChoice, we keep the dependency graph accurate.
+        If any other multicopy value was used for this, it the spouse states of residence would be dependent on it, when it really shouldn't be.
+        There needs to be a better way to create a blank multicopy list in the future infrastructure -->
+    <Node name="/Temporary/IRS8965/BlankStatesOfResidence">
+        <Inputs>
+            <Input>/Constants/True</Input>
+            <Input>/Constants/False</Input>
+            <Input>/Return/ReturnHeader/Filer/SpouseResidentStatesInfoGrpPP/ResidentStateInfoPP/ResidentStateAbbreviationCdPP</Input>
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Constants/True</BlankIfTrue>
+                <Gist>
+                    <MultiCopyChoice>
+                        <Choice>/Constants/False</Choice>
+                        <Possibility>/Return/ReturnHeader/Filer/SpouseResidentStatesInfoGrpPP/ResidentStateInfoPP/ResidentStateAbbreviationCdPP</Possibility>
+                        <ChoiceMapping>
+                            <Option>
+                                <Value>false</Value>
+                                <ID>/Return/ReturnHeader/Filer/SpouseResidentStatesInfoGrpPP/ResidentStateInfoPP/ResidentStateAbbreviationCdPP</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <DefaultOption>
+                                <ID>/Return/ReturnHeader/Filer/SpouseResidentStatesInfoGrpPP/ResidentStateInfoPP/ResidentStateAbbreviationCdPP</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </DefaultOption>
+                        </ChoiceMapping>
+                    </MultiCopyChoice>                    
+                </Gist>
+            </BlankIfApplicable>            
+        </Gist>
+    </Node>
+    
+    <!-- for each person, did they live in a state that did not expand medicaid? -->
+    <Node name="/Temporary/IRS8965/LivedInStateThatDidNotExpandMedicaid">
+        <Inputs>
+            <Input>/Temporary/IRS8965/DidStateExpandMedicaidPerPersonPerState</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8965/DidStateExpandMedicaidPerPersonPerState</List>
+                <Gist>
+                    <MultiCopyAtLeastOneConditionTrue>
+                        <Value>/Temporary/IRS8965/DidStateExpandMedicaidPerPersonPerState</Value>
+                    </MultiCopyAtLeastOneConditionTrue>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/DidStateExpandMedicaidPerPersonPerState">
+        <Inputs>
+            <Input>/Temporary/IRS8965/StatesThatDidNotExpandMedicaid</Input>
+            <Input>/Temporary/IRS8965/StatesOfResidencePerFamilyMember</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8965/StatesOfResidencePerFamilyMember</List>
+                <Gist>
+                    <MultiCopyMapper>
+                        <List>/Temporary/IRS8965/StatesOfResidencePerFamilyMember</List>
+                        <Gist>
+                            <MultiCopyHasSpecificValue>
+                                <MultiCopy>/Temporary/IRS8965/StatesThatDidNotExpandMedicaid</MultiCopy>
+                                <Value>/Temporary/IRS8965/StatesOfResidencePerFamilyMember</Value>
+                            </MultiCopyHasSpecificValue>
+                        </Gist>
+                    </MultiCopyMapper>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/StatesOfResidencePerFamilyMember">
+        <Inputs>
+            <Input>/Return/ReturnHeader/Filer/PrimaryResidentStatesInfoGrpPP/ResidentStateInfoPP/ResidentStateAbbreviationCdPP</Input>   
+            <Input>/Return/ReturnHeader/Filer/SpouseResidentStatesInfoGrpPP/ResidentStateInfoPP/ResidentStateAbbreviationCdPP</Input>
+            <Input>/Temporary/IRS8965/BlankListPerDependent</Input>
+            <Input>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</Input>
+        </Inputs>
+        <Gist>
+            <ValuePerFamilyMember>
+                <PrimaryValue>/Return/ReturnHeader/Filer/PrimaryResidentStatesInfoGrpPP/ResidentStateInfoPP/ResidentStateAbbreviationCdPP</PrimaryValue>   
+                <SpouseValue>/Return/ReturnHeader/Filer/SpouseResidentStatesInfoGrpPP/ResidentStateInfoPP/ResidentStateAbbreviationCdPP</SpouseValue>
+                <DependentValues>/Temporary/IRS8965/BlankListPerDependent</DependentValues>
+                <FilingStatus>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</FilingStatus>
+            </ValuePerFamilyMember>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/BlankListPerDependent">
+        <Inputs>
+            <Input>/Temporary/IRS8965/ACADependentIDs</Input>
+            <Input>/Temporary/IRS8965/BlankStatesOfResidence</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8965/ACADependentIDs</List>
+                <Gist>
+                    <MultiCopyChoice>
+                        <Choice>/Temporary/IRS8965/ACADependentIDs</Choice>
+                        <Possibility>/Temporary/IRS8965/BlankStatesOfResidence</Possibility>
+                        <ChoiceMapping>
+                            <DefaultOption>
+                                <ID>/Temporary/IRS8965/BlankStatesOfResidence</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </DefaultOption>
+                        </ChoiceMapping>
+                    </MultiCopyChoice>
+                </Gist>                
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/ACADependentDetails">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1040/DependentDetail/(DependentSSN | DependentBirthDtPP | DependentDeathDtPP)</Input>
+            <Input>/Temporary/IRS8965/ACADependentIDs</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8965/ACADependentIDs</List>
+                <Gist>
+                    <MultiCopySelectMultiCopyByID>
+                        <MultiCopy>/Return/ReturnData/IRS1040/DependentDetail/(DependentSSN | DependentBirthDtPP | DependentDeathDtPP)</MultiCopy>
+                        <ID>/Temporary/IRS8965/ACADependentIDs</ID>
+                    </MultiCopySelectMultiCopyByID>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/ACADependentIDs">
+        <Inputs>
+            <Input>/Temporary/IRS8965/IsDependentExcludedFromACA</Input>
+            <Input>/Constants/False</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyFindAllIDsForValue>
+                <MultiCopy>/Temporary/IRS8965/IsDependentExcludedFromACA</MultiCopy>
+                <Value>/Constants/False</Value>
+            </MultiCopyFindAllIDsForValue>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/IsDependentExcludedFromACA">
+        <Inputs>
+            <Input>/Temporary/IRS8965/ExcludedDependentCodes</Input>
+            <Input>/Temporary/IRS8965/DependentCodesIncludingBlanks</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8965/DependentCodesIncludingBlanks</List>
+                <Gist>
+                    <MultiCopyHasSpecificValue>
+                        <MultiCopy>/Temporary/IRS8965/ExcludedDependentCodes</MultiCopy>
+                        <Value>/Temporary/IRS8965/DependentCodesIncludingBlanks</Value>
+                    </MultiCopyHasSpecificValue>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/DependentCodesIncludingBlanks">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1040/DependentDetail/(DependentCodePP)</Input>
+            <Input>/Constants/IRS8965/DependentCodePPFieldName</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Return/ReturnData/IRS1040/DependentDetail/(DependentCodePP)</List>
+                <Gist>
+                    <MultiCopySelectStringByID>
+                        <MultiCopy>/Return/ReturnData/IRS1040/DependentDetail/(DependentCodePP)</MultiCopy>
+                        <ID>/Constants/IRS8965/DependentCodePPFieldName</ID>
+                    </MultiCopySelectStringByID>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8965/ExcludedDependentCodes">
+        <Inputs>
+            <Input>/Constants/IRS8965/ExcludedDependentCodesList</Input>         
+        </Inputs>
+        <Gist>
+            <MultiCopyCreateFromCSV>
+                <Data>/Constants/IRS8965/ExcludedDependentCodesList</Data>
+                <UseStringAsKey>true</UseStringAsKey>
+            </MultiCopyCreateFromCSV>
+        </Gist>
+    </Node>
+   
+    
+
+    <!-- all of these are for determining the gross income -->
+    
+     <Node name="/Temporary/IRS8965/IRS8949ShortTermCapitalGainOrLossAmt">
+		<Inputs>
+		    <Input>/Return/ReturnData/IRS8949/ShortTermCapitalGainAndLossGrp/TotalGainOrLossAmt</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyAccumulationOfPositiveValues>
+				<Type>income</Type>
+			    <Value>/Return/ReturnData/IRS8949/ShortTermCapitalGainAndLossGrp/TotalGainOrLossAmt</Value>
+			</MultiCopyAccumulationOfPositiveValues>
+		</Gist>
+	</Node>
+	
+	<Node name="/Temporary/IRS8965/IRS8949LongTermCapitalGainOrLossAmt">
+		<Inputs>
+		    <Input>/Return/ReturnData/IRS8949/LongTermCapitalGainAndLossGrp/TotalGainOrLossAmt</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyAccumulationOfPositiveValues>
+				<Type>income</Type>
+			    <Value>/Return/ReturnData/IRS8949/LongTermCapitalGainAndLossGrp/TotalGainOrLossAmt</Value>
+			</MultiCopyAccumulationOfPositiveValues>
+		</Gist>
+	</Node>
+	
+	<Node name="/Temporary/IRS8965/TotalTheftGainLessTotalLossAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS4684/TotalTheftGainLessTotalLossAmt</Input>		           
+		</Inputs>
+		<Gist>
+			<MultiCopyAccumulationOfPositiveValues>
+				<Type>income</Type>
+				<Value>/Return/ReturnData/IRS4684/TotalTheftGainLessTotalLossAmt</Value>
+			</MultiCopyAccumulationOfPositiveValues>
+		</Gist>
+	</Node>
+	
+	<Node name="/Temporary/IRS8965/LongTermTotalGainsTheftAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS4684/LongTermTotalGainsTheftAmt</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyAccumulationOfPositiveValues>
+				<Type>income</Type>
+				<Value>/Return/ReturnData/IRS4684/LongTermTotalGainsTheftAmt</Value>
+			</MultiCopyAccumulationOfPositiveValues>
+		</Gist>
+	</Node>
+	
+	<Node name="/Temporary/IRS8965/ShortTermTotalGainsTheftAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS4684/ShortTermTotalGainsTheftAmt</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyAccumulationOfPositiveValues>
+				<Type>income</Type>
+				<Value>/Return/ReturnData/IRS4684/ShortTermTotalGainsTheftAmt</Value>
+			</MultiCopyAccumulationOfPositiveValues>
+		</Gist>
+	</Node>
+	
+	<Node name="/Temporary/IRS8965/ScheduleCTotalGrossReceiptsAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleC/TotalGrossReceiptsAmt</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyAccumulationOfPositiveValues>
+				<Type>income</Type>
+				<Value>/Return/ReturnData/IRS1040ScheduleC/TotalGrossReceiptsAmt</Value>
+			</MultiCopyAccumulationOfPositiveValues>
+		</Gist>
+	</Node>
+	
+	<Node name="/Temporary/IRS8965/ScheduleFGrossIncomeAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleF/FarmIncomeCashMethodGrp/GrossIncomeAmt</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyAccumulationOfPositiveValues>
+				<Type>income</Type>
+				<Value>/Return/ReturnData/IRS1040ScheduleF/FarmIncomeCashMethodGrp/GrossIncomeAmt</Value>
+			</MultiCopyAccumulationOfPositiveValues>
+		</Gist>
+	</Node>
+	
+	<Node name="/Temporary/IRS8965/ScheduleFGrossFarmRentalIncomeAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS4835/GrossFarmRentalIncomeAmt</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyAccumulationOfPositiveValues>
+				<Type>income</Type>
+				<Value>/Return/ReturnData/IRS4835/GrossFarmRentalIncomeAmt</Value>
+			</MultiCopyAccumulationOfPositiveValues>
+		</Gist>
+	</Node>
+	
+	<Node name="/Temporary/IRS8965/ScheduleERentsReceivedAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleE/PropertyRealEstAndRoyaltyGroup/RentsReceivedAmt</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyAccumulationOfPositiveValues>
+				<Type>income</Type>
+				<Value>/Return/ReturnData/IRS1040ScheduleE/PropertyRealEstAndRoyaltyGroup/RentsReceivedAmt</Value>
+			</MultiCopyAccumulationOfPositiveValues>
+		</Gist>
+	</Node>
+	
+	<Node name="/Temporary/IRS8965/ScheduleETotalRoyaltiesReceivedAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1040ScheduleE/PropertyRealEstAndRoyaltyGroup/TotalRoyaltiesReceivedAmt</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyAccumulationOfPositiveValues>
+				<Type>income</Type>
+				<Value>/Return/ReturnData/IRS1040ScheduleE/PropertyRealEstAndRoyaltyGroup/TotalRoyaltiesReceivedAmt</Value>
+			</MultiCopyAccumulationOfPositiveValues>
+		</Gist>
+	</Node>
+	
+	<Node name="/Temporary/IRS8965/IRS1065ScheduleK1NetSTCapitalGainOrLossAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1065ScheduleK1/NetSTCapitalGainOrLossAmt</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyAccumulationOfPositiveValues>
+				<Type>income</Type>
+				<Value>/Return/ReturnData/IRS1065ScheduleK1/NetSTCapitalGainOrLossAmt</Value>
+			</MultiCopyAccumulationOfPositiveValues>
+		</Gist>
+	</Node>
+	
+	<Node name="/Temporary/IRS8965/IRS1065ScheduleK1NetLTCapitalGainOrLossAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1065ScheduleK1/NetLTCapitalGainOrLossAmt</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyAccumulationOfPositiveValues>
+				<Type>income</Type>
+				<Value>/Return/ReturnData/IRS1065ScheduleK1/NetLTCapitalGainOrLossAmt</Value>
+			</MultiCopyAccumulationOfPositiveValues>
+		</Gist>
+	</Node>
+	
+	<Node name="/Temporary/IRS8965/IRS1120ScheduleK1NetSTCapitalGainOrLossAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1120SScheduleK1/NetSTCapitalGainOrLossAmt</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyAccumulationOfPositiveValues>
+				<Type>income</Type>
+				<Value>/Return/ReturnData/IRS1120SScheduleK1/NetSTCapitalGainOrLossAmt</Value>
+			</MultiCopyAccumulationOfPositiveValues>
+		</Gist>
+	</Node>
+	
+	<Node name="/Temporary/IRS8965/IRS1120ScheduleK1NetLTCapitalGainOrLossAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1120SScheduleK1/NetLTCapitalGainOrLossAmt</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyAccumulationOfPositiveValues>
+				<Type>income</Type>
+				<Value>/Return/ReturnData/IRS1120SScheduleK1/NetLTCapitalGainOrLossAmt</Value>
+			</MultiCopyAccumulationOfPositiveValues>
+		</Gist>
+	</Node>
+	
+	
+	<Node name="/Temporary/IRS8965/IRS1041ScheduleK1NetSTCapitalGainOrLossAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1041/NetSTCapitalGainOrLossAmtPP</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyAccumulationOfPositiveValues>
+				<Type>income</Type>
+				<Value>/Return/ReturnData/IRS1041/NetSTCapitalGainOrLossAmtPP</Value>
+			</MultiCopyAccumulationOfPositiveValues>
+		</Gist>
+	</Node>
+	
+	<Node name="/Temporary/IRS8965/IRS1041ScheduleK1NetLTCapitalGainOrLossAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS1041/NetLTCapitalGainOrLossAmtPP</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyAccumulationOfPositiveValues>
+				<Type>income</Type>
+				<Value>/Return/ReturnData/IRS1041/NetLTCapitalGainOrLossAmtPP</Value>
+			</MultiCopyAccumulationOfPositiveValues>
+		</Gist>
+	</Node>
+	
+	<Node name="/Temporary/IRS8965/IRS2119GrossGainOrLossOnSaleAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/IRS2119/GrossGainOrLossOnSaleAmtPP</Input>
+		</Inputs>
+		<Gist>
+			<MultiCopyAccumulationOfPositiveValues>
+				<Type>income</Type>
+				<Value>/Return/ReturnData/IRS2119/GrossGainOrLossOnSaleAmtPP</Value>
+			</MultiCopyAccumulationOfPositiveValues>
+		</Gist>
+	</Node>
+
+    
+	<Node name="/Return/ReturnData/IRS8965/GrossIncmBelowFlngThresholdInd">
+		<Inputs>
+			<Input>/Temporary/IRS8965/GrossIncomeAmt</Input>
+			<Input>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlngThresholdAmtPP</Input>
+			<Input>/Temporary/IRS8965/LeaveOutputsBlank</Input>
+		</Inputs>
+		<Gist>
+			<BlankIfApplicable>
+				<BlankIfTrue>/Temporary/IRS8965/LeaveOutputsBlank</BlankIfTrue>
+				<Gist>
+					<ExemptDueToLowIncome>
+					    <Income>/Temporary/IRS8965/GrossIncomeAmt</Income>
+					    <Threshold>/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlngThresholdAmtPP</Threshold>
+						<ExemptFromWhat>ACAPenalty</ExemptFromWhat>
+					</ExemptDueToLowIncome>
+				</Gist>
+			</BlankIfApplicable>
+		</Gist>
+	</Node>
+	
+	<Node name ="/Temporary/IRS8965/AbsValForeignIncomeExclusionPP">
+		<Inputs>
+			<Input>/Return/ReturnData/OtherIncome/ForeignIncomeExclusionPP</Input>
+			<Input>/Constants/NegativeOne</Input>
+		</Inputs>
+		<Gist>
+			<Product>
+				<Product>/Return/ReturnData/OtherIncome/ForeignIncomeExclusionPP</Product>
+				<Product>/Constants/NegativeOne</Product>
+			</Product>
+		</Gist>
+	</Node>
+	
+	<Node name ="/Temporary/IRS8965/AbsValForeignIncomeExclusionSpousePP">
+		<Inputs>
+			<Input>/Return/ReturnData/OtherIncome/ForeignIncomeExclusionSpousePP</Input>
+			<Input>/Constants/NegativeOne</Input>
+		</Inputs>
+		<Gist>
+			<Product>
+				<Product>/Return/ReturnData/OtherIncome/ForeignIncomeExclusionSpousePP</Product>
+				<Product>/Constants/NegativeOne</Product>
+			</Product>
+		</Gist>
+	</Node>
+	
+	<Node name ="/Temporary/IRS8965/AbsValNetOperatingLossPP">
+		<Inputs>
+			<Input>/Return/ReturnData/OtherIncome/NetOperatingLossPP</Input>
+			<Input>/Constants/NegativeOne</Input>
+		</Inputs>
+		<Gist>
+			<Product>
+				<Product>/Return/ReturnData/OtherIncome/NetOperatingLossPP</Product>
+				<Product>/Constants/NegativeOne</Product>
+			</Product>
+		</Gist>
+	</Node>
+	
+	<Node name ="/Temporary/IRS8965/AbsValNetOperatingLossSpousePP">
+		<Inputs>
+			<Input>/Return/ReturnData/OtherIncome/NetOperatingLossSpousePP</Input>
+			<Input>/Constants/NegativeOne</Input>
+		</Inputs>
+		<Gist>
+			<Product>
+				<Product>/Return/ReturnData/OtherIncome/NetOperatingLossSpousePP</Product>
+				<Product>/Constants/NegativeOne</Product>
+			</Product>
+		</Gist>
+	</Node>
+	
+	<Node name = "/Temporary/IRS8965/GrossOtherIncome">
+		<Inputs>
+			<Input>/Temporary/IRS8965/AbsValNetOperatingLossPP</Input>
+			<Input>/Temporary/IRS8965/AbsValNetOperatingLossSpousePP</Input>
+			<Input>/Temporary/IRS8965/AbsValForeignIncomeExclusionSpousePP</Input>
+			<Input>/Temporary/IRS8965/AbsValForeignIncomeExclusionPP</Input>
+			<Input>/Return/ReturnData/OtherIncome/TotalOtherIncomePP</Input>
+			<Input>/Return/ReturnData/OtherIncome/TotalOtherIncomeSpousePP</Input>
+		</Inputs>
+		<Gist>
+			<Accumulation>
+				<Type>income</Type>
+				<Value>/Temporary/IRS8965/AbsValNetOperatingLossPP</Value>
+				<Value>/Temporary/IRS8965/AbsValNetOperatingLossSpousePP</Value>
+				<Value>/Temporary/IRS8965/AbsValForeignIncomeExclusionSpousePP</Value>
+				<Value>/Temporary/IRS8965/AbsValForeignIncomeExclusionPP</Value>
+				<Value>/Return/ReturnData/OtherIncome/TotalOtherIncomePP</Value>
+				<Value>/Return/ReturnData/OtherIncome/TotalOtherIncomeSpousePP</Value>
+			</Accumulation>
+		</Gist>
+	</Node>
+
+
+	<Node name="/Temporary/IRS8965/GrossIncomeAmt">
+		<Inputs>
+		    <Input>/Return/ReturnData/IRS1040/WagesSalariesAndTipsAmt</Input>
+		    <Input>/Return/ReturnData/IRS1040/TaxableInterestAmt</Input>
+		    <Input>/Return/ReturnData/IRS1040/OrdinaryDividendsAmt</Input>
+		    <Input>/Return/ReturnData/IRS1040/StateLocalIncomeTaxRefundAmt</Input>
+		    <Input>/Return/ReturnData/IRS1040/AlimonyReceivedAmt</Input>
+		    <Input>/Return/ReturnData/IRS1040/UnemploymentCompAmt</Input>
+		    <Input>/Return/ReturnData/IRS1040/TotalTaxablePensionsAmt</Input>
+		    <Input>/Return/ReturnData/IRS1040/TaxableIRAAmt</Input>
+		    <Input>/Return/ReturnData/IRS1040/TaxableSocSecAmt</Input>
+		    
+		    
+		    <Input>/Temporary/IRS8965/GrossOtherIncome</Input>
+		    
+		    
+		    <Input>/Temporary/IRS8965/IRS8949ShortTermCapitalGainOrLossAmt</Input>
+		    <Input>/Temporary/IRS8965/IRS8949LongTermCapitalGainOrLossAmt</Input>
+		    
+		    <Input>/Return/ReturnData/IRS1040ScheduleD/STInstallmentSaleIncomeAmtPP</Input>    
+		    <Input>/Return/ReturnData/IRS1040ScheduleD/LTInstallmentSaleIncomeAmtPP</Input>
+		    <Input>/Return/ReturnData/IRS1040ScheduleD/UndistributedLTCapitalGainAmtPP</Input>
+		    <Input>/Return/ReturnData/IRS1040ScheduleD/CapitalGainDistributionsAmt</Input>
+		    
+		    <Input>/Temporary/IRS8965/TotalTheftGainLessTotalLossAmt</Input>
+		    <Input>/Temporary/IRS8965/LongTermTotalGainsTheftAmt</Input>
+		    <Input>/Temporary/IRS8965/ShortTermTotalGainsTheftAmt</Input>
+		    <Input>/Return/ReturnData/IRS6781/ShortTermPortionOfGainAmt</Input>
+		    <Input>/Return/ReturnData/IRS6781/LongTermPortionOfGainAmt</Input>
+		    
+		    <Input>/Temporary/IRS8965/IRS2119GrossGainOrLossOnSaleAmt</Input>
+		    <Input>/Return/ReturnData/IRS4797/GainForm4684Amt</Input>
+		    <Input>/Return/ReturnData/IRS4797/GainInstallmentSalesFrm6252Amt</Input>
+		    <Input>/Return/ReturnData/IRS4797/GainLossForm8824Amt</Input>
+		    <Input>/Return/ReturnData/IRS4797/OrdinaryGainLossForm8824Amt</Input>
+		    <Input>/Return/ReturnData/IRS4797/GainOthThanCasualtyOrTheftAmt</Input>
+		    <Input>/Return/ReturnData/IRS4797/PropertySaleOrExchange/GainOrLossAmt</Input>
+		    <Input>/Return/ReturnData/IRS4797/OrdinaryGainLoss/GainOrLossAmt</Input>
+		    <Input>/Return/ReturnData/IRS4797/TotalSectionPropertyAmt</Input>
+		    
+		    <Input>/Temporary/IRS8965/ScheduleCTotalGrossReceiptsAmt</Input>
+		    <Input>/Temporary/IRS8965/ScheduleFGrossIncomeAmt</Input>
+		    <Input>/Temporary/IRS8965/ScheduleFGrossFarmRentalIncomeAmt</Input>
+		    <Input>/Temporary/IRS8965/ScheduleERentsReceivedAmt</Input>
+		    <Input>/Temporary/IRS8965/ScheduleETotalRoyaltiesReceivedAmt</Input>
+		    <Input>/Return/ReturnData/IRS1040ScheduleE/TotalPrtshpSCorpIncomeAmt</Input>
+		    
+		    <Input>/Return/ReturnData/IRS1040ScheduleE/TotalEstateOrTrustIncomeAmt</Input>
+		    
+		    <Input>/Temporary/IRS8965/IRS1065ScheduleK1NetSTCapitalGainOrLossAmt</Input>
+		    <Input>/Temporary/IRS8965/IRS1065ScheduleK1NetLTCapitalGainOrLossAmt</Input>
+		    <Input>/Temporary/IRS8965/IRS1120ScheduleK1NetSTCapitalGainOrLossAmt</Input>
+		    <Input>/Temporary/IRS8965/IRS1120ScheduleK1NetLTCapitalGainOrLossAmt</Input>
+		    
+		    <Input>/Temporary/IRS8965/IRS1041ScheduleK1NetSTCapitalGainOrLossAmt</Input>
+		    <Input>/Temporary/IRS8965/IRS1041ScheduleK1NetLTCapitalGainOrLossAmt</Input>
+		    
+		    
+		</Inputs>
+		<Gist>
+			<AccumulationOfPositiveValues>
+				<Type>income</Type>
+				<Value>/Return/ReturnData/IRS1040/WagesSalariesAndTipsAmt</Value>
+				<Value>/Return/ReturnData/IRS1040/TaxableInterestAmt</Value>
+				<Value>/Return/ReturnData/IRS1040/OrdinaryDividendsAmt</Value>
+				<Value>/Return/ReturnData/IRS1040/StateLocalIncomeTaxRefundAmt</Value>
+				<Value>/Return/ReturnData/IRS1040/AlimonyReceivedAmt</Value>
+				<Value>/Return/ReturnData/IRS1040/UnemploymentCompAmt</Value>
+				<Value>/Return/ReturnData/IRS1040/TotalTaxablePensionsAmt</Value>
+				<Value>/Return/ReturnData/IRS1040/TaxableIRAAmt</Value>
+				<Value>/Return/ReturnData/IRS1040/TaxableSocSecAmt</Value>
+				<Value>/Temporary/IRS8965/GrossOtherIncome</Value>
+			    <Value>/Temporary/IRS8965/IRS8949ShortTermCapitalGainOrLossAmt</Value>
+			    <Value>/Temporary/IRS8965/IRS8949LongTermCapitalGainOrLossAmt</Value>
+			    <Value>/Return/ReturnData/IRS1040ScheduleD/STInstallmentSaleIncomeAmtPP</Value>    
+			    <Value>/Return/ReturnData/IRS1040ScheduleD/LTInstallmentSaleIncomeAmtPP</Value>
+			    <Value>/Return/ReturnData/IRS1040ScheduleD/UndistributedLTCapitalGainAmtPP</Value>
+				<Value>/Return/ReturnData/IRS1040ScheduleD/CapitalGainDistributionsAmt</Value>
+			    <Value>/Temporary/IRS8965/TotalTheftGainLessTotalLossAmt</Value>
+				<Value>/Temporary/IRS8965/LongTermTotalGainsTheftAmt</Value>
+				<Value>/Temporary/IRS8965/ShortTermTotalGainsTheftAmt</Value>
+				<Value>/Return/ReturnData/IRS6781/ShortTermPortionOfGainAmt</Value>
+				<Value>/Return/ReturnData/IRS6781/LongTermPortionOfGainAmt</Value>
+			    <Value>/Temporary/IRS8965/IRS2119GrossGainOrLossOnSaleAmt</Value>
+			    <Value>/Return/ReturnData/IRS4797/GainForm4684Amt</Value>
+				<Value>/Return/ReturnData/IRS4797/GainInstallmentSalesFrm6252Amt</Value>
+				<Value>/Return/ReturnData/IRS4797/GainLossForm8824Amt</Value>
+				<Value>/Return/ReturnData/IRS4797/OrdinaryGainLossForm8824Amt</Value>
+				<Value>/Return/ReturnData/IRS4797/GainOthThanCasualtyOrTheftAmt</Value>
+				<Value>/Return/ReturnData/IRS4797/PropertySaleOrExchange/GainOrLossAmt</Value>
+				<Value>/Return/ReturnData/IRS4797/OrdinaryGainLoss/GainOrLossAmt</Value>
+				<Value>/Return/ReturnData/IRS4797/TotalSectionPropertyAmt</Value>
+			    <Value>/Temporary/IRS8965/ScheduleCTotalGrossReceiptsAmt</Value>
+				<Value>/Temporary/IRS8965/ScheduleFGrossIncomeAmt</Value>
+				<Value>/Temporary/IRS8965/ScheduleFGrossFarmRentalIncomeAmt</Value>
+				<Value>/Temporary/IRS8965/ScheduleERentsReceivedAmt</Value>
+				<Value>/Temporary/IRS8965/ScheduleETotalRoyaltiesReceivedAmt</Value>
+			    <Value>/Return/ReturnData/IRS1040ScheduleE/TotalPrtshpSCorpIncomeAmt</Value>
+				<Value>/Return/ReturnData/IRS1040ScheduleE/TotalEstateOrTrustIncomeAmt</Value>
+				<Value>/Temporary/IRS8965/IRS1065ScheduleK1NetSTCapitalGainOrLossAmt</Value>
+				<Value>/Temporary/IRS8965/IRS1065ScheduleK1NetLTCapitalGainOrLossAmt</Value>
+				<Value>/Temporary/IRS8965/IRS1120ScheduleK1NetSTCapitalGainOrLossAmt</Value>
+				<Value>/Temporary/IRS8965/IRS1120ScheduleK1NetLTCapitalGainOrLossAmt</Value>
+	            <Value>/Temporary/IRS8965/IRS1041ScheduleK1NetSTCapitalGainOrLossAmt</Value>
+				<Value>/Temporary/IRS8965/IRS1041ScheduleK1NetLTCapitalGainOrLossAmt</Value>
+			</AccumulationOfPositiveValues>
+		</Gist>
+		<RoundTo>
+			<Dollars/>
+		</RoundTo>
+	</Node>
+    
+
+    <!-- inputs -->
+    
+    <Node name="/Return/ReturnHeader/Filer/PrimarySSN" type="input"/>
+    <Node name="/Return/ReturnData/IRS1040/PrimaryDeathDt" type="input"/>
+    <Node name="/Return/ReturnHeader/Filer/SpouseSSN" type="input"/>
+    <Node name="/Return/ReturnHeader/SelfSelectPINGrp/SpouseBirthDt" type="input"/>
+    <Node name="/Return/ReturnData/IRS1040/SpouseDeathDt" type="input"/>
+    <Node name="/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd" type="input"/>
+    
+    <Node name="/Return/ReturnHeader/Filer/PrimaryResidentStatesInfoGrpPP/ResidentStateInfoPP/ResidentStateAbbreviationCdPP" type="multiCopyPrimitiveInput"/>
+    <Node name="/Return/ReturnHeader/Filer/SpouseResidentStatesInfoGrpPP/ResidentStateInfoPP/ResidentStateAbbreviationCdPP" type="multiCopyPrimitiveInput"/>
+    
+    <Node name="/Return/ReturnData/IRS1040/DependentDetail/(DependentSSN | DependentBirthDtPP | DependentDeathDtPP)" type="multiCopyStructInput"/>
+    <Node name="/Return/ReturnData/IRS1040/DependentDetail/(DependentCodePP)" type="multiCopyStructInput"/>    
+    <Node name="/Return/ReturnData/IRS1040/DependentDetail/DependentBirthDtPP" type="multiCopyPrimitiveInput"/>
+    
+    <Node name="/Return/ReturnData/IRS1095A/CoveredIndivInformationPP/(CoveredIndivSSNPP | CoveredIndivStartDtPP | CoveredIndivEndDtPP)" type="multiCopyStructInput"/>
+    <Node name="/Return/ReturnData/IRS1095B/CoveredIndivGrpPP/(SSNPP | AllYearIndPP | JanuaryIndPP | FebruaryIndPP | MarchIndPP | AprilIndPP | MayIndPP | JuneIndPP | JulyIndPP | AugustIndPP | SeptemberIndPP | OctoberIndPP | NovemberIndPP | DecemberIndPP)" type="multiCopyStructInput"/>
+    <Node name="/Return/ReturnData/IRS1095C/CoveredIndivGrpPP/(SSNPP | AllYearIndPP | JanuaryIndPP | FebruaryIndPP | MarchIndPP | AprilIndPP | MayIndPP | JuneIndPP | JulyIndPP | AugustIndPP | SeptemberIndPP | OctoberIndPP | NovemberIndPP | DecemberIndPP)" type="multiCopyStructInput"/>
+    <Node name="/Return/ReturnData/IRS1095Other/CoveredIndivGrpPP/(SSNPP | AllYearIndPP | JanuaryIndPP | FebruaryIndPP | MarchIndPP | AprilIndPP | MayIndPP | JuneIndPP | JulyIndPP | AugustIndPP | SeptemberIndPP | OctoberIndPP | NovemberIndPP | DecemberIndPP)" type="multiCopyStructInput"/>
+    <Node name="/Return/ReturnData/IRS8965/HealthCareRspnsCoverageIndInputPP" type="input"/>
+    <Node name="/Return/ReturnData/IRS8965/ObtndExemptCvrTaxHsldGrp/(SSN | StartMonthNumberCdPP | EndMonthNumberCdPP)" type="multiCopyStructInput"/>
+    <Node name="/Return/ReturnData/IRS8965/NonCalculatedExemptCvrTaxHsldGrpPP/(SSNPP | AllYearIndPP | MonthIndicatorGrpPP/JanuaryIndPP | MonthIndicatorGrpPP/FebruaryIndPP | MonthIndicatorGrpPP/MarchIndPP | MonthIndicatorGrpPP/AprilIndPP | MonthIndicatorGrpPP/MayIndPP | MonthIndicatorGrpPP/JuneIndPP | MonthIndicatorGrpPP/JulyIndPP | MonthIndicatorGrpPP/AugustIndPP | MonthIndicatorGrpPP/SeptemberIndPP | MonthIndicatorGrpPP/OctoberIndPP | MonthIndicatorGrpPP/NovemberIndPP | MonthIndicatorGrpPP/DecemberIndPP)" type="multiCopyStructInput"/>
+    
+    <Node name="/Return/ReturnData/IRS1040/DependentDetail/(DependentFirstNm | DependentSSN | DependentBirthDtPP)" type="multiCopyStructInput"/>
+    <Node name="/Return/ReturnData/IRS1040/TotalExemptionsCnt" type="input"><RoundTo><Integer/></RoundTo></Node>
+    
+    <Node name="/Return/ReturnData/IRS1040/TotalIncomeAmt" type="input"><RoundTo><Dollars/></RoundTo></Node>
+    <Node name="/Return/ReturnHeader/SelfSelectPINGrp/PrimaryBirthDt" type="input"/>
+    <Node name="/Return/ReturnData/IRS1040/AdjustedGrossIncomeAmt" type="input"><RoundTo><Dollars/></RoundTo></Node>
+    
+    <Node name="/Return/ReturnData/IRS1040/TaxExemptInterestAmt" type="input"><RoundTo><Dollars/></RoundTo></Node>
+    <Node name="/Return/ReturnData/IRS8965/NonCalculatedExemptCvrTaxHsldGrpPP/(PersonNmPP | SSNPP | ExemptionReasonCdPP | AllYearIndPP | MonthIndicatorGrpPP/JanuaryIndPP | MonthIndicatorGrpPP/FebruaryIndPP | MonthIndicatorGrpPP/MarchIndPP | MonthIndicatorGrpPP/AprilIndPP | MonthIndicatorGrpPP/MayIndPP | MonthIndicatorGrpPP/JuneIndPP | MonthIndicatorGrpPP/JulyIndPP | MonthIndicatorGrpPP/AugustIndPP | MonthIndicatorGrpPP/SeptemberIndPP | MonthIndicatorGrpPP/OctoberIndPP | MonthIndicatorGrpPP/NovemberIndPP | MonthIndicatorGrpPP/DecemberIndPP)" type="multiCopyStructInput"/>
+    <Node name="/Return/ReturnHeader/Filer/PrimaryFullNamePP/PersonFirstNm" type="input"/>
+    <Node name="/Return/ReturnHeader/Filer/PrimaryFullNamePP/PersonLastNm" type="input"/>
+    <Node name="/Return/ReturnHeader/Filer/SpouseFullNamePP/PersonFirstNm" type="input"/>
+    <Node name="/Return/ReturnHeader/Filer/SpouseFullNamePP/PersonLastNm" type="input"/>
+    <Node name="/Return/ReturnData/IRS1040/DependentDetail/(DependentFirstNm | DependentLastNm | DependentSSN)" type="multiCopyStructInput"/>
+    <Node name="/Return/ReturnData/IRS1040/DependentDetail/(DependentFirstNm)" type="multiCopyStructInput"/>
+    
+    <Node name="/Return/ReturnData/IRS8965/TotalDependentsModifiedAGIAmtPP" type="input"><RoundTo><Dollars/></RoundTo></Node>
+    
+    
+    <Node name="/Return/ReturnData/IRS2555/TotalIncomeExclusionAmt" type="multiCopyPrimitiveInput">
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>                           
+    </Node>
+    <Node name="/Return/ReturnData/IRS2555/HousingDeductionAmt" type="multiCopyPrimitiveInput">
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>                   
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS1040/WagesSalariesAndTipsAmt" type="input" />
+    <Node name="/Return/ReturnData/IRS1040/TaxableInterestAmt" type="input" />
+    <Node name="/Return/ReturnData/IRS1040/OrdinaryDividendsAmt" type="input" />
+    <Node name="/Return/ReturnData/IRS1040/StateLocalIncomeTaxRefundAmt" type="input" />
+    <Node name="/Return/ReturnData/IRS1040/AlimonyReceivedAmt" type="input" />
+    <Node name="/Return/ReturnData/IRS1040/UnemploymentCompAmt" type="input" />
+    <Node name="/Return/ReturnData/IRS1040/TotalTaxablePensionsAmt" type="input" />
+    <Node name="/Return/ReturnData/IRS1040/TaxableIRAAmt" type="input" />
+    <Node name="/Return/ReturnData/IRS1040/TaxableSocSecAmt" type="input" />
+    <Node name="/Return/ReturnData/IRS1040/SocSecBnftAmt" type="input"><RoundTo><Dollars/></RoundTo></Node>
+
+    
+
+    <Node name="/Return/ReturnData/OtherIncome/TotalOtherIncomePP" type="input" />
+    <Node name="/Return/ReturnData/OtherIncome/TotalOtherIncomeSpousePP" type="input" />
+    <Node name="/Return/ReturnData/OtherIncome/ForeignIncomeExclusionPP" type="input" />
+    <Node name="/Return/ReturnData/OtherIncome/ForeignIncomeExclusionSpousePP" type="input" />
+    <Node name="/Return/ReturnData/OtherIncome/NetOperatingLossPP" type="input" />
+    <Node name="/Return/ReturnData/OtherIncome/NetOperatingLossSpousePP" type="input" />
+    
+    
+    <Node name="/Return/ReturnData/IRS8949/ShortTermCapitalGainAndLossGrp/TotalGainOrLossAmt" type="multiCopyPrimitiveInput"/>
+    <Node name="/Return/ReturnData/IRS8949/LongTermCapitalGainAndLossGrp/TotalGainOrLossAmt" type="multiCopyPrimitiveInput"/>	
+    <Node name="/Return/ReturnData/IRS1040ScheduleD/STInstallmentSaleIncomeAmtPP" type ="input"/>   
+    <Node name="/Return/ReturnData/IRS1040ScheduleD/LTInstallmentSaleIncomeAmtPP" type="input"/>
+    
+    
+    <Node name="/Return/ReturnData/IRS4684/TotalTheftGainLessTotalLossAmt" type="multiCopyPrimitiveInput"/>
+    <Node name="/Return/ReturnData/IRS4684/LongTermTotalGainsTheftAmt" type="multiCopyPrimitiveInput"/>
+    <Node name="/Return/ReturnData/IRS4684/ShortTermTotalGainsTheftAmt" type="multiCopyPrimitiveInput"/>
+    <Node name="/Return/ReturnData/IRS1040ScheduleC/TotalGrossReceiptsAmt" type="multiCopyPrimitiveInput"/>
+    <Node name="/Return/ReturnData/IRS1040ScheduleF/FarmIncomeCashMethodGrp/GrossIncomeAmt" type="multiCopyPrimitiveInput"/>
+    <Node name="/Return/ReturnData/IRS4835/GrossFarmRentalIncomeAmt" type="multiCopyPrimitiveInput"/>
+    <Node name="/Return/ReturnData/IRS1040ScheduleE/PropertyRealEstAndRoyaltyGroup/RentsReceivedAmt" type="multiCopyPrimitiveInput"/>
+    <Node name="/Return/ReturnData/IRS1040ScheduleE/PropertyRealEstAndRoyaltyGroup/TotalRoyaltiesReceivedAmt" type="multiCopyPrimitiveInput"/>
+    <Node name="/Return/ReturnData/IRS1040ScheduleE/TotalPrtshpSCorpIncomeAmt" type="input"/>
+    <Node name="/Return/ReturnData/IRS1040ScheduleE/TotalEstateOrTrustIncomeAmt" type="input"/>
+    <Node name="/Return/ReturnData/IRS1065ScheduleK1/NetSTCapitalGainOrLossAmt" type="multiCopyPrimitiveInput"/>
+    <Node name="/Return/ReturnData/IRS1065ScheduleK1/NetLTCapitalGainOrLossAmt" type="multiCopyPrimitiveInput"/>
+    <Node name="/Return/ReturnData/IRS1120SScheduleK1/NetSTCapitalGainOrLossAmt" type="multiCopyPrimitiveInput"/>
+    <Node name="/Return/ReturnData/IRS1120SScheduleK1/NetLTCapitalGainOrLossAmt" type="multiCopyPrimitiveInput"/>
+
+    
+    <Node name="/Return/ReturnData/IRS1041/NetSTCapitalGainOrLossAmtPP" type="multiCopyPrimitiveInput"/>
+    <Node name="/Return/ReturnData/IRS1041/NetLTCapitalGainOrLossAmtPP" type="multiCopyPrimitiveInput"/>
+    
+    
+    <Node name="/Return/ReturnData/IRS1040ScheduleD/UndistributedLTCapitalGainAmtPP" type="input" />	
+    <Node name="/Return/ReturnData/IRS1040ScheduleD/CapitalGainDistributionsAmt" type="input" />		
+    <Node name="/Return/ReturnData/IRS6781/ShortTermPortionOfGainAmt" type="input" />		
+    <Node name="/Return/ReturnData/IRS6781/LongTermPortionOfGainAmt" type="input" />
+    <Node name="/Return/ReturnData/IRS4797/GainForm4684Amt" type="input" />
+    <Node name="/Return/ReturnData/IRS4797/GainInstallmentSalesFrm6252Amt" type="input" />
+    <Node name="/Return/ReturnData/IRS4797/GainLossForm8824Amt" type="input" />
+    <Node name="/Return/ReturnData/IRS4797/OrdinaryGainLossForm8824Amt" type="input" />
+    <Node name="/Return/ReturnData/IRS4797/GainOthThanCasualtyOrTheftAmt" type="input" />
+    <Node name="/Return/ReturnData/IRS4797/PropertySaleOrExchange/GainOrLossAmt" type="input" />
+    <Node name="/Return/ReturnData/IRS4797/OrdinaryGainLoss/GainOrLossAmt" type="input" />
+    <Node name="/Return/ReturnData/IRS4797/TotalSectionPropertyAmt" type="input" />
+    <Node name="/Return/ReturnData/IRS2119/GrossGainOrLossOnSaleAmtPP" type="multiCopyPrimitiveInput" />
+    
+    
+    <!-- constants -->
+    <Node name="/Constants/True" type="constant"/>
+    <Node name="/Constants/False" type="constant"/>
+    <Node name="/Constants/Zero" type="constant"><RoundTo><Integer/></RoundTo></Node>            
+    <Node name="/Constants/One" type="constant"><RoundTo><Integer/></RoundTo></Node>  
+    <Node name="/Constants/NegativeOne" type="constant"><RoundTo><Integer/></RoundTo></Node>            
+    <Node name="/Constants/MonthNames/January" type="constant"/>
+    
+    <Node name="/Constants/IRS8965/StatusTypes/Covered" type="constant"/>
+    <Node name="/Constants/IRS8965/StatusTypes/BeforeBirth" type="constant"/>
+    <Node name="/Constants/IRS8965/StatusTypes/Deceased" type="constant"/>
+    <Node name="/Constants/IRS8965/StatusTypes/NotCoveredPenaltyDue" type="constant"/>      
+    
+    
+    <Node name="/Constants/IRS8965/MaxBronzePlanAmt" type="constant"><RoundTo><Dollars/></RoundTo></Node>
+    <Node name="/Constants/IRS8965/MaxPeopleForBronzePlanPerMonth" type="constant"><RoundTo><Integer/></RoundTo></Node>
+    <Node name="/Constants/IRS8965/BronzePlanPerPersonAmt" type="constant"><RoundTo><Dollars/></RoundTo></Node>
+    
+    <Node name="/Constants/FilingYear" type="constant"><RoundTo><Integer/></RoundTo></Node>
+    
+    <!-- $285  -->
+    <Node name="/Constants/IRS8965/MaxFlatDollarAmt" type="constant"><RoundTo><Integer/></RoundTo></Node>
+    
+    <!-- $95 -->
+    <Node name="/Constants/IRS8965/FlatDollarPerPersonAmt" type="constant"><RoundTo><Dec>6</Dec></RoundTo></Node>
+    
+    <!--  1% of taxable income penalty for not having insurance -->
+    <Node name="/Constants/IRS8965/ACAIncomePenaltyPercentage" type="constant">
+        <RoundTo><Dec>6</Dec></RoundTo>
+    </Node>
+
+    <Node name="/Constants/IRS8965/MedicaidGapPovertyLevelPctThreshold" type="constant">
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <Node name="/Constants/IRS8965/Alaska" type="constant"/>
+    <Node name="/Constants/IRS8965/StatesThatDidNotExpandMedicaid" type="constant"/>
+    
+    <Node name="/Constants/IRS1040/FilingStatus/AgeLimit" type="constant">
+        <RoundTo><Integer/></RoundTo>        
+    </Node>
+    
+    <Node name="/Constants/IRS1040/FilingStatus/SingleStandardDeduction" type="constant">
+        <RoundTo><Dollars/></RoundTo>                
+    </Node>
+    <Node name="/Constants/IRS1040/FilingStatus/SingleExemption" type="constant">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    <Node name="/Constants/IRS1040/FilingStatus/SingleReachedAgeLimitAmt" type="constant">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Constants/IRS1040/FilingStatus/MarriedFilingJointlyStandardDeduction" type="constant">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    <Node name="/Constants/IRS1040/FilingStatus/MarriedFilingJointlyExemption" type="constant">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    <Node name="/Constants/IRS1040/FilingStatus/MarriedFilingJointlyReachedAgeLimitAmt" type="constant">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Constants/IRS1040/FilingStatus/MarriedFilingSeparatelyStandardDeduction" type="constant">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    <Node name="/Constants/IRS1040/FilingStatus/MarriedFilingSeparatelyExemption" type="constant">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    <Node name="/Constants/IRS1040/FilingStatus/MarriedFilingSeparatelyReachedAgeLimitAmt" type="constant">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Constants/IRS1040/FilingStatus/HeadOfHouseholdStandardDeduction" type="constant">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    <Node name="/Constants/IRS1040/FilingStatus/HeadOfHouseholdExemption" type="constant">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    <Node name="/Constants/IRS1040/FilingStatus/HeadOfHouseholdReachedAgeLimitAmt" type="constant">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Constants/IRS1040/FilingStatus/WidowerStandardDeduction" type="constant">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    <Node name="/Constants/IRS1040/FilingStatus/WidowerExemption" type="constant">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    <Node name="/Constants/IRS1040/FilingStatus/WidowerReachedAgeLimitAmt" type="constant">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Constants/IRS8965/AutoGExemptionMode" type="constant"/>
+    
+    
+    <Node name="/Constants/IRS8962/PovertyLevel/AlaskaFirstPerson" type="constant">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    <Node name="/Constants/IRS8962/PovertyLevel/AlaskaIncrement" type="constant">
+        <RoundTo><Dollars/></RoundTo>      
+    </Node>
+    
+    <Node name="/Constants/IRS8962/PovertyLevel/HawaiiFirstPerson" type="constant">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Constants/IRS8962/PovertyLevel/HawaiiIncrement" type="constant">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Constants/IRS8962/PovertyLevel/MainFirstPerson" type="constant">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Constants/IRS8962/PovertyLevel/MainIncrement" type="constant">
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Constants/IRS8965/DependentCodePPFieldName" type="constant"/>
+    <Node name="/Constants/IRS8965/ExcludedDependentCodesList" type="constant"/>
+</Nodes>

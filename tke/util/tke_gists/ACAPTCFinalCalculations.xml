@@ -1,0 +1,2635 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Nodes topic="Form8962Subsidy">
+	<Versions>
+		<Version id="TKE.Calc.FileFormat">1</Version>
+        <Version id="TKE.Calc.Runtime">1</Version>
+        <Version id="TKE.Gist">1</Version>
+        <Version id="TKE.MeF">1</Version>
+	</Versions>
+
+   <!-- line 29 -->
+    <Node name="/Return/ReturnData/IRS8962/PremiumTaxCreditTaxLiabAmt">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8962/ExcessAdvncPaymentAmt</Input>
+            <Input>/Return/ReturnData/IRS8962/AdditionalTaxLimitationAmt</Input>            
+            <Input>/Temporary/IRS8962/IsThereRepaymentDue</Input>
+        </Inputs>
+        <Aliases>
+            <Alias>/Return/ReturnData/IRS1040/PremiumTaxCreditTaxLiabAmt</Alias>
+        </Aliases>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfFalse>/Temporary/IRS8962/IsThereRepaymentDue</BlankIfFalse>
+                <Gist>
+                    <Cap>
+                        <Value>/Return/ReturnData/IRS8962/ExcessAdvncPaymentAmt</Value>
+                        <Cap>/Return/ReturnData/IRS8962/AdditionalTaxLimitationAmt</Cap>
+                        <ValueType>repayment</ValueType>
+                    </Cap>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    
+    <!-- line 28 -->
+    <Node name="/Return/ReturnData/IRS8962/AdditionalTaxLimitationAmt">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</Input>
+            <Input>/Return/ReturnData/IRS8962/FederalPovertyLevelPct</Input>
+            <Input>/Constants/IRS8962/AdditionalTaxLimitationTable</Input>            
+            <Input>/Temporary/IRS8962/IsThereRepaymentDue</Input>
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfFalse>/Temporary/IRS8962/IsThereRepaymentDue</BlankIfFalse>
+                <Gist>
+                    <ACAAdditionalTaxLimitationAmt>
+                        <FilingStatus>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</FilingStatus>
+                        <PovertyLevelPct>/Return/ReturnData/IRS8962/FederalPovertyLevelPct</PovertyLevelPct>
+                        <AdditionalTaxLimitationTable>/Constants/IRS8962/AdditionalTaxLimitationTable</AdditionalTaxLimitationTable>
+                    </ACAAdditionalTaxLimitationAmt>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+
+    <!-- determines if there is a repayment due.  We need to use a constant of 0 and a raw difference to do this
+         since there is a possibility that line 24 or line 25 might be blank.  IsThereRepaymentDue cannot be blank,
+         so we can't directly use the threshold gists here.-->
+    <Node name="/Temporary/IRS8962/IsThereRepaymentDue">
+        <Inputs>
+            <Input>/Temporary/IRS8962/RawExcessAdvancedPayment</Input>
+            <Input>/Constants/Zero</Input>
+        </Inputs>
+        <Gist>
+            <AboveThreshold>
+                <Value>/Temporary/IRS8962/RawExcessAdvancedPayment</Value>
+                <Threshold>/Constants/Zero</Threshold>
+            </AboveThreshold>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/RawExcessAdvancedPayment">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8962/TotalAdvancedPTCAmt</Input>
+            <Input>/Return/ReturnData/IRS8962/TotalPremiumTaxCreditAmt</Input>            
+        </Inputs>
+        <Gist>
+            <Difference>
+                <Left>/Return/ReturnData/IRS8962/TotalAdvancedPTCAmt</Left>
+                <Right>/Return/ReturnData/IRS8962/TotalPremiumTaxCreditAmt</Right>
+            </Difference>
+        </Gist>
+    </Node>
+    
+    <!-- line 27 -->
+    <Node name="/Return/ReturnData/IRS8962/ExcessAdvncPaymentAmt">
+        <Inputs>            
+            <Input>/Return/ReturnData/IRS8962/TotalAdvancedPTCAmt</Input>
+            <Input>/Return/ReturnData/IRS8962/TotalPremiumTaxCreditAmt</Input>
+            <Input>/Temporary/IRS8962/IsThereRepaymentDue</Input>
+        </Inputs>
+        <Gist>            
+            <BlankIfApplicable>
+                <BlankIfFalse>/Temporary/IRS8962/IsThereRepaymentDue</BlankIfFalse>
+                <Gist>
+                    <ExcessAmt>
+                        <Value>/Return/ReturnData/IRS8962/TotalAdvancedPTCAmt</Value>
+                        <Threshold>/Return/ReturnData/IRS8962/TotalPremiumTaxCreditAmt</Threshold>
+                        <ValueType>credit</ValueType>
+                    </ExcessAmt>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+
+    <!-- line 25 -->
+    <Node name="/Return/ReturnData/IRS8962/TotalAdvancedPTCAmt">
+        <Inputs>            
+            <Input>/Temporary/IRS8962/CalculationTypeChoice</Input>
+            <Input>/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualAdvancedPTCAmt</Input>
+            <Input>/Temporary/IRS8962/TotalAllocatedMonthlyAdvancedPTCAmt</Input>
+        </Inputs>
+        <Gist>        
+            <NumericChoice>
+                <Choice>/Temporary/IRS8962/CalculationTypeChoice</Choice>
+                <Possibility>/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualAdvancedPTCAmt</Possibility>
+                <Possibility>/Temporary/IRS8962/TotalAllocatedMonthlyAdvancedPTCAmt</Possibility>
+                <ChoiceMapping>
+                    <Option>
+                        <Value>ALTERNATE</Value>
+                        <ID>/Temporary/IRS8962/TotalAllocatedMonthlyAdvancedPTCAmt</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_ALLOCATIONS_ALT_IS_WORSE</Value>
+                        <ID>/Temporary/IRS8962/TotalAllocatedMonthlyAdvancedPTCAmt</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095A_ALT_IS_WORSE</Value>
+                        <ID>/Temporary/IRS8962/TotalAllocatedMonthlyAdvancedPTCAmt</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095C_OFFER_OF_COVERAGE_ALT_IS_WORSE</Value>
+                        <ID>/Temporary/IRS8962/TotalAllocatedMonthlyAdvancedPTCAmt</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>ANNUAL_ALT_IS_WORSE</Value>
+                        <ID>/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualAdvancedPTCAmt</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>                    
+                    <Option>
+                        <Value>MONTHLY_ALLOCATIONS</Value>
+                        <ID>/Temporary/IRS8962/TotalAllocatedMonthlyAdvancedPTCAmt</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095A</Value>
+                        <ID>/Temporary/IRS8962/TotalAllocatedMonthlyAdvancedPTCAmt</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095C_OFFER_OF_COVERAGE</Value>
+                        <ID>/Temporary/IRS8962/TotalAllocatedMonthlyAdvancedPTCAmt</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>ANNUAL</Value>
+                        <ID>/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualAdvancedPTCAmt</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>    
+                    <Option>
+                        <Value></Value>
+                        <ID>/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualAdvancedPTCAmt</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>    
+                </ChoiceMapping>
+            </NumericChoice>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualAdvancedPTCAmt">
+        <Inputs>            
+            <Input>/Return/ReturnData/IRS1095A/TotalAdvancedPTCAmtPP</Input>
+            <Input>/Temporary/IRS8962/NotUsingAnnualCalculation</Input>
+        </Inputs>
+        <Gist>  
+            <BlankIfApplicable>
+                <BlankIfTrue>/Temporary/IRS8962/NotUsingAnnualCalculation</BlankIfTrue>
+                <Gist>
+                    <MultiCopyAccumulation>
+                        <Type>credit</Type>
+                        <Value>/Return/ReturnData/IRS1095A/TotalAdvancedPTCAmtPP</Value>
+                    </MultiCopyAccumulation>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+
+    
+    <!-- this sums the allocated monthly advanced PTC for each month to get a value for the whole year -->
+    <Node name="/Temporary/IRS8962/TotalAllocatedMonthlyAdvancedPTCAmt">
+        <Inputs>            
+            <Input>/Temporary/IRS8962/AllocatedMonthlyAdvancedPTCAmtPerMonth</Input>
+        </Inputs>
+        <Gist>            
+            <MultiCopyAccumulation>
+                <Type>credit</Type>
+                <Value>/Temporary/IRS8962/AllocatedMonthlyAdvancedPTCAmtPerMonth</Value>
+            </MultiCopyAccumulation>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <!-- this sums the values across each 1095A for each month.  It runs 12 times, once per month -->
+    <Node name="/Temporary/IRS8962/AllocatedMonthlyAdvancedPTCAmtPerMonth">
+        <Inputs>            
+            <Input>/Temporary/IRS8962/AllocatedMonthlyAdvancedPTCAmt</Input>
+        </Inputs>
+        <Gist>        
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AllocatedMonthlyAdvancedPTCAmt</List>
+                <Gist>
+                    <MultiCopyAccumulation>
+                        <Type>credit</Type>
+                        <Value>/Temporary/IRS8962/AllocatedMonthlyAdvancedPTCAmt</Value>
+                    </MultiCopyAccumulation>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AllocatedMonthlyAdvancedPTCAmt">
+        <Inputs>            
+            <Input>/Temporary/IRS8962/MonthlyAdvancedPTCAmt</Input>
+            <Input>/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp/(PolicyNum | StartMonthNumberCd | EndMonthNumberCd | MonthlyAdvancedPTCPct)</Input>
+            <Input>/Return/ReturnData/IRS1095A/MarketAssignedPolicyNumberPP</Input>
+        </Inputs>
+        <Gist>        
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/MonthlyAdvancedPTCAmt</List>
+                <Gist>
+                    <ACA1095AAllocation>
+                        <Values>/Temporary/IRS8962/MonthlyAdvancedPTCAmt</Values>
+                        <Allocations>/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp/(PolicyNum | StartMonthNumberCd | EndMonthNumberCd | MonthlyAdvancedPTCPct)</Allocations>
+                        <PolicyNumbers>/Return/ReturnData/IRS1095A/MarketAssignedPolicyNumberPP</PolicyNumbers>
+                        <Month>/MultiCopyMapper/MultiCopy</Month>
+                        <ValueName>MonthlyAdvancedPTCPct</ValueName>
+                    </ACA1095AAllocation>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><MultiCopy><Dollars/></MultiCopy></MultiCopy></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/MonthlyAdvancedPTCAmt">
+        <Inputs>            
+            <Input>/Return/ReturnData/IRS1095A/(MonthlyPTCInformationGrpPP/(MonthCdPP | MonthlyAdvancedPTCAmtPP))</Input>
+        </Inputs>
+        <Gist>                
+            <ACAFilter1095AMonthlyValues>
+                <Data>/Return/ReturnData/IRS1095A/(MonthlyPTCInformationGrpPP/(MonthCdPP | MonthlyAdvancedPTCAmtPP))</Data>
+                <ValueName>MonthlyAdvancedPTCAmtPP</ValueName>
+            </ACAFilter1095AMonthlyValues>    
+        </Gist>
+        <RoundTo><MultiCopy><MultiCopy><Dollars/></MultiCopy></MultiCopy></RoundTo>
+    </Node>
+    
+    <!-- line 26 -->
+    <Node name="/Return/ReturnData/IRS8962/ReconciledPremiumTaxCreditAmt">
+        <Inputs>            
+            <Input>/Return/ReturnData/IRS8962/TotalAdvancedPTCAmt</Input>
+            <Input>/Return/ReturnData/IRS8962/TotalPremiumTaxCreditAmt</Input>
+            <Input>/Temporary/IRS8962/CalculationTypeChoice</Input>
+        </Inputs>
+        <Aliases>
+            <Alias>/Return/ReturnData/IRS1040/ReconciledPremiumTaxCreditAmt</Alias>
+        </Aliases>
+        <Gist>  
+            <ACAPTCTrueUp>
+                <PTCReceived>/Return/ReturnData/IRS8962/TotalAdvancedPTCAmt</PTCReceived>
+                <PTCEligible>/Return/ReturnData/IRS8962/TotalPremiumTaxCreditAmt</PTCEligible>
+                <CalculationType>/Temporary/IRS8962/CalculationTypeChoice</CalculationType>
+                <LeaveBlankIfNegative>true</LeaveBlankIfNegative>
+            </ACAPTCTrueUp>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <!-- line 24 -->
+    <Node name="/Return/ReturnData/IRS8962/TotalPremiumTaxCreditAmt">
+        <Inputs>            
+            <Input>/Temporary/IRS8962/CalculationTypeChoice</Input>
+            <Input>/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualPremiumTaxCreditAllwAmt</Input>
+            <Input>/Temporary/IRS8962/TotalMonthlyPremiumTaxCreditAllwAmt</Input>
+            <Input>/Temporary/IRS8962/TotalAltMonthlyPremiumTaxCreditAllwAmt</Input>
+        </Inputs>
+        <Gist>     
+            <NumericChoice>
+                <Choice>/Temporary/IRS8962/CalculationTypeChoice</Choice>
+                <Possibility>/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualPremiumTaxCreditAllwAmt</Possibility>
+                <Possibility>/Temporary/IRS8962/TotalMonthlyPremiumTaxCreditAllwAmt</Possibility>
+                <Possibility>/Temporary/IRS8962/TotalAltMonthlyPremiumTaxCreditAllwAmt</Possibility>
+                <ChoiceMapping>
+                    <Option>
+                        <Value>ALTERNATE</Value>
+                        <ID>/Temporary/IRS8962/TotalAltMonthlyPremiumTaxCreditAllwAmt</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_ALLOCATIONS_ALT_IS_WORSE</Value>
+                        <ID>/Temporary/IRS8962/TotalMonthlyPremiumTaxCreditAllwAmt</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095A_ALT_IS_WORSE</Value>
+                        <ID>/Temporary/IRS8962/TotalMonthlyPremiumTaxCreditAllwAmt</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095C_OFFER_OF_COVERAGE_ALT_IS_WORSE</Value>
+                        <ID>/Temporary/IRS8962/TotalMonthlyPremiumTaxCreditAllwAmt</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>ANNUAL_ALT_IS_WORSE</Value>
+                        <ID>/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualPremiumTaxCreditAllwAmt</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>                    
+                    <Option>
+                        <Value>MONTHLY_ALLOCATIONS</Value>
+                        <ID>/Temporary/IRS8962/TotalMonthlyPremiumTaxCreditAllwAmt</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095A</Value>
+                        <ID>/Temporary/IRS8962/TotalMonthlyPremiumTaxCreditAllwAmt</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095C_OFFER_OF_COVERAGE</Value>
+                        <ID>/Temporary/IRS8962/TotalMonthlyPremiumTaxCreditAllwAmt</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>ANNUAL</Value>
+                        <ID>/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualPremiumTaxCreditAllwAmt</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>   
+                    <Option>
+                        <Value></Value>
+                        <ID>/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualPremiumTaxCreditAllwAmt</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>   
+                </ChoiceMapping>
+            </NumericChoice>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    
+    <Node name="/Temporary/IRS8962/TotalMonthlyPremiumTaxCreditAllwAmt">
+        <Inputs>  
+            <Input>/Temporary/IRS8962/MonthlyPremiumTaxCreditAllwAmt</Input>
+        </Inputs>
+        <Gist>  
+            <MultiCopyAccumulation>
+                <Type>credit</Type>
+                <Value>/Temporary/IRS8962/MonthlyPremiumTaxCreditAllwAmt</Value>
+            </MultiCopyAccumulation>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    
+    <Node name="/Temporary/IRS8962/TotalAltMonthlyPremiumTaxCreditAllwAmt">
+        <Inputs>    
+            <Input>/Temporary/IRS8962/AltMonthlyPremiumTaxCreditAllwAmt</Input>
+        </Inputs>
+        <Gist>            
+            <MultiCopyAccumulation>
+                <Type>credit</Type>
+                <Value>/Temporary/IRS8962/AltMonthlyPremiumTaxCreditAllwAmt</Value>
+            </MultiCopyAccumulation>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <!-- here we create a blank multicopy list to route into the CalculationTypeChoice.
+        We no longer want to consider offers of coverage when determining the calculation type.  But the gist requires
+        a multicopy list of 1095C data (since at one point we thought this was important for the gist.  So we create a blank multicopy list to use as that input.
+        We create one using an input that is already used in the CalculationTypeChoice so that the dependency graph still looks correct.
+        We do not want to use a different multicopy value to blank out, since it would make the dependency graph think that the calculation type choice
+        depends on it when it really does not -->
+    <Node name="/Temporary/IRS8962/CalculationTypeChoice">
+        <Inputs>            
+            <Input>/Temporary/IRS8962/AltPrimaryFamilySize</Input>
+            <Input>/Return/ReturnData/IRS1095A/(MonthlyPTCInformationGrpPP/(MonthlyPlanPremiumAmtPP | MonthlyPremiumSLCSPAmtPP))</Input>
+            <Input>/Temporary/IRS8962/BlankMultiCopyForCalculationType</Input>
+            <Input>/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp/PolicyNum</Input>
+            <Input>/Temporary/IRS8962/MonthlyTrueUp</Input>
+            <Input>/Temporary/IRS8962/AltTrueUp</Input>
+        </Inputs>
+        <Gist> 
+            <ACAChooseCalculationType>
+                <PrimaryAltFamilySize>/Temporary/IRS8962/AltPrimaryFamilySize</PrimaryAltFamilySize>
+                <Monthly1095AData>/Return/ReturnData/IRS1095A/(MonthlyPTCInformationGrpPP/(MonthlyPlanPremiumAmtPP | MonthlyPremiumSLCSPAmtPP))</Monthly1095AData>
+                <MonthlyOfferOfCoverageData>/Temporary/IRS8962/BlankMultiCopyForCalculationType</MonthlyOfferOfCoverageData>
+                <AllocationPolicyNumbers>/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp/PolicyNum</AllocationPolicyNumbers>
+                <MonthlyTrueUp>/Temporary/IRS8962/MonthlyTrueUp</MonthlyTrueUp>
+                <AltTrueUp>/Temporary/IRS8962/AltTrueUp</AltTrueUp>
+            </ACAChooseCalculationType>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/BlankMultiCopyForCalculationType">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp/PolicyNum</Input>
+            <Input>/Constants/True</Input>
+            <Input>/Constants/False</Input>
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Constants/True</BlankIfTrue>
+                <Gist>
+                    <MultiCopyChoice>
+                        <Choice>/Constants/False</Choice>
+                        <Possibility>/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp/PolicyNum</Possibility>
+                        <ChoiceMapping>
+                            <Option>
+                                <Value>false</Value>
+                                <ID>/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp/PolicyNum</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value></Value>
+                                <ID>/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp/PolicyNum</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                        </ChoiceMapping>
+                    </MultiCopyChoice>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+    </Node>
+    
+    
+    <Node name="/Temporary/IRS8962/MonthlyTrueUp">
+        <Inputs>            
+            <Input>/Temporary/IRS8962/TotalAllocatedMonthlyAdvancedPTCAmt</Input>
+            <Input>/Temporary/IRS8962/TotalMonthlyPremiumTaxCreditAllwAmt</Input>
+            <Input>/Constants/IRS8962/MonthlyVarying1095AAltIsWorseCalculationType</Input>                
+        </Inputs>
+        <Gist>      
+            <ACAPTCTrueUp>
+                <PTCReceived>/Temporary/IRS8962/TotalAllocatedMonthlyAdvancedPTCAmt</PTCReceived>
+                <PTCEligible>/Temporary/IRS8962/TotalMonthlyPremiumTaxCreditAllwAmt</PTCEligible>
+                <!-- any monthly calculation type will do -->
+                <CalculationType>/Constants/IRS8962/MonthlyVarying1095AAltIsWorseCalculationType</CalculationType>                
+                <LeaveBlankIfNegative>false</LeaveBlankIfNegative>
+            </ACAPTCTrueUp>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    
+    <Node name="/Temporary/IRS8962/AltTrueUp">
+        <Inputs>            
+            <Input>/Temporary/IRS8962/TotalAllocatedMonthlyAdvancedPTCAmt</Input>
+            <Input>/Temporary/IRS8962/TotalAltMonthlyPremiumTaxCreditAllwAmt</Input>
+            <Input>/Constants/IRS8962/AlternateCalculationType</Input>                
+        </Inputs>
+        <Gist>            
+            <ACAPTCTrueUp>
+                <PTCReceived>/Temporary/IRS8962/TotalAllocatedMonthlyAdvancedPTCAmt</PTCReceived>
+                <PTCEligible>/Temporary/IRS8962/TotalAltMonthlyPremiumTaxCreditAllwAmt</PTCEligible>
+                <CalculationType>/Constants/IRS8962/AlternateCalculationType</CalculationType>                
+                <LeaveBlankIfNegative>false</LeaveBlankIfNegative>
+            </ACAPTCTrueUp>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltPrimaryHasPoliciesBeforeMarriageAndUsingAlternateCalculation">
+        <Inputs>
+            <Input>/Temporary/IRS8962/UsingAlternateCalculation</Input>
+            <Input>/Temporary/IRS8962/AltPrimaryHadAMonthWithCoverageBeforeMarriage</Input>            
+        </Inputs>
+        <Gist>
+            <AllConditionsTrue>
+                <Condition>/Temporary/IRS8962/UsingAlternateCalculation</Condition>
+                <Condition>/Temporary/IRS8962/AltPrimaryHadAMonthWithCoverageBeforeMarriage</Condition>
+            </AllConditionsTrue>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltPrimaryHadAMonthWithCoverageBeforeMarriage">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltPrimaryHas1095ABeforeMarriagePerMonth</Input>        
+        </Inputs>
+        <Gist>
+            <MultiCopyAtLeastOneConditionTrue>
+                <Value>/Temporary/IRS8962/AltPrimaryHas1095ABeforeMarriagePerMonth</Value>
+            </MultiCopyAtLeastOneConditionTrue>
+        </Gist>
+    </Node>
+    
+    
+    <!-- If we are using the alternate calculation, copy the proper values into the AltCalcForMarriagePrimaryGrp -->
+    <Node name="/Return/ReturnData/IRS8962/AltCalcForMarriagePrimaryGrp/FamilySizeCnt">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltPrimaryHasPoliciesBeforeMarriageAndUsingAlternateCalculation</Input>
+            <Input>/Temporary/IRS8962/AltPrimaryFamilySize</Input>
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfFalse>/Temporary/IRS8962/AltPrimaryHasPoliciesBeforeMarriageAndUsingAlternateCalculation</BlankIfFalse>
+                <Gist>
+                    <NumericCopy>
+                        <Value>/Temporary/IRS8962/AltPrimaryFamilySize</Value>
+                    </NumericCopy>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS8962/AltCalcForMarriagePrimaryGrp/MonthlyContributionAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltPrimaryHasPoliciesBeforeMarriageAndUsingAlternateCalculation</Input>
+            <Input>/Temporary/IRS8962/AltPrimaryMonthlyContriHealthCareCvrAmt</Input>
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfFalse>/Temporary/IRS8962/AltPrimaryHasPoliciesBeforeMarriageAndUsingAlternateCalculation</BlankIfFalse>
+                <Gist>
+                    <NumericCopy>
+                        <Value>/Temporary/IRS8962/AltPrimaryMonthlyContriHealthCareCvrAmt</Value>
+                    </NumericCopy>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+   
+    
+  
+    
+    
+    <!-- If we are using the alternate calculation, copy the proper values into the AltCalcForMarriageSpouseGrp -->
+    <Node name="/Temporary/IRS8962/AltSpouseHasPoliciesBeforeMarriageAndUsingAlternateCalculation">
+        <Inputs>
+            <Input>/Temporary/IRS8962/UsingAlternateCalculation</Input>
+            <Input>/Temporary/IRS8962/AltSpouseHadAMonthWithCoverageBeforeMarriage</Input>            
+        </Inputs>
+        <Gist>
+            <AllConditionsTrue>
+                <Condition>/Temporary/IRS8962/UsingAlternateCalculation</Condition>
+                <Condition>/Temporary/IRS8962/AltSpouseHadAMonthWithCoverageBeforeMarriage</Condition>
+            </AllConditionsTrue>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltSpouseHadAMonthWithCoverageBeforeMarriage">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltSpouseHas1095ABeforeMarriagePerMonth</Input>        
+        </Inputs>
+        <Gist>
+            <MultiCopyAtLeastOneConditionTrue>
+                <Value>/Temporary/IRS8962/AltSpouseHas1095ABeforeMarriagePerMonth</Value>
+            </MultiCopyAtLeastOneConditionTrue>
+        </Gist>
+    </Node>
+    
+    
+    
+    <Node name="/Return/ReturnData/IRS8962/AltCalcForMarriageSpouseGrp/FamilySizeCnt">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltSpouseHasPoliciesBeforeMarriageAndUsingAlternateCalculation</Input>
+            <Input>/Temporary/IRS8962/AltSpouseFamilySize</Input>
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfFalse>/Temporary/IRS8962/AltSpouseHasPoliciesBeforeMarriageAndUsingAlternateCalculation</BlankIfFalse>
+                <Gist>
+                    <NumericCopy>
+                        <Value>/Temporary/IRS8962/AltSpouseFamilySize</Value>
+                    </NumericCopy>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS8962/AltCalcForMarriageSpouseGrp/MonthlyContributionAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltSpouseHasPoliciesBeforeMarriageAndUsingAlternateCalculation</Input>
+            <Input>/Temporary/IRS8962/AltSpouseMonthlyContriHealthCareCvrAmt</Input>
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfFalse>/Temporary/IRS8962/AltSpouseHasPoliciesBeforeMarriageAndUsingAlternateCalculation</BlankIfFalse>
+                <Gist>
+                    <NumericCopy>
+                        <Value>/Temporary/IRS8962/AltSpouseMonthlyContriHealthCareCvrAmt</Value>
+                    </NumericCopy>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/UsingAlternateCalculation">
+        <Inputs>
+            <Input>/Temporary/IRS8962/CalculationTypeChoice</Input>
+            <Input>/Constants/True</Input>
+            <Input>/Constants/False</Input>
+        </Inputs>
+        <Gist>
+            <BooleanChoice>
+                <Choice>/Temporary/IRS8962/CalculationTypeChoice</Choice>
+                <Possibility>/Constants/True</Possibility>
+                <Possibility>/Constants/False</Possibility>
+                <ChoiceMapping>
+                    <Option>
+                        <Value>ALTERNATE</Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_ALLOCATIONS_ALT_IS_WORSE</Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095A_ALT_IS_WORSE</Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095C_OFFER_OF_COVERAGE_ALT_IS_WORSE</Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>ANNUAL_ALT_IS_WORSE</Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>                    
+                    <Option>
+                        <Value>MONTHLY_ALLOCATIONS</Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095A</Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095C_OFFER_OF_COVERAGE</Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>ANNUAL</Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>      
+                    <Option>
+                        <Value></Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>     
+                </ChoiceMapping>
+            </BooleanChoice>
+        </Gist>
+    </Node>
+    
+    <!-- line 9 -->
+    <Node name="/Return/ReturnData/IRS8962/SharePolicyMarriedAltCalcInd">
+        <Inputs>
+            <Input>/Temporary/IRS8962/CalculationTypeChoice</Input>
+            <Input>/Constants/True</Input>
+            <Input>/Constants/False</Input>
+        </Inputs>
+        <Gist>
+            <BooleanChoice>
+                <Choice>/Temporary/IRS8962/CalculationTypeChoice</Choice>
+                <Possibility>/Constants/True</Possibility>
+                <Possibility>/Constants/False</Possibility>
+                <ChoiceMapping>
+                    <Option>
+                        <Value>ALTERNATE</Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_ALLOCATIONS_ALT_IS_WORSE</Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095A_ALT_IS_WORSE</Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095C_OFFER_OF_COVERAGE_ALT_IS_WORSE</Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>ANNUAL_ALT_IS_WORSE</Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>                    
+                    <Option>
+                        <Value>MONTHLY_ALLOCATIONS</Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095A</Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095C_OFFER_OF_COVERAGE</Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>ANNUAL</Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>  
+                    <Option>
+                        <Value></Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>  
+                </ChoiceMapping>
+            </BooleanChoice>
+        </Gist>
+    </Node>
+    
+    <!-- line 10 -->
+    <Node name="/Return/ReturnData/IRS8962/Form1095ASameMonthlyAmtInd">
+        <Inputs>
+            <Input>/Temporary/IRS8962/CalculationTypeChoice</Input>
+            <Input>/Temporary/BlankBoolean</Input>
+            <Input>/Constants/True</Input>
+            <Input>/Constants/False</Input>
+        </Inputs>
+        <Gist>
+            <BooleanChoice>
+                <Choice>/Temporary/IRS8962/CalculationTypeChoice</Choice>
+                <Possibility>/Temporary/BlankBoolean</Possibility>
+                <Possibility>/Constants/True</Possibility>
+                <Possibility>/Constants/False</Possibility>
+                <ChoiceMapping>
+                    <Option>
+                        <Value>ALTERNATE</Value>
+                        <ID>/Temporary/BlankBoolean</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_ALLOCATIONS_ALT_IS_WORSE</Value>
+                        <ID>/Temporary/BlankBoolean</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095A_ALT_IS_WORSE</Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095C_OFFER_OF_COVERAGE_ALT_IS_WORSE</Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>ANNUAL_ALT_IS_WORSE</Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>                    
+                    <Option>
+                        <Value>MONTHLY_ALLOCATIONS</Value>
+                        <ID>/Temporary/BlankBoolean</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095A</Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095C_OFFER_OF_COVERAGE</Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>ANNUAL</Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>    
+                    <Option>
+                        <Value></Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>    
+                </ChoiceMapping>
+            </BooleanChoice>
+        </Gist>
+    </Node>
+    
+    <!-- this is a simple way to get a blank boolean that is needed in the above choices -->
+    <Node name="/Temporary/BlankBoolean">
+        <Inputs>
+            <Input>/Constants/True</Input>
+            <Input>/Constants/False</Input>
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfFalse>/Constants/False</BlankIfFalse>
+                <Gist>
+                    <BooleanCopy>
+                        <Value>/Constants/True</Value>
+                    </BooleanCopy>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+    </Node>
+    
+    
+    <!-- 8962 Alternative Calculation for Marriage Eligibility Worksheet lines 1-12 -->    
+    <Node name="/Return/ReturnData/IRS8962/AltCalcForMarriageEligibilityWksPP/AltCalcForMarriageEligibilityGrpPP/MonthlyAltCalcForMarriageEligibilityPP">
+        <Inputs>
+            <Input>/Temporary/IRS8962/TotalMonthlyPlanPremiumAmt</Input>
+            <Input>/Temporary/IRS8962/TotalMonthlyPremiumSLCSPAmt</Input>
+            <Input>/Temporary/IRS8962/MonthlyContributionAmt</Input>
+            <Input>/Temporary/IRS8962/MonthlyMaxPremiumAssistanceAmt</Input>
+            <Input>/Temporary/IRS8962/MonthlyPremiumTaxCreditAllwAmt</Input>
+            <Input>/Temporary/IRS8962/AllocatedMonthlyAdvancedPTCAmtPerMonth</Input>
+            <Input>/Temporary/IRS8962/AlternateIsPossible</Input>
+        </Inputs>
+        <MultiCopyOutputElements>
+            <Element>MonthCdPP</Element>
+            <Element>MonthlyPremiumAmtPP</Element>
+            <Element>MonthlyPremiumSLCSPAmtPP</Element>
+            <Element>MonthlyContributionAmtPP</Element>
+            <Element>MonthlyMaxPremiumAssistanceAmtPP</Element>
+            <Element>MonthlyPremiumTaxCreditAllwAmtPP</Element>
+            <Element>MonthlyAdvancedPTCAmtPP</Element>
+        </MultiCopyOutputElements>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfFalse>/Temporary/IRS8962/AlternateIsPossible</BlankIfFalse>
+                <Gist>
+                    <MultiCopyCombiner>
+                        <MultiCopyValue>/Temporary/IRS8962/TotalMonthlyPlanPremiumAmt</MultiCopyValue>
+                        <MultiCopyValue>/Temporary/IRS8962/TotalMonthlyPremiumSLCSPAmt</MultiCopyValue>
+                        <MultiCopyValue>/Temporary/IRS8962/MonthlyContributionAmt</MultiCopyValue>
+                        <MultiCopyValue>/Temporary/IRS8962/MonthlyMaxPremiumAssistanceAmt</MultiCopyValue>
+                        <MultiCopyValue>/Temporary/IRS8962/MonthlyPremiumTaxCreditAllwAmt</MultiCopyValue>
+                        <MultiCopyValue>/Temporary/IRS8962/AllocatedMonthlyAdvancedPTCAmtPerMonth</MultiCopyValue>
+                        <Config>
+                            <Elements>
+                                <Element>
+                                    <ID>/MultiCopyCombiner/MultiCopyID</ID>
+                                    <Name>MonthCdPP</Name>
+                                </Element>
+                                <Element>
+                                    <ID>/Temporary/IRS8962/TotalMonthlyPlanPremiumAmt</ID>
+                                    <Name>MonthlyPremiumAmtPP</Name>
+                                </Element>
+                                <Element>
+                                    <ID>/Temporary/IRS8962/TotalMonthlyPremiumSLCSPAmt</ID>
+                                    <Name>MonthlyPremiumSLCSPAmtPP</Name>
+                                </Element>
+                                <Element>
+                                    <ID>/Temporary/IRS8962/MonthlyContributionAmt</ID>
+                                    <Name>MonthlyContributionAmtPP</Name>
+                                </Element>
+                                <Element>
+                                    <ID>/Temporary/IRS8962/MonthlyMaxPremiumAssistanceAmt</ID>
+                                    <Name>MonthlyMaxPremiumAssistanceAmtPP</Name>
+                                </Element>
+                                <Element>
+                                    <ID>/Temporary/IRS8962/MonthlyPremiumTaxCreditAllwAmt</ID>
+                                    <Name>MonthlyPremiumTaxCreditAllwAmtPP</Name>
+                                </Element>
+                                <Element>
+                                    <ID>/Temporary/IRS8962/AllocatedMonthlyAdvancedPTCAmtPerMonth</ID>
+                                    <Name>MonthlyAdvancedPTCAmtPP</Name>
+                                </Element>
+                            </Elements>
+                        </Config>
+                    </MultiCopyCombiner>                    
+                </Gist>
+            </BlankIfApplicable>            
+        </Gist>
+        <RoundTo>
+            <MultiCopy>
+                <Struct>
+                    <Element>
+                        <Name>MonthlyPremiumAmtPP</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                    <Element>
+                        <Name>MonthlyPremiumSLCSPAmtPP</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                    <Element>
+                        <Name>MonthlyContributionAmtPP</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                    <Element>
+                        <Name>MonthlyMaxPremiumAssistanceAmtPP</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                    <Element>
+                        <Name>MonthlyPremiumTaxCreditAllwAmtPP</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                    <Element>
+                        <Name>MonthlyAdvancedPTCAmtPP</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                </Struct>
+            </MultiCopy>
+        </RoundTo> 
+    </Node>
+    
+    <!-- a node cannot use the same input value for multiple roles.  In this instance of ACAMonthlyPTCContributionForChoiceGrp, we 
+        don't need the Alt values.  But we need to make copies of dummy constants to pass in so that we don't pass the same constant twice -->
+    <Node name="/Temporary/IRS8962/MonthlyContributionAmt">
+        <Inputs>
+            <Input>/Constants/IRS8962/MonthlyVarying1095AAltIsWorseCalculationType</Input>
+            <Input>/Temporary/IRS8962/TotalMonthlyPlanPremiumAmt</Input>
+            <Input>/Temporary/IRS8962/TotalMonthlyPremiumSLCSPAmt</Input>
+            <Input>/Return/ReturnData/IRS8962/MonthlyContriHealthCareCvrAmt</Input>
+            <Input>/Constants/Zero</Input>
+            <Input>/Constants/MonthNumberCd/JanuaryMonthNumberCd</Input>
+            <Input>/Temporary/IRS8962/CopyOfJanuaryMonthNumberCd1</Input>
+            <Input>/Temporary/IRS8962/CopyOfZero1</Input>
+            <Input>/Temporary/IRS8962/CopyOfJanuaryMonthNumberCd2</Input>
+            <Input>/Temporary/IRS8962/CopyOfJanuaryMonthNumberCd3</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/TotalMonthlyPlanPremiumAmt</List>
+                <List>/Temporary/IRS8962/TotalMonthlyPremiumSLCSPAmt</List> 
+                <Gist>
+                    <ACAMonthlyPTCContributionForChoiceGrp>
+                        <Choice>/Constants/IRS8962/MonthlyVarying1095AAltIsWorseCalculationType</Choice>
+                        <MonthlyPremiumAmt>/Temporary/IRS8962/TotalMonthlyPlanPremiumAmt</MonthlyPremiumAmt>
+                        <MonthlyPremiumSLCSPAmt>/Temporary/IRS8962/TotalMonthlyPremiumSLCSPAmt</MonthlyPremiumSLCSPAmt>
+                        <MonthlyContribAmt>/Return/ReturnData/IRS8962/MonthlyContriHealthCareCvrAmt</MonthlyContribAmt>
+                        <AltPrimaryMonthlyContribAmt>/Constants/Zero</AltPrimaryMonthlyContribAmt>
+                        <AltPrimaryStartMonthNumberCd>/Constants/MonthNumberCd/JanuaryMonthNumberCd</AltPrimaryStartMonthNumberCd>
+                        <AltPrimaryEndMonthNumberCd>/Temporary/IRS8962/CopyOfJanuaryMonthNumberCd1</AltPrimaryEndMonthNumberCd>
+                        <AltSpouseMonthlyContribAmt>/Temporary/IRS8962/CopyOfZero1</AltSpouseMonthlyContribAmt>
+                        <AltSpouseStartMonthNumberCd>/Temporary/IRS8962/CopyOfJanuaryMonthNumberCd2</AltSpouseStartMonthNumberCd>
+                        <AltSpouseEndMonthNumberCd>/Temporary/IRS8962/CopyOfJanuaryMonthNumberCd3</AltSpouseEndMonthNumberCd>
+                        <Month>/MultiCopyMapper/MultiCopy</Month>
+                    </ACAMonthlyPTCContributionForChoiceGrp>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/CopyOfZero1">
+        <Inputs>
+            <Input>/Constants/Zero</Input>
+        </Inputs>
+        <Gist>
+            <NumericCopy>
+                <Value>/Constants/Zero</Value>
+            </NumericCopy>
+        </Gist>
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/CopyOfJanuaryMonthNumberCd1">
+        <Inputs>
+            <Input>/Constants/MonthNumberCd/JanuaryMonthNumberCd</Input>
+        </Inputs>
+        <Gist>
+            <StringCopy>
+                <Value>/Constants/MonthNumberCd/JanuaryMonthNumberCd</Value>
+            </StringCopy>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/CopyOfJanuaryMonthNumberCd2">
+        <Inputs>
+            <Input>/Constants/MonthNumberCd/JanuaryMonthNumberCd</Input>
+        </Inputs>
+        <Gist>
+            <StringCopy>
+                <Value>/Constants/MonthNumberCd/JanuaryMonthNumberCd</Value>
+            </StringCopy>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/CopyOfJanuaryMonthNumberCd3">
+        <Inputs>
+            <Input>/Constants/MonthNumberCd/JanuaryMonthNumberCd</Input>
+        </Inputs>
+        <Gist>
+            <StringCopy>
+                <Value>/Constants/MonthNumberCd/JanuaryMonthNumberCd</Value>
+            </StringCopy>
+        </Gist>
+    </Node>
+    
+    
+    <!-- 8962 Alternative Calculation for Marriage Eligibility Worksheet line 14 -->    
+    <Node name="/Return/ReturnData/IRS8962/AltCalcForMarriageEligibilityWksPP/EligibilityIndPP">
+        <Inputs>
+            <Input>/Temporary/IRS8962/TotalMonthlyPremiumTaxCreditAllwAmt</Input>
+            <Input>/Temporary/IRS8962/TotalAllocatedMonthlyAdvancedPTCAmt</Input>            
+            <Input>/Temporary/IRS8962/AlternateIsPossible</Input>
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfFalse>/Temporary/IRS8962/AlternateIsPossible</BlankIfFalse>
+                <Gist>
+                    <BelowThreshold>
+                        <Value>/Temporary/IRS8962/TotalMonthlyPremiumTaxCreditAllwAmt</Value>
+                        <Threshold>/Temporary/IRS8962/TotalAllocatedMonthlyAdvancedPTCAmt</Threshold>
+                    </BelowThreshold>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+    </Node>
+    
+    <!-- 8962 Alternative Calculation for Marriage Eligibility Worksheet line 13e -->
+    <Node name="/Return/ReturnData/IRS8962/AltCalcForMarriageEligibilityWksPP/TotalPremiumTaxCreditAmtPP">
+        <Inputs>
+            <Input>/Temporary/IRS8962/TotalMonthlyPremiumTaxCreditAllwAmt</Input>
+            <Input>/Temporary/IRS8962/AlternateIsPossible</Input>
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfFalse>/Temporary/IRS8962/AlternateIsPossible</BlankIfFalse>
+                <Gist>                    
+                    <NumericCopy>
+                        <Value>/Temporary/IRS8962/TotalMonthlyPremiumTaxCreditAllwAmt</Value>
+                    </NumericCopy>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>        
+    </Node>
+    
+    <!-- 8962 Alternative Calculation for Marriage Eligibility Worksheet line 13f -->    
+    <Node name="/Return/ReturnData/IRS8962/AltCalcForMarriageEligibilityWksPP/TotalAdvancedPTCAmtPP">
+        <Inputs>
+            <Input>/Temporary/IRS8962/TotalAllocatedMonthlyAdvancedPTCAmt</Input>
+            <Input>/Temporary/IRS8962/AlternateIsPossible</Input>
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfFalse>/Temporary/IRS8962/AlternateIsPossible</BlankIfFalse>
+                <Gist>                    
+                    <NumericCopy>
+                        <Value>/Temporary/IRS8962/TotalAllocatedMonthlyAdvancedPTCAmt</Value>
+                    </NumericCopy>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+        <RoundTo><Dollars/></RoundTo>        
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AlternateIsPossible">
+        <Inputs>
+            <Input>/Temporary/IRS8962/CalculationTypeChoice</Input>
+            <Input>/Constants/True</Input>
+            <Input>/Constants/False</Input>
+        </Inputs>
+        <Gist>
+            <BooleanChoice>
+                <Choice>/Temporary/IRS8962/CalculationTypeChoice</Choice>
+                <Possibility>/Constants/True</Possibility>
+                <Possibility>/Constants/False</Possibility>
+                <ChoiceMapping>
+                    <Option>
+                        <Value>ALTERNATE</Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_ALLOCATIONS_ALT_IS_WORSE</Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095A_ALT_IS_WORSE</Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095C_OFFER_OF_COVERAGE_ALT_IS_WORSE</Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>ANNUAL_ALT_IS_WORSE</Value>
+                        <ID>/Constants/True</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>                    
+                    <Option>
+                        <Value>MONTHLY_ALLOCATIONS</Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095A</Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095C_OFFER_OF_COVERAGE</Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>ANNUAL</Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>      
+                    <Option>
+                        <Value></Value>
+                        <ID>/Constants/False</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>     
+                </ChoiceMapping>
+            </BooleanChoice>
+        </Gist>
+    </Node>
+    
+    <!-- this is the final table of data to be filed on lines 12-23.
+         Either the standard monthly or the alternate monthly table is used,
+         unless the annual calculation is being used.  In that case a blank table is output.-->
+    <Node name="/Return/ReturnData/IRS8962/MonthlyPTCCalculationGrp">
+        <Inputs>
+            <Input>/Temporary/IRS8962/CalculationTypeChoice</Input>
+            <Input>/Temporary/IRS8962/MonthlyTable</Input>
+            <Input>/Temporary/IRS8962/AlternateTable</Input>
+            <Input>/Temporary/IRS8962/BlankMultiCopyForMonthlyPTCCalculationGrp</Input>
+        </Inputs>
+        <MultiCopyOutputElements>
+            <Element>MonthCd</Element>
+            <Element>MonthlyPremiumAmt</Element>
+            <Element>MonthlyPremiumSLCSPAmt</Element>
+            <Element>MonthlyContributionAmt</Element>
+            <Element>MonthlyMaxPremiumAssistanceAmt</Element>
+            <Element>MonthlyPremiumTaxCreditAllwAmt</Element>
+            <Element>MonthlyAdvancedPTCAmt</Element>
+        </MultiCopyOutputElements>
+        <Gist>
+            <MultiCopyChoice>
+                <Choice>/Temporary/IRS8962/CalculationTypeChoice</Choice>
+                <Possibility>/Temporary/IRS8962/MonthlyTable</Possibility>
+                <Possibility>/Temporary/IRS8962/AlternateTable</Possibility>
+                <Possibility>/Temporary/IRS8962/BlankMultiCopyForMonthlyPTCCalculationGrp</Possibility>
+                <ChoiceMapping>
+                    <Option>
+                        <Value>ALTERNATE</Value>
+                        <ID>/Temporary/IRS8962/AlternateTable</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_ALLOCATIONS_ALT_IS_WORSE</Value>
+                        <ID>/Temporary/IRS8962/MonthlyTable</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095A_ALT_IS_WORSE</Value>
+                        <ID>/Temporary/IRS8962/MonthlyTable</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095C_OFFER_OF_COVERAGE_ALT_IS_WORSE</Value>
+                        <ID>/Temporary/IRS8962/MonthlyTable</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>ANNUAL_ALT_IS_WORSE</Value>
+                        <ID>/Temporary/IRS8962/BlankMultiCopyForMonthlyPTCCalculationGrp</ID>
+                        <NoOtherOption>false</NoOtherOption>
+                    </Option>                    
+                    <Option>
+                        <Value>MONTHLY_ALLOCATIONS</Value>
+                        <ID>/Temporary/IRS8962/MonthlyTable</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095A</Value>
+                        <ID>/Temporary/IRS8962/MonthlyTable</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>MONTHLY_VARYING_1095C_OFFER_OF_COVERAGE</Value>
+                        <ID>/Temporary/IRS8962/MonthlyTable</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>ANNUAL</Value>
+                        <ID>/Temporary/IRS8962/BlankMultiCopyForMonthlyPTCCalculationGrp</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>                    
+                    <Option>
+                        <Value></Value>
+                        <ID>/Temporary/IRS8962/BlankMultiCopyForMonthlyPTCCalculationGrp</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>   
+                </ChoiceMapping>                
+            </MultiCopyChoice>
+        </Gist>        
+        <RoundTo>
+            <MultiCopy>
+                <Struct>
+                    <Element>
+                        <Name>MonthlyPremiumAmt</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                    <Element>
+                        <Name>MonthlyPremiumSLCSPAmt</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                    <Element>
+                        <Name>MonthlyContributionAmt</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                    <Element>
+                        <Name>MonthlyMaxPremiumAssistanceAmt</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                    <Element>
+                        <Name>MonthlyPremiumTaxCreditAllwAmt</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                    <Element>
+                        <Name>MonthlyAdvancedPTCAmt</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                </Struct>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/BlankMultiCopyForMonthlyPTCCalculationGrp">
+        <Inputs>
+            <Input>/Constants/True</Input>
+            <Input>/Constants/False</Input>
+            <Input>/Temporary/IRS8962/AlternateTable</Input>
+        </Inputs>
+        <MultiCopyOutputElements>
+        </MultiCopyOutputElements>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Constants/True</BlankIfTrue>
+                <Gist>
+                    <MultiCopyChoice>
+                        <Choice>/Constants/False</Choice>
+                        <Possibility>/Temporary/IRS8962/AlternateTable</Possibility>
+                        <ChoiceMapping>
+                            <Option>
+                                <Value>false</Value>
+                                <ID>/Temporary/IRS8962/AlternateTable</ID>
+                                <NoOtherOption>false</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value></Value>
+                                <ID>/Temporary/IRS8962/AlternateTable</ID>
+                                <NoOtherOption>false</NoOtherOption>
+                            </Option>
+                        </ChoiceMapping>
+                    </MultiCopyChoice>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AlternateTable">
+        <Inputs>
+            <Input>/Temporary/IRS8962/TotalMonthlyPlanPremiumAmt</Input>
+            <Input>/Temporary/IRS8962/TotalMonthlyPremiumSLCSPAmt</Input>
+            <Input>/Temporary/IRS8962/AltMonthlyContributionAmt</Input>
+            <Input>/Temporary/IRS8962/AltMonthlyMaxPremiumAssistanceAmt</Input>
+            <Input>/Temporary/IRS8962/AltMonthlyPremiumTaxCreditAllwAmt</Input>
+            <Input>/Temporary/IRS8962/AllocatedMonthlyAdvancedPTCAmtPerMonth</Input>            
+        </Inputs>
+        <MultiCopyOutputElements>
+            <Element>MonthCd</Element>
+            <Element>MonthlyPremiumAmt</Element>
+            <Element>MonthlyPremiumSLCSPAmt</Element>
+            <Element>MonthlyContributionAmt</Element>
+            <Element>MonthlyMaxPremiumAssistanceAmt</Element>
+            <Element>MonthlyPremiumTaxCreditAllwAmt</Element>
+            <Element>MonthlyAdvancedPTCAmt</Element>
+        </MultiCopyOutputElements>
+        <Gist>
+            <MultiCopyCombiner>
+                <MultiCopyValue>/Temporary/IRS8962/TotalMonthlyPlanPremiumAmt</MultiCopyValue>
+                <MultiCopyValue>/Temporary/IRS8962/TotalMonthlyPremiumSLCSPAmt</MultiCopyValue>
+                <MultiCopyValue>/Temporary/IRS8962/AltMonthlyContributionAmt</MultiCopyValue>
+                <MultiCopyValue>/Temporary/IRS8962/AltMonthlyMaxPremiumAssistanceAmt</MultiCopyValue>
+                <MultiCopyValue>/Temporary/IRS8962/AltMonthlyPremiumTaxCreditAllwAmt</MultiCopyValue>
+                <MultiCopyValue>/Temporary/IRS8962/AllocatedMonthlyAdvancedPTCAmtPerMonth</MultiCopyValue>
+                <Config>
+                    <Elements>
+                        <Element>
+                            <ID>/MultiCopyCombiner/MultiCopyID</ID>
+                            <Name>MonthCd</Name>
+                        </Element>
+                        <Element>
+                            <ID>/Temporary/IRS8962/TotalMonthlyPlanPremiumAmt</ID>
+                            <Name>MonthlyPremiumAmt</Name>
+                        </Element>
+                        <Element>
+                            <ID>/Temporary/IRS8962/TotalMonthlyPremiumSLCSPAmt</ID>
+                            <Name>MonthlyPremiumSLCSPAmt</Name>
+                        </Element>
+                        <Element>
+                            <ID>/Temporary/IRS8962/AltMonthlyContributionAmt</ID>
+                            <Name>MonthlyContributionAmt</Name>
+                        </Element>
+                        <Element>
+                            <ID>/Temporary/IRS8962/AltMonthlyMaxPremiumAssistanceAmt</ID>
+                            <Name>MonthlyMaxPremiumAssistanceAmt</Name>
+                        </Element>
+                        <Element>
+                            <ID>/Temporary/IRS8962/AltMonthlyPremiumTaxCreditAllwAmt</ID>
+                            <Name>MonthlyPremiumTaxCreditAllwAmt</Name>
+                        </Element>
+                        <Element>
+                            <ID>/Temporary/IRS8962/AllocatedMonthlyAdvancedPTCAmtPerMonth</ID>
+                            <Name>MonthlyAdvancedPTCAmt</Name>
+                        </Element>
+                    </Elements>
+                </Config>
+            </MultiCopyCombiner>            
+        </Gist>
+        <RoundTo>
+            <MultiCopy>
+                <Struct>
+                    <Element>
+                        <Name>MonthlyPremiumAmt</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                    <Element>
+                        <Name>MonthlyPremiumSLCSPAmt</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                    <Element>
+                        <Name>MonthlyContributionAmt</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                    <Element>
+                        <Name>MonthlyMaxPremiumAssistanceAmt</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                    <Element>
+                        <Name>MonthlyPremiumTaxCreditAllwAmt</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                    <Element>
+                        <Name>MonthlyAdvancedPTCAmt</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                </Struct>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+
+    <Node name="/Temporary/IRS8962/AltMonthlyContributionAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8962/MonthlyContributionAmt</Input>
+            <Input>/Temporary/IRS8962/AltCalculatedMonthlyContributionAmt</Input>
+            <Input>/Temporary/IRS8962/BlankAltCalculatedMonthlyContributionAmt</Input>
+            <Input>/Return/ReturnData/IRS8962/MonthOfMarriagePP</Input>
+            <Input>/Temporary/IRS8962/CopyOfMonthOfMarriage</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/MonthlyContributionAmt</List>
+                <Gist>
+                    <ACAAltPTC>
+                        <StandardPTC>/Temporary/IRS8962/MonthlyContributionAmt</StandardPTC>
+                        <AltPrimaryPTC>/Temporary/IRS8962/AltCalculatedMonthlyContributionAmt</AltPrimaryPTC>
+                        <AltSpousePTC>/Temporary/IRS8962/BlankAltCalculatedMonthlyContributionAmt</AltSpousePTC>
+                        <PrimaryEndMonthNumberCd>/Return/ReturnData/IRS8962/MonthOfMarriagePP</PrimaryEndMonthNumberCd>
+                        <SpouseEndMonthNumberCd>/Temporary/IRS8962/CopyOfMonthOfMarriage</SpouseEndMonthNumberCd>
+                        <Month>/MultiCopyMapper/MultiCopy</Month>
+                    </ACAAltPTC>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/CopyOfMonthOfMarriage">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8962/MonthOfMarriagePP</Input>
+        </Inputs>
+        <Gist>
+            <StringCopy>
+                <Value>/Return/ReturnData/IRS8962/MonthOfMarriagePP</Value>
+            </StringCopy>
+        </Gist>
+    </Node>
+    
+    
+    <Node name="/Temporary/IRS8962/AltCalculatedMonthlyContributionAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8962/TotalMonthlyPremiumSLCSPAmt</Input>
+            <Input>/Temporary/IRS8962/AltMonthlyMaxPremiumAssistanceAmt</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/TotalMonthlyPremiumSLCSPAmt</List>
+                <List>/Temporary/IRS8962/AltMonthlyMaxPremiumAssistanceAmt</List>
+                <Gist>
+                    <Difference>
+                        <Left>/Temporary/IRS8962/TotalMonthlyPremiumSLCSPAmt</Left>
+                        <Right>/Temporary/IRS8962/AltMonthlyMaxPremiumAssistanceAmt</Right>
+                    </Difference>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>
+    </Node>
+   
+    <Node name="/Temporary/IRS8962/BlankAltCalculatedMonthlyContributionAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltCalculatedMonthlyContributionAmt</Input>
+            <Input>/Temporary/IRS8962/BlankNumberForAltCalculatedMonthlyContributionAmt</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AltCalculatedMonthlyContributionAmt</List>
+                <Gist>
+                    <NumericCopy>
+                        <Value>/Temporary/IRS8962/BlankNumberForAltCalculatedMonthlyContributionAmt</Value>
+                    </NumericCopy>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/BlankNumberForAltCalculatedMonthlyContributionAmt">
+        <Inputs>
+            <Input>/Constants/One</Input>
+            <Input>/Constants/True</Input>
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Constants/True</BlankIfTrue>
+                <Gist>
+                    <NumericCopy>
+                        <Value>/Constants/One</Value>
+                    </NumericCopy>
+                </Gist>
+            </BlankIfApplicable>            
+        </Gist>
+    </Node>
+        
+    
+    <Node name="/Return/ReturnData/IRS8962/AltCalcForMarriagePrimaryGrp/StartMonthNumberCd">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltPrimaryHasPoliciesBeforeMarriageAndUsingAlternateCalculation</Input>
+            <Input>/Temporary/IRS8962/AltPrimaryStartMonthName</Input>
+            <Input>/Constants/MonthNumberCd/JanuaryMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/FebruaryMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/MarchMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/AprilMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/MayMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/JuneMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/JulyMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/AugustMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/SeptemberMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/OctoberMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/NovemberMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/DecemberMonthNumberCd</Input>
+            <Input>/Return/ReturnData/IRS8962/MonthOfMarriagePP</Input>
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfFalse>/Temporary/IRS8962/AltPrimaryHasPoliciesBeforeMarriageAndUsingAlternateCalculation</BlankIfFalse>
+                <Gist>
+                    <StringChoice>
+                        <Choice>/Temporary/IRS8962/AltPrimaryStartMonthName</Choice>
+                        <Possibility>/Constants/MonthNumberCd/JanuaryMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/FebruaryMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/MarchMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/AprilMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/MayMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/JuneMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/JulyMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/AugustMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/SeptemberMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/OctoberMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/NovemberMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/DecemberMonthNumberCd</Possibility>
+                        <Possibility>/Return/ReturnData/IRS8962/MonthOfMarriagePP</Possibility>
+                        <ChoiceMapping>
+                            <Option>
+                                <Value>JANUARY</Value>
+                                <ID>/Constants/MonthNumberCd/JanuaryMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>FEBRUARY</Value>
+                                <ID>/Constants/MonthNumberCd/FebruaryMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>MARCH</Value>
+                                <ID>/Constants/MonthNumberCd/MarchMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>APRIL</Value>
+                                <ID>/Constants/MonthNumberCd/AprilMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>MAY</Value>
+                                <ID>/Constants/MonthNumberCd/MayMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>JUNE</Value>
+                                <ID>/Constants/MonthNumberCd/JuneMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>JULY</Value>
+                                <ID>/Constants/MonthNumberCd/JulyMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>AUGUST</Value>
+                                <ID>/Constants/MonthNumberCd/AugustMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>SEPTEMBER</Value>
+                                <ID>/Constants/MonthNumberCd/SeptemberMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>OCTOBER</Value>
+                                <ID>/Constants/MonthNumberCd/OctoberMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>NOVEMBER</Value>
+                                <ID>/Constants/MonthNumberCd/NovemberMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>DECEMBER</Value>
+                                <ID>/Constants/MonthNumberCd/DecemberMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <DefaultOption>
+                                <ID>/Return/ReturnData/IRS8962/MonthOfMarriagePP</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </DefaultOption>
+                        </ChoiceMapping>
+                    </StringChoice>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltPrimaryStartMonthName">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltPrimaryMonthsWithCoverageNumbers</Input>
+        </Inputs>
+        <Gist>
+            <FindIDForMinValue>
+                <Values>/Temporary/IRS8962/AltPrimaryMonthsWithCoverageNumbers</Values>
+            </FindIDForMinValue>         
+        </Gist>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS8962/AltCalcForMarriagePrimaryGrp/EndMonthNumberCd">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltPrimaryHasPoliciesBeforeMarriageAndUsingAlternateCalculation</Input>
+            <Input>/Temporary/IRS8962/AltPrimaryEndMonthName</Input>
+            <Input>/Constants/MonthNumberCd/JanuaryMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/FebruaryMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/MarchMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/AprilMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/MayMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/JuneMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/JulyMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/AugustMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/SeptemberMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/OctoberMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/NovemberMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/DecemberMonthNumberCd</Input>
+            <Input>/Return/ReturnData/IRS8962/MonthOfMarriagePP</Input>
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfFalse>/Temporary/IRS8962/AltPrimaryHasPoliciesBeforeMarriageAndUsingAlternateCalculation</BlankIfFalse>
+                <Gist>
+                    <StringChoice>
+                        <Choice>/Temporary/IRS8962/AltPrimaryEndMonthName</Choice>
+                        <Possibility>/Constants/MonthNumberCd/JanuaryMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/FebruaryMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/MarchMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/AprilMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/MayMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/JuneMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/JulyMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/AugustMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/SeptemberMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/OctoberMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/NovemberMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/DecemberMonthNumberCd</Possibility>
+                        <Possibility>/Return/ReturnData/IRS8962/MonthOfMarriagePP</Possibility>
+                        <ChoiceMapping>
+                            <Option>
+                                <Value>JANUARY</Value>
+                                <ID>/Constants/MonthNumberCd/JanuaryMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>FEBRUARY</Value>
+                                <ID>/Constants/MonthNumberCd/FebruaryMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>MARCH</Value>
+                                <ID>/Constants/MonthNumberCd/MarchMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>APRIL</Value>
+                                <ID>/Constants/MonthNumberCd/AprilMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>MAY</Value>
+                                <ID>/Constants/MonthNumberCd/MayMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>JUNE</Value>
+                                <ID>/Constants/MonthNumberCd/JuneMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>JULY</Value>
+                                <ID>/Constants/MonthNumberCd/JulyMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>AUGUST</Value>
+                                <ID>/Constants/MonthNumberCd/AugustMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>SEPTEMBER</Value>
+                                <ID>/Constants/MonthNumberCd/SeptemberMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>OCTOBER</Value>
+                                <ID>/Constants/MonthNumberCd/OctoberMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>NOVEMBER</Value>
+                                <ID>/Constants/MonthNumberCd/NovemberMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>DECEMBER</Value>
+                                <ID>/Constants/MonthNumberCd/DecemberMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <DefaultOption>
+                                <ID>/Return/ReturnData/IRS8962/MonthOfMarriagePP</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </DefaultOption>
+                        </ChoiceMapping>
+                    </StringChoice>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltPrimaryEndMonthName">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltPrimaryMonthsWithCoverageNumbers</Input>
+        </Inputs>
+        <Gist>
+            <FindIDForMaxValue>
+                <Values>/Temporary/IRS8962/AltPrimaryMonthsWithCoverageNumbers</Values>
+            </FindIDForMaxValue>         
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltPrimaryMonthsWithCoverageNumbers">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltPrimaryMonthsWithCoverage</Input>
+            <Input>/Constants/One</Input>
+            <Input>/Constants/Two</Input>
+            <Input>/Constants/Three</Input>
+            <Input>/Constants/Four</Input>
+            <Input>/Constants/Five</Input>
+            <Input>/Constants/Six</Input>
+            <Input>/Constants/Seven</Input>
+            <Input>/Constants/Eight</Input>
+            <Input>/Constants/Nine</Input>
+            <Input>/Constants/Ten</Input>
+            <Input>/Constants/Eleven</Input>
+            <Input>/Constants/Twelve</Input>
+            <Input>/Temporary/IRS8962/BlankMonthNumber</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AltPrimaryMonthsWithCoverage</List>
+                <Gist>
+                    <NumericChoice>
+                        <Choice>/Temporary/IRS8962/AltPrimaryMonthsWithCoverage</Choice>
+                        <Possibility>/Constants/One</Possibility>
+                        <Possibility>/Constants/Two</Possibility>
+                        <Possibility>/Constants/Three</Possibility>
+                        <Possibility>/Constants/Four</Possibility>
+                        <Possibility>/Constants/Five</Possibility>
+                        <Possibility>/Constants/Six</Possibility>
+                        <Possibility>/Constants/Seven</Possibility>
+                        <Possibility>/Constants/Eight</Possibility>
+                        <Possibility>/Constants/Nine</Possibility>
+                        <Possibility>/Constants/Ten</Possibility>
+                        <Possibility>/Constants/Eleven</Possibility>
+                        <Possibility>/Constants/Twelve</Possibility>
+                        <Possibility>/Temporary/IRS8962/BlankMonthNumber</Possibility>
+                        <ChoiceMapping>
+                            <Option>
+                                <Value>JANUARY</Value>
+                                <ID>/Constants/One</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>FEBRUARY</Value>
+                                <ID>/Constants/Two</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>MARCH</Value>
+                                <ID>/Constants/Three</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>APRIL</Value>
+                                <ID>/Constants/Four</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>MAY</Value>
+                                <ID>/Constants/Five</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>JUNE</Value>
+                                <ID>/Constants/Six</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>JULY</Value>
+                                <ID>/Constants/Seven</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>AUGUST</Value>
+                                <ID>/Constants/Eight</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>SEPTEMBER</Value>
+                                <ID>/Constants/Nine</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>OCTOBER</Value>
+                                <ID>/Constants/Ten</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>NOVEMBER</Value>
+                                <ID>/Constants/Eleven</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>DECEMBER</Value>
+                                <ID>/Constants/Twelve</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <DefaultOption>
+                                <ID>/Temporary/IRS8962/BlankMonthNumber</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </DefaultOption>
+                        </ChoiceMapping>
+                    </NumericChoice>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/BlankMonthNumber">
+        <Inputs>
+            <Input>/Constants/One</Input>
+            <Input>/Constants/True</Input>
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfTrue>/Constants/True</BlankIfTrue>
+                <Gist>
+                    <NumericCopy>
+                        <Value>/Constants/One</Value>
+                    </NumericCopy>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltPrimaryMonthsWithCoverage">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltPrimaryHas1095ABeforeMarriagePerMonth</Input>
+            <Input>/Constants/True</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyFindAllIDsForValue>
+                <MultiCopy>/Temporary/IRS8962/AltPrimaryHas1095ABeforeMarriagePerMonth</MultiCopy>
+                <Value>/Constants/True</Value>
+            </MultiCopyFindAllIDsForValue>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltPrimaryHas1095ABeforeMarriagePerMonth">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltPrimaryTotalMonthlyPlanPremiumAmt</Input>
+            <Input>/Constants/Zero</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AltPrimaryTotalMonthlyPlanPremiumAmt</List>
+                <Gist>
+                    <AboveThreshold>
+                        <Value>/Temporary/IRS8962/AltPrimaryTotalMonthlyPlanPremiumAmt</Value>
+                        <Threshold>/Constants/Zero</Threshold>
+                    </AboveThreshold>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+        
+    <Node name="/Return/ReturnData/IRS8962/AltCalcForMarriageSpouseGrp/StartMonthNumberCd">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltSpouseHasPoliciesBeforeMarriageAndUsingAlternateCalculation</Input>
+            <Input>/Temporary/IRS8962/AltSpouseStartMonthName</Input>
+            <Input>/Constants/MonthNumberCd/JanuaryMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/FebruaryMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/MarchMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/AprilMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/MayMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/JuneMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/JulyMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/AugustMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/SeptemberMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/OctoberMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/NovemberMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/DecemberMonthNumberCd</Input>
+            <Input>/Return/ReturnData/IRS8962/MonthOfMarriagePP</Input>
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfFalse>/Temporary/IRS8962/AltSpouseHasPoliciesBeforeMarriageAndUsingAlternateCalculation</BlankIfFalse>
+                <Gist>
+                    <StringChoice>
+                        <Choice>/Temporary/IRS8962/AltSpouseStartMonthName</Choice>
+                        <Possibility>/Constants/MonthNumberCd/JanuaryMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/FebruaryMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/MarchMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/AprilMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/MayMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/JuneMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/JulyMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/AugustMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/SeptemberMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/OctoberMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/NovemberMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/DecemberMonthNumberCd</Possibility>
+                        <Possibility>/Return/ReturnData/IRS8962/MonthOfMarriagePP</Possibility>
+                        <ChoiceMapping>
+                            <Option>
+                                <Value>JANUARY</Value>
+                                <ID>/Constants/MonthNumberCd/JanuaryMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>FEBRUARY</Value>
+                                <ID>/Constants/MonthNumberCd/FebruaryMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>MARCH</Value>
+                                <ID>/Constants/MonthNumberCd/MarchMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>APRIL</Value>
+                                <ID>/Constants/MonthNumberCd/AprilMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>MAY</Value>
+                                <ID>/Constants/MonthNumberCd/MayMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>JUNE</Value>
+                                <ID>/Constants/MonthNumberCd/JuneMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>JULY</Value>
+                                <ID>/Constants/MonthNumberCd/JulyMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>AUGUST</Value>
+                                <ID>/Constants/MonthNumberCd/AugustMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>SEPTEMBER</Value>
+                                <ID>/Constants/MonthNumberCd/SeptemberMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>OCTOBER</Value>
+                                <ID>/Constants/MonthNumberCd/OctoberMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>NOVEMBER</Value>
+                                <ID>/Constants/MonthNumberCd/NovemberMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>DECEMBER</Value>
+                                <ID>/Constants/MonthNumberCd/DecemberMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <DefaultOption>
+                                <ID>/Return/ReturnData/IRS8962/MonthOfMarriagePP</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </DefaultOption>
+                        </ChoiceMapping>
+                    </StringChoice>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltSpouseStartMonthName">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltSpouseMonthsWithCoverageNumbers</Input>
+        </Inputs>
+        <Gist>
+            <FindIDForMinValue>
+                <Values>/Temporary/IRS8962/AltSpouseMonthsWithCoverageNumbers</Values>
+            </FindIDForMinValue>         
+        </Gist>        
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS8962/AltCalcForMarriageSpouseGrp/EndMonthNumberCd">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltSpouseHasPoliciesBeforeMarriageAndUsingAlternateCalculation</Input>
+            <Input>/Temporary/IRS8962/AltSpouseEndMonthName</Input>
+            <Input>/Constants/MonthNumberCd/JanuaryMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/FebruaryMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/MarchMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/AprilMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/MayMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/JuneMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/JulyMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/AugustMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/SeptemberMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/OctoberMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/NovemberMonthNumberCd</Input>
+            <Input>/Constants/MonthNumberCd/DecemberMonthNumberCd</Input>
+            <Input>/Return/ReturnData/IRS8962/MonthOfMarriagePP</Input>
+        </Inputs>
+        <Gist>
+            <BlankIfApplicable>
+                <BlankIfFalse>/Temporary/IRS8962/AltSpouseHasPoliciesBeforeMarriageAndUsingAlternateCalculation</BlankIfFalse>
+                <Gist>
+                    <StringChoice>
+                        <Choice>/Temporary/IRS8962/AltSpouseEndMonthName</Choice>
+                        <Possibility>/Constants/MonthNumberCd/JanuaryMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/FebruaryMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/MarchMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/AprilMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/MayMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/JuneMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/JulyMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/AugustMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/SeptemberMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/OctoberMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/NovemberMonthNumberCd</Possibility>
+                        <Possibility>/Constants/MonthNumberCd/DecemberMonthNumberCd</Possibility>
+                        <Possibility>/Return/ReturnData/IRS8962/MonthOfMarriagePP</Possibility>
+                        <ChoiceMapping>
+                            <Option>
+                                <Value>JANUARY</Value>
+                                <ID>/Constants/MonthNumberCd/JanuaryMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>FEBRUARY</Value>
+                                <ID>/Constants/MonthNumberCd/FebruaryMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>MARCH</Value>
+                                <ID>/Constants/MonthNumberCd/MarchMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>APRIL</Value>
+                                <ID>/Constants/MonthNumberCd/AprilMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>MAY</Value>
+                                <ID>/Constants/MonthNumberCd/MayMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>JUNE</Value>
+                                <ID>/Constants/MonthNumberCd/JuneMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>JULY</Value>
+                                <ID>/Constants/MonthNumberCd/JulyMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>AUGUST</Value>
+                                <ID>/Constants/MonthNumberCd/AugustMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>SEPTEMBER</Value>
+                                <ID>/Constants/MonthNumberCd/SeptemberMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>OCTOBER</Value>
+                                <ID>/Constants/MonthNumberCd/OctoberMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>NOVEMBER</Value>
+                                <ID>/Constants/MonthNumberCd/NovemberMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>DECEMBER</Value>
+                                <ID>/Constants/MonthNumberCd/DecemberMonthNumberCd</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <DefaultOption>
+                                <ID>/Return/ReturnData/IRS8962/MonthOfMarriagePP</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </DefaultOption>
+                        </ChoiceMapping>
+                    </StringChoice>
+                </Gist>
+            </BlankIfApplicable>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltSpouseEndMonthName">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltSpouseMonthsWithCoverageNumbers</Input>
+        </Inputs>
+        <Gist>
+            <FindIDForMaxValue>
+                <Values>/Temporary/IRS8962/AltSpouseMonthsWithCoverageNumbers</Values>
+            </FindIDForMaxValue>         
+        </Gist>                
+    </Node>
+    
+    
+    <Node name="/Temporary/IRS8962/AltSpouseMonthsWithCoverageNumbers">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltSpouseMonthsWithCoverage</Input>
+            <Input>/Constants/One</Input>
+            <Input>/Constants/Two</Input>
+            <Input>/Constants/Three</Input>
+            <Input>/Constants/Four</Input>
+            <Input>/Constants/Five</Input>
+            <Input>/Constants/Six</Input>
+            <Input>/Constants/Seven</Input>
+            <Input>/Constants/Eight</Input>
+            <Input>/Constants/Nine</Input>
+            <Input>/Constants/Ten</Input>
+            <Input>/Constants/Eleven</Input>
+            <Input>/Constants/Twelve</Input>
+            <Input>/Temporary/IRS8962/BlankMonthNumber</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AltSpouseMonthsWithCoverage</List>
+                <Gist>
+                    <NumericChoice>
+                        <Choice>/Temporary/IRS8962/AltSpouseMonthsWithCoverage</Choice>
+                        <Possibility>/Constants/One</Possibility>
+                        <Possibility>/Constants/Two</Possibility>
+                        <Possibility>/Constants/Three</Possibility>
+                        <Possibility>/Constants/Four</Possibility>
+                        <Possibility>/Constants/Five</Possibility>
+                        <Possibility>/Constants/Six</Possibility>
+                        <Possibility>/Constants/Seven</Possibility>
+                        <Possibility>/Constants/Eight</Possibility>
+                        <Possibility>/Constants/Nine</Possibility>
+                        <Possibility>/Constants/Ten</Possibility>
+                        <Possibility>/Constants/Eleven</Possibility>
+                        <Possibility>/Constants/Twelve</Possibility>
+                        <Possibility>/Temporary/IRS8962/BlankMonthNumber</Possibility>
+                        <ChoiceMapping>
+                            <Option>
+                                <Value>JANUARY</Value>
+                                <ID>/Constants/One</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>FEBRUARY</Value>
+                                <ID>/Constants/Two</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>MARCH</Value>
+                                <ID>/Constants/Three</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>APRIL</Value>
+                                <ID>/Constants/Four</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>MAY</Value>
+                                <ID>/Constants/Five</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>JUNE</Value>
+                                <ID>/Constants/Six</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>JULY</Value>
+                                <ID>/Constants/Seven</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>AUGUST</Value>
+                                <ID>/Constants/Eight</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>SEPTEMBER</Value>
+                                <ID>/Constants/Nine</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>OCTOBER</Value>
+                                <ID>/Constants/Ten</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>NOVEMBER</Value>
+                                <ID>/Constants/Eleven</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <Option>
+                                <Value>DECEMBER</Value>
+                                <ID>/Constants/Twelve</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </Option>
+                            <DefaultOption>
+                                <ID>/Temporary/IRS8962/BlankMonthNumber</ID>
+                                <NoOtherOption>true</NoOtherOption>
+                            </DefaultOption>
+                        </ChoiceMapping>
+                    </NumericChoice>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/AltSpouseMonthsWithCoverage">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltSpouseHas1095ABeforeMarriagePerMonth</Input>
+            <Input>/Constants/True</Input>            
+        </Inputs>
+        <Gist>
+            <MultiCopyFindAllIDsForValue>
+                <MultiCopy>/Temporary/IRS8962/AltSpouseHas1095ABeforeMarriagePerMonth</MultiCopy>
+                <Value>/Constants/True</Value>
+            </MultiCopyFindAllIDsForValue>
+        </Gist>
+    </Node>
+    <Node name="/Temporary/IRS8962/AltSpouseHas1095ABeforeMarriagePerMonth">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltSpouseTotalMonthlyPlanPremiumAmt</Input>
+            <Input>/Constants/Zero</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/AltSpouseTotalMonthlyPlanPremiumAmt</List>
+                <Gist>
+                    <AboveThreshold>
+                        <Value>/Temporary/IRS8962/AltSpouseTotalMonthlyPlanPremiumAmt</Value>
+                        <Threshold>/Constants/Zero</Threshold>
+                    </AboveThreshold>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+    </Node>
+
+
+    <!-- this determines the max premium assistance amount per month using the alternate calculations.
+        At this time, we don't have instructions on this yet.  So we are using an approach similar to the 
+        final alternate PTC.  For time before marriage, add the values for primary and spouse.  For time
+        after marriage, use the standard one.  The ACAAltPTC gist does exactly this for
+        the final allowed PTC amount, so we are reusing it here for the max premium assistance.  This may need to be
+        revisited when publication 974 is released. -->
+    <Node name="/Temporary/IRS8962/AltMonthlyMaxPremiumAssistanceAmt">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AltPrimaryMonthlyMaxPremiumAssistanceAmt</Input>
+            <Input>/Temporary/IRS8962/AltSpouseMonthlyMaxPremiumAssistanceAmt</Input>
+            <Input>/Temporary/IRS8962/MonthlyMaxPremiumAssistanceAmt</Input>
+            <Input>/Return/ReturnData/IRS8962/MonthOfMarriagePP</Input>
+            <Input>/Temporary/IRS8962/CopyOfMonthOfMarriage</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyMapper>
+                <List>/Temporary/IRS8962/MonthlyMaxPremiumAssistanceAmt</List>
+                <Gist>
+                    <ACAAltPTC>
+                        <AltPrimaryPTC>/Temporary/IRS8962/AltPrimaryMonthlyMaxPremiumAssistanceAmt</AltPrimaryPTC>
+                        <AltSpousePTC>/Temporary/IRS8962/AltSpouseMonthlyMaxPremiumAssistanceAmt</AltSpousePTC>
+                        <StandardPTC>/Temporary/IRS8962/MonthlyMaxPremiumAssistanceAmt</StandardPTC>
+                        <PrimaryEndMonthNumberCd>/Return/ReturnData/IRS8962/MonthOfMarriagePP</PrimaryEndMonthNumberCd>
+                        <SpouseEndMonthNumberCd>/Temporary/IRS8962/CopyOfMonthOfMarriage</SpouseEndMonthNumberCd>
+                        <Month>/MultiCopyMapper/MultiCopy</Month>
+                    </ACAAltPTC>
+                </Gist>
+            </MultiCopyMapper>
+        </Gist>
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>
+    </Node>
+                    
+    <!-- This selects the table for lines 12-23 for the normal monthly calculations 
+         The table varies if they are disqualified from PTC and must pay it all back.  -->
+    <Node name="/Temporary/IRS8962/MonthlyTable">
+        <Inputs>
+            <Input>/Temporary/IRS8962/MustRepayAllAdvancedPTC</Input>
+            <Input>/Temporary/IRS8962/DisqualifiedMonthlyTable</Input>
+            <Input>/Temporary/IRS8962/FullMonthlyTable</Input>
+        </Inputs>
+        <MultiCopyOutputElements>
+            <Element>MonthCd</Element>
+            <Element>MonthlyPremiumAmt</Element>
+            <Element>MonthlyPremiumSLCSPAmt</Element>
+            <Element>MonthlyContributionAmt</Element>
+            <Element>MonthlyMaxPremiumAssistanceAmt</Element>
+            <Element>MonthlyPremiumTaxCreditAllwAmt</Element>
+            <Element>MonthlyAdvancedPTCAmt</Element>
+        </MultiCopyOutputElements>
+        <Gist>
+            <MultiCopyChoice>
+                <Choice>/Temporary/IRS8962/MustRepayAllAdvancedPTC</Choice>
+                <Possibility>/Temporary/IRS8962/DisqualifiedMonthlyTable</Possibility>
+                <Possibility>/Temporary/IRS8962/FullMonthlyTable</Possibility>
+                <ChoiceMapping>
+                    <Option>
+                        <Value>true</Value>
+                        <ID>/Temporary/IRS8962/DisqualifiedMonthlyTable</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value>false</Value>
+                        <ID>/Temporary/IRS8962/FullMonthlyTable</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <Option>
+                        <Value></Value>
+                        <ID>/Temporary/IRS8962/FullMonthlyTable</ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                </ChoiceMapping>
+            </MultiCopyChoice>
+        </Gist>
+        <RoundTo>
+            <MultiCopy>
+                <Struct>
+                    <Element>
+                        <Name>MonthlyPremiumAmt</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                    <Element>
+                        <Name>MonthlyPremiumSLCSPAmt</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                    <Element>
+                        <Name>MonthlyContributionAmt</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                    <Element>
+                        <Name>MonthlyMaxPremiumAssistanceAmt</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                    <Element>
+                        <Name>MonthlyPremiumTaxCreditAllwAmt</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                    <Element>
+                        <Name>MonthlyAdvancedPTCAmt</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                </Struct>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    
+    <Node name="/Temporary/IRS8962/MustRepayAllAdvancedPTC">
+        <Inputs>
+            <Input>/Temporary/IRS8962/OverFPLThreshold</Input>
+            <Input>/Temporary/IRS8962/DisqualifiedDueToFilingStatus</Input>      
+        </Inputs>
+        <Gist>
+            <AtLeastOneConditionTrue>
+                <Condition>/Temporary/IRS8962/OverFPLThreshold</Condition>
+                <Condition>/Temporary/IRS8962/DisqualifiedDueToFilingStatus</Condition>
+            </AtLeastOneConditionTrue>
+        </Gist>
+    </Node>
+    
+    
+    <!-- this is the full table for lines 12-23 if the monthly choice is made and they don't have to pay back PTC -->
+    <Node name="/Temporary/IRS8962/FullMonthlyTable">
+        <Inputs>
+            <Input>/Temporary/IRS8962/TotalMonthlyPlanPremiumAmt</Input>
+            <Input>/Temporary/IRS8962/TotalMonthlyPremiumSLCSPAmt</Input>
+            <Input>/Temporary/IRS8962/MonthlyContributionAmt</Input>
+            <Input>/Temporary/IRS8962/MonthlyMaxPremiumAssistanceAmt</Input>
+            <Input>/Temporary/IRS8962/MonthlyPremiumTaxCreditAllwAmt</Input>
+            <Input>/Temporary/IRS8962/AllocatedMonthlyAdvancedPTCAmtPerMonth</Input>
+        </Inputs>
+        <MultiCopyOutputElements>
+            <Element>MonthCd</Element>
+            <Element>MonthlyPremiumAmt</Element>
+            <Element>MonthlyPremiumSLCSPAmt</Element>
+            <Element>MonthlyContributionAmt</Element>
+            <Element>MonthlyMaxPremiumAssistanceAmt</Element>
+            <Element>MonthlyPremiumTaxCreditAllwAmt</Element>
+            <Element>MonthlyAdvancedPTCAmt</Element>
+        </MultiCopyOutputElements>
+        <Gist>
+            <MultiCopyCombiner>
+                <MultiCopyValue>/Temporary/IRS8962/TotalMonthlyPlanPremiumAmt</MultiCopyValue>
+                <MultiCopyValue>/Temporary/IRS8962/TotalMonthlyPremiumSLCSPAmt</MultiCopyValue>
+                <MultiCopyValue>/Temporary/IRS8962/MonthlyContributionAmt</MultiCopyValue>
+                <MultiCopyValue>/Temporary/IRS8962/MonthlyMaxPremiumAssistanceAmt</MultiCopyValue>
+                <MultiCopyValue>/Temporary/IRS8962/MonthlyPremiumTaxCreditAllwAmt</MultiCopyValue>
+                <MultiCopyValue>/Temporary/IRS8962/AllocatedMonthlyAdvancedPTCAmtPerMonth</MultiCopyValue>
+                <Config>
+                    <Elements>
+                        <Element>
+                            <ID>/MultiCopyCombiner/MultiCopyID</ID>
+                            <Name>MonthCd</Name>
+                        </Element>
+                        <Element>
+                            <ID>/Temporary/IRS8962/TotalMonthlyPlanPremiumAmt</ID>
+                            <Name>MonthlyPremiumAmt</Name>
+                        </Element>
+                        <Element>
+                            <ID>/Temporary/IRS8962/TotalMonthlyPremiumSLCSPAmt</ID>
+                            <Name>MonthlyPremiumSLCSPAmt</Name>
+                        </Element>
+                        <Element>
+                            <ID>/Temporary/IRS8962/MonthlyContributionAmt</ID>
+                            <Name>MonthlyContributionAmt</Name>
+                        </Element>
+                        <Element>
+                            <ID>/Temporary/IRS8962/MonthlyMaxPremiumAssistanceAmt</ID>
+                            <Name>MonthlyMaxPremiumAssistanceAmt</Name>
+                        </Element>
+                        <Element>
+                            <ID>/Temporary/IRS8962/MonthlyPremiumTaxCreditAllwAmt</ID>
+                            <Name>MonthlyPremiumTaxCreditAllwAmt</Name>
+                        </Element>
+                        <Element>
+                            <ID>/Temporary/IRS8962/AllocatedMonthlyAdvancedPTCAmtPerMonth</ID>
+                            <Name>MonthlyAdvancedPTCAmt</Name>
+                        </Element>
+                    </Elements>
+                </Config>
+            </MultiCopyCombiner>           
+        </Gist>
+        <RoundTo>
+            <MultiCopy>
+                <Struct>
+                    <Element>
+                        <Name>MonthlyPremiumAmt</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                    <Element>
+                        <Name>MonthlyPremiumSLCSPAmt</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                    <Element>
+                        <Name>MonthlyContributionAmt</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                    <Element>
+                        <Name>MonthlyMaxPremiumAssistanceAmt</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                    <Element>
+                        <Name>MonthlyPremiumTaxCreditAllwAmt</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                    <Element>
+                        <Name>MonthlyAdvancedPTCAmt</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                </Struct>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+
+    <!-- this is the table for lines 12-23 if they are disqualified from PTC and have to pay it back.  Only column F, the advance PTC amount is filled out -->
+    <Node name="/Temporary/IRS8962/DisqualifiedMonthlyTable">
+        <Inputs>
+            <Input>/Temporary/IRS8962/AllocatedMonthlyAdvancedPTCAmtPerMonth</Input>
+        </Inputs>
+        <MultiCopyOutputElements>
+            <Element>MonthCd</Element>
+            <Element>MonthlyAdvancedPTCAmt</Element>
+        </MultiCopyOutputElements>
+        <Gist>
+            <MultiCopyCombiner>
+                <MultiCopyValue>/Temporary/IRS8962/AllocatedMonthlyAdvancedPTCAmtPerMonth</MultiCopyValue>
+                <Config>
+                    <Elements>
+                        <Element>
+                            <ID>/MultiCopyCombiner/MultiCopyID</ID>
+                            <Name>MonthCd</Name>
+                        </Element>
+                        <Element>
+                            <ID>/Temporary/IRS8962/AllocatedMonthlyAdvancedPTCAmtPerMonth</ID>
+                            <Name>MonthlyAdvancedPTCAmt</Name>
+                        </Element>
+                    </Elements>
+                </Config>
+            </MultiCopyCombiner>           
+        </Gist>
+        <RoundTo>
+            <MultiCopy>
+                <Struct>                    
+                    <Element>
+                        <Name>MonthlyAdvancedPTCAmt</Name>
+                        <RoundTo><Dollars/></RoundTo>
+                    </Element>
+                </Struct>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    
+    <!-- line 34 - This is true if there are 4 or less shared policy allocations, since that is what fits on the printed form.-->
+    <Node name="/Return/ReturnData/IRS8962/SharedPolicyAllocationInfoInd">
+        <Inputs>
+            <Input>/Temporary/IRS8962/NumberSharedPolicies</Input>
+            <Input>/Constants/IRS8962/NumberSharedPoliciesForOverflow</Input>            
+        </Inputs>
+        <Gist>
+            <BelowThreshold>
+                <Value>/Temporary/IRS8962/NumberSharedPolicies</Value>
+                <Threshold>/Constants/IRS8962/NumberSharedPoliciesForOverflow</Threshold>
+            </BelowThreshold>
+        </Gist>
+    </Node>
+    
+    <Node name="/Temporary/IRS8962/NumberSharedPolicies">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp/PolicyNum</Input>
+        </Inputs>
+        <Gist>
+            <MultiCopyCount>
+                <MultiCopy>/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp/PolicyNum</MultiCopy>
+            </MultiCopyCount>
+        </Gist>
+        <RoundTo><Integer/></RoundTo>
+    </Node>
+    
+    <!-- inputs -->
+    <Node name="/Return/ReturnData/IRS1095A/TotalAdvancedPTCAmtPP" type="multiCopyPrimitiveInput">
+        <RoundTo><MultiCopy><Dollars/></MultiCopy></RoundTo>
+    </Node>
+    <Node name="/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp/(PolicyNum | StartMonthNumberCd | EndMonthNumberCd | MonthlyAdvancedPTCPct)" 
+        type="multiCopyStructInput">
+        <RoundTo>
+            <MultiCopy>
+                <Struct>
+                    <Element>
+                        <Name>MonthlyAdvancedPTCPct</Name>
+                        <RoundTo><Dec>2</Dec></RoundTo>
+                    </Element>
+                </Struct>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS1095A/(MonthlyPTCInformationGrpPP/(MonthCdPP | MonthlyAdvancedPTCAmtPP))" type="multiCopyStructInput">
+        <RoundTo>
+            <MultiCopy>
+                <Struct>
+                    <Element>
+                        <Name>MonthlyPTCInformationGrpPP</Name>
+                        <RoundTo>
+                            <MultiCopy>
+                                <Struct>
+                                    <Element>
+                                        <Name>MonthlyAdvancedPTCAmtPP</Name>
+                                        <RoundTo><Dollars/></RoundTo>
+                                    </Element>
+                                </Struct>
+                            </MultiCopy>
+                        </RoundTo>
+                    </Element>
+                </Struct>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+    <Node name="/Return/ReturnData/IRS1095A/(MonthlyPTCInformationGrpPP/(MonthlyPlanPremiumAmtPP | MonthlyPremiumSLCSPAmtPP))" type="multiCopyStructInput">
+        <RoundTo>
+            <MultiCopy>
+                <Struct>
+                    <Element>
+                        <Name>MonthlyPTCInformationGrpPP</Name>
+                        <RoundTo>
+                            <MultiCopy>
+                                <Struct>
+                                    <Element>
+                                        <Name>MonthlyPlanPremiumAmtPP</Name>
+                                        <RoundTo><Dollars/></RoundTo>
+                                    </Element>
+                                    <Element>
+                                        <Name>MonthlyPremiumSLCSPAmtPP</Name>
+                                        <RoundTo><Dollars/></RoundTo>
+                                    </Element>
+                                </Struct>
+                            </MultiCopy>
+                        </RoundTo>
+                    </Element>
+                </Struct>
+            </MultiCopy>
+        </RoundTo>
+    </Node>
+    
+
+    <Node name="/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp/PolicyNum" type="multiCopyPrimitiveInput"/>
+    
+    
+    <!-- constants -->
+    <Node name="/Constants/IRS8962/AdditionalTaxLimitationTable" type="constant"/>
+    <Node name="/Constants/IRS8962/MonthlyVarying1095AAltIsWorseCalculationType" type="constant"/>
+    <Node name="/Constants/IRS8962/AlternateCalculationType" type="constant"/>
+    <Node name="/Constants/True" type="constant"/>
+    <Node name="/Constants/False" type="constant"/>
+    <Node name="/Constants/MonthNumberCd/JanuaryMonthNumberCd" type="constant"/>
+    <Node name="/Constants/MonthNumberCd/FebruaryMonthNumberCd" type="constant"/>
+    <Node name="/Constants/MonthNumberCd/MarchMonthNumberCd" type="constant"/>
+    <Node name="/Constants/MonthNumberCd/AprilMonthNumberCd" type="constant"/>
+    <Node name="/Constants/MonthNumberCd/MayMonthNumberCd" type="constant"/>
+    <Node name="/Constants/MonthNumberCd/JuneMonthNumberCd" type="constant"/>
+    <Node name="/Constants/MonthNumberCd/JulyMonthNumberCd" type="constant"/>
+    <Node name="/Constants/MonthNumberCd/AugustMonthNumberCd" type="constant"/>
+    <Node name="/Constants/MonthNumberCd/SeptemberMonthNumberCd" type="constant"/>
+    <Node name="/Constants/MonthNumberCd/OctoberMonthNumberCd" type="constant"/>
+    <Node name="/Constants/MonthNumberCd/NovemberMonthNumberCd" type="constant"/>
+    <Node name="/Constants/MonthNumberCd/DecemberMonthNumberCd" type="constant"/>
+    
+    <Node name="/Constants/IRS8962/NumberSharedPoliciesForOverflow" type="constant"><RoundTo><Integer/></RoundTo></Node>
+    
+    
+    <Node name="/Constants/One" type="constant"><RoundTo><Integer/></RoundTo></Node>
+    <!-- /Constants/Two is defined in another file -->
+    <Node name="/Constants/Three" type="constant"><RoundTo><Integer/></RoundTo></Node>
+    <Node name="/Constants/Four" type="constant"><RoundTo><Integer/></RoundTo></Node>
+    <Node name="/Constants/Five" type="constant"><RoundTo><Integer/></RoundTo></Node>
+    <Node name="/Constants/Six" type="constant"><RoundTo><Integer/></RoundTo></Node>
+    <Node name="/Constants/Seven" type="constant"><RoundTo><Integer/></RoundTo></Node>
+    <Node name="/Constants/Eight" type="constant"><RoundTo><Integer/></RoundTo></Node>
+    <Node name="/Constants/Nine" type="constant"><RoundTo><Integer/></RoundTo></Node>
+    <Node name="/Constants/Ten" type="constant"><RoundTo><Integer/></RoundTo></Node>
+    <Node name="/Constants/Eleven" type="constant"><RoundTo><Integer/></RoundTo></Node>
+    <Node name="/Constants/Twelve" type="constant"><RoundTo><Integer/></RoundTo></Node>
+</Nodes>

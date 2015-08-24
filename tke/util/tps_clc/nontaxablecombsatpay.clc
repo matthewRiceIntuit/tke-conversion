@@ -1,0 +1,53 @@
+FORM S2014US1040PER.FSCHEICW;
+
+
+
+SECTION Nontaxablecombatpay;
+VAR
+	DDCutoff : FDate;
+	TDCBCMBT, SDCBCMBT : FDollar; // nontaxable combat pay election for DCB
+BEGIN
+	DDCutoff := Date("10/05/2004"); 
+
+	
+	If (FW2SUM.TCOMBAT > 0) then
+		begin
+		If HasValue(Finfowks.TDOD) and (Finfowks.TDOD < DDCutoff) then
+			begin
+
+			end
+		else
+			TCOMBAT := FW2SUM.TCOMBAT;
+		end;
+
+	
+	If IsChecked(FINFOWKS.FS2) and (FW2SUM.SCOMBAT > 0) then
+		begin
+		If HasValue(Finfowks.SDOD) and (Finfowks.SDOD < DDCutoff) then
+			begin
+
+			end
+		else
+			SCOMBAT := FW2SUM.SCOMBAT;
+		end;
+
+
+	If IsChecked(YELECT) then
+		TNTCMBAT := TCOMBAT;
+	If IsChecked(FINFOWKS.FS2) and IsChecked(SELECTY) then
+		SNTCMBAT := SCOMBAT;
+
+
+	If IsChecked(YDCBELEC) then
+		TDCBCMBT := TCOMBAT;
+	If IsChecked(SDCBELEY) then
+		SDCBCMBT := SCOMBAT;
+
+
+
+
+
+
+
+	NTCOMBAT := TNTCMBAT + SNTCMBAT;
+END;

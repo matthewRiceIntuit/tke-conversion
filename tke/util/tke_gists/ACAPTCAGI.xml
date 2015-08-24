@@ -1,0 +1,776 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Nodes topic="Form8962Subsidy">
+	<Versions>
+		<Version id="TKE.Calc.FileFormat">1</Version>
+    <Version id="TKE.Calc.Runtime">1</Version>
+    <Version id="TKE.Gist">1</Version>
+    <Version id="TKE.MeF">1</Version>
+	</Versions>
+
+  <Node name="/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/CurrentExchangeSelfEmploymentDeductionPP">
+    <Inputs>
+      <Input>/Temporary/IRS8962/ScheduleCProfitWithoutExchangeSEDed</Input>
+      <Input>/Temporary/IRS8962/ScheduleFProfitWithoutExchangeSEDed</Input>
+      <Input>/Temporary/IRS8962/ScheduleK1SProfitWithoutExchangeSEDed</Input>
+      <Input>/Temporary/IRS8962/ScheduleK1PProfitWithoutExchangeSEDed</Input>
+      <Input>/Return/ReturnData/IRS1095A/(LinkStartMonthNumberCdPP | LinkEndMonthNumberCdPP | SchCLinkPP | SchK1PLinkPP | SchFLinkPP | SchK1SLinkPP)</Input>
+      <Input>/Temporary/IRS8962/AllocatedMonthlyPlanPremiumAmt</Input>
+      <Input>/Temporary/IRS8962/AllocatedMonthlyAdvancedPTCAmt</Input>
+      <Input>/Return/ReturnData/IRS8962/PovertyLevelAmt</Input>
+      <Input>/Return/ReturnData/IRS8962/HouseholdIncomeAmt</Input>
+      <Input>/Constants/IRS8962/AdditionalTaxLimitationTable</Input>
+      <Input>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</Input>
+      <Input>/Temporary/IRS8962/TotalMonthlyPlanPremiumAmt</Input>
+      <Input>/Constants/IRS8962/MaxIterationsForIterativeCalculation</Input>
+      <Input>/Temporary/IRS8962/FinalMonthlyPremiumTaxCreditAllwAmt</Input>
+      <Input>/Return/ReturnData/IRS8962/TotalPremiumTaxCreditAmt</Input>
+      <Input>/Constants/IRS8962/PTCThreshold</Input>
+      <Input>/Constants/IRS8962/DeductionThreshold</Input>
+      <Input>/Temporary/IRS8962/BlankedSelfEmployedExchangeHealthInsDedAmtPP</Input>
+      <Input>/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/TPSIterationNumberPP</Input>
+      <Input>/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/IterationNumberPP</Input>
+      <Input>/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/LastIterationDeductionPP</Input>
+      <Input>/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/LastIterationPTCPP</Input>
+      <Input>/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/AlternateDeductionPP</Input>
+    </Inputs>
+    <ExtraValuesForFiling>
+      <ExtraValue>
+        <ID>/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/NextIterationSetDeductionBlankPP</ID>
+      </ExtraValue>
+      <ExtraValue>
+        <ID>/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/NextExchangeSelfEmploymentDeductionPP</ID>
+        <RoundTo>
+          <Dollars />
+        </RoundTo>
+      </ExtraValue>
+      <ExtraValue>
+        <ID>/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/NextIterationNumberPP</ID>
+        <RoundTo>
+          <Integer />
+        </RoundTo>
+      </ExtraValue>
+      <ExtraValue>
+        <ID>/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/NextLastIterationDeductionPP</ID>
+        <RoundTo>
+          <Dollars />
+        </RoundTo>
+      </ExtraValue>
+      <ExtraValue>
+        <ID>/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/NextLastIterationPTCPP</ID>
+        <RoundTo>
+          <Dollars />
+        </RoundTo>
+      </ExtraValue>
+      <ExtraValue>
+        <ID>/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/NextAlternateDeductionPP</ID>
+        <RoundTo>
+          <Dollars />
+        </RoundTo>
+      </ExtraValue>
+    </ExtraValuesForFiling>
+    <Gist>
+      <ACASelfEmployedExchangeInsuranceDeductionViaTPSCycle>
+        <ScheduleCProfitIncludingStandardHealthDeduction>/Temporary/IRS8962/ScheduleCProfitWithoutExchangeSEDed</ScheduleCProfitIncludingStandardHealthDeduction>
+        <ScheduleFProfitIncludingStandardHealthDeduction>/Temporary/IRS8962/ScheduleFProfitWithoutExchangeSEDed</ScheduleFProfitIncludingStandardHealthDeduction>
+        <ScheduleK1SProfitIncludingStandardHealthDeduction>/Temporary/IRS8962/ScheduleK1SProfitWithoutExchangeSEDed</ScheduleK1SProfitIncludingStandardHealthDeduction>
+        <ScheduleK1PProfitIncludingStandardHealthDeduction>/Temporary/IRS8962/ScheduleK1PProfitWithoutExchangeSEDed</ScheduleK1PProfitIncludingStandardHealthDeduction>
+        <DataFrom1095A>/Return/ReturnData/IRS1095A/(LinkStartMonthNumberCdPP | LinkEndMonthNumberCdPP | SchCLinkPP | SchK1PLinkPP | SchFLinkPP | SchK1SLinkPP)</DataFrom1095A>
+        <MonthlyPlanPremiumAmt>/Temporary/IRS8962/AllocatedMonthlyPlanPremiumAmt</MonthlyPlanPremiumAmt>
+        <MonthlyAdvancedPTCAmt>/Temporary/IRS8962/AllocatedMonthlyAdvancedPTCAmt</MonthlyAdvancedPTCAmt>
+        <PovertyLevel>/Return/ReturnData/IRS8962/PovertyLevelAmt</PovertyLevel>
+        <AdjustedGrossIncomeAmt>/Return/ReturnData/IRS8962/HouseholdIncomeAmt</AdjustedGrossIncomeAmt>
+        <AdditionalTaxLimitationTable>/Constants/IRS8962/AdditionalTaxLimitationTable</AdditionalTaxLimitationTable>
+        <FilingStatus>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</FilingStatus>
+        <TotalPremiumByMonth>/Temporary/IRS8962/TotalMonthlyPlanPremiumAmt</TotalPremiumByMonth>
+        <MaxIterations>/Constants/IRS8962/MaxIterationsForIterativeCalculation</MaxIterations>
+        <MonthlyPTC>/Temporary/IRS8962/FinalMonthlyPremiumTaxCreditAllwAmt</MonthlyPTC>
+        <TotalPTC>/Return/ReturnData/IRS8962/TotalPremiumTaxCreditAmt</TotalPTC>
+        <PTCThreshold>/Constants/IRS8962/PTCThreshold</PTCThreshold>
+        <DeductionThreshold>/Constants/IRS8962/DeductionThreshold</DeductionThreshold>
+        <ExchangeSelfEmploymentDeduction>/Temporary/IRS8962/BlankedSelfEmployedExchangeHealthInsDedAmtPP</ExchangeSelfEmploymentDeduction>
+        <TPSIterationNumber>/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/TPSIterationNumberPP</TPSIterationNumber>
+        <IterationNumber>/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/IterationNumberPP</IterationNumber>
+        <LastIterationDeduction>/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/LastIterationDeductionPP</LastIterationDeduction>
+        <LastIterationPTC>/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/LastIterationPTCPP</LastIterationPTC>
+        <AlternateDeduction>/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/AlternateDeductionPP</AlternateDeduction>
+        <!-- extra data for filing IDs -->
+        <NextIterationSetDeductionBlank>/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/NextIterationSetDeductionBlankPP</NextIterationSetDeductionBlank>
+        <NextExchangeSelfEmploymentDeduction>/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/NextExchangeSelfEmploymentDeductionPP</NextExchangeSelfEmploymentDeduction>
+        <NextIterationNumber>/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/NextIterationNumberPP</NextIterationNumber>
+        <NextLastIterationDeduction>/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/NextLastIterationDeductionPP</NextLastIterationDeduction>
+        <NextLastIterationPTC>/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/NextLastIterationPTCPP</NextLastIterationPTC>
+        <NextAlternateDeduction>/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/NextAlternateDeductionPP</NextAlternateDeduction>
+      </ACASelfEmployedExchangeInsuranceDeductionViaTPSCycle>
+    </Gist>
+    <RoundTo>
+      <Dollars />
+    </RoundTo>
+  </Node>
+  <Node name="/Temporary/IRS8962/BlankedSelfEmployedExchangeHealthInsDedAmtPP">
+    <Inputs>
+      <Input>/Temporary/IRS8962/IsSelfEmployedExchangeHealthInsDedAmtPPZero</Input>
+      <Input>/Temporary/IRS8962/BlankNumericForSelfEmployedExchangeHealthInsDed</Input>
+      <Input>/Return/ReturnData/IRS8962/SelfEmployedExchangeHealthInsDedAmtPP</Input>
+    </Inputs>
+    <Gist>
+      <NumericChoice>
+        <Choice>/Temporary/IRS8962/IsSelfEmployedExchangeHealthInsDedAmtPPZero</Choice>
+        <Possibility>/Temporary/IRS8962/BlankNumericForSelfEmployedExchangeHealthInsDed</Possibility>
+        <Possibility>/Return/ReturnData/IRS8962/SelfEmployedExchangeHealthInsDedAmtPP</Possibility>
+        <ChoiceMapping>
+          <Option>
+            <Value>true</Value>
+            <ID>/Temporary/IRS8962/BlankNumericForSelfEmployedExchangeHealthInsDed</ID>
+            <NoOtherOption>true</NoOtherOption>
+          </Option>
+          <DefaultOption>
+            <ID>/Return/ReturnData/IRS8962/SelfEmployedExchangeHealthInsDedAmtPP</ID>
+            <NoOtherOption>true</NoOtherOption>
+          </DefaultOption>
+        </ChoiceMapping>
+      </NumericChoice>
+    </Gist>
+  </Node>
+  <Node name="/Temporary/IRS8962/IsSelfEmployedExchangeHealthInsDedAmtPPZero">
+    <Inputs>
+      <Input>/Return/ReturnData/IRS8962/SelfEmployedExchangeHealthInsDedAmtPP</Input>
+      <Input>/Constants/True</Input>
+      <Input>/Constants/False</Input>
+    </Inputs>
+    <Gist>
+      <BooleanChoice>
+        <Choice>/Return/ReturnData/IRS8962/SelfEmployedExchangeHealthInsDedAmtPP</Choice>
+        <Possibility>/Constants/True</Possibility>
+        <Possibility>/Constants/False</Possibility>
+        <ChoiceMapping>
+          <Option>
+            <Value>0</Value>
+            <ID>/Constants/True</ID>
+            <NoOtherOption>true</NoOtherOption>
+          </Option>
+          <DefaultOption>
+            <ID>/Constants/False</ID>
+            <NoOtherOption>true</NoOtherOption>
+          </DefaultOption>
+        </ChoiceMapping>
+      </BooleanChoice>
+    </Gist>
+  </Node>
+  <Node name="/Temporary/IRS8962/BlankNumericForSelfEmployedExchangeHealthInsDed">
+    <Inputs>
+      <Input>/Constants/True</Input>
+      <Input>/Return/ReturnData/IRS8962/SelfEmployedExchangeHealthInsDedAmtPP</Input>
+    </Inputs>
+    <Gist>
+      <BlankIfApplicable>
+        <BlankIfTrue>/Constants/True</BlankIfTrue>
+        <Gist>
+          <NumericCopy>
+            <Value>/Return/ReturnData/IRS8962/SelfEmployedExchangeHealthInsDedAmtPP</Value>
+          </NumericCopy>
+        </Gist>
+      </BlankIfApplicable>
+    </Gist>
+  </Node>
+  <Node name="/Temporary/IRS8962/ScheduleCProfitWithoutExchangeSEDed">
+    <Inputs>
+      <Input>/Temporary/IRS8962/ScheduleCHealthAndLongTermCareInsPremAmt</Input>
+      <Input>/Temporary/IRS8962/ScheduleCNetProfitFromBusinessAmt</Input>
+    </Inputs>
+    <Gist>
+      <MultiCopyMapper>
+        <List>/Temporary/IRS8962/ScheduleCHealthAndLongTermCareInsPremAmt</List>
+        <List>/Temporary/IRS8962/ScheduleCNetProfitFromBusinessAmt</List>
+        <Gist>
+          <ExcessAmt>
+            <ValueType>profit</ValueType>
+            <Threshold>/Temporary/IRS8962/ScheduleCHealthAndLongTermCareInsPremAmt</Threshold>
+            <Value>/Temporary/IRS8962/ScheduleCNetProfitFromBusinessAmt</Value>
+          </ExcessAmt>
+        </Gist>
+      </MultiCopyMapper>
+    </Gist>
+    <RoundTo>
+      <MultiCopy>
+        <Dollars />
+      </MultiCopy>
+    </RoundTo>
+  </Node>
+  <Node name="/Temporary/IRS8962/ScheduleCHealthAndLongTermCareInsPremAmt">
+    <Inputs>
+      <Input>/Return/ReturnData/IRS1040ScheduleC/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)</Input>
+      <Input>/Constants/IRS8962/HealthAndLongTermCareInsPremAmtFieldName</Input>
+    </Inputs>
+    <Gist>
+      <MultiCopyMapper>
+        <List>/Return/ReturnData/IRS1040ScheduleC/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)</List>
+        <Gist>
+          <MultiCopySelectNumericByID>
+            <MultiCopy>/Return/ReturnData/IRS1040ScheduleC/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)</MultiCopy>
+            <ID>/Constants/IRS8962/HealthAndLongTermCareInsPremAmtFieldName</ID>
+          </MultiCopySelectNumericByID>
+        </Gist>
+      </MultiCopyMapper>
+    </Gist>
+    <RoundTo>
+      <MultiCopy>
+        <Dollars />
+      </MultiCopy>
+    </RoundTo>
+  </Node>
+  <Node name="/Temporary/IRS8962/ScheduleCNetProfitFromBusinessAmt">
+    <Inputs>
+      <Input>/Return/ReturnData/IRS1040ScheduleC/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)</Input>
+      <Input>/Constants/IRS8962/NetProfitFromBusinessAmtFieldName</Input>
+    </Inputs>
+    <Gist>
+      <MultiCopyMapper>
+        <List>/Return/ReturnData/IRS1040ScheduleC/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)</List>
+        <Gist>
+          <MultiCopySelectNumericByID>
+            <MultiCopy>/Return/ReturnData/IRS1040ScheduleC/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)</MultiCopy>
+            <ID>/Constants/IRS8962/NetProfitFromBusinessAmtFieldName</ID>
+          </MultiCopySelectNumericByID>
+        </Gist>
+      </MultiCopyMapper>
+    </Gist>
+    <RoundTo>
+      <MultiCopy>
+        <Dollars />
+      </MultiCopy>
+    </RoundTo>
+  </Node>
+  <Node name="/Temporary/IRS8962/ScheduleFProfitWithoutExchangeSEDed">
+    <Inputs>
+      <Input>/Temporary/IRS8962/ScheduleFHealthAndLongTermCareInsPremAmt</Input>
+      <Input>/Temporary/IRS8962/ScheduleFNetProfitFromBusinessAmt</Input>
+    </Inputs>
+    <Gist>
+      <MultiCopyMapper>
+        <List>/Temporary/IRS8962/ScheduleFHealthAndLongTermCareInsPremAmt</List>
+        <List>/Temporary/IRS8962/ScheduleFNetProfitFromBusinessAmt</List>
+        <Gist>
+          <ExcessAmt>
+            <ValueType>profit</ValueType>
+            <Threshold>/Temporary/IRS8962/ScheduleFHealthAndLongTermCareInsPremAmt</Threshold>
+            <Value>/Temporary/IRS8962/ScheduleFNetProfitFromBusinessAmt</Value>
+          </ExcessAmt>
+        </Gist>
+      </MultiCopyMapper>
+    </Gist>
+    <RoundTo>
+      <MultiCopy>
+        <Dollars />
+      </MultiCopy>
+    </RoundTo>
+  </Node>
+  <Node name="/Temporary/IRS8962/ScheduleFHealthAndLongTermCareInsPremAmt">
+    <Inputs>
+      <Input>/Return/ReturnData/IRS1040ScheduleF/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)</Input>
+      <Input>/Constants/IRS8962/HealthAndLongTermCareInsPremAmtFieldName</Input>
+    </Inputs>
+    <Gist>
+      <MultiCopyMapper>
+        <List>/Return/ReturnData/IRS1040ScheduleF/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)</List>
+        <Gist>
+          <MultiCopySelectNumericByID>
+            <MultiCopy>/Return/ReturnData/IRS1040ScheduleF/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)</MultiCopy>
+            <ID>/Constants/IRS8962/HealthAndLongTermCareInsPremAmtFieldName</ID>
+          </MultiCopySelectNumericByID>
+        </Gist>
+      </MultiCopyMapper>
+    </Gist>
+    <RoundTo>
+      <MultiCopy>
+        <Dollars />
+      </MultiCopy>
+    </RoundTo>
+  </Node>
+  <Node name="/Temporary/IRS8962/ScheduleFNetProfitFromBusinessAmt">
+    <Inputs>
+      <Input>/Return/ReturnData/IRS1040ScheduleF/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)</Input>
+      <Input>/Constants/IRS8962/NetProfitFromBusinessAmtFieldName</Input>
+    </Inputs>
+    <Gist>
+      <MultiCopyMapper>
+        <List>/Return/ReturnData/IRS1040ScheduleF/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)</List>
+        <Gist>
+          <MultiCopySelectNumericByID>
+            <MultiCopy>/Return/ReturnData/IRS1040ScheduleF/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)</MultiCopy>
+            <ID>/Constants/IRS8962/NetProfitFromBusinessAmtFieldName</ID>
+          </MultiCopySelectNumericByID>
+        </Gist>
+      </MultiCopyMapper>
+    </Gist>
+    <RoundTo>
+      <MultiCopy>
+        <Dollars />
+      </MultiCopy>
+    </RoundTo>
+  </Node>
+  <Node name="/Temporary/IRS8962/ScheduleK1SProfitWithoutExchangeSEDed">
+    <Inputs>
+      <Input>/Temporary/IRS8962/ScheduleK1SHealthAndLongTermCareInsPremAmt</Input>
+      <Input>/Temporary/IRS8962/ScheduleK1SNetProfitFromBusinessAmt</Input>
+    </Inputs>
+    <Gist>
+      <MultiCopyMapper>
+        <List>/Temporary/IRS8962/ScheduleK1SHealthAndLongTermCareInsPremAmt</List>
+        <List>/Temporary/IRS8962/ScheduleK1SNetProfitFromBusinessAmt</List>
+        <Gist>
+          <ExcessAmt>
+            <ValueType>profit</ValueType>
+            <Threshold>/Temporary/IRS8962/ScheduleK1SHealthAndLongTermCareInsPremAmt</Threshold>
+            <Value>/Temporary/IRS8962/ScheduleK1SNetProfitFromBusinessAmt</Value>
+          </ExcessAmt>
+        </Gist>
+      </MultiCopyMapper>
+    </Gist>
+    <RoundTo>
+      <MultiCopy>
+        <Dollars />
+      </MultiCopy>
+    </RoundTo>
+  </Node>
+  <Node name="/Temporary/IRS8962/ScheduleK1SHealthAndLongTermCareInsPremAmt">
+    <Inputs>
+      <Input>/Return/ReturnData/IRS1120SScheduleK1/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)</Input>
+      <Input>/Constants/IRS8962/HealthAndLongTermCareInsPremAmtFieldName</Input>
+    </Inputs>
+    <Gist>
+      <MultiCopyMapper>
+        <List>/Return/ReturnData/IRS1120SScheduleK1/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)</List>
+        <Gist>
+          <MultiCopySelectNumericByID>
+            <MultiCopy>/Return/ReturnData/IRS1120SScheduleK1/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)</MultiCopy>
+            <ID>/Constants/IRS8962/HealthAndLongTermCareInsPremAmtFieldName</ID>
+          </MultiCopySelectNumericByID>
+        </Gist>
+      </MultiCopyMapper>
+    </Gist>
+    <RoundTo>
+      <MultiCopy>
+        <Dollars />
+      </MultiCopy>
+    </RoundTo>
+  </Node>
+  <Node name="/Temporary/IRS8962/ScheduleK1SNetProfitFromBusinessAmt">
+    <Inputs>
+      <Input>/Return/ReturnData/IRS1120SScheduleK1/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)</Input>
+      <Input>/Constants/IRS8962/NetProfitFromBusinessAmtFieldName</Input>
+    </Inputs>
+    <Gist>
+      <MultiCopyMapper>
+        <List>/Return/ReturnData/IRS1120SScheduleK1/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)</List>
+        <Gist>
+          <MultiCopySelectNumericByID>
+            <MultiCopy>/Return/ReturnData/IRS1120SScheduleK1/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)</MultiCopy>
+            <ID>/Constants/IRS8962/NetProfitFromBusinessAmtFieldName</ID>
+          </MultiCopySelectNumericByID>
+        </Gist>
+      </MultiCopyMapper>
+    </Gist>
+    <RoundTo>
+      <MultiCopy>
+        <Dollars />
+      </MultiCopy>
+    </RoundTo>
+  </Node>
+  <Node name="/Temporary/IRS8962/ScheduleK1PProfitWithoutExchangeSEDed">
+    <Inputs>
+      <Input>/Temporary/IRS8962/ScheduleK1PHealthAndLongTermCareInsPremAmt</Input>
+      <Input>/Temporary/IRS8962/ScheduleK1PNetProfitFromBusinessAmt</Input>
+    </Inputs>
+    <Gist>
+      <MultiCopyMapper>
+        <List>/Temporary/IRS8962/ScheduleK1PHealthAndLongTermCareInsPremAmt</List>
+        <List>/Temporary/IRS8962/ScheduleK1PNetProfitFromBusinessAmt</List>
+        <Gist>
+          <ExcessAmt>
+            <ValueType>profit</ValueType>
+            <Threshold>/Temporary/IRS8962/ScheduleK1PHealthAndLongTermCareInsPremAmt</Threshold>
+            <Value>/Temporary/IRS8962/ScheduleK1PNetProfitFromBusinessAmt</Value>
+          </ExcessAmt>
+        </Gist>
+      </MultiCopyMapper>
+    </Gist>
+    <RoundTo>
+      <MultiCopy>
+        <Dollars />
+      </MultiCopy>
+    </RoundTo>
+  </Node>
+  <Node name="/Temporary/IRS8962/ScheduleK1PHealthAndLongTermCareInsPremAmt">
+    <Inputs>
+      <Input>/Return/ReturnData/IRS1065ScheduleK1/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)</Input>
+      <Input>/Constants/IRS8962/HealthAndLongTermCareInsPremAmtFieldName</Input>
+    </Inputs>
+    <Gist>
+      <MultiCopyMapper>
+        <List>/Return/ReturnData/IRS1065ScheduleK1/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)</List>
+        <Gist>
+          <MultiCopySelectNumericByID>
+            <MultiCopy>/Return/ReturnData/IRS1065ScheduleK1/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)</MultiCopy>
+            <ID>/Constants/IRS8962/HealthAndLongTermCareInsPremAmtFieldName</ID>
+          </MultiCopySelectNumericByID>
+        </Gist>
+      </MultiCopyMapper>
+    </Gist>
+    <RoundTo>
+      <MultiCopy>
+        <Dollars />
+      </MultiCopy>
+    </RoundTo>
+  </Node>
+  <Node name="/Temporary/IRS8962/ScheduleK1PNetProfitFromBusinessAmt">
+    <Inputs>
+      <Input>/Return/ReturnData/IRS1065ScheduleK1/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)</Input>
+      <Input>/Constants/IRS8962/NetProfitFromBusinessAmtFieldName</Input>
+    </Inputs>
+    <Gist>
+      <MultiCopyMapper>
+        <List>/Return/ReturnData/IRS1065ScheduleK1/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)</List>
+        <Gist>
+          <MultiCopySelectNumericByID>
+            <MultiCopy>/Return/ReturnData/IRS1065ScheduleK1/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)</MultiCopy>
+            <ID>/Constants/IRS8962/NetProfitFromBusinessAmtFieldName</ID>
+          </MultiCopySelectNumericByID>
+        </Gist>
+      </MultiCopyMapper>
+    </Gist>
+    <RoundTo>
+      <MultiCopy>
+        <Dollars />
+      </MultiCopy>
+    </RoundTo>
+  </Node>
+  <Node name="/Temporary/IRS8962/FinalMonthlyPremiumTaxCreditAllwAmt">
+    <Inputs>
+      <Input>/Temporary/IRS8962/CalculationTypeChoice</Input>
+      <Input>/Temporary/IRS8962/MonthlyPremiumTaxCreditAllwAmt</Input>
+      <Input>/Temporary/IRS8962/AltMonthlyPremiumTaxCreditAllwAmt</Input>
+      <Input>/Temporary/IRS8962/AnnualPremiumTaxCreditAllwAmtDividedBy12PerMonth</Input>
+    </Inputs>
+    <Gist>
+      <MultiCopyChoice>
+        <Choice>/Temporary/IRS8962/CalculationTypeChoice</Choice>
+        <Possibility>/Temporary/IRS8962/MonthlyPremiumTaxCreditAllwAmt</Possibility>
+        <Possibility>/Temporary/IRS8962/AltMonthlyPremiumTaxCreditAllwAmt</Possibility>
+        <Possibility>/Temporary/IRS8962/AnnualPremiumTaxCreditAllwAmtDividedBy12PerMonth</Possibility>
+        <ChoiceMapping>
+          <Option>
+            <Value>ALTERNATE</Value>
+            <ID>/Temporary/IRS8962/AltMonthlyPremiumTaxCreditAllwAmt</ID>
+            <NoOtherOption>false</NoOtherOption>
+          </Option>
+          <Option>
+            <Value>MONTHLY_ALLOCATIONS_ALT_IS_WORSE</Value>
+            <ID>/Temporary/IRS8962/MonthlyPremiumTaxCreditAllwAmt</ID>
+            <NoOtherOption>false</NoOtherOption>
+          </Option>
+          <Option>
+            <Value>MONTHLY_VARYING_1095A_ALT_IS_WORSE</Value>
+            <ID>/Temporary/IRS8962/MonthlyPremiumTaxCreditAllwAmt</ID>
+            <NoOtherOption>false</NoOtherOption>
+          </Option>
+          <Option>
+            <Value>MONTHLY_VARYING_1095C_OFFER_OF_COVERAGE_ALT_IS_WORSE</Value>
+            <ID>/Temporary/IRS8962/MonthlyPremiumTaxCreditAllwAmt</ID>
+            <NoOtherOption>false</NoOtherOption>
+          </Option>
+          <Option>
+            <Value>ANNUAL_ALT_IS_WORSE</Value>
+            <ID>/Temporary/IRS8962/AnnualPremiumTaxCreditAllwAmtDividedBy12PerMonth</ID>
+            <NoOtherOption>false</NoOtherOption>
+          </Option>
+          <Option>
+            <Value>MONTHLY_ALLOCATIONS</Value>
+            <ID>/Temporary/IRS8962/MonthlyPremiumTaxCreditAllwAmt</ID>
+            <NoOtherOption>true</NoOtherOption>
+          </Option>
+          <Option>
+            <Value>MONTHLY_VARYING_1095A</Value>
+            <ID>/Temporary/IRS8962/MonthlyPremiumTaxCreditAllwAmt</ID>
+            <NoOtherOption>true</NoOtherOption>
+          </Option>
+          <Option>
+            <Value>MONTHLY_VARYING_1095C_OFFER_OF_COVERAGE</Value>
+            <ID>/Temporary/IRS8962/MonthlyPremiumTaxCreditAllwAmt</ID>
+            <NoOtherOption>true</NoOtherOption>
+          </Option>
+          <Option>
+            <Value>ANNUAL</Value>
+            <ID>/Temporary/IRS8962/AnnualPremiumTaxCreditAllwAmtDividedBy12PerMonth</ID>
+            <NoOtherOption>true</NoOtherOption>
+          </Option>
+          <Option>
+            <Value></Value>
+            <ID>/Temporary/IRS8962/MonthlyPremiumTaxCreditAllwAmt</ID>
+            <NoOtherOption>true</NoOtherOption>
+          </Option>
+        </ChoiceMapping>
+      </MultiCopyChoice>
+    </Gist>
+    <!--  We can't round here, since the annual values need to have decimal places to make the calculations work -->
+  </Node>
+  <Node name="/Temporary/IRS8962/AnnualPremiumTaxCreditAllwAmtDividedBy12PerMonth">
+    <Inputs>
+      <Input>/Temporary/IRS8962/AnnualPremiumTaxCreditAllwAmtDividedBy12</Input>
+      <!-- this is only used to get a list of the 12 month names.  We don't use the values. -->
+      <Input>/Temporary/IRS8962/MonthlyPremiumTaxCreditAllwAmt</Input>
+    </Inputs>
+    <Gist>
+      <MultiCopyMapper>
+        <List>/Temporary/IRS8962/MonthlyPremiumTaxCreditAllwAmt</List>
+        <Gist>
+          <NumericCopy>
+            <Value>/Temporary/IRS8962/AnnualPremiumTaxCreditAllwAmtDividedBy12</Value>
+          </NumericCopy>
+        </Gist>
+      </MultiCopyMapper>
+    </Gist>
+    <!-- we specifically don't want to round here, since all decimal places are needed to make the cycle calculations work. -->
+  </Node>
+  <Node name="/Temporary/IRS8962/AnnualPremiumTaxCreditAllwAmtDividedBy12">
+    <Inputs>
+      <Input>/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualPremiumTaxCreditAllwAmt</Input>
+      <Input>/Constants/NumberMonthsInYear</Input>
+    </Inputs>
+    <Gist>
+      <Quotient>
+        <Numerator>/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualPremiumTaxCreditAllwAmt</Numerator>
+        <Denominator>/Constants/NumberMonthsInYear</Denominator>
+      </Quotient>
+    </Gist>
+    <!-- we specifically don't want to round here, since all decimal places are needed to make the cycle calculations work. -->
+  </Node>
+  <!-- this is the overflow to schedule A for fed -->
+  <Node name="/Return/ReturnData/IRS8962/ExchangeHealthInsItemizedDedAmtPP">
+    <Inputs>
+      <Input>/Temporary/IRS8962/TotalAllocatedPlanPremiumAmt</Input>
+      <Input>/Temporary/IRS8962/NotEligibleForItemizedDedAmt</Input>
+    </Inputs>
+    <Gist>
+      <Difference>
+        <Left>/Temporary/IRS8962/TotalAllocatedPlanPremiumAmt</Left>
+        <Right>/Temporary/IRS8962/NotEligibleForItemizedDedAmt</Right>
+      </Difference>
+    </Gist>
+    <RoundTo>
+      <Dollars />
+    </RoundTo>
+  </Node>
+  <Node name="/Temporary/IRS8962/TotalAllocatedPlanPremiumAmt">
+    <Inputs>
+      <Input>/Temporary/IRS8962/TotalMonthlyPlanPremiumAmt</Input>
+    </Inputs>
+    <Gist>
+      <MultiCopyAccumulation>
+        <Type>premium</Type>
+        <Value>/Temporary/IRS8962/TotalMonthlyPlanPremiumAmt</Value>
+      </MultiCopyAccumulation>
+    </Gist>
+    <RoundTo>
+      <Dollars />
+    </RoundTo>
+  </Node>
+  <Node name="/Temporary/IRS8962/NotEligibleForItemizedDedAmt">
+    <Inputs>
+      <Input>/Return/ReturnData/IRS8962/SelfEmployedExchangeHealthInsDedAmtPP</Input>
+      <Input>/Temporary/IRS8962/PremiumsNotPaid</Input>
+    </Inputs>
+    <Gist>
+      <Accumulation>
+        <Type>premium</Type>
+        <Value>/Return/ReturnData/IRS8962/SelfEmployedExchangeHealthInsDedAmtPP</Value>
+        <Value>/Temporary/IRS8962/PremiumsNotPaid</Value>
+      </Accumulation>
+    </Gist>
+    <RoundTo>
+      <Dollars />
+    </RoundTo>
+  </Node>
+  <Node name="/Temporary/IRS8962/PremiumsNotPaid">
+    <Inputs>
+      <Input>/Temporary/IRS8962/PTCReceived</Input>
+      <Input>/Return/ReturnData/IRS8962/PremiumTaxCreditTaxLiabAmt</Input>
+    </Inputs>
+    <Gist>
+      <Difference>
+        <Left>/Temporary/IRS8962/PTCReceived</Left>
+        <Right>/Return/ReturnData/IRS8962/PremiumTaxCreditTaxLiabAmt</Right>
+      </Difference>
+    </Gist>
+    <RoundTo>
+      <Dollars />
+    </RoundTo>
+  </Node>
+  <Node name="/Temporary/IRS8962/PTCReceived">
+    <Inputs>
+      <Input>/Temporary/IRS8962/TotalAllocatedMonthlyAdvancedPTCAmt</Input>
+      <Input>/Return/ReturnData/IRS8962/ReconciledPremiumTaxCreditAmt</Input>
+    </Inputs>
+    <Gist>
+      <Accumulation>
+        <Type>credit</Type>
+        <Value>/Temporary/IRS8962/TotalAllocatedMonthlyAdvancedPTCAmt</Value>
+        <Value>/Return/ReturnData/IRS8962/ReconciledPremiumTaxCreditAmt</Value>
+      </Accumulation>
+    </Gist>
+    <RoundTo>
+      <Dollars />
+    </RoundTo>
+  </Node>
+  <!-- inputs -->
+  <Node name="/Return/ReturnData/IRS1040/AdjustedGrossIncomeAmt"
+        type="input">
+    <RoundTo>
+      <Dollars />
+    </RoundTo>
+  </Node>
+  <Node name="/Return/ReturnData/IRS1040ScheduleC/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)"
+        type="multiCopyStructInput">
+    <RoundTo>
+      <MultiCopy>
+        <Struct>
+          <Element>
+            <Name>SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP</Name>
+            <RoundTo>
+              <Dollars />
+            </RoundTo>
+          </Element>
+          <Element>
+            <Name>SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP</Name>
+            <RoundTo>
+              <Dollars />
+            </RoundTo>
+          </Element>
+        </Struct>
+      </MultiCopy>
+    </RoundTo>
+  </Node>
+  <Node name="/Return/ReturnData/IRS1040ScheduleF/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)"
+        type="multiCopyStructInput">
+    <RoundTo>
+      <MultiCopy>
+        <Struct>
+          <Element>
+            <Name>SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP</Name>
+            <RoundTo>
+              <Dollars />
+            </RoundTo>
+          </Element>
+          <Element>
+            <Name>SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP</Name>
+            <RoundTo>
+              <Dollars />
+            </RoundTo>
+          </Element>
+        </Struct>
+      </MultiCopy>
+    </RoundTo>
+  </Node>
+  <Node name="/Return/ReturnData/IRS1120SScheduleK1/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)"
+        type="multiCopyStructInput">
+    <RoundTo>
+      <MultiCopy>
+        <Struct>
+          <Element>
+            <Name>SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP</Name>
+            <RoundTo>
+              <Dollars />
+            </RoundTo>
+          </Element>
+          <Element>
+            <Name>SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP</Name>
+            <RoundTo>
+              <Dollars />
+            </RoundTo>
+          </Element>
+        </Struct>
+      </MultiCopy>
+    </RoundTo>
+  </Node>
+  <Node name="/Return/ReturnData/IRS1065ScheduleK1/(SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP | SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP)"
+        type="multiCopyStructInput">
+    <RoundTo>
+      <MultiCopy>
+        <Struct>
+          <Element>
+            <Name>SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP</Name>
+            <RoundTo>
+              <Dollars />
+            </RoundTo>
+          </Element>
+          <Element>
+            <Name>SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP</Name>
+            <RoundTo>
+              <Dollars />
+            </RoundTo>
+          </Element>
+        </Struct>
+      </MultiCopy>
+    </RoundTo>
+  </Node>
+  <Node name="/Return/ReturnData/IRS1095A/(LinkStartMonthNumberCdPP | LinkEndMonthNumberCdPP | SchCLinkPP | SchK1PLinkPP | SchFLinkPP | SchK1SLinkPP)"
+        type="multiCopyStructInput" />
+  <Node name="/Return/ReturnData/IRS8962/SelfEmployedExchangeHealthInsDedAmtPP"
+        type="input">
+    <RoundTo>
+      <Dollars />
+    </RoundTo>
+  </Node>
+  <Node name="/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/TPSIterationNumberPP"
+        type="input">
+    <RoundTo>
+      <Integer />
+    </RoundTo>
+  </Node>
+  <Node name="/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/IterationNumberPP"
+        type="input">
+    <RoundTo>
+      <Integer />
+    </RoundTo>
+  </Node>
+  <Node name="/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/LastIterationDeductionPP"
+        type="input">
+    <RoundTo>
+      <Dollars />
+    </RoundTo>
+  </Node>
+  <Node name="/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/LastIterationPTCPP"
+        type="input">
+    <RoundTo>
+      <Dollars />
+    </RoundTo>
+  </Node>
+  <Node name="/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/AlternateDeductionPP"
+        type="input">
+    <RoundTo>
+      <Dollars />
+    </RoundTo>
+  </Node>
+  <!-- constants -->
+  <Node name="/Constants/IRS8962/MaxIterationsForIterativeCalculation"
+        type="constant">
+    <RoundTo>
+      <Integer />
+    </RoundTo>
+  </Node>
+  <Node name="/Constants/IRS8962/PTCThreshold"
+        type="constant">
+    <RoundTo>
+      <Dollars />
+    </RoundTo>
+  </Node>
+  <Node name="/Constants/IRS8962/DeductionThreshold"
+        type="constant">
+    <RoundTo>
+      <Dollars />
+    </RoundTo>
+  </Node>
+  <Node name="/Constants/IRS8962/HealthAndLongTermCareInsPremAmtFieldName"
+        type="constant" />
+  <Node name="/Constants/IRS8962/NetProfitFromBusinessAmtFieldName"
+        type="constant" />
+</Nodes>

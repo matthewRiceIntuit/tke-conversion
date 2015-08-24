@@ -47,16 +47,6 @@
     <xsl:template match="Named_param[Tmp]"><xsl:variable name="name" select="Name/@val"/><xsl:element name="{$name}">/Temporary/EIC/<xsl:value-of select="Var/@val"/></xsl:element></xsl:template>
 
     <xsl:template match="/Gistscript/Section">
-<xsl:comment>
-<xsl:text>
-
-
-
-
-
-</xsl:text>
-</xsl:comment>
-
         <Node><xsl:attribute name="name"><xsl:apply-templates select="*[1]"/></xsl:attribute>
             <Inputs>
                 <xsl:for-each select="Gist/Params[Name/@val='inputs']//Var">
@@ -81,6 +71,13 @@
             </RoundTo>
         </Node>
 
+<xsl:comment>
+<xsl:text>
+
+
+
+</xsl:text>
+</xsl:comment>
     </xsl:template>
 
 </xsl:stylesheet>

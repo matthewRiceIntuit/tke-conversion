@@ -1,0 +1,144 @@
+
+     @FW2SUM.TCOMBATAboveThreshold = AboveThreshold(
+          inputs: [
+               value:FW2SUM.TCOMBAT, 
+               threshold:0
+          ]
+      )
+
+     @AllConditionsTrueNontaxablecombatpay1 = AllConditionsTrue(
+          inputs: [
+               @FINFOWKS.TDODIsNotBlank, 
+               @FINFOWKS.TDODBelowThreshold
+          ]
+      )
+
+     @FINFOWKS.TDODIsNotBlank = IsNotBlank(
+          inputs: [
+               FINFOWKS.TDOD
+          ]
+      )
+
+     @FINFOWKS.TDODBelowThreshold = BelowThreshold(
+          inputs: [
+               value:FINFOWKS.TDOD, 
+               threshold:
+          ]
+      )
+
+     EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/TaxpayerNontaxableCombatPayPP = NumericCopy(
+          inputs: [
+               FW2SUM.TCOMBAT
+          ]
+      )
+
+     @AllConditionsTrueNontaxablecombatpay2 = AllConditionsTrue(
+          inputs: [
+               @FINFOWKS.FS2IsNotBlank, 
+               @FW2SUM.SCOMBATAboveThreshold
+          ]
+      )
+
+     @FINFOWKS.FS2IsNotBlank = IsNotBlank(
+          inputs: [
+               FINFOWKS.FS2
+          ]
+      )
+
+     @FW2SUM.SCOMBATAboveThreshold = AboveThreshold(
+          inputs: [
+               value:FW2SUM.SCOMBAT, 
+               threshold:0
+          ]
+      )
+
+     @AllConditionsTrueNontaxablecombatpay3 = AllConditionsTrue(
+          inputs: [
+               @FINFOWKS.SDODIsNotBlank, 
+               @FINFOWKS.SDODBelowThreshold
+          ]
+      )
+
+     @FINFOWKS.SDODIsNotBlank = IsNotBlank(
+          inputs: [
+               FINFOWKS.SDOD
+          ]
+      )
+
+     @FINFOWKS.SDODBelowThreshold = BelowThreshold(
+          inputs: [
+               value:FINFOWKS.SDOD, 
+               threshold:
+          ]
+      )
+
+     EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/SpouseNontaxableCombatPayPP = NumericCopy(
+          inputs: [
+               FW2SUM.SCOMBAT
+          ]
+      )
+
+     @EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/TaxpayerCombatPayForEICIndPPIsNotBlank = IsNotBlank(
+          inputs: [
+               EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/TaxpayerCombatPayForEICIndPP
+          ]
+      )
+
+     EIC/EICWorksheetPP/TaxpayerNontaxableCombatPayPP = NumericCopy(
+          inputs: [
+               EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/TaxpayerNontaxableCombatPayPP
+          ], 
+          BlankIfFalse: @EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/TaxpayerCombatPayForEICIndPPIsNotBlank
+      )
+
+     @AllConditionsTrueNontaxablecombatpay4 = AllConditionsTrue(
+          inputs: [
+               @FINFOWKS.FS2IsNotBlank, 
+               @EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/SpouseCombatPayForEICIndPPIsNotBlank
+          ]
+      )
+
+     @FINFOWKS.FS2IsNotBlank = IsNotBlank(
+          inputs: [
+               FINFOWKS.FS2
+          ]
+      )
+
+     @EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/SpouseCombatPayForEICIndPPIsNotBlank = IsNotBlank(
+          inputs: [
+               EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/SpouseCombatPayForEICIndPP
+          ]
+      )
+
+     EIC/EICWorksheetPP/SpouseNontaxableCombatPayPP = NumericCopy(
+          inputs: [
+               EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/SpouseNontaxableCombatPayPP
+          ], 
+          BlankIfFalse: @AllConditionsTrueNontaxablecombatpay4
+      )
+
+     @FSCHEICW.YDCBELECIsNotBlank = IsNotBlank(
+          inputs: [
+               FSCHEICW.YDCBELEC
+          ]
+      )
+
+     @Nontaxablecombatpay/TDCBCMBT = NumericCopy(
+          inputs: [
+               EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/TaxpayerNontaxableCombatPayPP
+          ], 
+          BlankIfFalse: @FSCHEICW.YDCBELECIsNotBlank
+      )
+
+     @FSCHEICW.SDCBELEYIsNotBlank = IsNotBlank(
+          inputs: [
+               FSCHEICW.SDCBELEY
+          ]
+      )
+
+     @Nontaxablecombatpay/SDCBCMBT|HelloWorld = NumericCopy(
+          inputs: [
+               EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/SpouseNontaxableCombatPayPP
+          ], 
+          BlankIfFalse: @FSCHEICW.SDCBELEYIsNotBlank
+      )

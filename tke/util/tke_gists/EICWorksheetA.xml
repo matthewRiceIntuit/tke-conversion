@@ -1,0 +1,575 @@
+<?xml version="1.0"?>
+<Nodes topic="EIC">
+	<Versions>
+		<Version id="TKE.Calc.FileFormat">3</Version>
+		<Version id="TKE.Calc.Runtime">1</Version>
+		<Version id="TKE.Gist">11</Version>
+		<Version id="TKE.MeF">1</Version>
+	</Versions>
+	<Node name="/Temporary/EIC/BlankLines7To10">
+		<Inputs>
+			<Input>/Temporary/EIC/SSNInvalidForEmplmnOrEICPrpsInd</Input>
+			<Input>/Temporary/EIC/EICEligClmQlfyChldOfOtherInd</Input>
+			<Input>/Temporary/EIC/NotifiedByIRSNoEICInd</Input>
+			<Input>/Temporary/EIC/DisqualifiedBecauseMainHomeNotInUSOverHalfYr</Input>
+			<Input>/Temporary/EIC/ZeroChildrenAndDisqualifiedDueToAge</Input>
+			<Input>/Return/ReturnData/EIC/HOHAndLivedWithNRALast6MonthsIndPP</Input>
+			<Input>/Temporary/EIC/FilerOrSpouseIsDualStatusAlienInd</Input>
+			<Input>/Return/ReturnData/EIC/InvestmentIncomeOverLimitIndPP</Input>
+			<Input>/Temporary/EIC/DisqualifiedBecauseSSNBlank</Input>
+			<Input>/Temporary/EIC/DisqualifiedBecauseITIN</Input>
+			<Input>/Temporary/EIC/SSNInvalidForEmplmnOrEICPrpsInd</Input>
+			<Input>/Temporary/EIC/Form2555OrForm2555EZInd</Input>
+			<Input>/Return/ReturnData/EIC/ClaimedAsDependentIndPP</Input>
+			<Input>/Temporary/EIC/MarriedFilingSeparateDisqualification</Input>
+		</Inputs>
+		<Gist>
+			<AtLeastOneConditionTrue>
+				<InputRoles>
+					<Condition>/Temporary/EIC/ZeroChildrenAndDisqualifiedDueToAge</Condition>
+					<Condition>/Return/ReturnData/EIC/HOHAndLivedWithNRALast6MonthsIndPP</Condition>
+					<Condition>/Temporary/EIC/FilerOrSpouseIsDualStatusAlienInd</Condition>
+					<Condition>/Return/ReturnData/EIC/InvestmentIncomeOverLimitIndPP</Condition>
+					<Condition>/Temporary/EIC/DisqualifiedBecauseSSNBlank</Condition>
+					<Condition>/Temporary/EIC/DisqualifiedBecauseITIN</Condition>
+					<Condition>/Temporary/EIC/SSNInvalidForEmplmnOrEICPrpsInd</Condition>
+					<Condition>/Temporary/EIC/Form2555OrForm2555EZInd</Condition>
+					<Condition>/Return/ReturnData/EIC/ClaimedAsDependentIndPP</Condition>
+					<Condition>/Temporary/EIC/MarriedFilingSeparateDisqualification</Condition>
+					<Condition>/Temporary/EIC/SSNInvalidForEmplmnOrEICPrpsInd</Condition>
+					<Condition>/Temporary/EIC/EICEligClmQlfyChldOfOtherInd</Condition>
+					<Condition>/Temporary/EIC/NotifiedByIRSNoEICInd</Condition>
+					<Condition>/Temporary/EIC/DisqualifiedBecauseMainHomeNotInUSOverHalfYr</Condition>
+				</InputRoles>
+			</AtLeastOneConditionTrue>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/CalcLines7To10">
+		<Inputs>
+			<Input>/Temporary/EIC/BlankLines7To10</Input>
+			<Input>/Return/ReturnData/EIC/InvestmentIncomeOverLimitIndPP</Input>
+		</Inputs>
+		<Gist>
+			<AllConditionsTrue>
+				<InputRoles>
+					<OppositeCondition>/Temporary/EIC/BlankLines7To10</OppositeCondition>
+					<OppositeCondition>/Return/ReturnData/EIC/InvestmentIncomeOverLimitIndPP</OppositeCondition>
+				</InputRoles>
+			</AllConditionsTrue>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/AtLeastOneQualifyingChild">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/QualifyingChildCntPP</Input>
+			<Input>/Constants/Zero</Input>
+		</Inputs>
+		<Gist>
+			<AboveThreshold>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/QualifyingChildCntPP</Value>
+					<Threshold>/Constants/Zero</Threshold>
+				</InputRoles>
+			</AboveThreshold>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/GetNotMFJAmtMinLimit">
+		<Inputs>
+			<Input>/Temporary/EIC/AtLeastOneQualifyingChild</Input>
+			<Input>/Constants/EIC/IncomeLimit/NonMFJ/Min/NoQualChildAmt</Input>
+			<Input>/Constants/EIC/IncomeLimit/NonMFJ/Min/AtLeastOneQualChildAmt</Input>
+		</Inputs>
+		<Gist>
+			<NumericChoice>
+				<InputRoles>
+					<Choice>/Temporary/EIC/AtLeastOneQualifyingChild</Choice>
+					<Possibility>/Constants/EIC/IncomeLimit/NonMFJ/Min/NoQualChildAmt</Possibility>
+					<Possibility>/Constants/EIC/IncomeLimit/NonMFJ/Min/AtLeastOneQualChildAmt</Possibility>
+				</InputRoles>
+				<Configuration>
+					<ChoiceMapping>
+						<Option>
+							<Value>true</Value>
+							<ID>/Constants/EIC/IncomeLimit/NonMFJ/Min/AtLeastOneQualChildAmt</ID>
+							<NoOtherOption>false</NoOtherOption>
+						</Option>
+						<DefaultOption>
+							<ID>/Constants/EIC/IncomeLimit/NonMFJ/Min/NoQualChildAmt</ID>
+							<NoOtherOption>true</NoOtherOption>
+						</DefaultOption>
+					</ChoiceMapping>
+				</Configuration>
+			</NumericChoice>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/GetMFJAmtMinLimit">
+		<Inputs>
+			<Input>/Temporary/EIC/AtLeastOneQualifyingChild</Input>
+			<Input>/Constants/EIC/IncomeLimit/MFJ/Min/NoQualChildAmt</Input>
+			<Input>/Constants/EIC/IncomeLimit/MFJ/Min/AtLeastOneQualChildAmt</Input>
+		</Inputs>
+		<Gist>
+			<NumericChoice>
+				<InputRoles>
+					<Choice>/Temporary/EIC/AtLeastOneQualifyingChild</Choice>
+					<Possibility>/Constants/EIC/IncomeLimit/MFJ/Min/NoQualChildAmt</Possibility>
+					<Possibility>/Constants/EIC/IncomeLimit/MFJ/Min/AtLeastOneQualChildAmt</Possibility>
+				</InputRoles>
+				<Configuration>
+					<ChoiceMapping>
+						<Option>
+							<Value>true</Value>
+							<ID>/Constants/EIC/IncomeLimit/MFJ/Min/AtLeastOneQualChildAmt</ID>
+							<NoOtherOption>false</NoOtherOption>
+						</Option>
+						<DefaultOption>
+							<ID>/Constants/EIC/IncomeLimit/MFJ/Min/NoQualChildAmt</ID>
+							<NoOtherOption>true</NoOtherOption>
+						</DefaultOption>
+					</ChoiceMapping>
+				</Configuration>
+			</NumericChoice>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/GetAGIMinLimit">
+		<Inputs>
+			<Input>/Temporary/EIC/IsMarriedFilingJointly</Input>
+			<Input>/Temporary/EIC/GetMFJAmtMinLimit</Input>
+			<Input>/Temporary/EIC/GetNotMFJAmtMinLimit</Input>
+		</Inputs>
+		<Gist>
+			<NumericChoice>
+				<InputRoles>
+					<Choice>/Temporary/EIC/IsMarriedFilingJointly</Choice>
+					<Possibility>/Temporary/EIC/GetMFJAmtMinLimit</Possibility>
+					<Possibility>/Temporary/EIC/GetNotMFJAmtMinLimit</Possibility>
+				</InputRoles>
+				<Configuration>
+					<ChoiceMapping>
+						<Option>
+							<Value>true</Value>
+							<ID>/Temporary/EIC/GetMFJAmtMinLimit</ID>
+							<NoOtherOption>false</NoOtherOption>
+						</Option>
+						<DefaultOption>
+							<ID>/Temporary/EIC/GetNotMFJAmtMinLimit</ID>
+							<NoOtherOption>true</NoOtherOption>
+						</DefaultOption>
+					</ChoiceMapping>
+				</Configuration>
+			</NumericChoice>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/AtLeastOneChildAndTPCantBeClaimed">
+		<Inputs>
+			<Input>/Temporary/EIC/EICEligClmQlfyChldOfOtherInd</Input>
+			<Input>/Temporary/EIC/AtLeastOneQualifyingChild</Input>
+		</Inputs>
+		<Gist>
+			<AllConditionsTrue>
+				<InputRoles>
+					<Condition>/Temporary/EIC/AtLeastOneQualifyingChild</Condition>
+					<OppositeCondition>/Temporary/EIC/EICEligClmQlfyChldOfOtherInd</OppositeCondition>
+				</InputRoles>
+			</AllConditionsTrue>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/TPCantBeClaimedAndMainHomeInUS">
+		<Inputs>
+			<Input>/Temporary/EIC/MainHomeInUSOverHalfYrInd</Input>
+			<Input>/Temporary/EIC/EICEligClmQlfyChldOfOtherInd</Input>
+		</Inputs>
+		<Gist>
+			<AllConditionsTrue>
+				<InputRoles>
+					<Condition>/Temporary/EIC/MainHomeInUSOverHalfYrInd</Condition>
+					<OppositeCondition>/Temporary/EIC/EICEligClmQlfyChldOfOtherInd</OppositeCondition>
+				</InputRoles>
+			</AllConditionsTrue>
+		</Gist>
+	</Node>
+	<!--TODO Make node for the same checks as above, but for 1040EZ (if supported) and have AtLeastOneConditionTrue for that and above node-->
+	<Node name="/Temporary/EIC/NoChildAndTPCantBeClaimedAndUSHome">
+		<Inputs>
+			<Input>/Temporary/EIC/AtLeastOneQualifyingChild</Input>
+			<Input>/Temporary/EIC/TPCantBeClaimedAndMainHomeInUS</Input>
+		</Inputs>
+		<Gist>
+			<AllConditionsTrue>
+				<InputRoles>
+					<OppositeCondition>/Temporary/EIC/AtLeastOneQualifyingChild</OppositeCondition>
+					<Condition>/Temporary/EIC/TPCantBeClaimedAndMainHomeInUS</Condition>
+				</InputRoles>
+			</AllConditionsTrue>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/CalcLine7WithKidsInd">
+		<Inputs>
+			<Input>/Temporary/EIC/AtLeastOneChildAndTPCantBeClaimed</Input>
+			<Input>/Temporary/EIC/NoChildAndTPCantBeClaimedAndUSHome</Input>
+		</Inputs>
+		<Gist>
+			<AtLeastOneConditionTrue>
+				<InputRoles>
+					<Condition>/Temporary/EIC/AtLeastOneChildAndTPCantBeClaimed</Condition>
+					<Condition>/Temporary/EIC/NoChildAndTPCantBeClaimedAndUSHome</Condition>
+				</InputRoles>
+			</AtLeastOneConditionTrue>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/CalcLine7Ind">
+		<Inputs>
+			<Input>/Temporary/EIC/CalcLines7To10</Input>
+			<Input>/Temporary/EIC/CalcLine7WithKidsInd</Input>
+		</Inputs>
+		<Gist>
+			<AllConditionsTrue>
+				<InputRoles>
+					<Condition>/Temporary/EIC/CalcLines7To10</Condition>
+					<Condition>/Temporary/EIC/CalcLine7WithKidsInd</Condition>
+				</InputRoles>
+			</AllConditionsTrue>
+		</Gist>
+	</Node>
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeTableAmtPP">
+		<!--Line 7-->
+		<Inputs>
+			<Input>/Temporary/EIC/CalcLine7Ind</Input>
+			<Input>/Constants/IRS1040/EICTable</Input>
+			<Input>/Return/ReturnData/EIC/EICWorksheetPP/EarnedIncomePP</Input>
+			<Input>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</Input>
+			<Input>/Return/ReturnData/EIC/QualifyingChildCntPP</Input>
+		</Inputs>
+		<BlankCondition>
+			<BlankIfFalse>/Temporary/EIC/CalcLine7Ind</BlankIfFalse>
+		</BlankCondition>
+		<Gist>
+			<EarnedIncomeTaxCredit>
+				<InputRoles>
+					<Table>/Constants/IRS1040/EICTable</Table>
+					<Income>/Return/ReturnData/EIC/EICWorksheetPP/EarnedIncomePP</Income>
+					<FilingStatus>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</FilingStatus>
+					<NumberQualifyingChildren>/Return/ReturnData/EIC/QualifyingChildCntPP</NumberQualifyingChildren>
+				</InputRoles>
+			</EarnedIncomeTaxCredit>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/IsEarnedIncomeTableAmtZero">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeTableAmtPP</Input>
+			<Input>/Constants/Zero</Input>
+		</Inputs>
+		<Gist>
+			<Equals>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeTableAmtPP</Value>
+					<Value>/Constants/Zero</Value>
+				</InputRoles>
+			</Equals>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/IsEarnedIncomeTableAmtGTZero">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeTableAmtPP</Input>
+			<Input>/Constants/Zero</Input>
+		</Inputs>
+		<Gist>
+			<AboveThreshold>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeTableAmtPP</Value>
+					<Threshold>/Constants/Zero</Threshold>
+				</InputRoles>
+			</AboveThreshold>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeGTZeroAndNotDQIncome">
+		<Inputs>
+			<Input>/Temporary/EIC/IsEarnedIncomeTableAmtGTZero</Input>
+			<Input>/Temporary/EIC/CalcLines7To10</Input>
+		</Inputs>
+		<Gist>
+			<AllConditionsTrue>
+				<InputRoles>
+					<Condition>/Temporary/EIC/CalcLines7To10</Condition>
+					<Condition>/Temporary/EIC/IsEarnedIncomeTableAmtGTZero</Condition>
+				</InputRoles>
+			</AllConditionsTrue>
+		</Gist>
+	</Node>
+	<Node name="/Return/ReturnData/EIC/AGIAmtPP">
+		<!--Line 8-->
+		<Inputs>
+			<Input>/Temporary/EIC/EarnedIncomeGTZeroAndNotDQIncome</Input>
+			<Input>/Return/ReturnData/IRS1040/AdjustedGrossIncomeAmt</Input>
+		</Inputs>
+		<BlankCondition>
+			<BlankIfFalse>/Temporary/EIC/EarnedIncomeGTZeroAndNotDQIncome</BlankIfFalse>
+		</BlankCondition>
+		<Gist>
+			<NumericCopy>
+				<InputRoles>
+					<Value>/Return/ReturnData/IRS1040/AdjustedGrossIncomeAmt</Value>
+				</InputRoles>
+			</NumericCopy>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/AGILessThanMinLimit">
+		<Inputs>
+			<Input>/Temporary/EIC/GetAGIMinLimit</Input>
+			<Input>/Return/ReturnData/EIC/AGIAmtPP</Input>
+		</Inputs>
+		<Gist>
+			<BelowThreshold>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/AGIAmtPP</Value>
+					<Threshold>/Temporary/EIC/GetAGIMinLimit</Threshold>
+				</InputRoles>
+			</BelowThreshold>
+		</Gist>
+	</Node>
+	<Node name="/Return/ReturnData/EIC/DoNotGetEICFromAGIPP">
+		<!--Line 9 Y/N-->
+		<Inputs>
+			<Input>/Temporary/EIC/CalcLines7To10</Input>
+			<Input>/Temporary/EIC/AGILessThanMinLimit</Input>
+		</Inputs>
+		<BlankCondition>
+			<BlankIfFalse>/Temporary/EIC/CalcLines7To10</BlankIfFalse>
+		</BlankCondition>
+		<Gist>
+			<BooleanCopy>
+				<InputRoles>
+					<Value>/Temporary/EIC/AGILessThanMinLimit</Value>
+				</InputRoles>
+			</BooleanCopy>
+		</Gist>
+	</Node>
+	<Node name="/Temporary/EIC/Calc7To10AndDoNotGetEICFromAGI">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/DoNotGetEICFromAGIPP</Input>
+			<Input>/Temporary/EIC/CalcLines7To10</Input>
+		</Inputs>
+		<Gist>
+			<AllConditionsTrue>
+				<InputRoles>
+					<OppositeCondition>/Return/ReturnData/EIC/DoNotGetEICFromAGIPP</OppositeCondition>
+					<Condition>/Temporary/EIC/CalcLines7To10</Condition>
+				</InputRoles>
+			</AllConditionsTrue>
+		</Gist>
+	</Node>
+	<Node name="/Return/ReturnData/EIC/AdjustedGrossIncomeTableAmtPP">
+		<!--Line 9-->
+		<Inputs>
+			<Input>/Constants/IRS1040/EICTable</Input>
+			<Input>/Return/ReturnData/IRS1040/AdjustedGrossIncomeAmt</Input>
+			<Input>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</Input>
+			<Input>/Return/ReturnData/EIC/QualifyingChildCntPP</Input>
+			<Input>/Temporary/EIC/Calc7To10AndDoNotGetEICFromAGI</Input>
+		</Inputs>
+		<BlankCondition>
+			<BlankIfFalse>/Temporary/EIC/Calc7To10AndDoNotGetEICFromAGI</BlankIfFalse>
+		</BlankCondition>
+		<Gist>
+			<EarnedIncomeTaxCredit>
+				<InputRoles>
+					<Table>/Constants/IRS1040/EICTable</Table>
+					<Income>/Return/ReturnData/IRS1040/AdjustedGrossIncomeAmt</Income>
+					<FilingStatus>/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd</FilingStatus>
+					<NumberQualifyingChildren>/Return/ReturnData/EIC/QualifyingChildCntPP</NumberQualifyingChildren>
+				</InputRoles>
+			</EarnedIncomeTaxCredit>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/MinimumTableAmt">
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeTableAmtPP</Input>
+			<Input>/Return/ReturnData/EIC/AdjustedGrossIncomeTableAmtPP</Input>
+		</Inputs>
+		<Gist>
+			<Minimum>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeTableAmtPP</Value>
+					<Value>/Return/ReturnData/EIC/AdjustedGrossIncomeTableAmtPP</Value>
+				</InputRoles>
+			</Minimum>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Temporary/EIC/EarnedIncomeCreditAmt">
+		<!--Calcing Line 10-->
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/DoNotGetEICFromAGIPP</Input>
+			<Input>/Temporary/EIC/MinimumTableAmt</Input>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeTableAmtPP</Input>
+		</Inputs>
+		<Gist>
+			<NumericChoice>
+				<InputRoles>
+					<Choice>/Return/ReturnData/EIC/DoNotGetEICFromAGIPP</Choice>
+					<Possibility>/Temporary/EIC/MinimumTableAmt</Possibility>
+					<Possibility>/Return/ReturnData/EIC/EarnedIncomeTableAmtPP</Possibility>
+				</InputRoles>
+				<Configuration>
+					<ChoiceMapping>
+						<Option>
+							<Value>true</Value>
+							<ID>/Return/ReturnData/EIC/EarnedIncomeTableAmtPP</ID>
+							<NoOtherOption>false</NoOtherOption>
+						</Option>
+						<DefaultOption>
+							<ID>/Temporary/EIC/MinimumTableAmt</ID>
+							<NoOtherOption>true</NoOtherOption>
+						</DefaultOption>
+					</ChoiceMapping>
+				</Configuration>
+			</NumericChoice>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<!-- TODO: Actually need to do YET ANOTHER level of choicing if you are only disqualified due to income -->
+	<Node name="/Return/ReturnData/EIC/EarnedIncomeCreditAmtPP">
+		<!--Line 10-->
+		<Inputs>
+			<Input>/Temporary/EIC/CalcLines7To10</Input>
+			<Input>/Temporary/EIC/EarnedIncomeCreditAmt</Input>
+		</Inputs>
+		<BlankCondition>
+			<BlankIfFalse>/Temporary/EIC/CalcLines7To10</BlankIfFalse>
+		</BlankCondition>
+		<Gist>
+			<NumericCopy>
+				<InputRoles>
+					<Value>/Temporary/EIC/EarnedIncomeCreditAmt</Value>
+				</InputRoles>
+			</NumericCopy>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</Node>
+	<Node name="/Return/ReturnData/IRS1040/EarnedIncomeCreditAmt">
+		<!--F1040 Line 66a-->
+		<Inputs>
+			<Input>/Return/ReturnData/EIC/DisqualifiedFromEICIndPP</Input>
+			<Input>/Return/ReturnData/EIC/EarnedIncomeCreditAmtPP</Input>
+		</Inputs>
+		<BlankCondition>
+			<BlankIfTrue>/Return/ReturnData/EIC/DisqualifiedFromEICIndPP</BlankIfTrue>
+		</BlankCondition>
+		<Gist>
+			<NumericCopy>
+				<InputRoles>
+					<Value>/Return/ReturnData/EIC/EarnedIncomeCreditAmtPP</Value>
+				</InputRoles>
+			</NumericCopy>
+		</Gist>
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+    </Node>
+    <Node name="/Temporary/EIC/EICEligClmQlfyChldOfOtherInd">
+        <Inputs>
+            <Input>/Return/ReturnData/EIC/EICEligClmQlfyChldOfOtherIndPP</Input>
+            <Input>/Constants/True</Input>
+            <Input>/Constants/False</Input>
+        </Inputs>
+        <Gist>
+            <BooleanChoice>
+                <InputRoles>
+                    <Choice>/Return/ReturnData/EIC/EICEligClmQlfyChldOfOtherIndPP</Choice>
+                    <Possibility>/Constants/True</Possibility>
+                    <Possibility>/Constants/False</Possibility>
+                </InputRoles>
+                <Configuration>
+                    <ChoiceMapping>
+                        <Option>
+                            <Value>true</Value>
+                            <ID>/Constants/True</ID>
+                            <NoOtherOption>true</NoOtherOption>
+                        </Option>
+                        <DefaultOption>
+                            <ID>/Constants/False</ID>
+                            <NoOtherOption>true</NoOtherOption>
+                        </DefaultOption>
+                    </ChoiceMapping>
+                </Configuration>
+            </BooleanChoice>
+        </Gist>
+    </Node>
+    <ConstantNode name="/Constants/EIC/IncomeLimit/NonMFJ/Min/NoQualChildAmt" />
+	<ConstantNode name="/Constants/EIC/IncomeLimit/MFJ/Min/NoQualChildAmt" />
+	<ConstantNode name="/Constants/EIC/IncomeLimit/NonMFJ/Min/AtLeastOneQualChildAmt" />
+	<ConstantNode name="/Constants/EIC/IncomeLimit/MFJ/Min/AtLeastOneQualChildAmt" />
+	<ConstantNode name="/Constants/Zero" />
+	<ConstantNode name="/Constants/IRS1040/EICTable">
+		<RoundTo>
+			<MultiCopy>
+				<MultiCopy>
+					<Struct>
+						<Element>
+							<Name>MinPhaseOutIncome</Name>
+							<RoundTo>
+								<Dollars />
+							</RoundTo>
+						</Element>
+						<Element>
+							<Name>MaxCreditIncome</Name>
+							<RoundTo>
+								<Dollars />
+							</RoundTo>
+						</Element>
+						<Element>
+							<Name>CreditPercentage</Name>
+							<RoundTo>
+								<Dec>4</Dec>
+							</RoundTo>
+						</Element>
+						<Element>
+							<Name>PhaseOutPercentage</Name>
+							<RoundTo>
+								<Dec>4</Dec>
+							</RoundTo>
+						</Element>
+						<Element>
+							<Name>MaxAGI</Name>
+							<RoundTo>
+								<Dollars />
+							</RoundTo>
+						</Element>
+					</Struct>
+				</MultiCopy>
+			</MultiCopy>
+		</RoundTo>
+	</ConstantNode>
+	<!--1-->
+	<InputNode name="/Return/ReturnData/IRS1040/AdjustedGrossIncomeAmt">
+		<RoundTo>
+			<Dollars />
+		</RoundTo>
+	</InputNode>
+	<!--1 -->
+	<InputNode name="/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd" />
+	<!--6 -->
+</Nodes>

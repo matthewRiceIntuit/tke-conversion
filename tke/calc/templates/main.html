@@ -3,6 +3,7 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <style>
     body{
         padding:0;
@@ -19,15 +20,140 @@
     .pad{
        padding:15px;
     }
+    textarea{
+        width:100%;
+        height: 500px;
+        border:solid 1px #ccd6de;
+        padding:30px;
+        font-size:14px;
+
+    }
+    BUTTON{
+        font-size: 14px;
+        font-weight: 400;
+        cursor: pointer;
+        color: #ffffff;
+        background-color: #ff8000;
+        background-image: linear-gradient(to bottom, #ff8000, #ff7000);
+        -webkit-border-top-left-radius: 0.250em;
+        -moz-border-radius-topleft: 0.250em;
+        border-top-left-radius: 0.250em;
+        -webkit-border-top-right-radius: 0.250em;
+        -moz-border-radius-topright: 0.250em;
+        border-top-right-radius: 0.250em;
+        -webkit-border-bottom-right-radius: 0.250em;
+        -moz-border-radius-bottomright: 0.250em;
+        border-bottom-right-radius: 0.250em;
+        -webkit-border-bottom-left-radius: 0.250em;
+        -moz-border-radius-bottomleft: 0.250em;
+        border-bottom-left-radius: 0.250em;
+        outline: none;
+        height: 3.437em;
+        line-height: 3.437em;
+        width: 16em;
+        box-shadow: 1px 1px 5px 0 rgba(0, 0, 0, 0.45);
+        border: none;
+    }
+
+    .tabs{
+        margin-bottom: -6px;
+        display: inline-block;
+        position: relative;
+        margin-top:35px;
+    }
+
+    .tabs .last {
+        border-right: 1px solid #ccd6de;
+        border-top-right-radius: 10px;
+    }
+
+    .tabs .tab {
+        cursor: pointer;
+        text-align: center;
+        float: left;
+        border-top: 1px solid #ccd6de;
+        border-left: 1px solid #ccd6de;
+        background:#f6f6f6;
+        padding: 5px 10px 4px 10px;
+        color: #607181;
+        max-width: 150px;
+        min-width: 100px;
+
+    }
+    .tabs .selected {
+        background: #ffffff;
+        color:#000000;
+        font-weight:900;
+    }
+
 </style>
 </head>
-<body>
+<body style="background: #eee;">
 <div class="header">
     <img class="logo" alt="Intuit TurboTax" src="https://turbotax.intuit.com/handlebars/common/templates/partials/navbar/images/logo_ttcom.856557a3.png">
 </div>
 <div class="pad">
-    Hello world
+    <button style='float:right' onclick="calc2script()">Let 'r rip, tater chip</button>
+
+    <div class="tabs">
+
+        <div  type="header" class="tab first">Header</div>
+
+        <div  type="tps_calc" class="tab selected ">TPS Calc</div>
+
+        <div id="tab_gistscript" type="gistscript" class="tab ">GistScript™</div>
+        <div id="tab_graph" class="tab  " type="graph">Graph</div>
+        <div id="tab_mappings" class="tab last " type="mappings">Mappings</div>
+
+    </div>
+    <form id="tps_form" method="post">
+        {% csrf_token %}
+        <textarea style='display:none' id="header" name="header">{{ header }}</textarea>
+        <textarea id="tps_calc" name="tps_calc">
+{% if not tps_calc %}
+FORM S2014US1040PER.F2441;
+SECTION Address;
+
+BEGIN
+    L9:= max(0,((L6 * L8) + L9W));
+
+END;
+{% else %}
+{{ tps_calc }}
+{% endif %}
+
+        </textarea>
+
+        <textarea style='display:none' id="gistscript" name="gistscript"></textarea>
+        <textarea style='display:none' id="graph" name="graph">hello</textarea>
+
+    </form>
+
 </div>
+
+<script>
+    function calc2script(){
+        $.post('{% url "calc2script" %}', $('#tps_form').serialize()).
+                done(function (data) {
+                    $('#gistscript').text(data.calc2script)
+                    $('#graph').text(data.script2gist)
+                    $('#tab_graph').click()
+                });
+
+    }
+    $(document).ready(function(){
+            $('.tab').click(function(){
+                if ($(this).attr('type')=='mappings'){
+                    location.href='{% url 'mappings' %}'
+                    return
+                }
+                $('.tab').removeClass('selected')
+                $('textarea').hide()
+                $(this).addClass('selected')
+                $('#'+$(this).attr('type')).show()
+            })
+        })
+</script>
 
 </body>
 </html>
