@@ -14,7 +14,7 @@
     ]
 </xsl:template>
 
-    <xsl:template match="Literal[@val='0']" mode="getID">/Constants/Zero</xsl:template>
+    <xsl:template match="Literal[@val='0']" mode="getID">$Zero</xsl:template>
     <xsl:template match="Call[@val='HasValue']|Call[@val='IsChecked']" mode="getID">@<xsl:value-of select="ArgList/VarRef/ID/@val"/>IsNotBlank</xsl:template>
     <xsl:template match="Predicate[@val='&gt;']" mode="getID">@<xsl:value-of select="VarRef/ID/@val"/>AboveThreshold</xsl:template>
     <xsl:template match="Predicate[@val='&lt;']" mode="getID">@<xsl:value-of select="VarRef/ID/@val"/>BelowThreshold</xsl:template>

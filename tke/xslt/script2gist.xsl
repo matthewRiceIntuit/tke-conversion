@@ -49,6 +49,7 @@
 
     <xsl:template match="Var">/Return/ReturnData/<xsl:value-of select="@val"/></xsl:template>
     <xsl:template match="Tmp">/Temporary/Temp<xsl:value-of select="@val"/></xsl:template>
+    <xsl:template match="Const">/Constants/<xsl:value-of select="@val"/></xsl:template>
     <xsl:template match="Named_param[Var]"><xsl:variable name="name" select="Name/@val"/><xsl:element name="{$name}">/Return/ReturnData/<xsl:value-of select="Var/@val"/></xsl:element></xsl:template>
     <xsl:template match="Named_param[Tmp]"><xsl:variable name="name" select="Name/@val"/><xsl:element name="{$name}">/Temporary/Temp<xsl:value-of select="Var/@val"/></xsl:element></xsl:template>
 

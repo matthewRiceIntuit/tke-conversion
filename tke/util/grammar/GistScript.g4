@@ -3,9 +3,9 @@ grammar GistScript;
 gistscript: section*;
 
 section :
-    (var|tmp|const) alt? '=' gist;
+    (const|var|tmp) alt? '=' gist;
 
-alt: '|' (var|tmp|const);
+alt: '|' (const|var|tmp);
 
 gist:ID  '(' params (',' params)* ','?  ')';
 
@@ -13,14 +13,14 @@ params: name ':' (param_list|param);
 
 param_list: '[' param (',' param)* ','? ']';
 
-param:  named_param? (var|constant|tmp|const)  alt?;
+param:  named_param? (const|var|constant|tmp)  alt?;
 
 named_param: name ':' ;
 
 name: ID;
 var : ID;
 tmp: '@' ID;
-const: '/Constants/' ID;
+const: '$' ID;
 
 ID: [a-zA-Z_0-9\/\.]+ ;
 constant: CONSTANT;

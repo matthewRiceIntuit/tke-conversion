@@ -12,39 +12,41 @@ else:
 def serializedATN():
     with StringIO() as buf:
         buf.write(u"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3")
-        buf.write(u"\20j\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
-        buf.write(u"\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r\3")
-        buf.write(u"\2\7\2\34\n\2\f\2\16\2\37\13\2\3\3\3\3\5\3#\n\3\3\3\5")
-        buf.write(u"\3&\n\3\3\3\3\3\3\3\3\4\3\4\3\4\5\4.\n\4\3\5\3\5\3\5")
-        buf.write(u"\3\5\3\5\7\5\65\n\5\f\5\16\58\13\5\3\5\5\5;\n\5\3\5\3")
-        buf.write(u"\5\3\6\3\6\3\6\3\6\5\6C\n\6\3\7\3\7\3\7\3\7\7\7I\n\7")
-        buf.write(u"\f\7\16\7L\13\7\3\7\5\7O\n\7\3\7\3\7\3\b\5\bT\n\b\3\b")
-        buf.write(u"\3\b\3\b\5\bY\n\b\3\b\5\b\\\n\b\3\t\3\t\3\t\3\n\3\n\3")
-        buf.write(u"\13\3\13\3\f\3\f\3\f\3\r\3\r\3\r\2\2\16\2\4\6\b\n\f\16")
-        buf.write(u"\20\22\24\26\30\2\2j\2\35\3\2\2\2\4\"\3\2\2\2\6*\3\2")
-        buf.write(u"\2\2\b/\3\2\2\2\n>\3\2\2\2\fD\3\2\2\2\16S\3\2\2\2\20")
-        buf.write(u"]\3\2\2\2\22`\3\2\2\2\24b\3\2\2\2\26d\3\2\2\2\30g\3\2")
-        buf.write(u"\2\2\32\34\5\4\3\2\33\32\3\2\2\2\34\37\3\2\2\2\35\33")
-        buf.write(u"\3\2\2\2\35\36\3\2\2\2\36\3\3\2\2\2\37\35\3\2\2\2 #\5")
-        buf.write(u"\24\13\2!#\5\26\f\2\" \3\2\2\2\"!\3\2\2\2#%\3\2\2\2$")
-        buf.write(u"&\5\6\4\2%$\3\2\2\2%&\3\2\2\2&\'\3\2\2\2\'(\7\3\2\2(")
-        buf.write(u")\5\b\5\2)\5\3\2\2\2*-\7\4\2\2+.\5\24\13\2,.\5\26\f\2")
-        buf.write(u"-+\3\2\2\2-,\3\2\2\2.\7\3\2\2\2/\60\7\f\2\2\60\61\7\5")
-        buf.write(u"\2\2\61\66\5\n\6\2\62\63\7\6\2\2\63\65\5\n\6\2\64\62")
-        buf.write(u"\3\2\2\2\658\3\2\2\2\66\64\3\2\2\2\66\67\3\2\2\2\67:")
-        buf.write(u"\3\2\2\28\66\3\2\2\29;\7\6\2\2:9\3\2\2\2:;\3\2\2\2;<")
-        buf.write(u"\3\2\2\2<=\7\7\2\2=\t\3\2\2\2>?\5\22\n\2?B\7\b\2\2@C")
-        buf.write(u"\5\f\7\2AC\5\16\b\2B@\3\2\2\2BA\3\2\2\2C\13\3\2\2\2D")
-        buf.write(u"E\7\t\2\2EJ\5\16\b\2FG\7\6\2\2GI\5\16\b\2HF\3\2\2\2I")
-        buf.write(u"L\3\2\2\2JH\3\2\2\2JK\3\2\2\2KN\3\2\2\2LJ\3\2\2\2MO\7")
-        buf.write(u"\6\2\2NM\3\2\2\2NO\3\2\2\2OP\3\2\2\2PQ\7\n\2\2Q\r\3\2")
-        buf.write(u"\2\2RT\5\20\t\2SR\3\2\2\2ST\3\2\2\2TX\3\2\2\2UY\5\24")
-        buf.write(u"\13\2VY\5\30\r\2WY\5\26\f\2XU\3\2\2\2XV\3\2\2\2XW\3\2")
-        buf.write(u"\2\2Y[\3\2\2\2Z\\\5\6\4\2[Z\3\2\2\2[\\\3\2\2\2\\\17\3")
-        buf.write(u"\2\2\2]^\5\22\n\2^_\7\b\2\2_\21\3\2\2\2`a\7\f\2\2a\23")
-        buf.write(u"\3\2\2\2bc\7\f\2\2c\25\3\2\2\2de\7\13\2\2ef\7\f\2\2f")
-        buf.write(u"\27\3\2\2\2gh\7\r\2\2h\31\3\2\2\2\16\35\"%-\66:BJNSX")
-        buf.write(u"[")
+        buf.write(u"\21r\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
+        buf.write(u"\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r\4")
+        buf.write(u"\16\t\16\3\2\7\2\36\n\2\f\2\16\2!\13\2\3\3\3\3\3\3\5")
+        buf.write(u"\3&\n\3\3\3\5\3)\n\3\3\3\3\3\3\3\3\4\3\4\3\4\3\4\5\4")
+        buf.write(u"\62\n\4\3\5\3\5\3\5\3\5\3\5\7\59\n\5\f\5\16\5<\13\5\3")
+        buf.write(u"\5\5\5?\n\5\3\5\3\5\3\6\3\6\3\6\3\6\5\6G\n\6\3\7\3\7")
+        buf.write(u"\3\7\3\7\7\7M\n\7\f\7\16\7P\13\7\3\7\5\7S\n\7\3\7\3\7")
+        buf.write(u"\3\b\5\bX\n\b\3\b\3\b\3\b\3\b\5\b^\n\b\3\b\5\ba\n\b\3")
+        buf.write(u"\t\3\t\3\t\3\n\3\n\3\13\3\13\3\f\3\f\3\f\3\r\3\r\3\r")
+        buf.write(u"\3\16\3\16\3\16\2\2\17\2\4\6\b\n\f\16\20\22\24\26\30")
+        buf.write(u"\32\2\2t\2\37\3\2\2\2\4%\3\2\2\2\6-\3\2\2\2\b\63\3\2")
+        buf.write(u"\2\2\nB\3\2\2\2\fH\3\2\2\2\16W\3\2\2\2\20b\3\2\2\2\22")
+        buf.write(u"e\3\2\2\2\24g\3\2\2\2\26i\3\2\2\2\30l\3\2\2\2\32o\3\2")
+        buf.write(u"\2\2\34\36\5\4\3\2\35\34\3\2\2\2\36!\3\2\2\2\37\35\3")
+        buf.write(u"\2\2\2\37 \3\2\2\2 \3\3\2\2\2!\37\3\2\2\2\"&\5\30\r\2")
+        buf.write(u"#&\5\24\13\2$&\5\26\f\2%\"\3\2\2\2%#\3\2\2\2%$\3\2\2")
+        buf.write(u"\2&(\3\2\2\2\')\5\6\4\2(\'\3\2\2\2()\3\2\2\2)*\3\2\2")
+        buf.write(u"\2*+\7\3\2\2+,\5\b\5\2,\5\3\2\2\2-\61\7\4\2\2.\62\5\30")
+        buf.write(u"\r\2/\62\5\24\13\2\60\62\5\26\f\2\61.\3\2\2\2\61/\3\2")
+        buf.write(u"\2\2\61\60\3\2\2\2\62\7\3\2\2\2\63\64\7\r\2\2\64\65\7")
+        buf.write(u"\5\2\2\65:\5\n\6\2\66\67\7\6\2\2\679\5\n\6\28\66\3\2")
+        buf.write(u"\2\29<\3\2\2\2:8\3\2\2\2:;\3\2\2\2;>\3\2\2\2<:\3\2\2")
+        buf.write(u"\2=?\7\6\2\2>=\3\2\2\2>?\3\2\2\2?@\3\2\2\2@A\7\7\2\2")
+        buf.write(u"A\t\3\2\2\2BC\5\22\n\2CF\7\b\2\2DG\5\f\7\2EG\5\16\b\2")
+        buf.write(u"FD\3\2\2\2FE\3\2\2\2G\13\3\2\2\2HI\7\t\2\2IN\5\16\b\2")
+        buf.write(u"JK\7\6\2\2KM\5\16\b\2LJ\3\2\2\2MP\3\2\2\2NL\3\2\2\2N")
+        buf.write(u"O\3\2\2\2OR\3\2\2\2PN\3\2\2\2QS\7\6\2\2RQ\3\2\2\2RS\3")
+        buf.write(u"\2\2\2ST\3\2\2\2TU\7\n\2\2U\r\3\2\2\2VX\5\20\t\2WV\3")
+        buf.write(u"\2\2\2WX\3\2\2\2X]\3\2\2\2Y^\5\30\r\2Z^\5\24\13\2[^\5")
+        buf.write(u"\32\16\2\\^\5\26\f\2]Y\3\2\2\2]Z\3\2\2\2][\3\2\2\2]\\")
+        buf.write(u"\3\2\2\2^`\3\2\2\2_a\5\6\4\2`_\3\2\2\2`a\3\2\2\2a\17")
+        buf.write(u"\3\2\2\2bc\5\22\n\2cd\7\b\2\2d\21\3\2\2\2ef\7\r\2\2f")
+        buf.write(u"\23\3\2\2\2gh\7\r\2\2h\25\3\2\2\2ij\7\13\2\2jk\7\r\2")
+        buf.write(u"\2k\27\3\2\2\2lm\7\f\2\2mn\7\r\2\2n\31\3\2\2\2op\7\16")
+        buf.write(u"\2\2p\33\3\2\2\2\16\37%(\61:>FNRW]`")
         return buf.getvalue()
 
 
@@ -59,12 +61,12 @@ class GistScriptParser ( Parser ):
     sharedContextCache = PredictionContextCache()
 
     literalNames = [ u"<INVALID>", u"'='", u"'|'", u"'('", u"','", u"')'", 
-                     u"':'", u"'['", u"']'", u"'@'" ]
+                     u"':'", u"'['", u"']'", u"'@'", u"'$'" ]
 
     symbolicNames = [ u"<INVALID>", u"<INVALID>", u"<INVALID>", u"<INVALID>", 
                       u"<INVALID>", u"<INVALID>", u"<INVALID>", u"<INVALID>", 
-                      u"<INVALID>", u"<INVALID>", u"ID", u"CONSTANT", u"WS", 
-                      u"COMMENT", u"LINE_COMMENT" ]
+                      u"<INVALID>", u"<INVALID>", u"<INVALID>", u"ID", u"CONSTANT", 
+                      u"WS", u"COMMENT", u"LINE_COMMENT" ]
 
     RULE_gistscript = 0
     RULE_section = 1
@@ -77,11 +79,12 @@ class GistScriptParser ( Parser ):
     RULE_name = 8
     RULE_var = 9
     RULE_tmp = 10
-    RULE_constant = 11
+    RULE_const = 11
+    RULE_constant = 12
 
     ruleNames =  [ u"gistscript", u"section", u"alt", u"gist", u"params", 
                    u"param_list", u"param", u"named_param", u"name", u"var", 
-                   u"tmp", u"constant" ]
+                   u"tmp", u"const", u"constant" ]
 
     EOF = Token.EOF
     T__0=1
@@ -93,11 +96,12 @@ class GistScriptParser ( Parser ):
     T__6=7
     T__7=8
     T__8=9
-    ID=10
-    CONSTANT=11
-    WS=12
-    COMMENT=13
-    LINE_COMMENT=14
+    T__9=10
+    ID=11
+    CONSTANT=12
+    WS=13
+    COMMENT=14
+    LINE_COMMENT=15
 
     def __init__(self, input):
         super(GistScriptParser, self).__init__(input)
@@ -141,13 +145,13 @@ class GistScriptParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 27
+            self.state = 29
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while _la==GistScriptParser.T__8 or _la==GistScriptParser.ID:
-                self.state = 24
+            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << GistScriptParser.T__8) | (1 << GistScriptParser.T__9) | (1 << GistScriptParser.ID))) != 0):
+                self.state = 26
                 self.section()
-                self.state = 29
+                self.state = 31
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
@@ -167,6 +171,10 @@ class GistScriptParser ( Parser ):
 
         def gist(self):
             return self.getTypedRuleContext(GistScriptParser.GistContext,0)
+
+
+        def const(self):
+            return self.getTypedRuleContext(GistScriptParser.ConstContext,0)
 
 
         def var(self):
@@ -202,29 +210,33 @@ class GistScriptParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 32
+            self.state = 35
             token = self._input.LA(1)
-            if token in [GistScriptParser.ID]:
-                self.state = 30
+            if token in [GistScriptParser.T__9]:
+                self.state = 32
+                self.const()
+
+            elif token in [GistScriptParser.ID]:
+                self.state = 33
                 self.var()
 
             elif token in [GistScriptParser.T__8]:
-                self.state = 31
+                self.state = 34
                 self.tmp()
 
             else:
                 raise NoViableAltException(self)
 
-            self.state = 35
+            self.state = 38
             _la = self._input.LA(1)
             if _la==GistScriptParser.T__1:
-                self.state = 34
+                self.state = 37
                 self.alt()
 
 
-            self.state = 37
+            self.state = 40
             self.match(GistScriptParser.T__0)
-            self.state = 38
+            self.state = 41
             self.gist()
         except RecognitionException as re:
             localctx.exception = re
@@ -239,6 +251,10 @@ class GistScriptParser ( Parser ):
         def __init__(self, parser, parent=None, invokingState=-1):
             super(GistScriptParser.AltContext, self).__init__(parent, invokingState)
             self.parser = parser
+
+        def const(self):
+            return self.getTypedRuleContext(GistScriptParser.ConstContext,0)
+
 
         def var(self):
             return self.getTypedRuleContext(GistScriptParser.VarContext,0)
@@ -268,16 +284,20 @@ class GistScriptParser ( Parser ):
         self.enterRule(localctx, 4, self.RULE_alt)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 40
-            self.match(GistScriptParser.T__1)
             self.state = 43
+            self.match(GistScriptParser.T__1)
+            self.state = 47
             token = self._input.LA(1)
-            if token in [GistScriptParser.ID]:
-                self.state = 41
+            if token in [GistScriptParser.T__9]:
+                self.state = 44
+                self.const()
+
+            elif token in [GistScriptParser.ID]:
+                self.state = 45
                 self.var()
 
             elif token in [GistScriptParser.T__8]:
-                self.state = 42
+                self.state = 46
                 self.tmp()
 
             else:
@@ -328,33 +348,33 @@ class GistScriptParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 45
+            self.state = 49
             self.match(GistScriptParser.ID)
-            self.state = 46
+            self.state = 50
             self.match(GistScriptParser.T__2)
-            self.state = 47
+            self.state = 51
             self.params()
-            self.state = 52
+            self.state = 56
             self._errHandler.sync(self)
             _alt = self._interp.adaptivePredict(self._input,4,self._ctx)
             while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
                 if _alt==1:
-                    self.state = 48
+                    self.state = 52
                     self.match(GistScriptParser.T__3)
-                    self.state = 49
+                    self.state = 53
                     self.params() 
-                self.state = 54
+                self.state = 58
                 self._errHandler.sync(self)
                 _alt = self._interp.adaptivePredict(self._input,4,self._ctx)
 
-            self.state = 56
+            self.state = 60
             _la = self._input.LA(1)
             if _la==GistScriptParser.T__3:
-                self.state = 55
+                self.state = 59
                 self.match(GistScriptParser.T__3)
 
 
-            self.state = 58
+            self.state = 62
             self.match(GistScriptParser.T__4)
         except RecognitionException as re:
             localctx.exception = re
@@ -402,18 +422,18 @@ class GistScriptParser ( Parser ):
         self.enterRule(localctx, 8, self.RULE_params)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 60
-            self.name()
-            self.state = 61
-            self.match(GistScriptParser.T__5)
             self.state = 64
+            self.name()
+            self.state = 65
+            self.match(GistScriptParser.T__5)
+            self.state = 68
             token = self._input.LA(1)
             if token in [GistScriptParser.T__6]:
-                self.state = 62
+                self.state = 66
                 self.param_list()
 
-            elif token in [GistScriptParser.T__8, GistScriptParser.ID, GistScriptParser.CONSTANT]:
-                self.state = 63
+            elif token in [GistScriptParser.T__8, GistScriptParser.T__9, GistScriptParser.ID, GistScriptParser.CONSTANT]:
+                self.state = 67
                 self.param()
 
             else:
@@ -461,31 +481,31 @@ class GistScriptParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 66
+            self.state = 70
             self.match(GistScriptParser.T__6)
-            self.state = 67
+            self.state = 71
             self.param()
-            self.state = 72
+            self.state = 76
             self._errHandler.sync(self)
             _alt = self._interp.adaptivePredict(self._input,7,self._ctx)
             while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
                 if _alt==1:
-                    self.state = 68
+                    self.state = 72
                     self.match(GistScriptParser.T__3)
-                    self.state = 69
+                    self.state = 73
                     self.param() 
-                self.state = 74
+                self.state = 78
                 self._errHandler.sync(self)
                 _alt = self._interp.adaptivePredict(self._input,7,self._ctx)
 
-            self.state = 76
+            self.state = 80
             _la = self._input.LA(1)
             if _la==GistScriptParser.T__3:
-                self.state = 75
+                self.state = 79
                 self.match(GistScriptParser.T__3)
 
 
-            self.state = 78
+            self.state = 82
             self.match(GistScriptParser.T__7)
         except RecognitionException as re:
             localctx.exception = re
@@ -500,6 +520,10 @@ class GistScriptParser ( Parser ):
         def __init__(self, parser, parent=None, invokingState=-1):
             super(GistScriptParser.ParamContext, self).__init__(parent, invokingState)
             self.parser = parser
+
+        def const(self):
+            return self.getTypedRuleContext(GistScriptParser.ConstContext,0)
+
 
         def var(self):
             return self.getTypedRuleContext(GistScriptParser.VarContext,0)
@@ -542,34 +566,38 @@ class GistScriptParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 81
+            self.state = 85
             la_ = self._interp.adaptivePredict(self._input,9,self._ctx)
             if la_ == 1:
-                self.state = 80
+                self.state = 84
                 self.named_param()
 
 
-            self.state = 86
+            self.state = 91
             token = self._input.LA(1)
-            if token in [GistScriptParser.ID]:
-                self.state = 83
+            if token in [GistScriptParser.T__9]:
+                self.state = 87
+                self.const()
+
+            elif token in [GistScriptParser.ID]:
+                self.state = 88
                 self.var()
 
             elif token in [GistScriptParser.CONSTANT]:
-                self.state = 84
+                self.state = 89
                 self.constant()
 
             elif token in [GistScriptParser.T__8]:
-                self.state = 85
+                self.state = 90
                 self.tmp()
 
             else:
                 raise NoViableAltException(self)
 
-            self.state = 89
+            self.state = 94
             _la = self._input.LA(1)
             if _la==GistScriptParser.T__1:
-                self.state = 88
+                self.state = 93
                 self.alt()
 
 
@@ -611,9 +639,9 @@ class GistScriptParser ( Parser ):
         self.enterRule(localctx, 14, self.RULE_named_param)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 91
+            self.state = 96
             self.name()
-            self.state = 92
+            self.state = 97
             self.match(GistScriptParser.T__5)
         except RecognitionException as re:
             localctx.exception = re
@@ -652,7 +680,7 @@ class GistScriptParser ( Parser ):
         self.enterRule(localctx, 16, self.RULE_name)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 94
+            self.state = 99
             self.match(GistScriptParser.ID)
         except RecognitionException as re:
             localctx.exception = re
@@ -691,7 +719,7 @@ class GistScriptParser ( Parser ):
         self.enterRule(localctx, 18, self.RULE_var)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 96
+            self.state = 101
             self.match(GistScriptParser.ID)
         except RecognitionException as re:
             localctx.exception = re
@@ -730,9 +758,50 @@ class GistScriptParser ( Parser ):
         self.enterRule(localctx, 20, self.RULE_tmp)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 98
+            self.state = 103
             self.match(GistScriptParser.T__8)
-            self.state = 99
+            self.state = 104
+            self.match(GistScriptParser.ID)
+        except RecognitionException as re:
+            localctx.exception = re
+            self._errHandler.reportError(self, re)
+            self._errHandler.recover(self, re)
+        finally:
+            self.exitRule()
+        return localctx
+
+    class ConstContext(ParserRuleContext):
+
+        def __init__(self, parser, parent=None, invokingState=-1):
+            super(GistScriptParser.ConstContext, self).__init__(parent, invokingState)
+            self.parser = parser
+
+        def ID(self):
+            return self.getToken(GistScriptParser.ID, 0)
+
+        def getRuleIndex(self):
+            return GistScriptParser.RULE_const
+
+        def enterRule(self, listener):
+            if isinstance( listener, GistScriptListener ):
+                listener.enterConst(self)
+
+        def exitRule(self, listener):
+            if isinstance( listener, GistScriptListener ):
+                listener.exitConst(self)
+
+
+
+
+    def const(self):
+
+        localctx = GistScriptParser.ConstContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 22, self.RULE_const)
+        try:
+            self.enterOuterAlt(localctx, 1)
+            self.state = 106
+            self.match(GistScriptParser.T__9)
+            self.state = 107
             self.match(GistScriptParser.ID)
         except RecognitionException as re:
             localctx.exception = re
@@ -768,10 +837,10 @@ class GistScriptParser ( Parser ):
     def constant(self):
 
         localctx = GistScriptParser.ConstantContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 22, self.RULE_constant)
+        self.enterRule(localctx, 24, self.RULE_constant)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 101
+            self.state = 109
             self.match(GistScriptParser.CONSTANT)
         except RecognitionException as re:
             localctx.exception = re
