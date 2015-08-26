@@ -1,9 +1,0 @@
-    @AllConditionsTrue_1@AddSub_2@AddSub_3@AddSub_4@FINFOWKS.FS3IsNotBlank = IsNotBlank(inputs:[ FINFOWKS.FS3 ])
-
-    @F2441.L16BXIsNotBlank = IsNotBlank(inputs:[ F2441.L16BX ])
-
-    @F2441.MFSIsNotBlank = IsNotBlank(inputs:[ F2441.MFS ])
-
-    @AllConditionsTrue_5@AddSub_6F2441.L22/Constants/Zero@F2441.L22IsNotBlank = IsNotBlank(inputs:[ F2441.L22 ])
-
-    

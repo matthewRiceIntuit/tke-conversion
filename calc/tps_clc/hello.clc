@@ -1,6 +1,0 @@
-SECTION Address;
-
-BEGIN
-    L24  := MAX(L24,SInfoWks.HMinTax);
-
-END;

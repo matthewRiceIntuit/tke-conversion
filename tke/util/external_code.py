@@ -33,9 +33,11 @@ def external_codes(xml):
 
     text += 'ExternalCodeWrites(\n'
     for each in root.xpath("/Nodes/Node/@name"):
+        if each.startswith('/Temporary/'):
+            continue
         outputs[each] = find(map,each)
     for tke,tps in outputs.items():
-        text +='\t%s, //%s\n' %(tps,tke)
+        text +='\t%s, // %s\n' %(tps,tke)
     text += ');\n\n'
 
     return text
