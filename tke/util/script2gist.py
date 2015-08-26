@@ -11,14 +11,15 @@ from grammar.GistScriptLexer import GistScriptLexer
 
 from util import pretty_print, xslt, write, xslt_text
 from patterns import accumulations
-from resolve_vars import resolve_vars,assign_ids
+from resolve_vars import resolve_vars, assign_ids, name_temporarys
 
 
 def pprint(root):
     print(etree.tostring(root, pretty_print=True))
 
+
 def alternatives(root):
-    alts={}
+    alts = {}
 
     for each in root.xpath('//Alt/*'):
         name = each.getparent().getprevious().attrib['val']
@@ -27,15 +28,14 @@ def alternatives(root):
 
     for each in alts.items():
         for var in root.xpath("//*[@val='%s']" % each[0]):
-            var.attrib['val']=each[1]
+            var.attrib['val'] = each[1]
 
     print alts
 
 
-## antlr4 -Dlanguage=Python2 grammar/GistScript.g4
+# # antlr4 -Dlanguage=Python2 grammar/GistScript.g4
 ## python script2gist.py test/testscript.txt
 def script2gist(input_stream):
-
     lexer = GistScriptLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
     parser = GistScriptParser(token_stream)
@@ -48,12 +48,15 @@ def script2gist(input_stream):
     listner = GistScriptListener()
     walker.walk(listner, tree)
 
-    root = etree.XML('<?xml version="1.0" ?>'+listner.output)
+    root = etree.XML('<?xml version="1.0" ?>' + listner.output)
     pretty_print(root)
     alternatives(root)
 
-    newroot = xslt(root,'xslt/script2gist.xsl')
-    return  pretty_print(newroot).replace('<!--','').replace('-->','')
+    newroot = xslt(root, 'xslt/script2gist.xsl')
+
+    name_temporarys(newroot)
+
+    return pretty_print(newroot).replace('<!--', '').replace('-->', '')
 
 
 if __name__ == '__main__':

@@ -1,3 +1,5 @@
+{% load staticfiles %}
+
 <!DOCTYPE html>
 <html>
 <head lang="en">
@@ -103,6 +105,7 @@
 
         <div id="tab_gistscript" type="gistscript" class="tab ">GistScript™</div>
         <div id="tab_graph" class="tab  " type="graph">Graph</div>
+        <div id="tab_external" class="tab  " type="external">External Code</div>
         <div id="tab_mappings" class="tab last " type="mappings">Mappings</div>
 
     </div>
@@ -125,7 +128,8 @@ END;
         </textarea>
 
         <textarea style='display:none' id="gistscript" name="gistscript"></textarea>
-        <textarea style='display:none' id="graph" name="graph">hello</textarea>
+        <textarea style='display:none' id="graph" name="graph"></textarea>
+        <textarea style='display:none' id="external" name="external"></textarea>
 
     </form>
 
@@ -137,6 +141,7 @@ END;
                 done(function (data) {
                     $('#gistscript').text(data.calc2script)
                     $('#graph').text(data.script2gist)
+                    $('#external').text(data.external_codes)
                     $('#tab_graph').click()
                 });
 

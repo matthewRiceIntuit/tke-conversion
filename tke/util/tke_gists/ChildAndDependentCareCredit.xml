@@ -1,0 +1,142 @@
+<Nodes topic="ChildAndDependentCareCredit"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="TKE_Calc_Graph.xsd">
+    <Versions>
+        <Version id="TKE.Calc.Runtime">1</Version>
+        <Version id="TKE.Calc.FileFormat">4</Version>
+        <Version id="TKE.Gist">1</Version>
+        <Version id="TKE.MeF">1</Version>
+    </Versions>
+
+      <!-- Line 3 form 2441  -->
+       <Node name="/Return/ReturnData/IRS2441/TotalQlfdExpensesOrLimitAmt">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS2441/QualifyingPersonGrp/QualifiedCareExpensesPaidAmt</Input>
+		</Inputs>
+        <Gist>
+            <MultiCopyAccumulation>
+                <InputRoles>
+                    <Value>/Return/ReturnData/IRS2441/QualifyingPersonGrp/QualifiedCareExpensesPaidAmt</Value>
+                </InputRoles>
+                <Configuration>
+                    <Type>Income</Type>
+                </Configuration>
+            </MultiCopyAccumulation>
+        </Gist>
+        <PostProcessing>
+            <RoundTo>
+                <Dollars/>
+            </RoundTo>
+            <ZeroIfBlank/>
+        </PostProcessing>
+    </Node>
+
+
+	<!-- line 4 form 2441 -->
+    <InputNode name="/Return/ReturnData/IRS2441/PrimaryEarnedIncomeAmt"/>
+
+
+	<!-- line 5 form 2441 -->
+    <InputNode name="/Return/ReturnData/IRS2441/SpouseEarnedIncomeAmt"/>
+
+	<!-- line 6 form 2441 -->
+    <InputNode name="/Return/ReturnData/IRS2441/SmallerOfExpensesOrIncomeAmt"/>
+    
+    <!-- Line 7 form 2441  -->
+    <InputNode name="/Return/ReturnData/IRS2441/AdjustedGrossIncomeAmt"/>
+    
+    <!-- Line 8 form 2441  -->
+<!--    <InputNode name="/Return/ReturnData/IRS2441/CareExpensesDecimalAmt"/>-->
+       <MultiCopyStructInputNode name="/Return/ReturnData/IRS2441/CareExpensesDecimalAmt">
+			<inputs>
+				<input>/Return/ReturnData/IRS2441/AdjustedGrossIncomeAmt</input>
+				<input>/Constant/IRS2441/DecimalPercentage</input>
+			</inputs>
+			<Gist>
+				<TableLookup>
+					<InputRoles>
+						<ReturnValue>/Return/ReturnData/IRS2441/AdjustedGrossIncomeAmt</ReturnValue>
+						<Table>/Constant/IRS2441/DecimalPercentage</Table>
+					</InputRoles>
+				</TableLookup>
+			</Gist>
+        <PostProcessing>
+            <RoundTo>
+                <Dollars/>
+            </RoundTo> 
+        </PostProcessing>
+    </MultiCopyStructInputNode>
+
+      <!-- Line 9W form 2441  -->  <!--  Need to add this field to the PP fields-->
+    <InputNode name="/Return/ReturnData/IRS2441/CreditForPriorYearExpensesPP"/>  
+
+        <Node name="/Temporary/TempCalculatedTentativeExpenseAmt">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS2441/CareExpensesDecimalAmt</Input>
+            <Input>/Return/ReturnData/IRS2441/SmallerOfExpensesOrIncomeAmt</Input>
+        </Inputs>
+        <Gist>
+            <Product>
+                <InputRoles>
+                    <Product>/Return/ReturnData/IRS2441/CareExpensesDecimalAmt</Product>
+                    <Product>/Return/ReturnData/IRS2441/SmallerOfExpensesOrIncomeAmt</Product>
+                </InputRoles>
+            </Product>
+        </Gist>
+        <PostProcessing>
+            <RoundTo>
+                <Dollars/>
+            </RoundTo>
+        </PostProcessing>
+    </Node>
+
+    <!-- Line 9 of form 2441 -->
+    <Node name="/Return/ReturnData/IRS2441/CalculatedTentativeExpenseAmt">
+        <Inputs>
+            <Input>/Temporary/TempCalculatedTentativeExpenseAmt</Input>
+            <Input>/Return/ReturnData/IRS2441/CreditForPriorYearExpensesPP</Input>
+        </Inputs>
+        <Gist>
+            <Accumulation>
+				<InputRoles>
+					<Value>/Temporary/TempCalculatedTentativeExpenseAmt</Value>
+					<Value>/Return/ReturnData/IRS2441/CreditForPriorYearExpensesPP</Value>
+				</InputRoles>
+				<Configuration>
+					<Type>Income</Type>
+				</Configuration>
+			</Accumulation>
+        </Gist>
+        <PostProcessing>
+            <RoundTo>
+                <Dollars/>
+            </RoundTo>
+        </PostProcessing>
+    </Node>
+
+    <!--Line 10 form 2441 -->
+    <InputNode name="/Return/ReturnData/IRS2441/TaxLiabLmtFromCrLmtWrkshtAmt"/>
+
+    <!--Line 11 of form 2441-->
+
+    <Node name="/Return/ReturnData/IRS2441/CreditForChildAndDepdCareAmt">
+        <Inputs>
+            <Input>/Return/ReturnData/IRS2441/CalculatedTentativeExpenseAmt</Input>
+            <Input>/Return/ReturnData/IRS2441/TaxLiabLmtFromCrLmtWrkshtAmt</Input>
+        </Inputs>
+        <Gist>
+            <Minimum>
+                <InputRoles>
+                    <Value>/Return/ReturnData/IRS2441/CalculatedTentativeExpenseAmt</Value>
+                    <Value>/Return/ReturnData/IRS2441/TaxLiabLmtFromCrLmtWrkshtAmt</Value>
+                </InputRoles>
+            </Minimum>
+        </Gist>
+        <PostProcessing>
+            <RoundTo>
+                <Dollars/>
+            </RoundTo>
+        </PostProcessing>
+    </Node>
+	
+
+</Nodes>

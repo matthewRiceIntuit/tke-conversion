@@ -93,21 +93,21 @@
 <body>
 <div class="header">
     <img class="logo" alt="Intuit TurboTax" src="https://turbotax.intuit.com/handlebars/common/templates/partials/navbar/images/logo_ttcom.856557a3.png">
-<a class="menu" href="{% url 'main' %}">Back</a>
+    <a class="menu" href="{% url 'main' %}">Back</a>
 </div>
 <div class="pad">
 <table width="100%">
-    <tr><td class="head">TPS Field</td><td class="head">MFE++</td><td class="head"></td></tr>
+    <tr><td class="head">TPS Field</td><td class="head">MFE++</td></tr>
     <form method="POST"> {% csrf_token %}
         <tr>
             <td>{{form.tps}}{{ form.tps.errors }}</td>
-            <td>{{ form.tke }}{{ form.tke.errors }}</td>
-            <td>
-                <button>Add</button>
+            <td>{{ form.tke }}{{ form.tke.errors }}
+
+                <button style="float:right">Add</button>
             </td>
         </tr>
     </form>
-    <tr><td class="head">TPS Field</td><td class="head">MFE++</td><td class="head"></td></tr>
+    <tr><td class="head">TPS Field</td><td class="head">MFE++</td></tr>
     {% for each in mappings %}
     <tr><td>{{ each.tps }}</td><td>{{ each.tke }}</td></tr>
     {% endfor %}

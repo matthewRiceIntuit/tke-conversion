@@ -27,9 +27,9 @@ if __name__ == '__main__':
     text = text.replace(' Value=','').replace(',\n\n',',\n').replace('\n)',')')
     #text = text.replace('/Return/ReturnData/EIC/EICWorksheetPP/','').replace('/Temporary/EIC/','_')\
 
-    import map
+    from mapping import map
     text=text.replace('/Return/ReturnData/','')
-    for each in map.map.items():
+    for each in map.items():
         text= text.replace(each[1],each[0])
 
     '''

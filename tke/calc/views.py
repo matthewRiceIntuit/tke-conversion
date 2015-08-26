@@ -6,13 +6,14 @@ from django.utils import timezone
 from django.utils.timezone import utc
 from django.shortcuts import render
 from django.http import HttpResponse
+from antlr4 import InputStream
+
 from util.calc2script import convert
 from util.script2gist import script2gist
-from antlr4 import InputStream
-from .forms import FieldMapForm
-import tempfile
+from util.external_code import external_codes
 
-from django.views.generic import ListView
+
+from .forms import FieldMapForm
 from .models import FieldMap
 
 
@@ -26,12 +27,11 @@ def main(request, context=None, template_name="main.html"):
 
 
 def calc2script(request, template_name="main.html"):
-
     header = request.POST.get('header', '')
-    tps_calc = request.POST['tps_calc']
+    tps_calc = request.POST['tps_calc'].strip()
     if not bool(re.match('form ', tps_calc, re.I)):
         if not bool(re.match('section ', tps_calc, re.I)):
-            tps_calc = header + "SECTION GENERIC; BEGIN" + tps_calc + "END;"
+            tps_calc = header + "SECTION GENERIC;\nBEGIN\n" + tps_calc + "\nEND;"
         else:
             tps_calc = header + tps_calc
 
@@ -41,8 +41,11 @@ def calc2script(request, template_name="main.html"):
 
     gists = script2gist(InputStream(gistscript))
 
+    codes = external_codes(gists)
+
     data = {'calc2script': gistscript,
-            'script2gist': gists}
+            'script2gist': gists,
+            'external_codes': codes }
 
     response = HttpResponse(json.dumps(data, indent=1) + "\n", content_type="application/json")
     response.set_cookie('tke_header', value=header)
@@ -51,6 +54,7 @@ def calc2script(request, template_name="main.html"):
 
 
 def mappings(request, template_name='mappings.html'):
+    import os
     context = {
         'mappings': FieldMap.objects.all().order_by('tps'),
     }

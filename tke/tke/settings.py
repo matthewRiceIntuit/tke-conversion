@@ -12,8 +12,14 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import os.path
+
+PROJECT_PATH = os.path.join(os.path.dirname(__file__), '..')
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+LOCAL_DB_PATH = os.path.join(BASE_DIR, '..', 'db.sqlite3')
+LOCAL = os.path.isfile(LOCAL_DB_PATH)
 
 
 # Quick-start development settings - unsuitable for production
@@ -38,9 +44,13 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
+
     'calc',
     'util',
 )
+
+if not LOCAL:
+    INSTALLED_APPS += ('raven.contrib.django.raven_compat',)
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -77,12 +87,28 @@ WSGI_APPLICATION = 'tke.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+
+
+
+if not LOCAL:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'ebdb',
+            'USER': 'tke',
+            'PASSWORD': 'calc2script!',
+            'HOST': 'aa1h0cdoz37krg2.cxfcgacgd1et.us-west-2.rds.amazonaws.com',
+            'PORT': 3306,
+        }
     }
-}
+else:
+    DATABASES = {
+
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': LOCAL_DB_PATH,
+        }
+    }
 
 
 # Internationalization
@@ -102,4 +128,19 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
+PROJECT_DIR = os.path.dirname(__file__)
+STATIC_ROOT = os.path.join(PROJECT_PATH, 'static')
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+STATIC_DEV = os.path.join(PROJECT_PATH, 'static_dev')
+STATICFILES_DIRS = (STATIC_DEV,)
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+)
+
 STATIC_URL = '/static/'
+
+# Set your DSN value
+RAVEN_CONFIG = {
+    'dsn': 'https://3b21eafbe76e4d5fa401df83460a58c6:0f00847c2f464580a31513c646ceb0a1@app.getsentry.com/51016',
+}
