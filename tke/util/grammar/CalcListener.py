@@ -378,6 +378,14 @@ class CalcListener(ParseTreeListener):
     def exitPercentageOf(self, ctx):
         self.exit()
 
+        # Enter a parse tree produced by CalcParser#MultiCopyAccumulate.
+    def enterMultiCopyAccumulate(self, ctx):
+        self.enter("MultiCopyAccumulate")
+
+    # Exit a parse tree produced by CalcParser#MultiCopyAccumulate.
+    def exitMultiCopyAccumulate(self, ctx):
+        self.exit()
+
 
 
 

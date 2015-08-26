@@ -23,6 +23,8 @@ assign: full_id LET expr ;
 
 call :ID '(' argList ')';
 
+multicopy_accum: ID '[' LITERAL '..' ID ']' ;
+
 
 
 expr : expr op=('/' | '*') expr #DivMul
@@ -33,6 +35,7 @@ expr : expr op=('/' | '*') expr #DivMul
 	| NOT expr #Not
 	| full_id #VarRef
 	| call #FunctionCall
+	| multicopy_accum #MultiCopyAccumulate
 	| 'MAX' '(' argList ')' #Max
 	| LITERAL #Literal
 	| '(' expr ')'  #Parens

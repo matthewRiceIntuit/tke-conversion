@@ -23,7 +23,7 @@ def convert(input_stream):
     parser = CalcParser(token_stream)
     tree = parser.calcfile()
     lisp_tree_str = tree.toStringTree(recog=parser)
-
+    print(lisp_tree_str)
 
     walker = ParseTreeWalker()
 
@@ -31,6 +31,8 @@ def convert(input_stream):
     walker.walk(listner, tree)
 
     root = etree.XML('<?xml version="1.0" ?>' + listner.output)
+    pretty_print(root)
+    return
 
     resolve_vars(root, use_tke= '-tps' not in sys.argv)
     assign_ids(root)
