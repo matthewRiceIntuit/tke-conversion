@@ -379,13 +379,41 @@ class CalcListener(ParseTreeListener):
         self.exit()
 
         # Enter a parse tree produced by CalcParser#MultiCopyAccumulate.
+    def enterMulticopy_accum(self, ctx):
+        self.enter("MultiCopyAccumulate");
+        #import ipdb;ipdb.set_trace()
+        #self.close("ID",ctx.ID().getText())
+
+
+    # Exit a parse tree produced by CalcParser#MultiCopyAccumulate.
+    def exitMulticopy_accum(self, ctx):
+        self.exit()
+
+        # Enter a parse tree produced by CalcParser#MultiCopyAccumulate.
     def enterMultiCopyAccumulate(self, ctx):
-        self.enter("MultiCopyAccumulate")
+        pass
 
     # Exit a parse tree produced by CalcParser#MultiCopyAccumulate.
     def exitMultiCopyAccumulate(self, ctx):
+        pass
+
+        # Enter a parse tree produced by CalcParser#start_index.
+    def enterStart_index(self, ctx):
+
+        self.enter("StartIndex",ctx.LITERAL().getText())
+
+    # Exit a parse tree produced by CalcParser#start_index.
+    def exitStart_index(self, ctx):
         self.exit()
 
+
+    # Enter a parse tree produced by CalcParser#end_index.
+    def enterEnd_index(self, ctx):
+        self.enter("EndIndex")
+
+    # Exit a parse tree produced by CalcParser#end_index.
+    def exitEnd_index(self, ctx):
+        self.exit()
 
 
 

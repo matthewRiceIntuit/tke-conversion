@@ -23,6 +23,7 @@
     <xsl:template match="DivMul|Multiply" mode="getID"><xsl:choose><xsl:when test="name(..)='Assign'"><xsl:value-of select="../ID/@val"/></xsl:when><xsl:otherwise>@DivMul<xsl:value-of select="@id"/></xsl:otherwise></xsl:choose></xsl:template>
     <xsl:template match="AddSub|Accumulate" mode="getID"><xsl:choose><xsl:when test="name(..)='Assign'"><xsl:value-of select="../ID/@val"/></xsl:when><xsl:otherwise>@AddSub<xsl:value-of select="@id"/></xsl:otherwise></xsl:choose></xsl:template>
     <xsl:template match="FunctionCall" mode="getID"><xsl:choose><xsl:when test="name(..)='Assign'"><xsl:value-of select="../ID/@val"/></xsl:when><xsl:otherwise>@AddSub<xsl:value-of select="@id"/></xsl:otherwise></xsl:choose></xsl:template>
+    <xsl:template match="MultiCopyAccumulate" mode="getID"><xsl:value-of select="../ID/@val"/></xsl:template>
 
 
 
@@ -162,6 +163,16 @@
             </xsl:for-each>
         </AllConditionsTrue>
         <xsl:apply-templates/>
+    </xsl:template>
+
+
+    <xsl:template match="MultiCopyAccumulate">
+        <MultiCopyAccumulation>
+            <ID><xsl:apply-templates select="."  mode="getID"/></ID>
+            <INPUT><xsl:value-of select="ID/@val"/></INPUT>
+        </MultiCopyAccumulation>
+        <xsl:apply-templates/>
+
     </xsl:template>
 
 

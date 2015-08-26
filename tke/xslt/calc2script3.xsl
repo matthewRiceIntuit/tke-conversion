@@ -31,6 +31,11 @@
 
     </xsl:template>
 
+    <xsl:template match="MultiCopyAccumulation">
+        <xsl:value-of select="ID"/> = MultiCopyAccumulation(inputs:[ <xsl:value-of select="INPUT"/> ])
+
+    </xsl:template>
+
     <xsl:template match="node()[ID[not(normalize-space())]]"></xsl:template>
 
     <xsl:template match="Max|AboveThreshold|Accumulate|Product|Difference|Threshold|Cap">

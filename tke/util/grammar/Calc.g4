@@ -23,7 +23,10 @@ assign: full_id LET expr ;
 
 call :ID '(' argList ')';
 
-multicopy_accum: ID '[' LITERAL '..' ID ']' ;
+multicopy_accum: full_id '[' start_index '..' end_index ']' ;
+
+start_index: LITERAL|expr;
+end_index: LITERAL|expr;
 
 
 

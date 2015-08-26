@@ -32,7 +32,7 @@ def convert(input_stream):
 
     root = etree.XML('<?xml version="1.0" ?>' + listner.output)
     pretty_print(root)
-    return
+
 
     resolve_vars(root, use_tke= '-tps' not in sys.argv)
     assign_ids(root)
@@ -45,6 +45,7 @@ def convert(input_stream):
     pretty_print(root)
 
     section = root.xpath('/CALC/Section/@val')[0]
+
 
     root = xslt(root, 'xslt/calc2script.xsl')
     pretty_print(root)
