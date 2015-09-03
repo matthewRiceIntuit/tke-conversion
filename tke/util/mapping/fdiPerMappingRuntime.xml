@@ -1,0 +1,1314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MappingRuntime xmlns="http://schemas.intuit.com/ctg/mapping" >
+    <IndexDefinitions>
+        <IndexDefinition id="MonthTextToIndex">
+            <Entry index="1" value="JANUARY"/>
+            <Entry index="2" value="FEBRUARY"/>
+            <Entry index="3" value="MARCH"/>
+            <Entry index="4" value="APRIL"/>
+            <Entry index="5" value="MAY"/>
+            <Entry index="6" value="JUNE"/>
+            <Entry index="7" value="JULY"/>
+            <Entry index="8" value="AUGUST"/>
+            <Entry index="9" value="SEPTEMBER"/>
+            <Entry index="10" value="OCTOBER"/>
+            <Entry index="11" value="NOVEMBER"/>
+            <Entry index="12" value="DECEMBER"/>
+        </IndexDefinition>
+    </IndexDefinitions>
+    <ConstraintDefinitions>
+        <ConstraintDefinition mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/EICCodePP" type="write"/>
+        <ConstraintDefinition mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentCodePP" type="write"/>
+        <ConstraintDefinition mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentAgePP" type="write"/>
+        <ConstraintDefinition mef="/Return/ReturnData/IRS1040/DependentDetail[uuid_1]/DependentFirstNm" type="write"/>
+        <ConstraintDefinition mef="/Return/ReturnData/IRS1040/DependentDetail[uuid_1]/DependentLastNm" type="write"/>
+        <ConstraintDefinition mef="/Return/ReturnData/IRS1040/DependentDetail[uuid_1]/DependentRelationshipCd" type="write"/>
+        <ConstraintDefinition mef="/Return/ReturnData/IRS1040/DependentDetail[uuid_1]/DependentSSN" type="write"/>
+        <ConstraintDefinition mef="/Return/ReturnData/IRS1040/DependentDetail[uuid_1]/DiedLiteralCd" type="write"/>
+        <ConstraintDefinition mef="/Return/ReturnData/IRS1040/DependentDetail[uuid_1]/EligibleForChildTaxCreditInd" type="write"/>
+        <ConstraintDefinition mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/QualifiedTuitionProgramPP/TotalQTPFrom1099QPP" type="write"/>
+        <ConstraintDefinition mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationSavingsAccountPP/TotalESADistributions" type="write"/>
+        <ConstraintDefinition mef="/Return/ReturnData/IRSW2[uuid_1]" type="readonly">
+            <Exists mef="/Return/ReturnData/IRSW2[uuid_1]/EmployerForeignAddress/CountryCd"/>
+        </ConstraintDefinition>
+        <ConstraintDefinition mef="/Return/ReturnData/IRSW2[uuid_1]" type="read">
+            <Exists tps="FDI$FW2[uuid_1].CCOUNTRY"/>
+        </ConstraintDefinition>
+        <ConstraintDefinition mef="/Return/ReturnData/IRS1095A[uuid_1]/SchCLinkPP" type="write"/>
+        <ConstraintDefinition mef="/Return/ReturnData/IRS1095A[uuid_1]/SchK1PLinkPP" type="write"/>
+        <ConstraintDefinition mef="/Return/ReturnData/IRS1095A[uuid_1]/SchK1SLinkPP" type="write"/>
+        <ConstraintDefinition mef="/Return/ReturnData/IRS1095A[uuid_1]/SchFLinkPP" type="write"/>
+        <ConstraintDefinition mef="/Return/ReturnData/IRS1095A[uuid_1]/MonthlyPTCInformationGrpPP[uuid_2]" type="readonly">
+            <Exists mef="/Return/ReturnData/IRS1095A[uuid_1]/MonthlyPTCInformationGrpPP[uuid_2]/MonthCdPP"/>
+            <IndexArrayBy value="MonthCdPP" using="/Return/ReturnData/IRS1095A[uuid_1]/MonthlyPTCInformationGrpPP[uuid_2]/MonthTextToIndex"/>
+        </ConstraintDefinition>
+        <ConstraintDefinition mef="/Return/ReturnData/IRS8962/MonthlyPTCCalculationGrp[uuid_1]" type="readonly">
+            <Exists mef="/Return/ReturnData/IRS8962/MonthlyPTCCalculationGrp[uuid_1]/MonthCdPP"/>
+        </ConstraintDefinition>
+        <ConstraintDefinition mef="/Return/ReturnData/IRS8962/AltCalcForMarriageEligibilityWksPP/AltCalcForMarriageEligibilityGrpPP/MonthlyAltCalcForMarriageEligibilityPP" type="readonly">
+            <Exists mef="/Return/ReturnData/IRS8962/AltCalcForMarriageEligibilityWksPP/AltCalcForMarriageEligibilityGrpPP/MonthlyAltCalcForMarriageEligibilityPP/MonthCdPP"/>
+        </ConstraintDefinition>
+        <ConstraintDefinition mef="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/MonthlyStatusGrpPP/MonthPP[uuid_2]" type="readonly">
+            <Exists mef="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/MonthlyStatusGrpPP/MonthPP[uuid_2]/MonthCdPP"/>
+        </ConstraintDefinition>
+        <ConstraintDefinition mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/MonthlyCoverageGrpPP[uuid_2]" type="readonly">
+            <Exists mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/MonthlyCoverageGrpPP[uuid_2]/MonthCdPP"/>
+        </ConstraintDefinition>
+        <ConstraintDefinition mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP[uuid_1]" type="readonly">
+            <Exists mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP[uuid_1]/MonthCdPP"/>
+        </ConstraintDefinition>
+        <ConstraintDefinition mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP[uuid_1]" type="readonly">
+            <Exists mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP[uuid_1]/MonthCdPP"/>
+        </ConstraintDefinition>
+        <ConstraintDefinition mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP[uuid_1]" type="readonly">
+            <Exists mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP[uuid_1]/MonthCdPP"/>
+        </ConstraintDefinition>
+        <ConstraintDefinition mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP[uuid_1]" type="readonly">
+            <Exists mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP[uuid_1]/MonthCdPP"/>
+        </ConstraintDefinition>
+        <ConstraintDefinition mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP[uuid_1]" type="readonly">
+            <Exists mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP[uuid_1]/MonthCdPP"/>
+        </ConstraintDefinition>
+        <ConstraintDefinition mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]" type="readonly">
+            <Exists mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/MonthCdPP"/>
+        </ConstraintDefinition>
+        <ConstraintDefinition mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]" type="readonly">
+            <Exists mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/MonthCdPP"/>
+        </ConstraintDefinition>
+    </ConstraintDefinitions>
+    <MappingDefinitions>
+        <Mapping mef="/Return/ReturnData/IRS1098E[uuid_1]/LenderNamePP" tps="FDI$FSTDLOAN.LENDR[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS1098E[uuid_1]/BorrowerPP" tps="FDI$FSTDLOAN.BTSJ[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS1098E[uuid_1]/LoanInterestAmtPP" tps="FDI$FSTDLOAN.SLIAMT[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/Form1098[uuid_1]/LenderNmPP/BusinessNameLine1Txt" tps="FDI$F1098[uuid_1].PAYERNM1"/>
+        <Mapping mef="/Return/ReturnData/Form1098[uuid_1]/LenderEINPP" tps="FDI$F1098[uuid_1].PAYERID"/>
+        <Mapping mef="/Return/ReturnData/Form1098[uuid_1]/LenderUSAddressPP/AddressLine1Txt" tps="FDI$F1098[uuid_1].PAYADD1"/>
+        <Mapping mef="/Return/ReturnData/Form1098[uuid_1]/LenderUSAddressPP/CityNm" tps="FDI$F1098[uuid_1].PCTY"/>
+        <Mapping mef="/Return/ReturnData/Form1098[uuid_1]/LenderUSAddressPP/StateAbbreviationCd" tps="FDI$F1098[uuid_1].PST"/>
+        <Mapping mef="/Return/ReturnData/Form1098[uuid_1]/LenderUSAddressPP/ZIPCd" tps="FDI$F1098[uuid_1].PZIP"/>
+        <Mapping mef="/Return/ReturnData/Form1098[uuid_1]/BorrowerNamePP" tps="FDI$F1098[uuid_1].RECIPNAM"/>
+        <Mapping mef="/Return/ReturnData/Form1098[uuid_1]/BorrowerSSNPP" tps="FDI$F1098[uuid_1].RECIPSSN"/>
+        <Mapping mef="/Return/ReturnData/Form1098[uuid_1]/BorrowerUSAddressPP/AddressLine1Txt" tps="FDI$F1098[uuid_1].RECIPADD"/>
+        <Mapping mef="/Return/ReturnData/Form1098[uuid_1]/BorrowerUSAddressPP/CityNm" tps="FDI$F1098[uuid_1].RCTY"/>
+        <Mapping mef="/Return/ReturnData/Form1098[uuid_1]/BorrowerUSAddressPP/StateAbbreviationCd" tps="FDI$F1098[uuid_1].RST"/>
+        <Mapping mef="/Return/ReturnData/Form1098[uuid_1]/BorrowerUSAddressPP/ZIPCd" tps="FDI$F1098[uuid_1].RZIP"/>
+        <Mapping mef="/Return/ReturnData/Form1098[uuid_1]/AccountNumPP" tps="FDI$F1098[uuid_1].ACCTNUM"/>
+        <Mapping mef="/Return/ReturnData/Form1098[uuid_1]/MortgageInterestAmtPP" tps="FDI$F1098[uuid_1].MORTGAGE"/>
+        <Mapping mef="/Return/ReturnData/Form1098[uuid_1]/PointsPaidAmtPP" tps="FDI$F1098[uuid_1].POINTS"/>
+        <Mapping mef="/Return/ReturnData/Form1099INT[uuid_1]/PayerNamePP/BusinessNameLine1Txt" tps="FDI$FSCHB:F1099I[uuid_1].PNA1"/>
+        <Mapping mef="/Return/ReturnData/Form1099INT[uuid_1]/RecipientSSNPP" tps="FDI$FSCHB:F1099I[uuid_1].RECIPSSN"/>
+        <Mapping mef="/Return/ReturnData/Form1099INT[uuid_1]/AccountNumPP" tps="FDI$FSCHB:F1099I[uuid_1].ACCTNUM"/>
+        <Mapping mef="/Return/ReturnData/Form1099INT[uuid_1]/PayerRoutingTransitNumPP" tps="FDI$FSCHB:F1099I[uuid_1].PAYERRTN"/>
+        <Mapping mef="/Return/ReturnData/Form1099INT[uuid_1]/InterestIncomeAmtPP" tps="FDI$FSCHB:F1099I[uuid_1].L1"/>
+        <Mapping mef="/Return/ReturnData/Form1099INT[uuid_1]/EarlyWithdrawalPenaltyAmtPP" tps="FDI$FSCHB:F1099I[uuid_1].L2"/>
+        <Mapping mef="/Return/ReturnData/Form1099INT[uuid_1]/InterestOnBondsAndTreasuryAmtPP" tps="FDI$FSCHB:F1099I[uuid_1].L3"/>
+        <Mapping mef="/Return/ReturnData/Form1099INT[uuid_1]/FederalIncomeTaxWithheldAmtPP" tps="FDI$FSCHB:F1099I[uuid_1].L4"/>
+        <Mapping mef="/Return/ReturnData/Form1099INT[uuid_1]/InvestmentExpensesAmtPP" tps="FDI$FSCHB:F1099I[uuid_1].L5"/>
+        <Mapping mef="/Return/ReturnData/Form1099INT[uuid_1]/ForeignTaxPaidAmtPP" tps="FDI$FSCHB:F1099I[uuid_1].TAX"/>
+        <Mapping mef="/Return/ReturnData/Form1099INT[uuid_1]/ForeignCountryOrUSPossessionPP" tps="FDI$FSCHB:F1099I[uuid_1].CTRY"/>
+        <Mapping mef="/Return/ReturnData/Form1099INT[uuid_1]/TaxExemptInterestAmtPP" tps="FDI$FSCHB:F1099I[uuid_1].EXINT"/>
+        <Mapping mef="/Return/ReturnData/Form1099INT[uuid_1]/ActivityBondInterestAmtPP" tps="FDI$FSCHB:F1099I[uuid_1].INTP"/>
+        <Mapping mef="/Return/ReturnData/Form1099INT[uuid_1]/MarketDiscountAmtPP" tps="FDI$FSCHB:F1099I[uuid_1].MDISC"/>
+        <Mapping mef="/Return/ReturnData/Form1099INT[uuid_1]/BondPremiumAmtPP" tps="FDI$FSCHB:F1099I[uuid_1].BPREM"/>
+        <Mapping mef="/Return/ReturnData/Form1099INT[uuid_1]/TaxExemptCUSIPPP" tps="FDI$FSCHB:F1099I[uuid_1].CUSIP"/>
+        <Mapping mef="/Return/ReturnData/Form1099DIV[uuid_1]/CashLiquidationDistAmtPP" tps="FDI$FSCHB:F1099D[uuid_1].L5"/>
+        <Mapping mef="/Return/ReturnData/Form1099DIV[uuid_1]/TaxExemptInterestAmtPP" tps="FDI$FSCHB:F1099D[uuid_1].EX2"/>
+        <Mapping mef="/Return/ReturnData/Form1099DIV[uuid_1]/FederalIncomeTaxWithheldAmtPP" tps="FDI$FSCHB:F1099D[uuid_1].L2"/>
+        <Mapping mef="/Return/ReturnData/Form1099DIV[uuid_1]/ForeignTaxPaidAmtPP" tps="FDI$FSCHB:F1099D[uuid_1].TAX"/>
+        <Mapping mef="/Return/ReturnData/Form1099DIV[uuid_1]/InvestmentExpensesAmtPP" tps="FDI$FSCHB:F1099D[uuid_1].L1E"/>
+        <Mapping mef="/Return/ReturnData/Form1099DIV[uuid_1]/NoncashLiquidationDistAmtPP" tps="FDI$FSCHB:F1099D[uuid_1].L6"/>
+        <Mapping mef="/Return/ReturnData/Form1099DIV[uuid_1]/NonDividendDistributionsAmtPP" tps="FDI$FSCHB:F1099D[uuid_1].L1D"/>
+        <Mapping mef="/Return/ReturnData/Form1099DIV[uuid_1]/OrdinaryDividendsAmtPP" tps="FDI$FSCHB:F1099D[uuid_1].L1B"/>
+        <Mapping mef="/Return/ReturnData/Form1099DIV[uuid_1]/PayerNamePP/BusinessNameLine1Txt" tps="FDI$FSCHB:F1099D[uuid_1].PNA1"/>
+        <Mapping mef="/Return/ReturnData/Form1099DIV[uuid_1]/ForeignCountryOrUSPossessionPP" tps="FDI$FSCHB:F1099D[uuid_1].CTRY"/>
+        <Mapping mef="/Return/ReturnData/Form1099DIV[uuid_1]/QualifiedDividendsAmtPP" tps="FDI$FSCHB:F1099D[uuid_1].QDIV"/>
+        <Mapping mef="/Return/ReturnData/Form1099DIV[uuid_1]/RecipientSSNPP" tps="FDI$FSCHB:F1099D[uuid_1].RECIPSSN"/>
+        <Mapping mef="/Return/ReturnData/Form1099DIV[uuid_1]/Sec1202GainAmtPP" tps="FDI$FSCHB:F1099D[uuid_1].L2D"/>
+        <Mapping mef="/Return/ReturnData/Form1099DIV[uuid_1]/ActivityBondInterestAmtPP" tps="FDI$FSCHB:F1099D[uuid_1].EX4"/>
+        <Mapping mef="/Return/ReturnData/Form1099DIV[uuid_1]/CapitalGainDistributionsAmtPP" tps="FDI$FSCHB:F1099D[uuid_1].L1C"/>
+        <Mapping mef="/Return/ReturnData/Form1099DIV[uuid_1]/Sec1250GainAmtPP" tps="FDI$FSCHB:F1099D[uuid_1].L2C"/>
+        <Mapping mef="/Return/ReturnData/Form1099DIV[uuid_1]/CollectiblesAmtPP" tps="FDI$FSCHB:F1099D[uuid_1].L1CTX"/>
+        <Mapping mef="/Return/ReturnData/Form1099OID[uuid_1]/OriginalIssueDiscountAmtPP" tps="FDI$FSCHB:F1099O[uuid_1].B1"/>
+        <Mapping mef="/Return/ReturnData/Form1099OID[uuid_1]/PeriodicInterestAmtPP" tps="FDI$FSCHB:F1099O[uuid_1].B2"/>
+        <Mapping mef="/Return/ReturnData/Form1099OID[uuid_1]/EarlyWithdrawalPenaltyAmtPP" tps="FDI$FSCHB:F1099O[uuid_1].B3"/>
+        <Mapping mef="/Return/ReturnData/Form1099OID[uuid_1]/FederalIncomeTaxWithheldAmtPP" tps="FDI$FSCHB:F1099O[uuid_1].B4"/>
+        <Mapping mef="/Return/ReturnData/Form1099OID[uuid_1]/MarketDiscountAmtPP" tps="FDI$FSCHB:F1099O[uuid_1].TAX"/>
+        <Mapping mef="/Return/ReturnData/Form1099OID[uuid_1]/AcquistionPremiumAmtPP" tps="FDI$FSCHB:F1099O[uuid_1].BREM"/>
+        <Mapping mef="/Return/ReturnData/Form1099OID[uuid_1]/OriginalIssueDiscountUSTreasuryAmtPP" tps="FDI$FSCHB:F1099O[uuid_1].US"/>
+        <Mapping mef="/Return/ReturnData/Form1099OID[uuid_1]/InvestmentExpensesAmtPP" tps="FDI$FSCHB:F1099O[uuid_1].B7"/>
+        <Mapping mef="/Return/ReturnData/Form1099OID[uuid_1]/PayerNamePP/BusinessNameLine1Txt" tps="FDI$FSCHB:F1099O[uuid_1].PNA1"/>
+        <Mapping mef="/Return/ReturnData/Form1099OID[uuid_1]/RecipientSSNPP" tps="FDI$FSCHB:F1099O[uuid_1].RECIPSSN"/>
+        <Mapping mef="/Return/ReturnData/Form1099MISC[uuid_1]/RentsAmtPP" tps="FDI$F99MPER[uuid_1].L1"/>
+        <Mapping mef="/Return/ReturnData/Form1099MISC[uuid_1]/RoyaltiesAmtPP" tps="FDI$F99MPER[uuid_1].L2"/>
+        <Mapping mef="/Return/ReturnData/Form1099MISC[uuid_1]/OtherIncomeAmtPP" tps="FDI$F99MPER[uuid_1].L3"/>
+        <Mapping mef="/Return/ReturnData/Form1099MISC[uuid_1]/FederalIncomeTaxWithheldAmtPP" tps="FDI$F99MPER[uuid_1].L4"/>
+        <Mapping mef="/Return/ReturnData/Form1099MISC[uuid_1]/FishingBoatProceedsAmtPP" tps="FDI$F99MPER[uuid_1].L5"/>
+        <Mapping mef="/Return/ReturnData/Form1099MISC[uuid_1]/MedicalHealthCarePaymentsAmtPP" tps="FDI$F99MPER[uuid_1].L6"/>
+        <Mapping mef="/Return/ReturnData/Form1099MISC[uuid_1]/NonEmployeeCompensationAmtPP" tps="FDI$F99MPER[uuid_1].L7"/>
+        <Mapping mef="/Return/ReturnData/Form1099MISC[uuid_1]/SubstitutePaymentsAmtPP" tps="FDI$F99MPER[uuid_1].L8"/>
+        <Mapping mef="/Return/ReturnData/Form1099MISC[uuid_1]/CropInsuranceProceedsAmtPP" tps="FDI$F99MPER[uuid_1].L10"/>
+        <Mapping mef="/Return/ReturnData/Form1099MISC[uuid_1]/ExcessGoldenParachutePaymentsAmtPP" tps="FDI$F99MPER[uuid_1].L13"/>
+        <Mapping mef="/Return/ReturnData/Form1099MISC[uuid_1]/GrossAttorneyProceedsAmtPP" tps="FDI$F99MPER[uuid_1].L13A"/>
+        <Mapping mef="/Return/ReturnData/Form1099MISC[uuid_1]/Section409ADeferralsAmtPP" tps="FDI$F99MPER[uuid_1].L15A"/>
+        <Mapping mef="/Return/ReturnData/Form1099MISC[uuid_1]/Section409AIncomeAmtPP" tps="FDI$F99MPER[uuid_1].L15B"/>
+        <Mapping mef="/Return/ReturnData/Form1099MISC[uuid_1]/AccountNumPP" tps="FDI$F99MPER[uuid_1].ACCTNUM"/>
+        <Mapping mef="/Return/ReturnData/Form1099MISC[uuid_1]/PayerEINPP" tps="FDI$F99MPER[uuid_1].FEDIDNO"/>
+        <Mapping mef="/Return/ReturnData/Form1099MISC[uuid_1]/RecipientSSNPP" tps="FDI$F99MPER[uuid_1].RECIPSSN"/>
+        <Mapping mef="/Return/ReturnData/Form1099MISC[uuid_1]/PayerNamePP/BusinessNameLine1Txt" tps="FDI$F99MPER[uuid_1].PNM"/>
+        <Mapping mef="/Return/ReturnData/Form1099B[uuid_1]/PayerNamePP/BusinessNameLine1Txt" tps="FDI$D1099BWK[uuid_1].FI"/>
+        <Mapping mef="/Return/ReturnData/Form1099B[uuid_1]/AccountNumPP" tps="FDI$D1099BWK[uuid_1].ACCTNUM"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/CorrectedInd" tps="FDI$F1099R[uuid_1].CMX"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/PayerName/BusinessNameLine1Txt" tps="FDI$F1099R[uuid_1].PNAM1"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/PayerName/BusinessNameLine2Txt" tps="FDI$F1099R[uuid_1].PNAM2"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/PayerUSAddress/AddressLine1Txt" tps="FDI$F1099R[uuid_1].PADD"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/PayerUSAddress/CityNm" tps="FDI$F1099R[uuid_1].PCTY"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/PayerUSAddress/StateAbbreviationCd" tps="FDI$F1099R[uuid_1].PST"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/PayerUSAddress/ZIPCd" tps="FDI$F1099R[uuid_1].PZIP"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/PayerEIN" tps="FDI$F1099R[uuid_1].EIN"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/RecipientSSN" tps="FDI$F1099R[uuid_1].RECIPSSN"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/RecipientNm" tps="FDI$F1099R[uuid_1].RNAM"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/RecipientUSAddress/AddressLine1Txt" tps="FDI$F1099R[uuid_1].RADD"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/RecipientUSAddress/CityNm" tps="FDI$F1099R[uuid_1].RCTY"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/RecipientUSAddress/StateAbbreviationCd" tps="FDI$F1099R[uuid_1].RST"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/RecipientUSAddress/ZIPCd" tps="FDI$F1099R[uuid_1].RZIP"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/PayerRecipientAccountNum" tps="FDI$F1099R[uuid_1].ACCT"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/GrossDistributionAmt" tps="FDI$F1099R[uuid_1].L1"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/TaxableAmt" tps="FDI$F1099R[uuid_1].L2A"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/TxblAmountNotDeterminedInd" tps="FDI$F1099R[uuid_1].L2B"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/TotalDistributionInd" tps="FDI$F1099R[uuid_1].TOTAL"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/CapitalGainAmt" tps="FDI$F1099R[uuid_1].L3"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/FederalIncomeTaxWithheldAmt" tps="FDI$F1099R[uuid_1].L4"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/EmployeeContributionsAmt" tps="FDI$F1099R[uuid_1].L5"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/NetUnrlzdSecuritiesApprcnAmt" tps="FDI$F1099R[uuid_1].L6"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/F1099RDistributionCd" tps="FDI$F1099R[uuid_1].L7A"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/IRASEPSIMPLEInd" tps="FDI$F1099R[uuid_1].IRA"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/OtherDistributionAmt" tps="FDI$F1099R[uuid_1].L8"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/RcpntOthDistributionPct" tps="FDI$F1099R[uuid_1].L8A"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/RcpntTotalDistributionPct" tps="FDI$F1099R[uuid_1].L9A"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/TotalEmployeeContributionsAmt" tps="FDI$F1099R[uuid_1].L9B"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/IRRAllocatedAmt" tps="FDI$F1099R[uuid_1].ACCIRR"/>
+        <Mapping mef="/Return/ReturnData/IRS1099R[uuid_1]/DesignatedROTHAcctFirstYr" tps="FDI$F1099R[uuid_1].DESROTH"/>
+        <Mapping mef="/Return/ReturnData/DirectDepositInfoFromProviders/DirectDepositInfoFromProvidersGrpPP[uuid_1]/RoutingTransitNumPP" tps="FDI$CIMPDATA.DDRTN[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/DirectDepositInfoFromProviders/DirectDepositInfoFromProvidersGrpPP[uuid_1]/DepositorAccountNumPP" tps="FDI$CIMPDATA.DDACCT[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/DirectDepositInfoFromProviders/DirectDepositInfoFromProvidersGrpPP[uuid_1]/FinancialInstitutionNamePP" tps="FDI$CIMPDATA.DDNAME[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/DirectDepositInfoFromProviders/DirectDepositInfoFromProvidersGrpPP[uuid_1]/FIAccountNicknamePP" tps="FDI$CIMPDATA.DDNICK[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/EICCodePP" tps="FDI$FWDEPINF[uuid_1].EIC"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentCodePP" tps="FDI$FWDEPINF[uuid_1].CD"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/BirthDtPP" tps="FDI$FWDEPINF[uuid_1].DOB" transform="DateTransformation"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DeathDtPP" tps="FDI$FWDEPINF[uuid_1].CHDOD" transform="DateTransformation"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentAgePP" tps="FDI$FWDEPINF[uuid_1].AGE"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/FirstNmPP" tps="FDI$FWDEPINF[uuid_1].FIRSTNAM"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/LastNmPP" tps="FDI$FWDEPINF[uuid_1].LASTNAM"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/SSNPP" tps="FDI$FWDEPINF[uuid_1].SSN"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentDisabledIndPP" tps="FDI$FWDEPINF[uuid_1].DISABX"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentAdoptedIndPP" tps="FDI$FWDEPINF[uuid_1].ADOPTED"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/MonthsPP" tps="FDI$FWDEPINF[uuid_1].MONTHS"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentMonthsLivedWithTaxpayerInUSPP" tps="FDI$FWDEPINF[uuid_1].MTHSINUS"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentRelationshipCdPP" tps="FDI$FWDEPINF[uuid_1].RELATION"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentFosterIndPP" tps="FDI$FDEPWKS[uuid_1].FOSTER"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/DependentDetail[uuid_1]/DependentFirstNm" tps="FDI$F1040.L6FIRST[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/DependentDetail[uuid_1]/DependentLastNm" tps="FDI$F1040.L6LAST[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/DependentDetail[uuid_1]/DependentRelationshipCd" tps="FDI$F1040.L6C4[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/DependentDetail[uuid_1]/DependentSSN" tps="FDI$F1040.L6C3[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/DependentDetail[uuid_1]/DiedLiteralCd" tps="FDI$F1040.L6C3[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/DependentDetail[uuid_1]/EligibleForChildTaxCreditInd" tps="FDI$F1040.L6C5[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/PersonalInfoWorksheetLinkPP" tps="FDI$F1098T[uuid_1].PW1"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/DependentInfoWorksheetLinkPP" tps="FDI$F1098T[uuid_1].PW2"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/SchoolFilerNamePP" tps="FDI$F1098T[uuid_1].FNAME"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/SchoolFilerEINPP" tps="FDI$F1098T[uuid_1].FEIN"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/AmountPaidPP" tps="FDI$F1098T[uuid_1].PAYMENTS"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/AmountBilledPP" tps="FDI$F1098T[uuid_1].BILLED"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/AdjustmentsPriorYearPP" tps="FDI$F1098T[uuid_1].ADJUSTPY"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/ScholarshipsGrantsPP" tps="FDI$F1098T[uuid_1].SCHOLAR"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/ScholarshipsGrantsAdjustmentsPP" tps="FDI$F1098T[uuid_1].ADJSCHOL"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/AmountsIncludeNextYearPP" tps="FDI$F1098T[uuid_1].ACADEMIC"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/GraduateStudentIndPP" tps="FDI$F1098T[uuid_1].GRADSTU"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/AtLeastHalfTimeStudentIndPP" tps="FDI$F1098T[uuid_1].HALF"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/ReportingTypeChangesIndPP" tps="FDI$F1098T[uuid_1].REPORTX"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/InsuranceContractReimburseRefundPP" tps="FDI$F1098T[uuid_1].ADJSCHOL"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/StudentSSNPP" tps="FDI$F1098T[uuid_1].SSSN"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/StudentUSAddressPP/AddressLine1Txt" tps="FDI$F1098T[uuid_1].SADD"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/StudentUSAddressPP/AddressLine2Txt" tps="FDI$F1098T[uuid_1].APT"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/StudentUSAddressPP/CityNm" tps="FDI$F1098T[uuid_1].SCITY"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/StudentUSAddressPP/StateAbbreviationCd" tps="FDI$F1098T[uuid_1].SST"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/StudentUSAddressPP/ZIPCd" tps="FDI$F1098T[uuid_1].SZIP"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/SchoolFilerUSAddressPP/AddressLine1Txt" tps="FDI$F1098T[uuid_1].FADD"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/SchoolFilerUSAddressPP/CityNm" tps="FDI$F1098T[uuid_1].FCITY"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/SchoolFilerUSAddressPP/StateAbbreviationCd" tps="FDI$F1098T[uuid_1].FST"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/SchoolFilerUSAddressPP/ZIPCd" tps="FDI$F1098T[uuid_1].FZIP"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/SchoolFilerForeignAddressPP/CountryCd" tps="FDI$F1098T[uuid_1].COUNTRY"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/ElementarySchoolIndPP" tps="FDI$STINFOTP.ELEMX"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/HighSchoolIndPP" tps="FDI$STINFOTP.SECONX"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/CollegeIndPP" tps="FDI$STINFOTP.COLLEGX"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/VocationalSchoolIndPP" tps="FDI$STINFOTP.VOCX"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/MilitaryAcademyIndPP" tps="FDI$STINFOTP.MILX"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/SchoolTypeNotApplicableIndPP" tps="FDI$STINFOTP.ELNAX"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/AOCreditPriorYears" tps="FDI$STINFOTP.HMAM"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/HopeCreditPriorYears" tps="FDI$STINFOTP.HMHOP"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationAssistancePP/VeteranOrEmployerAssistancePP" tps="FDI$STINFOTP.F98VET"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationAssistancePP/OtherVeteranAssistancePP" tps="FDI$STINFOTP.VET"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationAssistancePP/OtherTaxFreeEmployerAssistancePP" tps="FDI$STINFOTP.QTR"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationAssistancePP/TotalTaxFreeAssistancePP" tps="FDI$STINFOTP.TIFA"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationAssistancePP/TotalScholarshipsGrants1098TPP" tps="FDI$STINFOTP.F98TFREE"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationAssistancePP/OtherScholarshipsGrantsAmountPP" tps="FDI$STINFOTP.SCHOLAR"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationAssistancePP/TotalScholarshipsGrantsAmountPP" tps="FDI$STINFOTP.SL1"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationAssistancePP/ScholarshipNotAllocableAmountPP" tps="FDI$STINFOTP.SL2"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationAssistancePP/OtherThanQualifiedAmountPP" tps="FDI$STINFOTP.SL4"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationAssistancePP/ScholarshipNotAllowableAmountPP" tps="FDI$STINFOTP.SL5"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationAssistancePP/TotalQualifiedEducationExpensesPP" tps="FDI$STINFOTP.QESCHOL"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationAssistancePP/DegreeCandidateQualifiedAmountPP" tps="FDI$STINFOTP.SL6"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationAssistancePP/TaxFreeAssistanceTotalAmountPP" tps="FDI$STINFOTP.TFTOTAL"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationalExpensesPP/FeesPP" tps="FDI$STINFOTP.FEES"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationalExpensesPP/ExpensesToOtherInstitutionsPP" tps="FDI$STINFOTP.BOOKSO"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationalExpensesPP/BooksSuppliesAmountPP" tps="FDI$STINFOTP.BOOKS"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationalExpensesPP/OtherCourseRelatedExpensesPP" tps="FDI$STINFOTP.COURRE"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationalExpensesPP/RoomAndBoardAmountPP" tps="FDI$STINFOTP.ROOM"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationalExpensesPP/SpecialNeedsExpensesAmountPP" tps="FDI$STINFOTP.SPECND"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationalExpensesPP/ComputerExpensesAmountPP" tps="FDI$STINFOTP.COMPTR"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationalExpensesPP/QTPorESAContributionPP" tps="FDI$STINFOTP.QTP"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationalExpensesPP/AcademicTutoringAmountPP" tps="FDI$STINFOTP.TUTOR"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationalExpensesPP/UniformsAmountPP" tps="FDI$STINFOTP.UNIFO"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationalExpensesPP/TransportationAmountPP" tps="FDI$STINFOTP.TRANSP"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationalExpensesPP/TotalQualifiedExpensesPP" tps="FDI$STINFOTP.GREXP"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationalExpensesPP/RefundsAmountPP" tps="FDI$STINFOTP.TOADJU"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationalExpensesPP/TaxFreeAssistancePP" tps="FDI$STINFOTP.TFHELP"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationalExpensesPP/DeductedOnScheduleAPP" tps="FDI$STINFOTP.DSCHA"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationalExpensesPP/UsedForCreditOrDeductionAmountPP" tps="FDI$STINFOTP.TEXCR"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationalExpensesPP/TotalQualifiedAdjustmentsPP" tps="FDI$STINFOTP.REEXP"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/QualifiedTuitionProgramPP/TotalQTPFrom1099QPP" tps="FDI$STINFOTP.Q3"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationSavingsAccountPP/TotalESADistributions" tps="FDI$STINFOTP.E3"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/PayerEIN" tps="FDI$F1099Q[uuid_1].PEIN"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/PayerNamePP" tps="FDI$F1099Q[uuid_1].PNAME"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/PayerAddressPP/AddressLine1Txt" tps="FDI$F1099Q[uuid_1].PADD"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/PayerAddressPP/CityNm" tps="FDI$F1099Q[uuid_1].PCITY"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/PayerAddressPP/StateAbbreviationCd" tps="FDI$F1099Q[uuid_1].PST"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/PayerAddressPP/ZIPCd" tps="FDI$F1099Q[uuid_1].PZIP"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/RecipientNamePP" tps="FDI$F1099Q[uuid_1].RNAM"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/RecipientAddressPP/AddressLine1Txt" tps="FDI$F1099Q[uuid_1].RADD"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/RecipientAddressPP/CityNm" tps="FDI$F1099Q[uuid_1].RCITY"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/RecipientAddressPP/StateAbbreviationCd" tps="FDI$F1099Q[uuid_1].RST"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/RecipientAddressPP/ZIPCd" tps="FDI$F1099Q[uuid_1].RZIP"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/AccountNumberPP" tps="FDI$F1099Q[uuid_1].ACCT"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/GrossDistributionAmountPP" tps="FDI$F1099Q[uuid_1].GDIST"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/EarningsAmountPP" tps="FDI$F1099Q[uuid_1].EARN"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/BasisAmountPP" tps="FDI$F1099Q[uuid_1].BASIS"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/TrusteeToTrusteeTransferIndPP" tps="FDI$F1099Q[uuid_1].TTROLLX"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/RecipientNotDesignatedBeneficiaryIndPP" tps="FDI$F1099Q[uuid_1].NDBENX"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/DistributionCodePP" tps="FDI$F1099Q[uuid_1].DISTCODE"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/StateForQTPPP" tps="FDI$F1099Q[uuid_1].ST"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/DistributionDueToDisabilityIndPP" tps="FDI$F1099Q[uuid_1].DISX"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/DistributionDueToDeathIndPP" tps="FDI$F1099Q[uuid_1].DEATHX"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/PartialRolloverAmountPP" tps="FDI$F1099Q[uuid_1].PARTRO"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/RolloverAmountPP" tps="FDI$F1099Q[uuid_1].ROVR"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/ContributionReturnedAmountPP" tps="FDI$F1099Q[uuid_1].ROCA"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/ESABasisAmountPP" tps="FDI$F1099Q[uuid_1].ESABASIS"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/ESABeginAmountPP" tps="FDI$F1099Q[uuid_1].ESABEGIN"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/ESAContribLastTaxYrAmountPP" tps="FDI$F1099Q[uuid_1].ESAPRI"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/ESAContribCurrentTaxYrAmountPP" tps="FDI$F1099Q[uuid_1].ESACONT"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/ESAEndingAmountPP" tps="FDI$F1099Q[uuid_1].ESAVALUE"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/ESAOutstandingRolloversAmountPP" tps="FDI$F1099Q[uuid_1].ESAOUTR"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/ESAContributionsPostTaxYearAmountPP" tps="FDI$F1099Q[uuid_1].ESAPOST"/>
+        <Mapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/ESAAdjustedQualifiedExpensesAmountPP" tps="FDI$F1099Q[uuid_1].EDE"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/AllocatedTipsAmt" tps="FDI$FW2[uuid_1].ALLOCTIP"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/ClergyDesignatedHousingAmtPP" tps="FDI$FW2[uuid_1].CHA"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/ClergySmallestHousingAmtPP" tps="FDI$FW2[uuid_1].CUHA"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/ControlNum" tps="FDI$FW2[uuid_1].A"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/CorrectedW2Ind" tps="FDI$FW2[uuid_1].CORRX"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/DependentCareBenefitsAmt" tps="FDI$FW2[uuid_1].DCB"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/EmployeeSSN" tps="FDI$FW2[uuid_1].D"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/EmployerEIN" tps="FDI$FW2[uuid_1].EIN"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/EmployerForeignAddress/CountryCd" tps="FDI$FW2[uuid_1].CCOUNTRY"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/EmployerName/BusinessNameLine1Txt" tps="FDI$FW2[uuid_1].CA"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/EmployerName/BusinessNameLine2Txt" tps="FDI$FW2[uuid_1].CA2"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/EmployersUseGrp[uuid_2]/EmployersUseAmt" tps="FDI$FW2[uuid_1].CODESA[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/EmployersUseGrp[uuid_2]/EmployersUseCd" tps="FDI$FW2[uuid_1].CODESC[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/EmployerUSAddress/AddressLine1Txt" tps="FDI$FW2[uuid_1].CB"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/EmployerUSAddress/CityNm" tps="FDI$FW2[uuid_1].CADDR"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/EmployerUSAddress/StateAbbreviationCd" tps="FDI$FW2[uuid_1].CST"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/EmployerUSAddress/ZIPCd" tps="FDI$FW2[uuid_1].CZIP"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/HaveClergyChurchRelSectIncomeIndPP" tps="FDI$FW2[uuid_1].HCLINC"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/MedicareTaxWithheldAmt" tps="FDI$FW2[uuid_1].MEDTAX"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/MedicareWagesAndTipsAmt" tps="FDI$FW2[uuid_1].MEDWAGES"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/NonqualifiedPlansAmt" tps="FDI$FW2[uuid_1].NQAMOUNT"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/NonQualifiedPlansDistributionAmtPP" tps="FDI$FW2[uuid_1].NQPLANS"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/OtherDeductionsBenefitsGrp[uuid_2]/Amt" tps="FDI$FW2[uuid_1].OTHERA[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/OtherDeductionsBenefitsGrp[uuid_2]/Desc" tps="FDI$FW2[uuid_1].OTHERD[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/SocialSecurityTaxAmt" tps="FDI$FW2[uuid_1].SSTAX"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/SocialSecurityTipsAmt" tps="FDI$FW2[uuid_1].SSTIPS"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/SocialSecurityWagesAmt" tps="FDI$FW2[uuid_1].SSWAGES"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/W2ClergyFirstChoicePPR2" tps="FDI$FW2[uuid_1].HCLTYPE"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/WagesAmt" tps="FDI$FW2[uuid_1].WAGES"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/WithholdingAmt" tps="FDI$FW2[uuid_1].FEDTAX"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/StandardOrNonStandardCd" tps="FDI$FW2[uuid_1].NSX">
+            <ValueTransform mef="N" tps="X"/>
+            <ValueTransform mef="S" tps=""/>
+        </Mapping>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/EmployerForeignAddress/AddressLine1Txt" tps="FDI$FW2[uuid_1].CB"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/EmployerForeignAddress/CityNm" tps="FDI$FW2[uuid_1].CADDR"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/EmployerForeignAddress/ProvinceOrStateNm" tps="FDI$FW2[uuid_1].CST"/>
+        <Mapping mef="/Return/ReturnData/IRSW2[uuid_1]/EmployerForeignAddress/ForeignPostalCd" tps="FDI$FW2[uuid_1].CZIP"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/PolicyIssuersNamePP" tps="FDI$F1095A[uuid_1].PAYERNM1"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/MarketplaceIdentiferPP" tps="FDI$F1095A[uuid_1].PAYERID"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/PolicyStartDatePP" tps="FDI$F1095A[uuid_1].PLSTDATE" transform="DateTransformation"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/PolicyTerminationDatePP" tps="FDI$F1095A[uuid_1].PLENDATE" transform="DateTransformation"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/RecipientFirstNamePP" tps="FDI$F1095A[uuid_1].RFNAME"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/RecipientLastNamePP" tps="FDI$F1095A[uuid_1].RLNAME"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/RecipientSSNPP" tps="FDI$F1095A[uuid_1].RECIPSSN"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/RecipientBirthDtPP" tps="FDI$F1095A[uuid_1].RDOB" transform="DateTransformation"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/RecipientAddressPP/AddressLine1Txt" tps="FDI$F1095A[uuid_1].RECIPADD"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/RecipientAddressPP/CityNm" tps="FDI$F1095A[uuid_1].RCTY"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/RecipientAddressPP/StateAbbreviationCd" tps="FDI$F1095A[uuid_1].RST"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/RecipientAddressPP/ZIPCd" tps="FDI$F1095A[uuid_1].RZIP"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/RecipientSpouseFirstNamePP" tps="FDI$F1095A[uuid_1].RSFNAME"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/RecipientSpouseLastNamePP" tps="FDI$F1095A[uuid_1].RSLNAME"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/RecipientSpouseSSNPP" tps="FDI$F1095A[uuid_1].RSSSN"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/RecipientSpouseBirthDtPP" tps="FDI$F1095A[uuid_1].RSDOB" transform="DateTransformation"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/MarketAssignedPolicyNumberPP" tps="FDI$F1095A[uuid_1].PAYPOLID"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/TotalPlanPremiumAmtPP" tps="FDI$F1095A[uuid_1].TOTPREM"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/TotalPremiumSLCSPAmtPP" tps="FDI$F1095A[uuid_1].TOTSLCSP"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/TotalAdvancedPTCAmtPP" tps="FDI$F1095A[uuid_1].ADVCRED"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/LinkStartMonthNumberCdPP" tps="FDI$F1095A[uuid_1].STRMTH"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/LinkEndMonthNumberCdPP" tps="FDI$F1095A[uuid_1].ENDMTH"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/FormCopyKeyForBusinessTypePP" tps="FDI$F1095A[uuid_1].HACTCOPY"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/BusinessTypeIdPP" tps="FDI$F1095A[uuid_1].HACTTYPE"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/SharedPolicyAllocationPP/SSNPP" tps="FDI$F1095A[uuid_1].SHPOLSSN"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/SharedPolicyAllocationPP/StartMonthNumberCdPP" tps="FDI$F1095A[uuid_1].SHPOLSM"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/SharedPolicyAllocationPP/EndMonthNumberCdPP" tps="FDI$F1095A[uuid_1].SHPOLEM"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/SharedPolicyAllocationPP/MonthlyPremiumPctPP" tps="FDI$F1095A[uuid_1].SPMPPCT"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/SharedPolicyAllocationPP/MonthlyPremiumSLCSPPctPP" tps="FDI$F1095A[uuid_1].SPSLCSPP"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/SharedPolicyAllocationPP/MonthlyAdvancedPTCPctPP" tps="FDI$F1095A[uuid_1].SPADVPTC"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/SchCLinkPP" tps="FDI$F1095A[uuid_1].SCHC"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/SchK1PLinkPP" tps="FDI$F1095A[uuid_1].SCHK1P"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/SchK1SLinkPP" tps="FDI$F1095A[uuid_1].SCHK1S"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/SchFLinkPP" tps="FDI$F1095A[uuid_1].SCHF"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/CoveredIndivInformationPP[uuid_2]/CoveredIndivFirstNamePP" tps="FDI$F1095A[uuid_1].DFNAME[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/CoveredIndivInformationPP[uuid_2]/CoveredIndivLastNamePP" tps="FDI$F1095A[uuid_1].DLNAME[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/CoveredIndivInformationPP[uuid_2]/CoveredIndivSSNPP" tps="FDI$F1095A[uuid_1].DSSN[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/CoveredIndivInformationPP[uuid_2]/CoveredIndivBirthDtPP" tps="FDI$F1095A[uuid_1].DDOB[uuid_2]" transform="DateTransformation"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/CoveredIndivInformationPP[uuid_2]/CoveredIndivStartDtPP" tps="FDI$F1095A[uuid_1].DSTRCVM[uuid_2]" transform="DateTransformation"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/CoveredIndivInformationPP[uuid_2]/CoveredIndivEndDtPP" tps="FDI$F1095A[uuid_1].DENDCVRM[uuid_2]" transform="DateTransformation"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/MonthlyPTCInformationGrpPP[uuid_2]/MonthCdPP" tps="FDI$F1095A[uuid_1].MONTHCD[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/MonthlyPTCInformationGrpPP[uuid_2]/MonthlyPlanPremiumAmtPP" tps="FDI$F1095A[uuid_1].MTHPREM[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/MonthlyPTCInformationGrpPP[uuid_2]/MonthlyPremiumSLCSPAmtPP" tps="FDI$F1095A[uuid_1].MTHSLCSP[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095A[uuid_1]/MonthlyPTCInformationGrpPP[uuid_2]/MonthlyAdvancedPTCAmtPP" tps="FDI$F1095A[uuid_1].MTHADVCR[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/ReliefInd" tps="FDI$F8962.HSHIPIND"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/TotalExemptionsCnt" tps="FDI$F8962.TOTEXCNT"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/ModifiedAGIAmt" tps="FDI$F8962.MODAGI"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/TotalDependentsModifiedAGIAmt" tps="FDI$F8962.DMODAGI"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/HouseholdIncomeAmt" tps="FDI$F8962.HSHLDINC"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/PovertyLevelAmt" tps="FDI$F8962.PVRTYLVL"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/FederalPovertyLevelPct" tps="FDI$F8962.PVRTYPCT"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/ApplicableFigureRt" tps="FDI$F8962.APPFIGRT"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AnnualContributionAmt" tps="FDI$F8962.ANNCONTR"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/MonthlyContriHealthCareCvrAmt" tps="FDI$F8962.MTHCONTR"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualPremiumAmt" tps="FDI$F8962.ANNPREM"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualPremiumSLCSPAmt" tps="FDI$F8962.APSLCSP"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualContributionAmt" tps="FDI$F8962.ANNCONT"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualMaxPremiumAssistanceAmt" tps="FDI$F8962.ANNMXAST"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualPremiumTaxCreditAllwAmt" tps="FDI$F8962.ANNTXCR"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AnnualPTCCalculationGrp/AnnualAdvancedPTCAmt" tps="FDI$F8962.ANNADVCR"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/TotalPremiumTaxCreditAmt" tps="FDI$F8962.TOTPTC"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/TotalAdvancedPTCAmt" tps="FDI$F8962.TOTADPTC"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/ReconciledPremiumTaxCreditAmt" tps="FDI$F8962.RECONPTC"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/ExcessAdvncPaymentAmt" tps="FDI$F8962.EXADVPMT"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AdditionalTaxLimitationAmt" tps="FDI$F8962.ADDTXLIM"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AltCalcForMarriagePrimaryGrp/FamilySizeCnt" tps="FDI$F8962.TPFAMSZ"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AltCalcForMarriagePrimaryGrp/MonthlyContributionAmt" tps="FDI$F8962.TPMTHCNT"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AltCalcForMarriagePrimaryGrp/StartMonthNumberCd" tps="FDI$F8962.TPSTRMTH"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AltCalcForMarriagePrimaryGrp/EndMonthNumberCd" tps="FDI$F8962.TPENDMTH"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AltCalcForMarriageSpouseGrp/FamilySizeCnt" tps="FDI$F8962.SPFAMSZ"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AltCalcForMarriageSpouseGrp/MonthlyContributionAmt" tps="FDI$F8962.SPMTHCNT"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AltCalcForMarriageSpouseGrp/StartMonthNumberCd" tps="FDI$F8962.SPSTRMTH"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AltCalcForMarriageSpouseGrp/EndMonthNumberCd" tps="FDI$F8962.SPENDMTH"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AltCalcForMarriageInputsPrimaryCalcGrpPP/FamilySizeCntPP" tps="FDI$F8962.ATFAMSZ"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AltCalcForMarriageInputsPrimaryCalcGrpPP/StartMonthNumberCdPP" tps="FDI$F8962.ATSTRMTH"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AltCalcForMarriageInputsPrimaryCalcGrpPP/EndMonthNumberCdPP" tps="FDI$F8962.ATENDMTH"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AltCalcForMarriageInputsSpouseCalcGrpPP/FamilySizeCntPP" tps="FDI$F8962.ASFAMSZ"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AltCalcForMarriageInputsSpouseCalcGrpPP/StartMonthNumberCdPP" tps="FDI$F8962.ASSTRMTH"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AltCalcForMarriageInputsSpouseCalcGrpPP/EndMonthNumberCdPP" tps="FDI$F8962.ASENDMTH"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/PartOfReturnPP" tps="FDI$F8962.__POR__"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/SelfEmployedHealthInsDedAmtPP" tps="FDI$F8962.SEIDTOTA"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/SelfEmployedExchangeHealthInsDedAmtPP" tps="FDI$F8962.SEIDEXCH"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/ExchangeHealthInsItemizedDedAmtPP" tps="FDI$F8962.SEIDOVER"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/StateSelfEmployedExchangeHealthInsDedAmtPP" tps="FDI$F8962.SEIDSTEX"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/StateExchangeHealthInsItemizedDedAmtPP" tps="FDI$F8962.SEIDSTOV"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/MonthOfMarriagePP" tps="FDI$F8962.MARDATE"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/NextIterationSetDeductionBlankPP" tps="FDI$F8962.HBLANKNI"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/NextExchangeSelfEmploymentDeductionPP" tps="FDI$F8962.HSEDNEXT"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/NextIterationNumberPP" tps="FDI$F8962.HNUMNI"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/NextLastIterationDeductionPP" tps="FDI$F8962.HDEDNLI"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/NextLastIterationPTCPP" tps="FDI$F8962.HPTCNLI"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/SelfEmploymentCalculationDataPP/NextAlternateDeductionPP" tps="FDI$F8962.HDEDNA"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp[uuid_1]/PolicyNum" tps="FDI$F8962.POLCYNUM[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp[uuid_1]/SSN" tps="FDI$F8962.SHPOLSSN[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp[uuid_1]/StartMonthNumberCd" tps="FDI$F8962.SHPOLSM[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp[uuid_1]/EndMonthNumberCd" tps="FDI$F8962.SHPOLEM[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp[uuid_1]/MonthlyPremiumPct" tps="FDI$F8962.SPMPPCT[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp[uuid_1]/MonthlyPremiumSLCSPPct" tps="FDI$F8962.SPSLCSPP[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/SharedPolicyAllocationGrp[uuid_1]/MonthlyAdvancedPTCPct" tps="FDI$F8962.SPADVPTC[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/MonthlyPTCCalculationGrp[uuid_1]/MonthCd" tps="FDI$F8962.MONTHCD[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/MonthlyPTCCalculationGrp[uuid_1]/MonthlyPremiumAmt" tps="FDI$F8962.MTHPREM[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/MonthlyPTCCalculationGrp[uuid_1]/MonthlyPremiumSLCSPAmt" tps="FDI$F8962.MTHSLCSP[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/MonthlyPTCCalculationGrp[uuid_1]/MonthlyContributionAmt" tps="FDI$F8962.MTHCONT[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/MonthlyPTCCalculationGrp[uuid_1]/MonthlyMaxPremiumAssistanceAmt" tps="FDI$F8962.MTHMXAST[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/MonthlyPTCCalculationGrp[uuid_1]/MonthlyPremiumTaxCreditAllwAmt" tps="FDI$F8962.MTHTXCR[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/MonthlyPTCCalculationGrp[uuid_1]/MonthlyAdvancedPTCAmt" tps="FDI$F8962.MTHADVCR[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AltCalcForMarriageEligibilityWksPP/AltCalcForMarriageEligibilityGrpPP/MonthlyAltCalcForMarriageEligibilityPP/MonthCdPP" tps="FDI$F8962.AMONTHCD[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AltCalcForMarriageEligibilityWksPP/AltCalcForMarriageEligibilityGrpPP/MonthlyAltCalcForMarriageEligibilityPP/MonthlyPremiumAmtPP" tps="FDI$F8962.AMTHPREM[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AltCalcForMarriageEligibilityWksPP/AltCalcForMarriageEligibilityGrpPP/MonthlyAltCalcForMarriageEligibilityPP/MonthlyPremiumSLCSPAmtPP" tps="FDI$F8962.AMTSLCSP[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AltCalcForMarriageEligibilityWksPP/AltCalcForMarriageEligibilityGrpPP/MonthlyAltCalcForMarriageEligibilityPP/MonthlyContributionAmtPP" tps="FDI$F8962.AMTHCONT[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AltCalcForMarriageEligibilityWksPP/AltCalcForMarriageEligibilityGrpPP/MonthlyAltCalcForMarriageEligibilityPP/MonthlyMaxPremiumAssistanceAmtPP" tps="FDI$F8962.AMTMXAST[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AltCalcForMarriageEligibilityWksPP/AltCalcForMarriageEligibilityGrpPP/MonthlyAltCalcForMarriageEligibilityPP/MonthlyPremiumTaxCreditAllwAmtPP" tps="FDI$F8962.AMTHTXCR[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AltCalcForMarriageEligibilityWksPP/AltCalcForMarriageEligibilityGrpPP/MonthlyAltCalcForMarriageEligibilityPP/MonthlyAdvancedPTCAmtPP" tps="FDI$F8962.AMTADVCR[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AltCalcForMarriageEligibilityWksPP/TotalPremiumTaxCreditAmtPP" tps="FDI$F8962.ATMTXCR"/>
+        <Mapping mef="/Return/ReturnData/IRS8962/AltCalcForMarriageEligibilityWksPP/TotalAdvancedPTCAmtPP" tps="FDI$F8962.ATMADVCR"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/PartOfReturnPP" tps="FDI$F8965.__POR__">
+            <ValueTransform mef="true" tps="1"/>
+            <ValueTransform mef="false" tps="0"/>
+        </Mapping>
+        <Mapping mef="/Return/ReturnData/IRS8965/TotalDependentsModifiedAGIAmtPP" tps="FDI$F8965.DEMODAGI"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/ObtndExemptCvrTaxHsldGrp[uuid_1]/PersonNm" tps="FDI$F8965.PERSNAME[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/ObtndExemptCvrTaxHsldGrp[uuid_1]/SSN" tps="FDI$F8965.SSN[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/ObtndExemptCvrTaxHsldGrp[uuid_1]/ExemptionCertificateNum" tps="FDI$F8965.EXEMCERT[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/ObtndExemptCvrTaxHsldGrp[uuid_1]/StartMonthNumberCdPP" tps="FDI$F8965.ESTRMTH[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/ObtndExemptCvrTaxHsldGrp[uuid_1]/EndMonthNumberCdPP" tps="FDI$F8965.EENDMTH[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/RequestExemptCvrTaxHsldGrp[uuid_1]/PersonNm" tps="FDI$F8965.RPERSNAM[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/RequestExemptCvrTaxHsldGrp[uuid_1]/SSN" tps="FDI$F8965.REXEMSSN[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/RequestExemptCvrTaxHsldGrp[uuid_1]/ExemptionReasonCd" tps="FDI$F8965.REXEMCD[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/RequestExemptCvrTaxHsldGrp[uuid_1]/AllYearInd" tps="FDI$F8965.REQEXEAY[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/RequestExemptCvrTaxHsldGrp[uuid_1]/MonthIndicatorGrp/JanuaryInd" tps="FDI$F8965.REJAN[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/RequestExemptCvrTaxHsldGrp[uuid_1]/MonthIndicatorGrp/FebruaryInd" tps="FDI$F8965.REFEB[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/RequestExemptCvrTaxHsldGrp[uuid_1]/MonthIndicatorGrp/MarchInd" tps="FDI$F8965.REMAR[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/RequestExemptCvrTaxHsldGrp[uuid_1]/MonthIndicatorGrp/AprilInd" tps="FDI$F8965.REAPR[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/RequestExemptCvrTaxHsldGrp[uuid_1]/MonthIndicatorGrp/MayInd" tps="FDI$F8965.REMAY[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/RequestExemptCvrTaxHsldGrp[uuid_1]/MonthIndicatorGrp/JuneInd" tps="FDI$F8965.REJUN[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/RequestExemptCvrTaxHsldGrp[uuid_1]/MonthIndicatorGrp/JulyInd" tps="FDI$F8965.REJUL[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/RequestExemptCvrTaxHsldGrp[uuid_1]/MonthIndicatorGrp/AugustInd" tps="FDI$F8965.REAUG[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/RequestExemptCvrTaxHsldGrp[uuid_1]/MonthIndicatorGrp/SeptemberInd" tps="FDI$F8965.RESEP[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/RequestExemptCvrTaxHsldGrp[uuid_1]/MonthIndicatorGrp/OctoberInd" tps="FDI$F8965.REOCT[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/RequestExemptCvrTaxHsldGrp[uuid_1]/MonthIndicatorGrp/NovemberInd" tps="FDI$F8965.RENOV[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/RequestExemptCvrTaxHsldGrp[uuid_1]/MonthIndicatorGrp/DecemberInd" tps="FDI$F8965.REDEC[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/NonCalculatedExemptCvrTaxHsldGrpPP[uuid_1]/PersonNmPP" tps="FDI$F8965.IRPERNAM[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/NonCalculatedExemptCvrTaxHsldGrpPP[uuid_1]/SSNPP" tps="FDI$F8965.IREXMSSN[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/NonCalculatedExemptCvrTaxHsldGrpPP[uuid_1]/ExemptionReasonCdPP" tps="FDI$F8965.IREXEMCD[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/NonCalculatedExemptCvrTaxHsldGrpPP[uuid_1]/AllYearIndPP" tps="FDI$F8965.IREQEXAY[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/NonCalculatedExemptCvrTaxHsldGrpPP[uuid_1]/MonthIndicatorGrpPP/JanuaryIndPP" tps="FDI$F8965.IREJAN[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/NonCalculatedExemptCvrTaxHsldGrpPP[uuid_1]/MonthIndicatorGrpPP/FebruaryIndPP" tps="FDI$F8965.IREFEB[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/NonCalculatedExemptCvrTaxHsldGrpPP[uuid_1]/MonthIndicatorGrpPP/MarchIndPP" tps="FDI$F8965.IREMAR[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/NonCalculatedExemptCvrTaxHsldGrpPP[uuid_1]/MonthIndicatorGrpPP/AprilIndPP" tps="FDI$F8965.IREAPR[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/NonCalculatedExemptCvrTaxHsldGrpPP[uuid_1]/MonthIndicatorGrpPP/MayIndPP" tps="FDI$F8965.IREMAY[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/NonCalculatedExemptCvrTaxHsldGrpPP[uuid_1]/MonthIndicatorGrpPP/JuneIndPP" tps="FDI$F8965.IREJUN[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/NonCalculatedExemptCvrTaxHsldGrpPP[uuid_1]/MonthIndicatorGrpPP/JulyIndPP" tps="FDI$F8965.IREJUL[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/NonCalculatedExemptCvrTaxHsldGrpPP[uuid_1]/MonthIndicatorGrpPP/AugustIndPP" tps="FDI$F8965.IREAUG[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/NonCalculatedExemptCvrTaxHsldGrpPP[uuid_1]/MonthIndicatorGrpPP/SeptemberIndPP" tps="FDI$F8965.IRESEP[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/NonCalculatedExemptCvrTaxHsldGrpPP[uuid_1]/MonthIndicatorGrpPP/OctoberIndPP" tps="FDI$F8965.IREOCT[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/NonCalculatedExemptCvrTaxHsldGrpPP[uuid_1]/MonthIndicatorGrpPP/NovemberIndPP" tps="FDI$F8965.IRENOV[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/NonCalculatedExemptCvrTaxHsldGrpPP[uuid_1]/MonthIndicatorGrpPP/DecemberIndPP" tps="FDI$F8965.IREDEC[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/PersonFirstNamePP" tps="FDI$F8965.COVDNAME[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/PersonSSNPP" tps="FDI$F8965.COVDSSN[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/PersonBirthDtPP" tps="FDI$F8965.CDOB[uuid_1]" transform="DateTransformation"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/TotalBronzePlanCountPP" tps="FDI$F8965.SUMOFXS[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HshldIncmAmtPP" tps="FDI$F8965.HSHLDINC[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlngThresholdAmtPP" tps="FDI$F8965.FILETHRS[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/ExcessHshldIncmAmtPP" tps="FDI$F8965.EXCESINC[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/ExcessHshldIncmPenaltyAmtPP" tps="FDI$F8965.EXCINCPN[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/IncmOrFlatDollarX12AmtPP" tps="FDI$F8965.INCORFLT[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/IncmOrFlatDollarAmtPP" tps="FDI$F8965.ANNUALIZ[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzeCapAmtPP" tps="FDI$F8965.BRONZCAP[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/PenaltyAmountPP" tps="FDI$F8965.MECPNSUM[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/PersonNamePP" tps="FDI$F8965.SRPWNAME[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/TotalFlatDollarAmtPP" tps="FDI$F8965.FTOTAL"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/TotalExcessHshldIncmAmtPP" tps="FDI$F8965.ITOTAL"/>
+        <Mapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/TotalExcessHshldIncmAndFlatDollarAmtPP" tps="FDI$F8965.FDWKSHT"/>
+        <Mapping mef="/Return/ReturnData/IRS1095Other[uuid_1]/CoveredIndivGrpPP[uuid_2]/PersonNmPP" tps="FDI$F1095OTH[uuid_1].COVFNAM[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095Other[uuid_1]/CoveredIndivGrpPP[uuid_2]/SSNPP" tps="FDI$F1095OTH[uuid_1].COVSSN[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095Other[uuid_1]/CoveredIndivGrpPP[uuid_2]/PersonBirthDtPP" tps="FDI$F1095OTH[uuid_1].COVDOB[uuid_2]" transform="DateTransformation"/>
+        <Mapping mef="/Return/ReturnData/IRS1095Other[uuid_1]/CoveredIndivGrpPP[uuid_2]/AllYearIndPP" tps="FDI$F1095OTH[uuid_1].COV12MTH[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095Other[uuid_1]/CoveredIndivGrpPP[uuid_2]/JanuaryIndPP" tps="FDI$F1095OTH[uuid_1].CIMJAN[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095Other[uuid_1]/CoveredIndivGrpPP[uuid_2]/FebruaryIndPP" tps="FDI$F1095OTH[uuid_1].CIMFEB[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095Other[uuid_1]/CoveredIndivGrpPP[uuid_2]/MarchIndPP" tps="FDI$F1095OTH[uuid_1].CIMMAR[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095Other[uuid_1]/CoveredIndivGrpPP[uuid_2]/AprilIndPP" tps="FDI$F1095OTH[uuid_1].CIMAPR[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095Other[uuid_1]/CoveredIndivGrpPP[uuid_2]/MayIndPP" tps="FDI$F1095OTH[uuid_1].CIMMAY[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095Other[uuid_1]/CoveredIndivGrpPP[uuid_2]/JuneIndPP" tps="FDI$F1095OTH[uuid_1].CIMJUN[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095Other[uuid_1]/CoveredIndivGrpPP[uuid_2]/JulyIndPP" tps="FDI$F1095OTH[uuid_1].CIMJUL[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095Other[uuid_1]/CoveredIndivGrpPP[uuid_2]/AugustIndPP" tps="FDI$F1095OTH[uuid_1].CIMAUG[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095Other[uuid_1]/CoveredIndivGrpPP[uuid_2]/SeptemberIndPP" tps="FDI$F1095OTH[uuid_1].CIMSEP[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095Other[uuid_1]/CoveredIndivGrpPP[uuid_2]/OctoberIndPP" tps="FDI$F1095OTH[uuid_1].CIMOCT[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095Other[uuid_1]/CoveredIndivGrpPP[uuid_2]/NovemberIndPP" tps="FDI$F1095OTH[uuid_1].CIMNOV[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095Other[uuid_1]/CoveredIndivGrpPP[uuid_2]/DecemberIndPP" tps="FDI$F1095OTH[uuid_1].CIMDEC[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/HaveAnyDependentCarePP" tps="FDI$F2441.HANYCDC"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/PrimaryEarnedIncomeAmt" tps="FDI$F2441.L4"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/EarnedIncomeAmt" tps="FDI$F2441.L15"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/NumMonthsTaxpayerDisabledOrStudentPP" tps="FDI$F2441.S1"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/StudentOrDisabledTaxpayerEarnedIncomeAmtPP" tps="FDI$F2441.S2"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/SpouseEarnedIncomeAmt" tps="FDI$F2441.L5"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/SpouseIncomeAmt" tps="FDI$F2441.L16"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/NumMonthsSpouseDisabledOrStudentPP" tps="FDI$F2441.S3"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/StudentOrDisabledSpouseEarnedIncomeAmtPP" tps="FDI$F2441.S4"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/DependentCareBenefitsAmt" tps="FDI$F2441.L10"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/CarryoverAmt" tps="FDI$F2441.CRYOVER"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/ForfeitedAmt" tps="FDI$F2441.L11"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/QualifiedExpensesTotalPP" tps="FDI$F2441.L13"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/MFSSpouseEarnedIncomeAmtPP" tps="FDI$F2441.L16A"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/QualifyingPersonCntPP" tps="FDI$F2441.TOTKIDS"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/ProviderAmountPaidTotalPP" tps="FDI$F2441.TOTPROV"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/EmploymentTaxPaidPP" tps="FDI$F2441.L2A"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/ExpensePaidNotUsedPP" tps="FDI$F2441.L2B"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/MedicalExpensePaidPP" tps="FDI$F2441.L2AA"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/IsSchedCPartOfReturnPP" tps="FDI$F2441.CDCB"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/IsSchedEPartOfReturnPP" tps="FDI$F2441.EDCB"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/IsSchedFPartOfReturnPP" tps="FDI$F2441.FDCB"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/SchedCDepCareBenefitsAmtPP" tps="FDI$F2441.DCBC"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/SchedEDepCareBenefitsAmtPP" tps="FDI$F2441.DCBE"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/SchedFDepCareBenefitsAmtPP" tps="FDI$F2441.DCBF"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/CareProviderGrp[uuid_1]/CareProviderPersonName/PersonFirstNm" tps="FDI$F2441.L1A[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/CareProviderGrp[uuid_1]/CareProviderPersonName/PersonLastNm" tps="FDI$F2441.L1A2[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/CareProviderGrp[uuid_1]/CareProviderBusinessName/BusinessNameLine1Txt" tps="FDI$F2441.L1A[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/CareProviderGrp[uuid_1]/CareProviderBusinessName/BusinessNameLine2Txt" tps="FDI$F2441.L1A2[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/CareProviderGrp[uuid_1]/ForeignAddress/AddressLine1Txt" tps="FDI$F2441.L1B[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/CareProviderGrp[uuid_1]/ForeignAddress/CityNm" tps="FDI$F2441.L1B2[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/CareProviderGrp[uuid_1]/ForeignAddress/ProvinceOrStateNm" tps="FDI$F2441.ST[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/CareProviderGrp[uuid_1]/ForeignAddress/ForeignPostalCd" tps="FDI$F2441.ZIP[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/CareProviderGrp[uuid_1]/USAddress/AddressLine1Txt" tps="FDI$F2441.L1B[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/CareProviderGrp[uuid_1]/USAddress/CityNm" tps="FDI$F2441.L1B2[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/CareProviderGrp[uuid_1]/USAddress/StateAbbreviationCd" tps="FDI$F2441.ST[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/CareProviderGrp[uuid_1]/USAddress/ZIPCd" tps="FDI$F2441.ZIP[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/CareProviderGrp[uuid_1]/SSN" tps="FDI$F2441.L1C[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/CareProviderGrp[uuid_1]/EIN" tps="FDI$F2441.L1C2[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/CareProviderGrp[uuid_1]/PaidAmt" tps="FDI$F2441.L1D[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/QualifyingPersonGrp[uuid_1]/QualifyingPersonName/PersonFirstNm" tps="FDI$F2441.L2F[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/QualifyingPersonGrp[uuid_1]/QualifyingPersonName/PersonLastNm" tps="FDI$F2441.L2L[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/QualifyingPersonGrp[uuid_1]/QualifyingPersonSSN" tps="FDI$F2441.L2SSN[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/QualifyingPersonGrp[uuid_1]/QualifiedCareExpensesPaidAmt" tps="FDI$F2441.L2[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/LivedApartFromSpouseLastSixMonthsPP" tps="FDI$F2441.MFS1"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/QualPersonLivedInTPHomeMoreThanHalfYearPP" tps="FDI$F2441.MFS2"/>
+        <Mapping mef="/Return/ReturnData/IRS2441/TaxpayerPaidMoreThanHalfHouseUpkeepPP" tps="FDI$F2441.MFS3"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/DependentCareIndPP" tps="FDI$FPERSWKS[1].HCDCIND">
+            <ValueTransform mef="true" tps="1"/>
+            <ValueTransform mef="false" tps="0"/>
+        </Mapping>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/QualifiedCareExpensesPaidAmtPP" tps="FDI$FPERSWKS[1].CCEXP"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/DependentCareIndPP" tps="FDI$FPERSWKS[2].HCDCIND">
+            <ValueTransform mef="true" tps="1"/>
+            <ValueTransform mef="false" tps="0"/>
+        </Mapping>
+        <Mapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/QualifiedCareExpensesPaidAmtPP" tps="FDI$FPERSWKS[2].CCEXP"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentCareIndPP" tps="FDI$FWDEPINF[uuid_1].HCDCIND"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/QualifiedCareExpensesPaidAmtPP" tps="FDI$FWDEPINF[uuid_1].CCEXP"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleEIC/QualifyingChildInformation[uuid_1]/ChildFirstAndLastName/PersonFirstNm" tps="FDI$FSCHEICW.L1A[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleEIC/QualifyingChildInformation[uuid_1]/ChildFirstAndLastName/PersonLastNm" tps="FDI$FSCHEICW.L1C[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleEIC/QualifyingChildInformation[uuid_1]/QualifyingChildSSN" tps="FDI$FSCHEICW.CHSSN[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleEIC/QualifyingChildInformation[uuid_1]/ChildBirthYr" tps="FDI$FSCHEICW.BirthYr[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleEIC/QualifyingChildInformation[uuid_1]/ChildRelationshipCd" tps="FDI$FSCHEICW.RELATION[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleEIC/QualifyingChildInformation[uuid_1]/MonthsChildLivedWithYouCnt" tps="FDI$FSCHEICW.LIVEUS[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleEIC/EICPreviouslyDisallowedAndNeed8862IndPP" tps="FDI$FSCHEICW.h8862Req"/>
+        <Mapping mef="/Return/ReturnData/EIC/LiveWithChldInUSOverHalfYrIndPP" tps="FDI$FSCHEICW.HUSOvrHf"/>
+        <Mapping mef="/Return/ReturnData/EIC/DisqualifiedFromEICIndPP" tps="FDI$FSCHEICW.HDISQEIC"/>
+        <Mapping mef="/Return/ReturnData/EIC/PotentialQualifyingChildCntPP" tps="FDI$FSCHEICW.HEICPQC"/>
+        <Mapping mef="/Return/ReturnData/EIC/QualifyingChildCntPP" tps="FDI$FSCHEICW.HEICQCCT"/>
+        <Mapping mef="/Return/ReturnData/EIC/EICWorksheetPP/WagesSalariesAndTipsAmtPP" tps="FDI$FSCHEICW.L1"/>
+        <Mapping mef="/Return/ReturnData/EIC/EICWorksheetPP/SelfEmploymentIncomeAmtPP" tps="FDI$FSCHEICW.L2B"/>
+        <Mapping mef="/Return/ReturnData/EIC/EICWorksheetPP/WagesNotConsideredEarnedPP" tps="FDI$FSCHEICW.L2F"/>
+        <Mapping mef="/Return/ReturnData/EIC/EICWorksheetPP/Section457AndNonqualPlansPP" tps="FDI$FSCHEICW.L2G"/>
+        <Mapping mef="/Return/ReturnData/EIC/EICWorksheetPP/WagesSalariesAndTipsAdjPP" tps="FDI$FSCHEICW.L3"/>
+        <Mapping mef="/Return/ReturnData/EIC/EICWorksheetPP/TaxpayerNontaxableCombatPayPP" tps="FDI$FSCHEICW.TNTCMBAT"/>
+        <Mapping mef="/Return/ReturnData/EIC/EICWorksheetPP/SpouseNontaxableCombatPayPP" tps="FDI$FSCHEICW.SNTCMBAT"/>
+        <Mapping mef="/Return/ReturnData/EIC/EICWorksheetPP/TotalNontaxableCombatPayPP" tps="FDI$FSCHEICW.NTCOMBAT"/>
+        <Mapping mef="/Return/ReturnData/EIC/EICWorksheetPP/SEOrStatutoryEmployeeAmtPP" tps="FDI$FSCHEICW.L5"/>
+        <Mapping mef="/Return/ReturnData/EIC/EICWorksheetPP/EarnedIncomePP" tps="FDI$FSCHEICW.L6"/>
+        <Mapping mef="/Return/ReturnData/EIC/InvestmentIncomeOverLimitIndPP" tps="FDI$FSCHEICW.BX3"/>
+        <Mapping mef="/Return/ReturnData/EIC/TaxpayerFSMarriedFilingSepIndPP" tps="FDI$FSCHEICW.BX4"/>
+        <Mapping mef="/Return/ReturnData/EIC/TxpyerOrSpsAge25ButUnder65IndPP" tps="FDI$FSCHEICW.BX8"/>
+        <Mapping mef="/Return/ReturnData/EIC/ClaimedAsDependentIndPP" tps="FDI$FSCHEICW.BX9"/>
+        <Mapping mef="/Return/ReturnData/EIC/Form2555OrForm2555EZIndPP" tps="FDI$FSCHEICW.BX6"/>
+        <Mapping mef="/Return/ReturnData/EIC/FilerUSCitOrResAlienAllYrIndPP" tps="FDI$FSCHEICW.BX13"/>
+        <Mapping mef="/Return/ReturnData/EIC/AllQCAreOfAnotherPersonIndPP" tps="FDI$FSCHEICW.BX11"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeTableAmtPP" tps="FDI$FSCHEICW.L7"/>
+        <Mapping mef="/Return/ReturnData/EIC/AGIAmtPP" tps="FDI$FSCHEICW.L8"/>
+        <Mapping mef="/Return/ReturnData/EIC/AdjustedGrossIncomeTableAmtPP" tps="FDI$FSCHEICW.L9"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeCreditAmtPP" tps="FDI$FSCHEICW.L10"/>
+        <Mapping mef="/Return/ReturnData/EIC/DisqualEICDueToExternalFieldsIndPP" tps="FDI$FSCHEICW.HDIEICEX"/>
+        <Mapping mef="/Return/ReturnData/EIC/DisqualEICDueToInternalFieldsIndPP" tps="FDI$FSCHEICW.HDIEICIN"/>
+        <Mapping mef="/Return/ReturnData/EIC/HOHAndLivedWithNRALast6MonthsIndPP" tps="FDI$FSCHEICW.BX14"/>
+        <Mapping mef="/Return/ReturnData/EIC/InvestmentIncomeAmount" tps="FDI$FSCHEICW.IITOT"/>
+        <Mapping mef="/Return/ReturnData/EIC/EICWorksheetPP/NotEarnedIncomeSmartWorksheetPP/TaxpayerAmountEarnedBySpousePP" tps="FDI$FSCHEICW.L2C"/>
+        <Mapping mef="/Return/ReturnData/EIC/EICWorksheetPP/NotEarnedIncomeSmartWorksheetPP/TaxpayerAmountsEarnedAsInmatePP" tps="FDI$FSCHEICW.L2D"/>
+        <Mapping mef="/Return/ReturnData/EIC/EICWorksheetPP/NotEarnedIncomeSmartWorksheetPP/SpouseAmountsEarnedAsInmatePP" tps="FDI$FSCHEICW.L2DSP"/>
+        <Mapping mef="/Return/ReturnData/EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/SpouseNontaxableCombatPayPP" tps="FDI$FSCHEICW.SCOMBAT"/>
+        <Mapping mef="/Return/ReturnData/EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/TaxpayerNontaxableCombatPayPP" tps="FDI$FSCHEICW.TCOMBAT"/>
+        <Mapping mef="/Return/ReturnHeader/Filer/PrimarySSN" tps="FDI$F1040.SSN"/>
+        <Mapping mef="/Return/ReturnHeader/Filer/SpouseSSN" tps="FDI$F1040.SSSN"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/AdjustedGrossIncomeAmt" tps="FDI$F1040.L33"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/CapitalGainLossAmt" tps="FDI$F1040.L13"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/TaxableInterestAmt" tps="FDI$F1040.L8A"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/TaxExemptInterestAmt" tps="FDI$F1040.L8B"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/OrdinaryDividendsAmt" tps="FDI$F1040.L9"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/WagesSalariesAndTipsAmt" tps="FDI$F1040.L7"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/EarnedIncomeCreditAmt" tps="FDI$F1040.L60"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/NontxCombatPayElectionAmt" tps="FDI$F1040.NTCOMBAT"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/ClergyEICLiteralPP" tps="FDI$F1040.L60C"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/DisqualifiedFromEICLiteralPP" tps="FDI$F1040.L60W"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/EICEligibilityLiteralCd" tps="FDI$F1040.HEICL"/>
+        <Mapping mef="/Return/ReturnData/EIC/FilerOrSpouseIsDualStatusAlienIndPP" tps="FDI$FINFOWKS.PDR"/>
+        <Mapping mef="/Return/ReturnData/EIC/SSNInvalidForEmplmnOrEICPrpsIndPP" tps="FDI$FINFOWKS.DY"/>
+        <Mapping mef="/Return/ReturnData/EIC/NotifiedByIRSNoEICIndPP" tps="FDI$FINFOWKS.NOEICX"/>
+        <Mapping mef="/Return/ReturnData/EIC/LivedWithNRALast6MonthsIndPP" tps="FDI$FINFOWKS.CY"/>
+        <Mapping mef="/Return/ReturnHeader/SelfSelectPINGrp/PrimaryBirthDt" tps="FDI$FINFOWKS.TDOB"/>
+        <Mapping mef="/Return/ReturnHeader/SelfSelectPINGrp/SpouseBirthDt" tps="FDI$FINFOWKS.SDOB"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/PrimaryDeathDt" tps="FDI$FINFOWKS.TDOD"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/SpouseDeathDt" tps="FDI$FINFOWKS.SDOD"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksNetSEIncomePP" tps="FDI$FEARNINC.L1AA"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksOptMethodAmtPP" tps="FDI$FEARNINC.L1AB"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksSumSEIncomePP" tps="FDI$FEARNINC.L1AC"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksHalfSETaxPP" tps="FDI$FEARNINC.L1AD"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksSETaxMinusIncomePP" tps="FDI$FEARNINC.L1AE"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksNetFarmAmtPP" tps="FDI$FEARNINC.L2AA"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksNetNonfarmAmtPP" tps="FDI$FEARNINC.L2AB"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksNetProfitOrLossPP" tps="FDI$FEARNINC.L2AC"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksGrossReceiptsAmtPP" tps="FDI$FEARNINC.L3A"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TaxpayerEICWksComputationTtlPP" tps="FDI$FEARNINC.L4A"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksNetSEIncomePP" tps="FDI$FEARNINC.L1BA"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksOptMethodAmtPP" tps="FDI$FEARNINC.L1BB"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksSumSEIncomePP" tps="FDI$FEARNINC.L1BC"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksHalfSETaxPP" tps="FDI$FEARNINC.L1BD"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksSETaxMinusIncomePP" tps="FDI$FEARNINC.L1BE"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksFarmProfitOrLossPP" tps="FDI$FEARNINC.L2BA"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksNetNonfarmAmtPP" tps="FDI$FEARNINC.L2BB"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksNetProfitOrLossPP" tps="FDI$FEARNINC.L2BC"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksGrossReceiptsAmtPP" tps="FDI$FEARNINC.L3B"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/SpouseEICWksComputationTotalPP" tps="FDI$FEARNINC.L4B"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksNetSEIncomePP" tps="FDI$FEARNINC.L1CA"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksOptMethodAmtPP" tps="FDI$FEARNINC.L1CB"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksSumSEIncomePP" tps="FDI$FEARNINC.L1CC"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksHalfSETaxPP" tps="FDI$FEARNINC.L1CD"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksSETaxMinusIncomePP" tps="FDI$FEARNINC.L1CE"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksFarmProfitOrLossPP" tps="FDI$FEARNINC.L2CA"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksNetNonfarmAmtPP" tps="FDI$FEARNINC.L2CB"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksSumNetProfitOrLossPP" tps="FDI$FEARNINC.L2CC"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksGrossReceiptsAmtPP" tps="FDI$FEARNINC.L3C"/>
+        <Mapping mef="/Return/ReturnData/EIC/EarnedIncomeWorksheetPP/TotalEICWksComputationTotalPP" tps="FDI$FEARNINC.L4C"/>
+        <Mapping mef="/Return/ReturnData/ScheduleSEAdjustments/TaxpayerScheduleSELine1TotalPP[uuid_1]" tps="FDI$FSEADJ.TOTLN1[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/ScheduleSEAdjustments/SpouseScheduleSELine1TotalPP[uuid_2]" tps="FDI$FSEADJ.TOTLN1[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/ScheduleSEAdjustments/TaxpayerCRPPaymentsTotalAmtPP[uuid_1]" tps="FDI$FSEADJ.CONSRES[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/ScheduleSEAdjustments/SpouseCRPPaymentsTotalAmtPP[uuid_2]" tps="FDI$FSEADJ.CONSRES[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/ScheduleSEAdjustments/TaxpayerScheduleSELine2TotalPP[uuid_1]" tps="FDI$FSEADJ.TOTLN2[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/ScheduleSEAdjustments/SpouseScheduleSELine2TotalPP[uuid_2]" tps="FDI$FSEADJ.TOTLN2[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/ScheduleSEAdjustments/TaxpayerExemptNotaryIncomePP[uuid_1]" tps="FDI$FSEADJ.EXNOTARY[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/ScheduleSEAdjustments/SpouseExemptNotaryIncomePP[uuid_2]" tps="FDI$FSEADJ.EXNOTARY[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/ScheduleSEAdjustments/TaxpayerSEReportedIncomePP[uuid_1]" tps="FDI$FSEADJ.OTHWAGES[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/ScheduleSEAdjustments/SpouseSEReportedIncomePP[uuid_2]" tps="FDI$FSEADJ.OTHWAGES[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleSE[uuid_1]/SSN" tps="FDI$FSCHSELT[uuid_1].SSN"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleSE[uuid_2]/SSN" tps="FDI$FSCHSELS[uuid_2].SSN"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleSE[uuid_1]/SSN" tps="FDI$FSCHSEST[uuid_1].SSN"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleSE[uuid_2]/SSN" tps="FDI$FSCHSESS[uuid_2].SSN"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE[uuid_1]/SETotalNetEarningsOrLossAmt" tps="FDI$FSCHSELT[uuid_1].L3"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE[uuid_1]/OptionalMethodAmt" tps="FDI$FSCHSELT[uuid_1].L4B"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE[uuid_1]/CombinedSEAmt" tps="FDI$FSCHSELT[uuid_1].L4C"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE[uuid_1]/W2WagesFromChurchesAmt" tps="FDI$FSCHSELT[uuid_1].L5A"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE[uuid_1]/SelfEmploymentTaxAmt" tps="FDI$FSCHSELT[uuid_1].L12"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE[uuid_1]/DeductibleSelfEmploymentTaxAmt" tps="FDI$FSCHSELT[uuid_1].L13"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE[uuid_2]/SETotalNetEarningsOrLossAmt" tps="FDI$FSCHSELS[uuid_2].L3"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE[uuid_2]/OptionalMethodAmt" tps="FDI$FSCHSELS[uuid_2].L4B"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE[uuid_2]/CombinedSEAmt" tps="FDI$FSCHSELS[uuid_2].L4C"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE[uuid_2]/W2WagesFromChurchesAmt" tps="FDI$FSCHSELS[uuid_2].L5A"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE[uuid_2]/SelfEmploymentTaxAmt" tps="FDI$FSCHSELS[uuid_2].L12"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleSE/LongScheduleSE[uuid_2]/DeductibleSelfEmploymentTaxAmt" tps="FDI$FSCHSELS[uuid_2].L13"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE[uuid_1]/SETotalNetEarningsOrLossAmt" tps="FDI$FSCHSEST[uuid_1].L3"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE[uuid_1]/MinimumProfitForSETaxAmt" tps="FDI$FSCHSEST[uuid_1].L4"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE[uuid_1]/SelfEmploymentTaxAmt" tps="FDI$FSCHSEST[uuid_1].L5"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE[uuid_1]/DeductibleSelfEmploymentTaxAmt" tps="FDI$FSCHSEST[uuid_1].L6"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE[uuid_2]/SETotalNetEarningsOrLossAmt" tps="FDI$FSCHSESS[uuid_2].L3"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE[uuid_2]/MinimumProfitForSETaxAmt" tps="FDI$FSCHSESS[uuid_2].L4"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE[uuid_2]/SelfEmploymentTaxAmt" tps="FDI$FSCHSESS[uuid_2].L5"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleSE/ShortScheduleSE[uuid_2]/DeductibleSelfEmploymentTaxAmt" tps="FDI$FSCHSESS[uuid_2].L6"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleC[uuid_1]/StatutoryEmployeeFromW2Ind" tps="FDI$FSCHC[uuid_1].GROSSB"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleC[uuid_1]/TotalGrossReceiptsAmt" tps="FDI$FSCHC[uuid_1].L1"/>
+        <Mapping mef="/Return/ReturnData/IRS8862/EICEligClmDaysLivedInUSCnt" tps="FDI$F8862.DAYSINUS"/>
+        <Mapping mef="/Return/ReturnData/IRS8862/EICEligClmDaysSpsLivedInUSCnt" tps="FDI$F8862.DAYSSPUS"/>
+        <Mapping mef="/Return/ReturnData/IRS8862/EICEligClmFilingYr" tps="FDI$F8862.L1"/>
+        <Mapping mef="/Return/ReturnData/IRS8862/EICEligClmLiveWithChld2AddrGrp/EICEligClmAddrSameAsChild1Ind" tps="FDI$F8862.CH2SAMEX"/>
+        <Mapping mef="/Return/ReturnData/IRS8862/EICEligClmLiveWithChld3AddrGrp/EICEligClmAddrSameAsChild2Ind" tps="FDI$F8862.CH1SAMEX"/>
+        <Mapping mef="/Return/ReturnData/IRS8862/EICEligClmLiveWithPrsnChld2Grp/EICEligClmOthPrsnSameChild1Ind" tps="FDI$F8862.OTHSAME"/>
+        <Mapping mef="/Return/ReturnData/IRS8862/EICEligClmLiveWithPrsnChld3Grp/EICEligClmOthPrsnSameChld2Ind" tps="FDI$F8862.OTHSAME3"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/TaxpayerAlimonyReceivedAmtPP" tps="FDI$F1040.L11T"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/SpouseAlimonyReceivedAmtPP" tps="FDI$F1040.L11S"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/AmountRepaidToEmployerJuryDutyPP" tps="FDI$F1040.L32C"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/HaveAnyAlimonyPaidPP" tps="FDI$F1040.HHAVEAL"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/HaveAnyMoreAlimonyPaidPP" tps="FDI$F1040.HMOREAL"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/TotalOtherIncomeAmt" tps="FDI$F1040.L21"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/TotalAdjustmentsAmt" tps="FDI$F1040.L32"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/BusinessIncomeLossAmt" tps="FDI$F1040.L12"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/OtherGainLossAmt" tps="FDI$F1040.L14"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/RentalRealEstateIncomeLossAmt" tps="FDI$F1040.L17"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/NetFarmProfitLossAmt" tps="FDI$F1040.L18"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/SelfEmpldHealthInsDedAmt" tps="FDI$F1040.L28"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalWagesSalariesAndTipsGrpPP/W2WagesAmtPP" tps="FDI$FW7.L1"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalWagesSalariesAndTipsGrpPP/MiscIncomeFrom8819AmtPP" tps="FDI$FW7.L2"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalWagesSalariesAndTipsGrpPP/DisabilityBeforeMinRetirementAge1099RAmtPP" tps="FDI$FW7.L3"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalWagesSalariesAndTipsGrpPP/ReturnOfContrib1099RAmtPP" tps="FDI$FW7.L3B"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalWagesSalariesAndTipsGrpPP/ExcessReimbursement2106AmtPP" tps="FDI$FW7.L4"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalWagesSalariesAndTipsGrpPP/TaxableTips4137AmtPP" tps="FDI$FW7.L5"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalWagesSalariesAndTipsGrpPP/NonCashTipsAmtPP" tps="FDI$FW7.L5NC"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalWagesSalariesAndTipsGrpPP/ExcessMovingExpenseReimbursement3903AmtPP" tps="FDI$FW7.L6"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalWagesSalariesAndTipsGrpPP/NonW2HouseholdEmployeeWagesAmtPP" tps="FDI$FW7.L7"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalWagesSalariesAndTipsGrpPP/SickPayOrDisabilityAmtPP" tps="FDI$FW7.L8"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalWagesSalariesAndTipsGrpPP/TotalForeignSourceIncomeAmtPP" tps="FDI$FW7.L8B"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalWagesSalariesAndTipsGrpPP/NonW2StockOrdinaryIncomeAmtPP" tps="FDI$FW7.L8D"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalWagesSalariesAndTipsGrpPP/TotalOtherEarnedIncomeAmtPP" tps="FDI$FW7.hL9"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalWagesSalariesAndTipsGrpPP/TotalEarnedIncomePP" tps="FDI$FW7.L10"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalWagesSalariesAndTipsGrpPP/EmployerProvidedDependentCareAmtPP" tps="FDI$FW7.L11"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalWagesSalariesAndTipsGrpPP/EmployerProvidedAdoptionBenefitsAmtPP" tps="FDI$FW7.L12"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalWagesSalariesAndTipsGrpPP/ScholarshipFellowshipNotOnW2AmtPP" tps="FDI$FW7.L13"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalWagesSalariesAndTipsGrpPP/TotalOtherNonEarnedIncomeAmtPP" tps="FDI$FW7.hL14"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalWagesSalariesAndTipsGrpPP/TotalWagesSalariesAndTipsAmtPP" tps="FDI$FW7.L15"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/WagesSalariesAndTipsWorksheet/TotalWagesSalariesAndTipsGrpPP/OtherEarnedIncomeGrpPP[uuid_1]/OtherEarnedIncomeAmtPP" tps="FDI$FW7.L9[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/AlimonyAmountGrp/RecipientNamePP" tps="FDI$F1040.ALNAME"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/AlimonyAmountGrp/RecipientSSN" tps="FDI$F1040.MRSSN"/>
+        <Mapping mef="/Return/ReturnData/IRS1040/AlimonyAmountGrp/AlimonyPaidAmt" tps="FDI$F1040.L31AMT"/>
+        <Mapping mef="/Return/ReturnData/OtherIncome/TaxpayerJuryDutyPayPP" tps="FDI$FOTHINC.L12T"/>
+        <Mapping mef="/Return/ReturnData/OtherIncome/SpouseJuryDutyPayPP" tps="FDI$FOTHINC.L12S"/>
+        <Mapping mef="/Return/ReturnData/OtherIncome/TaxpayerWinningsNotReportedOnFormPP" tps="FDI$FOTHINC.L2BT"/>
+        <Mapping mef="/Return/ReturnData/OtherIncome/SpouseWinningsNotReportedOnFormPP" tps="FDI$FOTHINC.L2BS"/>
+        <Mapping mef="/Return/ReturnData/OtherIncome/TotalWinningsPP" tps="FDI$FOTHINC.HTOTL2"/>
+        <Mapping mef="/Return/ReturnData/OtherIncome/OtherTaxableIncomeGrpPP[uuid_1]/TaxpayerHobbyIncomePP" tps="FDI$FOTHINC.HOBBYT[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/OtherIncome/OtherTaxableIncomeGrpPP[uuid_1]/SpouseHobbyIncomePP" tps="FDI$FOTHINC.HOBBYS[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/OtherIncome/OtherTaxableIncomeGrpPP[uuid_1]/TaxpayerBarteringIncomePP" tps="FDI$FOTHINC.L13T[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/OtherIncome/OtherTaxableIncomeGrpPP[uuid_1]/SpouseBarteringIncomePP" tps="FDI$FOTHINC.L13S[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/OtherIncome/OtherTaxableIncomeGrpPP[uuid_1]/OtherTaxableIncomeDescriptionPP" tps="FDI$FOTHINC.L15DES[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/OtherIncome/OtherTaxableIncomeGrpPP[uuid_1]/TaxpayerOtherTaxableIncomeAmtPP" tps="FDI$FOTHINC.L15TP[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/OtherIncome/OtherTaxableIncomeGrpPP[uuid_1]/SpouseOtherTaxableIncomeAmtPP" tps="FDI$FOTHINC.L15SP[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleA/HaveAnyAutoRegistrationIndPP" tps="FDI$FSCHATI.hAutoReg"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleA/HaveAnyMoreAutoRegistrationIndPP" tps="FDI$FSCHATI.hAddAuto"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleA/GamblingLossesPP" tps="FDI$FSCHATI.L17"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleA/LegalFeesPP" tps="FDI$FSCHATI.L12B"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleA/TaxpayerHobbyExpensePP" tps="FDI$FSCHATI.HOBBYEXT"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleA/SpouseHobbyExpensePP" tps="FDI$FSCHATI.HOBBYEXS"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleA/TaxPreparationFeesAmt" tps="FDI$FSCHATI.L21"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleA/AutoRegistrationGroupPP/MakeModelDescriptionPP" tps="FDI$FOTHINC.L3A1"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleA/AutoRegistrationGroupPP/DeductibleRegistrationFeePP" tps="FDI$FOTHINC.L3A"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/IssuerOrProviderNamePP" tps="FDI$F1095B[uuid_1].PAYERNM1"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/IssuerOrProviderEINPP" tps="FDI$F1095B[uuid_1].PAYERID"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/ContactPersonPhonePP" tps="FDI$F1095B[uuid_1].PCONPHON"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/OriginOfPolicyCdPP" tps="FDI$F1095B[uuid_1].POLORGCD"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/EmployerNamePP" tps="FDI$F1095B[uuid_1].EMPNAME"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/EmployerEINPP" tps="FDI$F1095B[uuid_1].EMPLOYID"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/PlanIsSHOPIndPP" tps="FDI$F1095B[uuid_1].SHOPPLAN"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/SHOPIdentifierPP" tps="FDI$F1095B[uuid_1].SHOPPLID"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/ResponsibleIndivNamePP" tps="FDI$F1095B[uuid_1].RECIPNAM"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/ResponsibleIndivSSNPP" tps="FDI$F1095B[uuid_1].RECIPSSN"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/ResponsibleIndivBirthDtPP" tps="FDI$F1095B[uuid_1].RDOB" transform="DateTransformation"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/IssuerOrProviderAddressPP/AddressLine1Txt" tps="FDI$F1095B[uuid_1].PAYADD1"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/IssuerOrProviderAddressPP/CityNm" tps="FDI$F1095B[uuid_1].PCTY"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/IssuerOrProviderAddressPP/StateAbbreviationCd" tps="FDI$F1095B[uuid_1].PST"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/IssuerOrProviderAddressPP/ZIPCd" tps="FDI$F1095B[uuid_1].PZIP"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/EmployerAddressPP/AddressLine1Txt" tps="FDI$F1095B[uuid_1].EADDRESS"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/EmployerAddressPP/CityNm" tps="FDI$F1095B[uuid_1].ECTY"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/EmployerAddressPP/StateAbbreviationCd" tps="FDI$F1095B[uuid_1].EST"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/EmployerAddressPP/ZIPCd" tps="FDI$F1095B[uuid_1].EZIP"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/ResponsibleIndivAddressPP/AddressLine1Txt" tps="FDI$F1095B[uuid_1].RECIPADD"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/ResponsibleIndivAddressPP/CityNm" tps="FDI$F1095B[uuid_1].RCTY"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/ResponsibleIndivAddressPP/StateAbbreviationCd" tps="FDI$F1095B[uuid_1].RST"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/ResponsibleIndivAddressPP/ZIPCd" tps="FDI$F1095B[uuid_1].RZIP"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/CoveredIndivGrpPP[uuid_2]/PersonNmPP" tps="FDI$F1095B[uuid_1].COVFNAM[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/CoveredIndivGrpPP[uuid_2]/SSNPP" tps="FDI$F1095B[uuid_1].COVSSN[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/CoveredIndivGrpPP[uuid_2]/PersonBirthDtPP" tps="FDI$F1095B[uuid_1].COVDOB[uuid_2]" transform="DateTransformation"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/CoveredIndivGrpPP[uuid_2]/AllYearIndPP" tps="FDI$F1095B[uuid_1].COV12MTH[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/CoveredIndivGrpPP[uuid_2]/JanuaryIndPP" tps="FDI$F1095B[uuid_1].CIM1[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/CoveredIndivGrpPP[uuid_2]/FebruaryIndPP" tps="FDI$F1095B[uuid_1].CIM2[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/CoveredIndivGrpPP[uuid_2]/MarchIndPP" tps="FDI$F1095B[uuid_1].CIM3[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/CoveredIndivGrpPP[uuid_2]/AprilIndPP" tps="FDI$F1095B[uuid_1].CIM4[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/CoveredIndivGrpPP[uuid_2]/MayIndPP" tps="FDI$F1095B[uuid_1].CIM5[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/CoveredIndivGrpPP[uuid_2]/JuneIndPP" tps="FDI$F1095B[uuid_1].CIM6[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/CoveredIndivGrpPP[uuid_2]/JulyIndPP" tps="FDI$F1095B[uuid_1].CIM7[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/CoveredIndivGrpPP[uuid_2]/AugustIndPP" tps="FDI$F1095B[uuid_1].CIM8[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/CoveredIndivGrpPP[uuid_2]/SeptemberIndPP" tps="FDI$F1095B[uuid_1].CIM9[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/CoveredIndivGrpPP[uuid_2]/OctoberIndPP" tps="FDI$F1095B[uuid_1].CIM10[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/CoveredIndivGrpPP[uuid_2]/NovemberIndPP" tps="FDI$F1095B[uuid_1].CIM11[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095B[uuid_1]/CoveredIndivGrpPP[uuid_2]/DecemberIndPP" tps="FDI$F1095B[uuid_1].CIM12[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/ALENamePP" tps="FDI$F1095C[uuid_1].ERNAME"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/ALEEINPP" tps="FDI$F1095C[uuid_1].ERID"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/ALEPhoneNumberPP" tps="FDI$F1095C[uuid_1].ERPHONE"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/EmployeeNamePP" tps="FDI$F1095C[uuid_1].EEFNAME"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/EmployeeSSNPP" tps="FDI$F1095C[uuid_1].EESSN"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/AnnualCoverageOfferedCdPP" tps="FDI$F1095C[uuid_1].AOFRCOV"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/AnnualMonthlyPremiumAmtPP" tps="FDI$F1095C[uuid_1].AESHRPR"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/AnnualSafeHarborCdPP" tps="FDI$F1095C[uuid_1].ASFHARBR"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/EmployeeAddressPP/AddressLine1Txt" tps="FDI$F1095C[uuid_1].EEADDRES"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/EmployeeAddressPP/CityNm" tps="FDI$F1095C[uuid_1].EECTY"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/EmployeeAddressPP/StateAbbreviationCd" tps="FDI$F1095C[uuid_1].EEST"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/EmployeeAddressPP/ZIPCd" tps="FDI$F1095C[uuid_1].EEZIP"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/ALEAddressPP/AddressLine1Txt" tps="FDI$F1095C[uuid_1].ERADDRES"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/ALEAddressPP/CityNm" tps="FDI$F1095C[uuid_1].ERCTY"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/ALEAddressPP/StateAbbreviationCd" tps="FDI$F1095C[uuid_1].ERST"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/ALEAddressPP/ZIPCd" tps="FDI$F1095C[uuid_1].ERZIP"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/CoveredIndivGrpPP[uuid_2]/PersonNmPP" tps="FDI$F1095C[uuid_1].COVFNAM[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/CoveredIndivGrpPP[uuid_2]/SSNPP" tps="FDI$F1095C[uuid_1].COVSSN[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/CoveredIndivGrpPP[uuid_2]/PersonBirthDtPP" tps="FDI$F1095C[uuid_1].COVDOB[uuid_2]" transform="DateTransformation"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/CoveredIndivGrpPP[uuid_2]/AllYearIndPP" tps="FDI$F1095C[uuid_1].COV12MTH[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/CoveredIndivGrpPP[uuid_2]/JanuaryIndPP" tps="FDI$F1095C[uuid_1].CIM1[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/CoveredIndivGrpPP[uuid_2]/FebruaryIndPP" tps="FDI$F1095C[uuid_1].CIM2[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/CoveredIndivGrpPP[uuid_2]/MarchIndPP" tps="FDI$F1095C[uuid_1].CIM3[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/CoveredIndivGrpPP[uuid_2]/AprilIndPP" tps="FDI$F1095C[uuid_1].CIM4[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/CoveredIndivGrpPP[uuid_2]/MayIndPP" tps="FDI$F1095C[uuid_1].CIM5[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/CoveredIndivGrpPP[uuid_2]/JuneIndPP" tps="FDI$F1095C[uuid_1].CIM6[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/CoveredIndivGrpPP[uuid_2]/JulyIndPP" tps="FDI$F1095C[uuid_1].CIM7[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/CoveredIndivGrpPP[uuid_2]/AugustIndPP" tps="FDI$F1095C[uuid_1].CIM8[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/CoveredIndivGrpPP[uuid_2]/SeptemberIndPP" tps="FDI$F1095C[uuid_1].CIM9[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/CoveredIndivGrpPP[uuid_2]/OctoberIndPP" tps="FDI$F1095C[uuid_1].CIM10[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/CoveredIndivGrpPP[uuid_2]/NovemberIndPP" tps="FDI$F1095C[uuid_1].CIM11[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/CoveredIndivGrpPP[uuid_2]/DecemberIndPP" tps="FDI$F1095C[uuid_1].CIM12[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/PartIIGrpPP[uuid_2]/MonthNamePP" tps="FDI$F1095C[uuid_1].MONTHCD"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/PartIIGrpPP[uuid_2]/CoverageOfferedCdPP" tps="FDI$F1095C[uuid_1].OFRCOV"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/PartIIGrpPP[uuid_2]/MonthlyPremiumAmtPP" tps="FDI$F1095C[uuid_1].ESHRPREM"/>
+        <Mapping mef="/Return/ReturnData/IRS1095C[uuid_1]/PartIIGrpPP[uuid_2]/SafeHarborCdPP" tps="FDI$F1095C[uuid_1].SFHARBOR"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleC[uuid_1]/PrincipalBusinessActivityDesc" tps="FDI$FSCHC[uuid_1].A"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleC[uuid_1]/NetProfitOrLossAllowedAmtPP" tps="FDI$FSCHC[uuid_1].ALOW"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleC[uuid_1]/SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP" tps="FDI$FW26C[uuid_1].LA"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleC[uuid_1]/SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP" tps="FDI$FW26C[uuid_1].L9"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleF[uuid_1]/SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP" tps="FDI$FW26F[uuid_1].LA"/>
+        <Mapping mef="/Return/ReturnData/IRS1040ScheduleF[uuid_1]/SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP" tps="FDI$FW26F[uuid_1].L9"/>
+        <Mapping mef="/Return/ReturnData/IRS1065ScheduleK1[uuid_1]/SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP" tps="FDI$FW26P[uuid_1].LA"/>
+        <Mapping mef="/Return/ReturnData/IRS1065ScheduleK1[uuid_1]/SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP" tps="FDI$FW26P[uuid_1].L9"/>
+        <Mapping mef="/Return/ReturnData/IRS1120SScheduleK1[uuid_1]/SelfEmpHealthInsDedPP/HealthAndLongTermCareInsPremAmtPP" tps="FDI$FW26S[uuid_1].LA"/>
+        <Mapping mef="/Return/ReturnData/IRS1120SScheduleK1[uuid_1]/SelfEmpHealthInsDedPP/NetProfitFromBusinessAmtPP" tps="FDI$FW26S[uuid_1].S4"/>
+        <Mapping mef="/Return/ReturnData/IRS2119[uuid_1]/GrossGainOrLossOnSaleAmtPP" tps="FDI$F2119[uuid_1].L5[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/ScheduleSEAdjustments/TaxpayerSEReportedIncomePP" tps="FDI$FSEADJ.OTHWAGES[1]"/>
+        <Mapping mef="/Return/ReturnData/ScheduleSEAdjustments/SpouseSEReportedIncomePP" tps="FDI$FSEADJ.OTHWAGES[2]"/>
+        <Mapping mef="/Return/ReturnData/IRSW2G[uuid_1]/CorrectedW2GInd" tps="FDI$FW2G[uuid_1].CORRX"/>
+        <Mapping mef="/Return/ReturnData/IRSW2G[uuid_1]/PayerSSN" tps="FDI$FW2G[uuid_1].SSN"/>
+        <Mapping mef="/Return/ReturnData/IRSW2G[uuid_1]/PayerEIN" tps="FDI$FW2G[uuid_1].PFIN"/>
+        <Mapping mef="/Return/ReturnData/IRSW2G[uuid_1]/PayerTelephoneNum" tps="FDI$FW2G[uuid_1].PHONE"/>
+        <Mapping mef="/Return/ReturnData/IRSW2G[uuid_1]/GamblingWinGrossWinningAmt" tps="FDI$FW2G[uuid_1].L1"/>
+        <Mapping mef="/Return/ReturnData/IRSW2G[uuid_1]/FederalIncomeTaxWithheldAmt" tps="FDI$FW2G[uuid_1].L2"/>
+        <Mapping mef="/Return/ReturnData/IRSW2G[uuid_1]/GamblingWinWagerTypeCd" tps="FDI$FW2G[uuid_1].L3"/>
+        <Mapping mef="/Return/ReturnData/IRSW2G[uuid_1]/GamblingWinningDt" tps="FDI$FW2G[uuid_1].L4"/>
+        <Mapping mef="/Return/ReturnData/IRSW2G[uuid_1]/GamblingWinningTransactionDesc" tps="FDI$FW2G[uuid_1].L5"/>
+        <Mapping mef="/Return/ReturnData/IRSW2G[uuid_1]/GamblingWinningEventDesc" tps="FDI$FW2G[uuid_1].L6"/>
+        <Mapping mef="/Return/ReturnData/IRSW2G[uuid_1]/GamblingWinFromIdntclWagersAmt" tps="FDI$FW2G[uuid_1].L7"/>
+        <Mapping mef="/Return/ReturnData/IRSW2G[uuid_1]/GamblingWinCashierId" tps="FDI$FW2G[uuid_1].L8"/>
+        <Mapping mef="/Return/ReturnData/IRSW2G[uuid_1]/RecipientNm" tps="FDI$FW2G[uuid_1].WNAM"/>
+        <Mapping mef="/Return/ReturnData/IRSW2G[uuid_1]/RecipientSSN" tps="FDI$FW2G[uuid_1].L9"/>
+        <Mapping mef="/Return/ReturnData/IRSW2G[uuid_1]/GamblingWinWindowNum" tps="FDI$FW2G[uuid_1].L10"/>
+        <Mapping mef="/Return/ReturnData/IRSW2G[uuid_1]/RecipientFirstAdditionalIdNum" tps="FDI$FW2G[uuid_1].L11"/>
+        <Mapping mef="/Return/ReturnData/IRSW2G[uuid_1]/RecipientSecondAdditionalIdNum" tps="FDI$FW2G[uuid_1].L12"/>
+        <Mapping mef="/Return/ReturnData/IRSW2G[uuid_1]/PayerName/BusinessNameLine1Txt" tps="FDI$FW2G[uuid_1].PNAM"/>
+        <Mapping mef="/Return/ReturnData/IRSW2G[uuid_1]/PayerName/BusinessNameLine2Txt" tps="FDI$FW2G[uuid_1].PNAM2"/>
+        <Mapping mef="/Return/ReturnData/IRSW2G[uuid_1]/W2GStateLocalTaxGrp[uuid_2]/StateAbbreviationCd" tps="FDI$FW2G[uuid_1].L13A[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRSW2G[uuid_1]/W2GStateLocalTaxGrp[uuid_2]/PayerStateIdNum" tps="FDI$FW2G[uuid_1].L13B[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRSW2G[uuid_1]/W2GStateLocalTaxGrp[uuid_2]/StateTaxWithheldAmt" tps="FDI$FW2G[uuid_1].L14[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRSW2G[uuid_1]/W2GStateLocalTaxGrp[uuid_2]/GamblingWinningAmt" tps="FDI$FW2G[uuid_1].L14B[uuid_2]"/>
+        <Mapping mef="/Return/ReturnData/IRSW2G[uuid_1]/W2GStateLocalTaxGrp[uuid_2]/W2GLocalTaxGrp[uuid_3]/LocalityNm" tps="FDI$FW2G[uuid_1].L15[uuid_3]"/>
+        <Mapping mef="/Return/ReturnData/IRSW2G[uuid_1]/W2GStateLocalTaxGrp[uuid_2]/W2GLocalTaxGrp[uuid_3]/LocalIncomeTaxAmt" tps="FDI$FW2G[uuid_1].L16[uuid_3]"/>
+        <Mapping mef="/Return/ReturnData/IRSW2G[uuid_1]/W2GStateLocalTaxGrp[uuid_2]/W2GLocalTaxGrp[uuid_3]/GamblingWinningAmt" tps="FDI$FW2G[uuid_1].L16B[uuid_3]"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/PersonFullNamePP/PersonFirstNm" tps="FDI$FPERSWKS[1].FIRSTNAM"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/PersonFullNamePP/PersonLastNm" tps="FDI$FPERSWKS[1].LASTNAM"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/PersonMiddleInitialPP" tps="FDI$FPERSWKS[1].INITIAL"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/PersonSuffixPP" tps="FDI$FPERSWKS[1].SUFFIX"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/SSNPP" tps="FDI$FPERSWKS[1].SSN"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/DateOfBirthPP" tps="FDI$FPERSWKS[1].DOB" transform="DateTransformation"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/DateOfDeathPP" tps="FDI$FPERSWKS[1].DOD" transform="DateTransformation"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/OccupationPP" tps="FDI$FPERSWKS[1].OCCUP"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StateOfResidencePP" tps="FDI$FINFOWKS.RSTA"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/FormerPlaceOfResidencePP" tps="FDI$FINFOWKS.WHERE"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/DateOfStateResidencePP" tps="FDI$FINFOWKS.RESDATE" transform="DateTransformation"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/StateOfResidencePP" tps="FDI$FINFOWKS.SRSTA"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/FormerPlaceOfResidencePP" tps="FDI$FINFOWKS.SWHERE"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/DateOfStateResidencePP" tps="FDI$FINFOWKS.SRESDATE" transform="DateTransformation"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/PersonNicknamePP" tps="FDI$FONLINE.hFNAM"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/PersonFullNamePP/PersonFirstNm" tps="FDI$FPERSWKS[2].FIRSTNAM"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/PersonFullNamePP/PersonLastNm" tps="FDI$FPERSWKS[2].LASTNAM"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/PersonMiddleInitialPP" tps="FDI$FPERSWKS[2].INITIAL"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/PersonSuffixPP" tps="FDI$FPERSWKS[2].SUFFIX"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/SSNPP" tps="FDI$FPERSWKS[2].SSN"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/DateOfBirthPP" tps="FDI$FPERSWKS[2].DOB" transform="DateTransformation"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/DateOfDeathPP" tps="FDI$FPERSWKS[2].DOD" transform="DateTransformation"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/OccupationPP" tps="FDI$FPERSWKS[2].OCCUP"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/StateOfResidencePP" tps="FDI$FPERSWKS[2].SRSTA"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/FormerPlaceOfResidencePP" tps="FDI$FPERSWKS[2].SWHERE"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/DateOfStateResidencePP" tps="FDI$FPERSWKS[2].SRESDATE" transform="DateTransformation"/>
+        <Mapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/PersonNicknamePP" tps="FDI$FONLINE.hSFNAM"/>
+        <Mapping mef="/Return/ReturnData/PPReturnInformation/USAddressPP/AddressLine1Txt" tps="FDI$FINFOWKS.ADDR"/>
+        <Mapping mef="/Return/ReturnData/PPReturnInformation/USAddressPP/AddressLine2Txt" tps="FDI$FINFOWKS.APT"/>
+        <Mapping mef="/Return/ReturnData/PPReturnInformation/USAddressPP/CityNm" tps="FDI$FINFOWKS.CITY"/>
+        <Mapping mef="/Return/ReturnData/PPReturnInformation/USAddressPP/StateAbbreviationCd" tps="FDI$FINFOWKS.ST"/>
+        <Mapping mef="/Return/ReturnData/PPReturnInformation/USAddressPP/ZIPCd" tps="FDI$FINFOWKS.ZIP"/>
+        <Mapping mef="/Return/ReturnData/PPReturnInformation/ForeignAddressPP/AddressLine1Txt" tps="FDI$FINFOWKS.ADDR"/>
+        <Mapping mef="/Return/ReturnData/PPReturnInformation/ForeignAddressPP/AddressLine2Txt" tps="FDI$FINFOWKS.APT"/>
+        <Mapping mef="/Return/ReturnData/PPReturnInformation/ForeignAddressPP/CityNm" tps="FDI$FINFOWKS.CITY"/>
+        <Mapping mef="/Return/ReturnData/PPReturnInformation/ForeignAddressPP/ProvinceOrStateNm" tps="FDI$FINFOWKS.FPC"/>
+        <Mapping mef="/Return/ReturnData/PPReturnInformation/ForeignAddressPP/CountryCd" tps="FDI$FINFOWKS.FCCODE"/>
+        <Mapping mef="/Return/ReturnData/PPReturnInformation/ForeignAddressPP/ForeignPostalCd" tps="FDI$FINFOWKS.FZIP"/>
+        <Mapping mef="/Return/ReturnData/PPReturnInformation/DetailedMaritalStatusPP" tps="FDI$FINFOWKS.HMARSTAT"/>
+        <Mapping mef="/Return/ReturnData/PPReturnInformation/hMarriedFilingStatusPP" tps="FDI$FINFOWKS.HMFSTAT"/>
+        <Mapping mef="/Return/ReturnData/PPReturnInformation/TaxpayerOrSpouseItemizingIndPP" tps="FDI$FINFOWKS.SIX"/>
+        <Mapping mef="/Return/ReturnData/PPReturnInformation/NonResidentStateGrpPP/NonResidentStatePP[uuid_1]" tps="FDI$FINFOWKS.NONRESST[uuid_1]"/>
+        <Mapping mef="/Return/ReturnData/PPReturnInformation/HasRDPPP" tps="FDI$FINFOWKS.HHASRDP">
+            <ValueTransform mef="true" tps="1"/>
+            <ValueTransform mef="false" tps="0"/>
+        </Mapping>
+        <Mapping mef="/Return/ReturnData/PPReturnInformation/HasCivilUnionPP" tps="FDI$FINFOWKS.HHASCU">
+            <ValueTransform mef="true" tps="1"/>
+            <ValueTransform mef="false" tps="0"/>
+        </Mapping>
+        <Mapping mef="/Return/ReturnData/PPReturnInformation/HasRDPorCUPP" tps="FDI$FINFOWKS.HRDPORCU">
+            <ValueTransform mef="true" tps="1"/>
+            <ValueTransform mef="false" tps="0"/>
+        </Mapping>
+        <Mapping mef="/Return/ReturnData/PPReturnInformation/DetailedMaritalStatusPP" tps="FDI$FPERSWKS[1].MARITAL"/>
+        <Mapping mef="/Return/ReturnData/PPReturnInformation/DayTimePhoneNumberPP" tps="FDI$FPERSWKS[1].PHONE"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentWhoWillClaimPP" tps="FDI$FWDEPINF[uuid_1].IWILL" value="Taxpayer"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentWhoWillClaimPP" tps="FDI$FWDEPINF[uuid_1].OTHPAR" value="Other Parent"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentWhoWillClaimPP" tps="FDI$FWDEPINF[uuid_1].SONEELSE" value="Someone Else"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentLegalParentsPP" tps="FDI$FWDEPINF[uuid_1].TPPAR" value="Taxpayer"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentLegalParentsPP" tps="FDI$FWDEPINF[uuid_1].SPPAR" value="Spouse"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentLegalParentsPP" tps="FDI$FWDEPINF[uuid_1].BOTHPAR" value="Both"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentMarriedIndPP" tps="FDI$FWDEPINF[uuid_1].YESMAR" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentMarriedIndPP" tps="FDI$FWDEPINF[uuid_1].NOMAR" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentStudentIndPP" tps="FDI$FWDEPINF[uuid_1].YESSTU" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentStudentIndPP" tps="FDI$FWDEPINF[uuid_1].NOSTU" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentYouProvideHalfIndPP" tps="FDI$FWDEPINF[uuid_1].OVRHALF" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentYouProvideHalfIndPP" tps="FDI$FWDEPINF[uuid_1].HALFLESS" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentLegalAgreementIndPP" tps="FDI$FWDEPINF[uuid_1].YESAGR" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentLegalAgreementIndPP" tps="FDI$FWDEPINF[uuid_1].NOAGR" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/IsDeceasedIndPP" tps="FDI$FWDEPINF[uuid_1].PASSDY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/IsDeceasedIndPP" tps="FDI$FWDEPINF[uuid_1].PASSDN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentPaidMoreThanHalfIndPP" tps="FDI$FWDEPINF[uuid_1].YESSUP" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentPaidMoreThanHalfIndPP" tps="FDI$FWDEPINF[uuid_1].NOSUP" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/IncomeLessThanIndicatorPP" tps="FDI$FWDEPINF[uuid_1].GILESSY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/IncomeLessThanIndicatorPP" tps="FDI$FWDEPINF[uuid_1].GILESSN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentCitizenIndPP" tps="FDI$FWDEPINF[uuid_1].USCIT" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentCitizenIndPP" tps="FDI$FWDEPINF[uuid_1].USCITN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentLegalResIndPP" tps="FDI$FWDEPINF[uuid_1].CANMEX" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentLegalResIndPP" tps="FDI$FWDEPINF[uuid_1].CANMEXN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentNumberOfNightsPP" tps="FDI$FDEPWKS[uuid_1].TPTIME" value="YouMore"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentNumberOfNightsPP" tps="FDI$FDEPWKS[uuid_1].OTHTIME" value="OtherParentMore"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentNumberOfNightsPP" tps="FDI$FDEPWKS[uuid_1].SAMETIME" value="Same"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentYouPaidHalfIndPP" tps="FDI$FDEPWKS[uuid_1].OHALF" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentYouPaidHalfIndPP" tps="FDI$FDEPWKS[uuid_1].LHALF" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentAllPaidHalfIndPP" tps="FDI$FDEPWKS[uuid_1].FIFTYY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentAllPaidHalfIndPP" tps="FDI$FDEPWKS[uuid_1].FIFTYN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentYouPayTenIndPP" tps="FDI$FDEPWKS[uuid_1].TENY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentYouPayTenIndPP" tps="FDI$FDEPWKS[uuid_1].TENN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentLetYouClaimIndPP" tps="FDI$FDEPWKS[uuid_1].YOUGETY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentLetYouClaimIndPP" tps="FDI$FDEPWKS[uuid_1].YOUGETN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentLiveWithRelHalfIndPP" tps="FDI$FDEPWKS[uuid_1].YESSIX" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentLiveWithRelHalfIndPP" tps="FDI$FDEPWKS[uuid_1].NOSIX" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentRelMeetsQualsIndPP" tps="FDI$FDEPWKS[uuid_1].YESCLAIM" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentRelMeetsQualsIndPP" tps="FDI$FDEPWKS[uuid_1].NOCLAIM" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentAdoptionFinalIndPP" tps="FDI$FDEPWKS[uuid_1].FINALY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentAdoptionFinalIndPP" tps="FDI$FDEPWKS[uuid_1].FINALN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentPlacedByAdoptionAgencyIndPP" tps="FDI$FDEPWKS[uuid_1].LATERY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentPlacedByAdoptionAgencyIndPP" tps="FDI$FDEPWKS[uuid_1].LATERN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentFosterPlacedByAgencyIndPP" tps="FDI$FDEPWKS[uuid_1].YESAUTH" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentFosterPlacedByAgencyIndPP" tps="FDI$FDEPWKS[uuid_1].NOAUTH" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentTPOrRelHigherHigherPP" tps="FDI$FDEPWKS[uuid_1].AGIMINE" value="Taxpayer"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentTPOrRelHigherHigherPP" tps="FDI$FDEPWKS[uuid_1].AGIOTH" value="Rel"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentHigherIncomePP" tps="FDI$FDEPWKS[uuid_1].MEHIGH" value="YouHigher"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentHigherIncomePP" tps="FDI$FDEPWKS[uuid_1].OTHHIGH" value="OtherParentHigher"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentRelHelpSupportIndPP" tps="FDI$FDEPWKS[uuid_1].YESHELP" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentRelHelpSupportIndPP" tps="FDI$FDEPWKS[uuid_1].NOHELP" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentRelParentIndPP" tps="FDI$FDEPWKS[uuid_1].RELPARY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentRelParentIndPP" tps="FDI$FDEPWKS[uuid_1].RELPARN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentParentWaiveIndPP" tps="FDI$FDEPWKS[uuid_1].IMCL" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/DependentWorksheetPP[uuid_1]/DependentParentWaiveIndPP" tps="FDI$FDEPWKS[uuid_1].IMNOTCL" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/FormReceivedFromInstitutionIndPP" tps="FDI$F1098T[uuid_1].Y1098T" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/FormReceivedFromInstitutionIndPP" tps="FDI$F1098T[uuid_1].N1098T" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/FormReceivedPriorYearIndPP" tps="FDI$F1098T[uuid_1].Y98TPY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1098TPP[uuid_1]/FormReceivedPriorYearIndPP" tps="FDI$F1098T[uuid_1].N98TPY" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/IsStudentIndPP" tps="FDI$STINFOTP.STUDENY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/IsStudentIndPP" tps="FDI$STINFOTP.STUDENN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/ReceivedAssistanceIndPP" tps="FDI$STINFOTP.GRANTBX" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/ReceivedAssistanceIndPP" tps="FDI$STINFOTP.GRANTN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/CompletedFourYearEducationIndPP" tps="FDI$STINFOTP.Y4RY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/CompletedFourYearEducationIndPP" tps="FDI$STINFOTP.Y4RN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EnrolledAtEligibleInstIndPP" tps="FDI$STINFOTP.ELIGUY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EnrolledAtEligibleInstIndPP" tps="FDI$STINFOTP.ELIGUN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EnrolledInAccreditedInstitutionIndPP" tps="FDI$STINFOTP.CREDY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EnrolledInAccreditedInstitutionIndPP" tps="FDI$STINFOTP.CREDN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationForJobSkillsIndPP" tps="FDI$STINFOTP.JOBEDY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationForJobSkillsIndPP" tps="FDI$STINFOTP.JOBEDN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/StudentAtLeastHalfTimeIndPP" tps="FDI$STINFOTP.FULLY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/StudentAtLeastHalfTimeIndPP" tps="FDI$STINFOTP.FULLN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/ConvictedOfDrugFelonyIndPP" tps="FDI$STINFOTP.FELONY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/ConvictedOfDrugFelonyIndPP" tps="FDI$STINFOTP.FELONN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationalCreditDeductionElectionPP" tps="FDI$STINFOTP.USERB" value="BEST_TAX_OUTCOME"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationalCreditDeductionElectionPP" tps="FDI$STINFOTP.USERA" value="AMERICAN_OPPORTUNITY"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationalCreditDeductionElectionPP" tps="FDI$STINFOTP.USERL" value="LIFETIME_LEARNING"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationalCreditDeductionElectionPP" tps="FDI$STINFOTP.USERD" value="TUITION_FEES_DEDUCTION"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/StudentInformationWorksheetPP/EducationalCreditDeductionElectionPP" tps="FDI$STINFOTP.USERN" value="NOT_APPLICABLE"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/DesignatedBeneficiaryPP" tps="FDI$F1099Q[uuid_1].STUTP" value="Taxpayer"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/DesignatedBeneficiaryPP" tps="FDI$F1099Q[uuid_1].STUSP" value="Spouse"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/DesignatedBeneficiaryPP" tps="FDI$F1099Q[uuid_1].STUDP" value="Dependent"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/DesignatedBeneficiaryPP" tps="FDI$F1099Q[uuid_1].STUSE" value="Someone else"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/DesignatedBeneficiaryPP" tps="FDI$F1099Q[uuid_1].STUNA" value="Not applicable"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/RecipientPP" tps="FDI$F1099Q[uuid_1].OWNT" value="Taxpayer"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/RecipientPP" tps="FDI$F1099Q[uuid_1].SPBX" value="Spouse"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/RecipientPP" tps="FDI$F1099Q[uuid_1].OWND" value="Dependent"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/RecipientPP" tps="FDI$F1099Q[uuid_1].OWNO" value="Someone else"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/QualifiedTuitionProgramPP" tps="FDI$F1099Q[uuid_1].PRIV" value="Private"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/QualifiedTuitionProgramPP" tps="FDI$F1099Q[uuid_1].STATE" value="State"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/QualifiedTuitionProgramPP" tps="FDI$F1099Q[uuid_1].ESA" value="Coverdell ESA"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/RolloverTypePP" tps="FDI$F1099Q[uuid_1].FULLX" value="RolledOverAllMetConditions"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/RolloverTypePP" tps="FDI$F1099Q[uuid_1].PARTX" value="PartialRolloverConditionsMet"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/RolloverTypePP" tps="FDI$F1099Q[uuid_1].NOTRX" value="NoRolloverOrConditionsNotMet"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/AccountBeneficiaryPP" tps="FDI$F1099Q[uuid_1].BENE" value="OriginalBeneficiary"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/AccountBeneficiaryPP" tps="FDI$F1099Q[uuid_1].FAM" value="FamilyMember"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/AccountBeneficiaryPP" tps="FDI$F1099Q[uuid_1].NOFAM" value="NotFamilyOrOriginalBeneficiary"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/AccountBeneficiaryPP" tps="FDI$F1099Q[uuid_1].RNA" value="NotApplicable"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/ReturnOfContributionIndPP" tps="FDI$F1099Q[uuid_1].CRX" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/ReturnOfContributionIndPP" tps="FDI$F1099Q[uuid_1].DPRACN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/ReturnOfESAContributionTypePP" tps="FDI$F1099Q[uuid_1].R33X" value="ContributionMadeReturnedThisTaxYr"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/ReturnOfESAContributionTypePP" tps="FDI$F1099Q[uuid_1].R34X" value="ContributionReturnedNextTaxYr"/>
+        <ValueMapping mef="/Return/ReturnData/EducationPP/Form1099QPP[uuid_1]/ReturnOfESAContributionTypePP" tps="FDI$F1099Q[uuid_1].R23X" value="ContributionMadeLastTaxYr"/>
+        <ValueMapping mef="/Return/ReturnData/IRSW2[uuid_1]/ClergySelfEmploymentTaxCdPP" tps="FDI$FW2[uuid_1].CLHAX" value="ClergySETaxonHousing"/>
+        <ValueMapping mef="/Return/ReturnData/IRSW2[uuid_1]/ClergySelfEmploymentTaxCdPP" tps="FDI$FW2[uuid_1].CLW2X" value="ClergySETaxonW2"/>
+        <ValueMapping mef="/Return/ReturnData/IRSW2[uuid_1]/ClergySelfEmploymentTaxCdPP" tps="FDI$FW2[uuid_1].CLHAW2X" value="ClergySETaxonHousingandW2"/>
+        <ValueMapping mef="/Return/ReturnData/IRSW2[uuid_1]/ClergySelfEmploymentTaxCdPP" tps="FDI$FW2[uuid_1].CLEX" value="ClergyExpemptfromSETax"/>
+        <ValueMapping mef="/Return/ReturnData/IRSW2[uuid_1]/ClergySelfEmploymentTaxCdPP" tps="FDI$FW2[uuid_1].NCLW2X" value="NonClergySETaxonW2"/>
+        <ValueMapping mef="/Return/ReturnData/IRSW2[uuid_1]/ClergySelfEmploymentTaxCdPP" tps="FDI$FW2[uuid_1].NCLEX" value="NonClergyExpemptfromSETax"/>
+        <ValueMapping mef="/Return/ReturnData/IRSW2[uuid_1]/ClergySelfEmploymentTaxCdPP" tps="FDI$FW2[uuid_1].CLNONE" value="NoSSAndMedicareTax"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1095A[uuid_1]/HaveOtherCoveredIndivIndPP" tps="FDI$F1095A[uuid_1].HOYCIND" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1095A[uuid_1]/HaveOtherCoveredIndivIndPP" tps="FDI$F1095A[uuid_1].HONCIND" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1095A[uuid_1]/HaveAnyMoreCoveredIndivIndPP" tps="FDI$F1095A[uuid_1].HAMYCIND" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1095A[uuid_1]/HaveAnyMoreCoveredIndivIndPP" tps="FDI$F1095A[uuid_1].HAMNCIND" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8962/FederalPovertyTableLocCd" tps="FDI$F8962.AK" value="A"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8962/FederalPovertyTableLocCd" tps="FDI$F8962.HI" value="B"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8962/FederalPovertyTableLocCd" tps="FDI$F8962.OTH48DC" value="C"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8962/HshldIncmBelowPTCThresholdInd" tps="FDI$F8962.HILTPVRT" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8962/HshldIncmBelowPTCThresholdInd" tps="FDI$F8962.M400PCT" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8962/SharePolicyMarriedAltCalcInd" tps="FDI$F8962.APORACMI" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8962/SharePolicyMarriedAltCalcInd" tps="FDI$F8962.APRACMIN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8962/Form1095ASameMonthlyAmtInd" tps="FDI$F8962.F1095ASM" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8962/Form1095ASameMonthlyAmtInd" tps="FDI$F8962.F1095ANO" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8962/SharedPolicyAllocationInfoInd" tps="FDI$F8962.SPALLIND" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8962/SharedPolicyAllocationInfoInd" tps="FDI$F8962.SPALLNO" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8962/ACAPTCRefundMonitorControlPP" tps="FDI$F8962.HCPTCY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8962/ACAPTCRefundMonitorControlPP" tps="FDI$F8962.HCPTCN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8962/SpousalAbuseIndPP" tps="FDI$F8962.SPABUSEY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8962/SpousalAbuseIndPP" tps="FDI$F8962.SPABUSEN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8962/AltCalcForMarriageEligibilityWksPP/EligibilityIndPP" tps="FDI$F8962.YESINC" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8962/AltCalcForMarriageEligibilityWksPP/EligibilityIndPP" tps="FDI$F8962.NOINC" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8965/HsldIncmBelowFlngThresholdInd" tps="FDI$F8965.HIBELFTY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8965/HsldIncmBelowFlngThresholdInd" tps="FDI$F8965.HIBELFTN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8965/GrossIncmBelowFlngThresholdInd" tps="FDI$F8965.GIBELFTY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8965/GrossIncmBelowFlngThresholdInd" tps="FDI$F8965.GIBELFTN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8965/HealthCareRspnsCoverageIndPP" tps="FDI$F8965.HCCVINDY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8965/HealthCareRspnsCoverageIndPP" tps="FDI$F8965.HCCVINDN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8965/HaveAnyObtainedExemption" tps="FDI$F8965.HANYOBY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8965/HaveAnyObtainedExemption" tps="FDI$F8965.HANYOBN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8965/HaveAnyMoreObtainedExemption" tps="FDI$F8965.HMOROBY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8965/HaveAnyMoreObtainedExemption" tps="FDI$F8965.HMOROBN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8965/HaveAnyRequestExemption" tps="FDI$F8965.HANYRQY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8965/HaveAnyRequestExemption" tps="FDI$F8965.HANYRQN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8965/HaveAnyMoreRequestExemption" tps="FDI$F8965.HMORRQY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8965/HaveAnyMoreRequestExemption" tps="FDI$F8965.HMORRQN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8965/ACARefundMonitorControlPP" tps="FDI$F8965.HSHDRSPC" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8965/ACARefundMonitorControlPP" tps="FDI$F8965.HSHDRSPN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/PenaltyOnlyHshldIncmIndPP" tps="FDI$F8965.YESINC" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/PenaltyOnlyHshldIncmIndPP" tps="FDI$F8965.NOINC" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1095Other[uuid_1]/HaveOtherCoveredIndivIndPP" tps="FDI$F1095OTH[uuid_1].HOYCIND" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1095Other[uuid_1]/HaveOtherCoveredIndivIndPP" tps="FDI$F1095OTH[uuid_1].HONCIND" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1095Other[uuid_1]/HaveAnyMoreCoveredIndivIndPP" tps="FDI$F1095OTH[uuid_1].HAMYCIND" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1095Other[uuid_1]/HaveAnyMoreCoveredIndivIndPP" tps="FDI$F1095OTH[uuid_1].HAMNCIND" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS2441/IncludeNontaxCombatPayPP" tps="FDI$F2441.YELECT" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS2441/IncludeNontaxCombatPayPP" tps="FDI$F2441.NELECT" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040ScheduleEIC/QualifyingChildInformation[uuid_1]/ChildIsAStudentUnder24Ind" tps="FDI$FSCHEICW.STUY[uuid_1]" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040ScheduleEIC/QualifyingChildInformation[uuid_1]/ChildIsAStudentUnder24Ind" tps="FDI$FSCHEICW.STUN[uuid_1]" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040ScheduleEIC/QualifyingChildInformation[uuid_1]/ChildPermanentlyDisabledInd" tps="FDI$FSCHEICW.DISY[uuid_1]" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040ScheduleEIC/QualifyingChildInformation[uuid_1]/ChildPermanentlyDisabledInd" tps="FDI$FSCHEICW.DISN[uuid_1]" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/EIC/DoNotGetEICFromAGIPP" tps="FDI$FSCHEICW.L9Y" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/EIC/DoNotGetEICFromAGIPP" tps="FDI$FSCHEICW.L9N" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/TaxpayerCombatPayForEICIndPP" tps="FDI$FSCHEICW.YELECT" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/TaxpayerCombatPayForEICIndPP" tps="FDI$FSCHEICW.NELECT" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/SpouseCombatPayForEICIndPP" tps="FDI$FSCHEICW.SELECTY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/EIC/EICWorksheetPP/NontaxableCombatPaySmartWksPP/SpouseCombatPayForEICIndPP" tps="FDI$FSCHEICW.SELECTN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd" tps="FDI$F1040.FS1" value="1"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd" tps="FDI$F1040.FS2" value="2"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd" tps="FDI$F1040.FS3" value="3"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd" tps="FDI$F1040.FS4" value="4"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040/IndividualReturnFilingStatusCd" tps="FDI$F1040.FS5" value="5"/>
+        <ValueMapping mef="/Return/ReturnData/EIC/EICEligClmQlfyChldOfOtherIndPP" tps="FDI$FINFOWKS.AY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/EIC/EICEligClmQlfyChldOfOtherIndPP" tps="FDI$FINFOWKS.AN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/EIC/MainHomeInUSOverHalfYrIndPP" tps="FDI$FINFOWKS.BY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/EIC/MainHomeInUSOverHalfYrIndPP" tps="FDI$FINFOWKS.BN" value="false"/>
+        <ValueMapping mef="/Return/ReturnHeader/Filer/PrimaryInfoDependentOnOtherReturnPP/FilerCanBeClaimedAsDependentIndPP" tps="FDI$FINFOWKS.DXT" value="true"/>
+        <ValueMapping mef="/Return/ReturnHeader/Filer/PrimaryInfoDependentOnOtherReturnPP/FilerCanBeClaimedAsDependentIndPP" tps="FDI$FINFOWKS.DXTN" value="false"/>
+        <ValueMapping mef="/Return/ReturnHeader/Filer/PrimaryInfoDependentOnOtherReturnPP/FilerIsClaimedAsDependentIndPP" tps="FDI$FINFOWKS.DEPTY" value="true"/>
+        <ValueMapping mef="/Return/ReturnHeader/Filer/PrimaryInfoDependentOnOtherReturnPP/FilerIsClaimedAsDependentIndPP" tps="FDI$FINFOWKS.DEPTN" value="false"/>
+        <ValueMapping mef="/Return/ReturnHeader/Filer/SpouseInfoDependentOnOtherReturnPP/FilerCanBeClaimedAsDependentIndPP" tps="FDI$FINFOWKS.DXS" value="true"/>
+        <ValueMapping mef="/Return/ReturnHeader/Filer/SpouseInfoDependentOnOtherReturnPP/FilerCanBeClaimedAsDependentIndPP" tps="FDI$FINFOWKS.DXSN" value="false"/>
+        <ValueMapping mef="/Return/ReturnHeader/Filer/SpouseInfoDependentOnOtherReturnPP/FilerIsClaimedAsDependentIndPP" tps="FDI$FINFOWKS.DEPSY" value="true"/>
+        <ValueMapping mef="/Return/ReturnHeader/Filer/SpouseInfoDependentOnOtherReturnPP/FilerIsClaimedAsDependentIndPP" tps="FDI$FINFOWKS.DEPSN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/ScheduleSEAdjustments/TaxpayerUsingShortScheduleSEIndPP" tps="FDI$FSEADJ.TPSTBX" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/ScheduleSEAdjustments/TaxpayerUsingShortScheduleSEIndPP" tps="FDI$FSEADJ.TPLGBX" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/ScheduleSEAdjustments/SpouseUsingShortScheduleSEIndPP" tps="FDI$FSEADJ.SPSTBX" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/ScheduleSEAdjustments/SpouseUsingShortScheduleSEIndPP" tps="FDI$FSEADJ.SPLGBX" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040ScheduleC[uuid_1]/BusinessOperatedByPP" tps="FDI$FSCHC[uuid_1]." value="Taxpayer"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040ScheduleC[uuid_1]/BusinessOperatedByPP" tps="FDI$FSCHC[uuid_1].OWNS" value="Spouse"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1040ScheduleC[uuid_1]/BusinessOperatedByPP" tps="FDI$FSCHC[uuid_1].OWNJ" value="Joint"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8862/EICEligClmIncmIncorrectRptInd" tps="FDI$F8862.INCXY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8862/EICEligClmIncmIncorrectRptInd" tps="FDI$F8862.INCXN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8862/EICEligClmLivedWithOthersInd" tps="FDI$F8862.OTHERY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8862/EICEligClmLivedWithOthersInd" tps="FDI$F8862.OTHERN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8862/EICEligClmQlfyChldOfOtherInd" tps="FDI$F8862.L2Y" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS8862/EICEligClmQlfyChldOfOtherInd" tps="FDI$F8862.L2N" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1095B[uuid_1]/HaveOtherCoveredIndivIndPP" tps="FDI$F1095B[uuid_1].HOYCIND" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1095B[uuid_1]/HaveOtherCoveredIndivIndPP" tps="FDI$F1095B[uuid_1].HONCIND" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1095B[uuid_1]/HaveAnyMoreCoveredIndivIndPP" tps="FDI$F1095B[uuid_1].HAMYCIND" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1095B[uuid_1]/HaveAnyMoreCoveredIndivIndPP" tps="FDI$F1095B[uuid_1].HAMNCIND" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1095C[uuid_1]/HaveOtherCoveredIndivIndPP" tps="FDI$F1095C[uuid_1].HOYCIND" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1095C[uuid_1]/HaveOtherCoveredIndivIndPP" tps="FDI$F1095C[uuid_1].HONCIND" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1095C[uuid_1]/HaveAnyMoreCoveredIndivIndPP" tps="FDI$F1095C[uuid_1].HAMYCIND" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/IRS1095C[uuid_1]/HaveAnyMoreCoveredIndivIndPP" tps="FDI$F1095C[uuid_1].HAMNCIND" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/LegallyBlindIndPP" tps="FDI$FPERSWKS[1].BLXT" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/CanBeClaimedAsDependentIndPP" tps="FDI$FPERSWKS[1].DXT" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/CanBeClaimedAsDependentIndPP" tps="FDI$FPERSWKS[1].DXTN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/WillBeClaimedAsDependentIndPP" tps="FDI$FPERSWKS[1].DEPTY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/WillBeClaimedAsDependentIndPP" tps="FDI$FPERSWKS[1].DEPTN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/UnderSixteenFirstTimeFilerIndPP" tps="FDI$FPERSWKS[1].SIXTEENY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/UnderSixteenFirstTimeFilerIndPP" tps="FDI$FPERSWKS[1].SIXTEENN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/MilitaryIndPP" tps="FDI$FPERSWKS[1].YMIL" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/MilitaryIndPP" tps="FDI$FPERSWKS[1].NMIL" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/LivedInAnotherStatePP" tps="FDI$FINFOWKS.RESP" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/LivedInAnotherStatePP" tps="FDI$FINFOWKS.RESF" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/LivedInAnotherStatePP" tps="FDI$FINFOWKS.SRESP" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/LivedInAnotherStatePP" tps="FDI$FINFOWKS.SRESF" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/WidowedInYearPP" tps="FDI$FINFOWKS.YX4" value="NextTaxYear"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/WidowedInYearPP" tps="FDI$FINFOWKS.YX3" value="TaxYear"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/WidowedInYearPP" tps="FDI$FINFOWKS.YX2" value="PriorTaxYear"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/WidowedInYearPP" tps="FDI$FINFOWKS.YX1" value="TwoPriorTaxYear"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/WidowedInYearPP" tps="FDI$FINFOWKS.YX0" value="PriorTwoPriorTaxYear"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/TaxpayerFilerInfoPP/MilitaryRelatedDeathPP" tps="FDI$FONLINE.TPMILDOD" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/LegallyBlindIndPP" tps="FDI$FPERSWKS[2].BLXT" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/CanBeClaimedAsDependentIndPP" tps="FDI$FPERSWKS[2].DXT" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/CanBeClaimedAsDependentIndPP" tps="FDI$FPERSWKS[2].DXTN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/WillBeClaimedAsDependentIndPP" tps="FDI$FPERSWKS[2].DEPTY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/WillBeClaimedAsDependentIndPP" tps="FDI$FPERSWKS[2].DEPTN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/UnderSixteenFirstTimeFilerIndPP" tps="FDI$FPERSWKS[2].SIXTEENY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/UnderSixteenFirstTimeFilerIndPP" tps="FDI$FPERSWKS[2].SIXTEENN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/LivedInAnotherStatePP" tps="FDI$FPERSWKS[2].RESP" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/LivedInAnotherStatePP" tps="FDI$FPERSWKS[2].RESF" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/MilitaryIndPP" tps="FDI$FPERSWKS[2].YMIL" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/MilitaryIndPP" tps="FDI$FPERSWKS[2].NMIL" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/PPPerson/SpouseFilerInfoPP/MilitaryRelatedDeathPP" tps="FDI$FONLINE.SPMILDOD" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPReturnInformation/DidNotLiveWithSpouseLastYearIndPP" tps="FDI$FINFOWKS.NOTX" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPReturnInformation/CouldHaveFiledJointReturnIndPP" tps="FDI$FONLINE.QWJNTY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPReturnInformation/CouldHaveFiledJointReturnIndPP" tps="FDI$FONLINE.QWJNTN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/PPReturnInformation/MaintainHalfHomeExpensesIndPP" tps="FDI$FONLINE.MTHOMEY" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPReturnInformation/MaintainHalfHomeExpensesIndPP" tps="FDI$FONLINE.MTHOMEN" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/PPReturnInformation/DidNotLiveWithSpouseLastSixMonthsIndPP" tps="FDI$FONLINE.CSUNWED" value="false"/>
+        <ValueMapping mef="/Return/ReturnData/PPReturnInformation/SpouseNoGrossIncomeIndPP" tps="FDI$FONLINE.SPNOINC" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPReturnInformation/SpouseNotFilingReturnIndPP" tps="FDI$FONLINE.SPNOTAX" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPReturnInformation/SpouseCouldNotBeClmdAsDependentIndPP" tps="FDI$FONLINE.SPNOTDEP" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPReturnInformation/HOHDependentIndPP" tps="FDI$FONLINE.DEPHOH" value="true"/>
+        <ValueMapping mef="/Return/ReturnData/PPReturnInformation/QWDependentIndPP" tps="FDI$FONLINE.DEPQW" value="true"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/MonthlyStatusGrpPP/MonthPP[uuid_2]/StatusPP" tps="FDI$F8965/CJAN[uuid_1]" key="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/MonthlyStatusGrpPP/MonthPP[uuid_2]/MonthCdPP" value="JANUARY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/MonthlyStatusGrpPP/MonthPP[uuid_2]/StatusPP" tps="FDI$F8965/CFEB[uuid_1]" key="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/MonthlyStatusGrpPP/MonthPP[uuid_2]/MonthCdPP" value="FEBRUARY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/MonthlyStatusGrpPP/MonthPP[uuid_2]/StatusPP" tps="FDI$F8965/CMAR[uuid_1]" key="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/MonthlyStatusGrpPP/MonthPP[uuid_2]/MonthCdPP" value="MARCH"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/MonthlyStatusGrpPP/MonthPP[uuid_2]/StatusPP" tps="FDI$F8965/CAPR[uuid_1]" key="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/MonthlyStatusGrpPP/MonthPP[uuid_2]/MonthCdPP" value="APRIL"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/MonthlyStatusGrpPP/MonthPP[uuid_2]/StatusPP" tps="FDI$F8965/CMAY[uuid_1]" key="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/MonthlyStatusGrpPP/MonthPP[uuid_2]/MonthCdPP" value="MAY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/MonthlyStatusGrpPP/MonthPP[uuid_2]/StatusPP" tps="FDI$F8965/CJUN[uuid_1]" key="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/MonthlyStatusGrpPP/MonthPP[uuid_2]/MonthCdPP" value="JUNE"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/MonthlyStatusGrpPP/MonthPP[uuid_2]/StatusPP" tps="FDI$F8965/CJUL[uuid_1]" key="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/MonthlyStatusGrpPP/MonthPP[uuid_2]/MonthCdPP" value="JULY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/MonthlyStatusGrpPP/MonthPP[uuid_2]/StatusPP" tps="FDI$F8965/CAUG[uuid_1]" key="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/MonthlyStatusGrpPP/MonthPP[uuid_2]/MonthCdPP" value="AUGUST"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/MonthlyStatusGrpPP/MonthPP[uuid_2]/StatusPP" tps="FDI$F8965/CSEP[uuid_1]" key="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/MonthlyStatusGrpPP/MonthPP[uuid_2]/MonthCdPP" value="SEPTEMBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/MonthlyStatusGrpPP/MonthPP[uuid_2]/StatusPP" tps="FDI$F8965/COCT[uuid_1]" key="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/MonthlyStatusGrpPP/MonthPP[uuid_2]/MonthCdPP" value="OCTOBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/MonthlyStatusGrpPP/MonthPP[uuid_2]/StatusPP" tps="FDI$F8965/CNOV[uuid_1]" key="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/MonthlyStatusGrpPP/MonthPP[uuid_2]/MonthCdPP" value="NOVEMBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/MonthlyStatusGrpPP/MonthPP[uuid_2]/StatusPP" tps="FDI$F8965/CDEC[uuid_1]" key="/Return/ReturnData/IRS8965/HealthCareCoverageAndExemptionsPP[uuid_1]/MonthlyStatusGrpPP/MonthPP[uuid_2]/MonthCdPP" value="DECEMBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/MonthlyCoverageGrpPP[uuid_2]/NoCoverageIndPP" tps="FDI$F8965/SRPWJAN[uuid_1]" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/MonthlyCoverageGrpPP[uuid_2]/MonthCdPP" value="JANUARY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/MonthlyCoverageGrpPP[uuid_2]/NoCoverageIndPP" tps="FDI$F8965/SRPWFEB[uuid_1]" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/MonthlyCoverageGrpPP[uuid_2]/MonthCdPP" value="FEBRUARY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/MonthlyCoverageGrpPP[uuid_2]/NoCoverageIndPP" tps="FDI$F8965/SRPWMAR[uuid_1]" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/MonthlyCoverageGrpPP[uuid_2]/MonthCdPP" value="MARCH"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/MonthlyCoverageGrpPP[uuid_2]/NoCoverageIndPP" tps="FDI$F8965/SRPWAPR[uuid_1]" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/MonthlyCoverageGrpPP[uuid_2]/MonthCdPP" value="APRIL"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/MonthlyCoverageGrpPP[uuid_2]/NoCoverageIndPP" tps="FDI$F8965/SRPWMAY[uuid_1]" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/MonthlyCoverageGrpPP[uuid_2]/MonthCdPP" value="MAY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/MonthlyCoverageGrpPP[uuid_2]/NoCoverageIndPP" tps="FDI$F8965/SRPWJUN[uuid_1]" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/MonthlyCoverageGrpPP[uuid_2]/MonthCdPP" value="JUNE"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/MonthlyCoverageGrpPP[uuid_2]/NoCoverageIndPP" tps="FDI$F8965/SRPWJUL[uuid_1]" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/MonthlyCoverageGrpPP[uuid_2]/MonthCdPP" value="JULY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/MonthlyCoverageGrpPP[uuid_2]/NoCoverageIndPP" tps="FDI$F8965/SRPWAUG[uuid_1]" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/MonthlyCoverageGrpPP[uuid_2]/MonthCdPP" value="AUGUST"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/MonthlyCoverageGrpPP[uuid_2]/NoCoverageIndPP" tps="FDI$F8965/SRPWSEP[uuid_1]" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/MonthlyCoverageGrpPP[uuid_2]/MonthCdPP" value="SEPTEMBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/MonthlyCoverageGrpPP[uuid_2]/NoCoverageIndPP" tps="FDI$F8965/SRPWOCT[uuid_1]" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/MonthlyCoverageGrpPP[uuid_2]/MonthCdPP" value="OCTOBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/MonthlyCoverageGrpPP[uuid_2]/NoCoverageIndPP" tps="FDI$F8965/SRPWNOV[uuid_1]" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/MonthlyCoverageGrpPP[uuid_2]/MonthCdPP" value="NOVEMBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/MonthlyCoverageGrpPP[uuid_2]/NoCoverageIndPP" tps="FDI$F8965/SRPWDEC[uuid_1]" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/SharedRespHshldCoverageGrpPP/SharedRespHshldCoveragePP[uuid_1]/MonthlyCoverageGrpPP[uuid_2]/MonthCdPP" value="DECEMBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW1JAN" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP[uuid_1]/MonthCdPP" value="JANUARY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW1FEB" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP[uuid_1]/MonthCdPP" value="FEBRUARY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW1MAR" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP[uuid_1]/MonthCdPP" value="MARCH"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW1APR" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP[uuid_1]/MonthCdPP" value="APRIL"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW1MAY" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP[uuid_1]/MonthCdPP" value="MAY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW1JUN" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP[uuid_1]/MonthCdPP" value="JUNE"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW1JUL" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP[uuid_1]/MonthCdPP" value="JULY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW1AUG" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP[uuid_1]/MonthCdPP" value="AUGUST"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW1SEP" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP[uuid_1]/MonthCdPP" value="SEPTEMBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW1OCT" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP[uuid_1]/MonthCdPP" value="OCTOBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW1NOV" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP[uuid_1]/MonthCdPP" value="NOVEMBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW1DEC" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/BronzePlanCountPP/MonthPP[uuid_1]/MonthCdPP" value="DECEMBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW2JAN" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP[uuid_1]/MonthCdPP" value="JANUARY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW2FEB" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP[uuid_1]/MonthCdPP" value="FEBRUARY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW2MAR" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP[uuid_1]/MonthCdPP" value="MARCH"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW2APR" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP[uuid_1]/MonthCdPP" value="APRIL"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW2MAY" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP[uuid_1]/MonthCdPP" value="MAY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW2JUN" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP[uuid_1]/MonthCdPP" value="JUNE"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW2JUL" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP[uuid_1]/MonthCdPP" value="JULY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW2AUG" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP[uuid_1]/MonthCdPP" value="AUGUST"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW2SEP" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP[uuid_1]/MonthCdPP" value="SEPTEMBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW2OCT" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP[uuid_1]/MonthCdPP" value="OCTOBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW2NOV" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP[uuid_1]/MonthCdPP" value="NOVEMBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW2DEC" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/AdultCountPP/MonthPP[uuid_1]/MonthCdPP" value="DECEMBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW3JAN" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP[uuid_1]/MonthCdPP" value="JANUARY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW3FEB" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP[uuid_1]/MonthCdPP" value="FEBRUARY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW3MAR" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP[uuid_1]/MonthCdPP" value="MARCH"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW3APR" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP[uuid_1]/MonthCdPP" value="APRIL"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW3MAY" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP[uuid_1]/MonthCdPP" value="MAY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW3JUN" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP[uuid_1]/MonthCdPP" value="JUNE"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW3JUL" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP[uuid_1]/MonthCdPP" value="JULY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW3AUG" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP[uuid_1]/MonthCdPP" value="AUGUST"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW3SEP" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP[uuid_1]/MonthCdPP" value="SEPTEMBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW3OCT" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP[uuid_1]/MonthCdPP" value="OCTOBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW3NOV" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP[uuid_1]/MonthCdPP" value="NOVEMBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW3DEC" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/HalfOfTotalMinorsCountPP/MonthPP[uuid_1]/MonthCdPP" value="DECEMBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW4JAN" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP[uuid_1]/MonthCdPP" value="JANUARY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW4FEB" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP[uuid_1]/MonthCdPP" value="FEBRUARY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW4MAR" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP[uuid_1]/MonthCdPP" value="MARCH"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW4APR" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP[uuid_1]/MonthCdPP" value="APRIL"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW4MAY" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP[uuid_1]/MonthCdPP" value="MAY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW4JUN" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP[uuid_1]/MonthCdPP" value="JUNE"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW4JUL" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP[uuid_1]/MonthCdPP" value="JULY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW4AUG" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP[uuid_1]/MonthCdPP" value="AUGUST"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW4SEP" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP[uuid_1]/MonthCdPP" value="SEPTEMBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW4OCT" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP[uuid_1]/MonthCdPP" value="OCTOBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW4NOV" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP[uuid_1]/MonthCdPP" value="NOVEMBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP[uuid_1]/CountPP" tps="FDI$F8965/SRPW4DEC" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarPeopleCountPP/MonthPP[uuid_1]/MonthCdPP" value="DECEMBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP[uuid_1]/AmountPP" tps="FDI$F8965/SRPW5JAN" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP[uuid_1]/MonthCdPP" value="JANUARY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP[uuid_1]/AmountPP" tps="FDI$F8965/SRPW5FEB" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP[uuid_1]/MonthCdPP" value="FEBRUARY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP[uuid_1]/AmountPP" tps="FDI$F8965/SRPW5MAR" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP[uuid_1]/MonthCdPP" value="MARCH"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP[uuid_1]/AmountPP" tps="FDI$F8965/SRPW5APR" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP[uuid_1]/MonthCdPP" value="APRIL"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP[uuid_1]/AmountPP" tps="FDI$F8965/SRPW5MAY" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP[uuid_1]/MonthCdPP" value="MAY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP[uuid_1]/AmountPP" tps="FDI$F8965/SRPW5JUN" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP[uuid_1]/MonthCdPP" value="JUNE"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP[uuid_1]/AmountPP" tps="FDI$F8965/SRPW5JUL" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP[uuid_1]/MonthCdPP" value="JULY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP[uuid_1]/AmountPP" tps="FDI$F8965/SRPW5AUG" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP[uuid_1]/MonthCdPP" value="AUGUST"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP[uuid_1]/AmountPP" tps="FDI$F8965/SRPW5SEP" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP[uuid_1]/MonthCdPP" value="SEPTEMBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP[uuid_1]/AmountPP" tps="FDI$F8965/SRPW5OCT" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP[uuid_1]/MonthCdPP" value="OCTOBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP[uuid_1]/AmountPP" tps="FDI$F8965/SRPW5NOV" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP[uuid_1]/MonthCdPP" value="NOVEMBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP[uuid_1]/AmountPP" tps="FDI$F8965/SRPW5DEC" key="/Return/ReturnData/IRS8965/SharedRespHshldCoverageWksPP/FlatDollarAmtPP/MonthPP[uuid_1]/MonthCdPP" value="DECEMBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/FlatDollarAmtPP" tps="FDI$F8965/FJAN" key="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/MonthCdPP" value="JANUARY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/FlatDollarAmtPP" tps="FDI$F8965/FFEB" key="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/MonthCdPP" value="FEBRUARY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/FlatDollarAmtPP" tps="FDI$F8965/FMAR" key="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/MonthCdPP" value="MARCH"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/FlatDollarAmtPP" tps="FDI$F8965/FAPR" key="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/MonthCdPP" value="APRIL"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/FlatDollarAmtPP" tps="FDI$F8965/FMAY" key="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/MonthCdPP" value="MAY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/FlatDollarAmtPP" tps="FDI$F8965/FJUN" key="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/MonthCdPP" value="JUNE"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/FlatDollarAmtPP" tps="FDI$F8965/FJUL" key="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/MonthCdPP" value="JULY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/FlatDollarAmtPP" tps="FDI$F8965/FAUG" key="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/MonthCdPP" value="AUGUST"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/FlatDollarAmtPP" tps="FDI$F8965/FSEP" key="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/MonthCdPP" value="SEPTEMBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/FlatDollarAmtPP" tps="FDI$F8965/FOCT" key="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/MonthCdPP" value="OCTOBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/FlatDollarAmtPP" tps="FDI$F8965/FNOV" key="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/MonthCdPP" value="NOVEMBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/FlatDollarAmtPP" tps="FDI$F8965/FDEC" key="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/MonthCdPP" value="DECEMBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/ExcessHshldIncmAmtPP" tps="FDI$F8965/IJAN" key="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/MonthCdPP" value="JANUARY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/ExcessHshldIncmAmtPP" tps="FDI$F8965/IFEB" key="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/MonthCdPP" value="FEBRUARY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/ExcessHshldIncmAmtPP" tps="FDI$F8965/IMAR" key="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/MonthCdPP" value="MARCH"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/ExcessHshldIncmAmtPP" tps="FDI$F8965/IAPR" key="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/MonthCdPP" value="APRIL"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/ExcessHshldIncmAmtPP" tps="FDI$F8965/IMAY" key="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/MonthCdPP" value="MAY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/ExcessHshldIncmAmtPP" tps="FDI$F8965/IJUN" key="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/MonthCdPP" value="JUNE"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/ExcessHshldIncmAmtPP" tps="FDI$F8965/IJUL" key="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/MonthCdPP" value="JULY"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/ExcessHshldIncmAmtPP" tps="FDI$F8965/IAUG" key="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/MonthCdPP" value="AUGUST"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/ExcessHshldIncmAmtPP" tps="FDI$F8965/ISEP" key="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/MonthCdPP" value="SEPTEMBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/ExcessHshldIncmAmtPP" tps="FDI$F8965/IOCT" key="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/MonthCdPP" value="OCTOBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/ExcessHshldIncmAmtPP" tps="FDI$F8965/INOV" key="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/MonthCdPP" value="NOVEMBER"/>
+        <IndirectKeyValueMapping mef="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/ExcessHshldIncmAmtPP" tps="FDI$F8965/IDEC" key="/Return/ReturnData/IRS8965/FlatDollarAmountWksPP/FlatDollarOrExcessHshldIncmGrpPP/MonthlyFlatDollarOrExcessHshldIncmPP[uuid_1]/MonthCdPP" value="DECEMBER"/>
+    </MappingDefinitions>
+</MappingRuntime>

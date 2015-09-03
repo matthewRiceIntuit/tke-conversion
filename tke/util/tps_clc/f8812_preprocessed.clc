@@ -1,0 +1,173 @@
+
+FORM S2014US1040PER.F8812;
+var
+	h8812cr  : FDollar;
+	DoPart1, DoPart2, DoPart3 : Boolean;
+	EIthreshold : FDollar;
+	hQCDwITIN,
+	hQCDOrdinalNo	: Array[23] of FText;
+			_	:FText;
+CONSTANT
+	MaxQCDITIN = 22;
+
+
+
+Section Lines1to3;
+Begin
+	L1 := FWChTxCr.L8;
+	L2 := F1040.L47;
+	If HasValue(L1) or HasValue(L2) then
+		L3 := Max(0,(L1 - L2));
+	If (L3 > 0) then
+		DoPart1 := true;
+End;
+Section TaxableEI;
+Begin
+	If DoPart1 then
+		begin
+			If (FEARNINC.L26C > 0) then
+			L4 := FEARNINC.L26C
+			else
+			L4 := 0;
+		end;
+End;
+Section NTCombatpay;
+Begin
+	If DoPart1 and
+		(Fearninc.combatc > 0) then
+		L4B := Fearninc.combatc;
+End;
+Section Lines5and6;
+Begin
+	If DoPart1 then
+		begin
+			If (L4 > EIthreshold) then
+				begin
+					L5BY := Checked;
+					L5 := L4 - EIthreshold;
+					L6 := L5 * .15;
+				end
+			else
+				begin
+					L5BN := Checked;
+					L6 := 0;
+				end;
+		end;
+End;
+Section Lines7to9;
+Begin
+	If DoPart1 then
+		begin
+			If (FWCHTXCR.L1A < 3) then
+				begin
+					L7BN := Checked;
+					If (L6 > 0) then
+						DoPart3 := true;
+				end
+			else
+				begin
+					L7BY := Checked;
+					DoPart3 := true;
+					If (L6 < L3) then
+						DoPart2 := true;
+				end;
+			If DoPart2 then
+				begin
+					If IsChecked(FINFOWKS.FS2) then
+						begin
+							W2BOX4 := 0 + FW2Sum.TP4 + FW2Sum.SP4;
+						end
+					else
+						begin
+							W2BOX4 := 0 + FW2Sum.TP4;
+						end;
+					If IsChecked(FINFOWKS.FS2) then
+						begin
+							W2BOX6 := 0 + FW2Sum.TP6 + FW2Sum.SP6;
+						end
+					else
+						begin
+							W2BOX6 := 0 + FW2Sum.TP6;
+						end;
+					F8959MT := F8959.ADLMCTX5;
+					SUBTOT4 := W2BOX4 + W2BOX6 + F8959MT;
+					F8959MTW := F8959.ADLMCTX6;
+					SUBTOT6 := SUBTOT4 - F8959MTW;
+					F8959SE := F8959.ADDMCSE;
+					If IsChecked(FINFOWKS.FS2) then
+						begin
+							W2BOX14 := 0 + FW2Sum.TTIER1 + FW2Sum.STIER1;
+						end
+					else
+						begin
+							W2BOX14 := 0 + FW2Sum.TTIER1;
+						end;
+					If IsChecked(FINFOWKS.FS2) then
+						begin
+							W2BX14MT := 0 + FW2Sum.TRRMED + FW2Sum.TRRAMT + FW2Sum.SRRMED + FW2Sum.SRRAMT;
+						end
+					else
+						begin
+							W2BX14MT := 0 + FW2Sum.TRRMED + FW2Sum.TRRAMT;
+						end;
+					F8959RMT := F8959.ADDLMCRR;
+					SUBTOT11 := W2BOX14 + W2BX14MT + F8959RMT;
+					SUBTOT15 := CT24QTR + CT24QTMT + F8959AMT;
+					TOTS8812 := SUBTOT6 + F8959SE + SUBTOT11 + SUBTOT15;
+					L7 := TOTS8812;
+					If IsChecked(FINFOWKS.FS2) then
+						L8 := 0 + F1040.L27 + F1040.L53 + Max(0,(F1040.L57B - FW2SUM.hTPCODEA - FW2SUM.hSPCODEA))
+								+ Max(0,(F1040.L57C - FW2SUM.hTPCODEM - FW2SUM.hSPCODEM))
+					else
+						L8 := 0 + F1040.L27 + F1040.L53 + Max(0,(F1040.L57B - FW2SUM.hTPCODEA))
+								+ Max(0,(F1040.L57C - FW2SUM.hTPCODEM));
+					L9 := L7 + L8;
+				end;
+		end;
+End;
+Section EIC_SSxs;
+Begin
+	If DoPart2 then
+		begin
+			L10 := F1040.L60 + F1040.L61;
+		end;
+End;
+Section Line11;
+Begin
+	If DoPart2 then
+		begin
+			If (L9 > L10) then
+				L11 := L9 - L10
+			else
+				L11 := 0;
+			L12 := Max(L6, L11);
+		end;
+End;
+Section CTC;
+Begin
+	If DoPart3 then
+		begin
+			If IsChecked(L7BN) then
+			begin
+					L13 := Min(L3,L6);
+			end
+			else
+			If IsChecked(L7BY) then
+			begin
+				If DoPart2 then
+						L13 := Min(L3,L12)
+					else
+						L13 := L3;
+			end;
+			h8812cr := L13;
+		end;
+End;
+Section SetPor;
+Begin
+	If (L13 > 0) or (LastIndex(ITIN8812) > 0) then
+		begin
+			FormIs(PartOfReturn);
+			If IsNonFinalError() then
+			begin if( (FEFHDSUM.EFSSN <> 1) ) then begin if TestFormIs(PartOfReturn) then begin Test( _, ShouldBeFinal ); end; end; end;
+		end;
+End;

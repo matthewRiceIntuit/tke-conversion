@@ -111,7 +111,7 @@ class CalcListener(ParseTreeListener):
 
     # Enter a parse tree produced by CalcParser#call.
     def enterCall(self, ctx):
-        self.enter("Call",ctx.ID().getText())
+        self.enter("Call",ctx.ID().getText().lower())
 
     # Exit a parse tree produced by CalcParser#call.
     def exitCall(self, ctx):
@@ -189,7 +189,7 @@ class CalcListener(ParseTreeListener):
 
     # Enter a parse tree produced by CalcParser#FunctionCall.
     def enterFunctionCall(self, ctx):
-        self.enter("FunctionCall",ctx.ID().getText())
+        self.enter("FunctionCall",ctx.ID().getText().lower())
 
     # Exit a parse tree produced by CalcParser#FunctionCall.
     def exitFunctionCall(self, ctx):

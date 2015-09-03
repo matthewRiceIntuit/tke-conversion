@@ -34,8 +34,9 @@ def alternatives(root):
 
 
 # # antlr4 -Dlanguage=Python2 grammar/GistScript.g4
-## python script2gist.py test/testscript.txt
+# # python script2gist.py test/testscript.txt
 def script2gist(input_stream):
+    print input_stream
     lexer = GistScriptLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
     parser = GistScriptParser(token_stream)
