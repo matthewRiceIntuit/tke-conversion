@@ -19,3 +19,4 @@ class FieldMapForm(forms.ModelForm):
         super(FieldMapForm, self).__init__(*args, **kwargs)
         self.fields['tps'].widget.attrs.update({'placeholder': 'Enter TPS Field name to be mapped'})
         self.fields['tke'].widget.attrs.update({'placeholder': 'Enter MEF Mapping '})
+

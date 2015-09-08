@@ -381,8 +381,6 @@ class CalcListener(ParseTreeListener):
         # Enter a parse tree produced by CalcParser#MultiCopyAccumulate.
     def enterMulticopy_accum(self, ctx):
         self.enter("MultiCopyAccumulate");
-        #import ipdb;ipdb.set_trace()
-        #self.close("ID",ctx.ID().getText())
 
 
     # Exit a parse tree produced by CalcParser#MultiCopyAccumulate.

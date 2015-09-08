@@ -47,7 +47,7 @@
         </Nodes>
     </xsl:template>
 
-    <xsl:template match="Var">/Return/ReturnData/<xsl:value-of select="@val"/></xsl:template>
+    <xsl:template match="Var"><xsl:value-of select="@val"/></xsl:template>
     <xsl:template match="Tmp">/Temporary/Temp<xsl:value-of select="@val"/></xsl:template>
     <xsl:template match="Const">/Constants/<xsl:value-of select="@val"/></xsl:template>
     <xsl:template match="Named_param[Var]"><xsl:variable name="name" select="Name/@val"/><xsl:element name="{$name}">/Return/ReturnData/<xsl:value-of select="Var/@val"/></xsl:element></xsl:template>
@@ -56,7 +56,7 @@
     <xsl:template match="/Gistscript/Section">
         <Node><xsl:attribute name="name"><xsl:apply-templates select="*[1]"/></xsl:attribute>
             <Inputs>
-                <xsl:for-each select="Gist/Params[Name/@val='inputs']//Var">
+                <xsl:for-each select="Gist/Params[Name/@val='inputs']/Param_list/*">
                     <Input><xsl:apply-templates select="(.)"/></Input>
                 </xsl:for-each>
             </Inputs>
@@ -69,7 +69,7 @@
                 <xsl:variable name="gist" select="Gist/@val"/>
                 <xsl:element name="{$gist}">
                     <InputRoles>
-                        <xsl:for-each select="Gist/Params[Name/@val='inputs']/Param_list/Param">
+                        <xsl:for-each select="Gist/Params[Name/@val='inputs']/Param_list/*">
                             <Value><xsl:apply-templates select="."/></Value>
                         </xsl:for-each>
                     </InputRoles>

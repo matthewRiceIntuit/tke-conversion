@@ -1,0 +1,48 @@
+
+FORM S2014US1040PER.F8812;
+var
+	h8812cr  : FDollar;
+	DoPart1, DoPart2, DoPart3 : Boolean;
+	EIthreshold : FDollar;
+	hQCDwITIN,
+	hQCDOrdinalNo	: Array[23] of FText;
+			_	:FText;
+CONSTANT
+	MaxQCDITIN = 22;
+Section Generic;
+BEGIN
+    L1 := FWChTxCr.L8;
+    L2 := F1040.L47;
+    If HasValue(L1) or HasValue(L2) then
+        L3 := Max(0,(L1 - L2));
+
+    If (FEARNINC.L26C > 0) then
+                L4 := FEARNINC.L26C
+
+    If Fearninc.combatc > 0 then
+            L4B := Fearninc.combatc;
+
+    L5 := L4 - EIthreshold;
+    L6 := L5 * .15;
+
+    F8959SE := F8959.ADDMCSE;
+    TOTS8812 := SUBTOT6 + F8959SE + SUBTOT11 + SUBTOT15;
+    L7 := TOTS8812;
+
+    L8 := F1040.L27 + F1040.L53 + Max(0,(F1040.L57B - FW2SUM.hTPCODEA - FW2SUM.hSPCODEA))
+            + Max(0,(F1040.L57C - FW2SUM.hTPCODEM - FW2SUM.hSPCODEM))
+    L9 := L7 + L8;
+    L10 := F1040.L60 + F1040.L61;
+    L11 := Min(0,L9 - L10)
+    L12 := Max(L6, L11);
+
+    If IsChecked(L7BN) then
+    begin
+         L13 := Min(L3,L6);
+    end
+    else
+        begin
+             L13 := Min(L3,L12);
+        end;
+
+END;

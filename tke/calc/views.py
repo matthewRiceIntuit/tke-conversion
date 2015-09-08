@@ -15,7 +15,7 @@ from util.external_code import external_codes
 
 from .forms import FieldMapForm
 from .models import FieldMap
-
+from django.shortcuts import render, redirect, get_object_or_404
 
 def main(request, context=None, template_name="main.html"):
     context = {
@@ -63,4 +63,14 @@ def mappings(request, template_name='mappings.html'):
         if mapping_form.is_valid():
             mapping_form.save()
     return render(request, template_name, context)
+
+def bulk_mappings(request):
+    mappings = request.POST.get('bulk_mappings')
+    import json
+    for each in json.loads(mappings):
+        if not FieldMap.objects.filter(tps=each.get('tps').upper()).exists():
+            field = FieldMap.objects.create(tps=each.get('tps').upper(),tke=each.get('mef'))
+            field.save()
+            print each
+    return redirect('mappings')
 

@@ -42,16 +42,25 @@ def resolve_vars(root,use_tke=False):
 
 
 def name_temporarys(root):
-
+    names = set()
     for each in  root.xpath("/Nodes/Node[starts-with(@name,'/Temporary/')]"):
-        name= each.get('name','blah')
+        try:
+            name= each.get('name','blah')
 
-        node = root.xpath("/Nodes/Node[Gist//Value/text()='%s']" % name)
-        node_name="/Temporary/Temp%s"  % (node[0].get('name').split('/')[-1])
-        each.set("name",  node_name)
+            node = root.xpath("/Nodes/Node[Gist//Value/text()='%s']" % name)
+            node_name= _node_name="/Temporary/Temp%s"  % (node[0].get('name').split('/')[-1])
+            count=1
+            while node_name in names:
+                count+=1
+                node_name = _node_name + "_"+str(count)
+            names.add(node_name)
 
-        for value in root.xpath("//Value[text()='%s']" % name):
-            value.text = node_name
+            each.set("name",  node_name)
+
+            for value in root.xpath("//Value[text()='%s']|//Input[text()='%s']" % (name,name)):
+                value.text = node_name
+        except Exception:
+            pass
 
 
 

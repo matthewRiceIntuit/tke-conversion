@@ -103,7 +103,7 @@ full_id : ID sub_id?;
 sub_id : '.' ID;
 ID : [a-zA-Z_][a-zA-Z_0-9]* ;
 
-INT : '-'? [0-9]+ ('.' [0-9]+)?;
+INT : '-'? '.'? [0-9]+ ('.' [0-9]+)?;
 STRING : '"' .*? '"' ;
 BOOLEAN : 'true' | 'false' ;
 

@@ -56,6 +56,10 @@ def script2gist(input_stream):
     newroot = xslt(root, 'xslt/script2gist.xsl')
 
     name_temporarys(newroot)
+    print "###### script2gist ######"
+    pretty_print(newroot)
+
+    newroot = xslt(newroot, 'xslt/script2gist2.xsl')
 
     return pretty_print(newroot).replace('<!--', '').replace('-->', '')
 

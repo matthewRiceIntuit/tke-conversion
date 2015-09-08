@@ -16,7 +16,7 @@
             <xsl:copy-of select="@*|node()" />
         </DEPRECATE>
     </xsl:template>
-    <xsl:template match="INPUT[substring(.,1,1)='#']" ><INPUT><xsl:variable name="id" select="."/><xsl:value-of select="//INPUT[text()=$id]/../ID"/></INPUT></xsl:template>
+    <xsl:template match="INPUT[substring(.,1,1)='#']" ><INPUT> <xsl:variable name="id" select="."/><xsl:choose><xsl:when test="//INPUT[text()=$id and not(self::INPUT)]"><xsl:value-of select="//INPUT[text()=$id and not(self::INPUT)]/../ID"/></xsl:when><xsl:otherwise>@<xsl:value-of select="$id"/></xsl:otherwise></xsl:choose></INPUT></xsl:template>
     <xsl:template match="ID[substring(.,1,1)='#']" ><ID><xsl:variable name="id" select="."/><xsl:value-of select="//Assign[INPUT/text()=$id]/ID"/></ID></xsl:template>
 
 </xsl:stylesheet>
