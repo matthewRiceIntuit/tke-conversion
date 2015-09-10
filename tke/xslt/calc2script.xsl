@@ -15,6 +15,8 @@
 </xsl:template>
 
     <xsl:template match="Literal[@val='0']" mode="getID">$Zero</xsl:template>
+    <xsl:template match="Literal[@val='.15']" mode="getID">$FifteenPercent</xsl:template>
+
     <xsl:template match="Literal" mode="getID">$<xsl:value-of select="@val"/></xsl:template>
     <xsl:template match="Call[@val='hasvalue']|Call[@val='ischecked']" mode="getID">@<xsl:value-of select="ArgList/VarRef/ID/@val"/>IsNotBlank</xsl:template>
     <xsl:template match="Predicate[@val='&gt;']" mode="getID">@<xsl:value-of select="VarRef/ID/@val"/>AboveThreshold</xsl:template>

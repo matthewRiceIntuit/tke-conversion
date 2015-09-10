@@ -31,5 +31,51 @@
 
     </xsl:template>
 
+    <xsl:template match="Difference" >
+        <Difference>
+            <InputRoles>
+                <Left><xsl:value-of select="InputRoles/*[1]"/></Left>
+                <Right><xsl:value-of select="InputRoles/*[1]"/></Right>
+            </InputRoles>
+        </Difference>
+    </xsl:template>
+
+    <xsl:template match="AboveThreshold" >
+        <AboveThreshold>
+            <InputRoles>
+                <Value><xsl:value-of select="InputRoles/*[1]"/></Value>
+                <Threshold><xsl:value-of select="InputRoles/*[2]"/></Threshold>
+            </InputRoles>
+        </AboveThreshold>
+    </xsl:template>
+
+    <xsl:template match="Product[contains(InputRoles/Value[2]/text(),'Percent')]" >
+        <PercentageOf>
+            <InputRoles>
+                <Value><xsl:value-of select="InputRoles/*[1]"/></Value>
+                <Percentage><xsl:value-of select="InputRoles/*[2]"/></Percentage>
+            </InputRoles>
+            <Configuration>
+                <ValueType>income</ValueType>
+                <OutputType>penalty</OutputType>
+            </Configuration>
+        </PercentageOf>
+    </xsl:template>
+
+    <xsl:template match="Product" >
+        <Product>
+            <InputRoles>
+                <Product><xsl:value-of select="InputRoles/*[1]"/></Product>
+                <Product><xsl:value-of select="InputRoles/*[2]"/></Product>
+            </InputRoles>
+        </Product>
+    </xsl:template>
+
+
+    <xsl:template match="Nodes/Node[Gist/AboveThreshold]/PostProcessing" >
+    </xsl:template>
+
+
+
 
 </xsl:stylesheet>

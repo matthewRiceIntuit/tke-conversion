@@ -62,7 +62,17 @@ def name_temporarys(root):
         except Exception:
             pass
 
-
+def name_unmapped(root):
+    names = set()
+    for each in  root.xpath("//Node[contains(@name,'.')]"):
+        name = each.get('name').split('.')
+        each.set("name",  '%s/%s'%(name[0],name[1]))
+    for each in  root.xpath("//Value[contains(.,'.')]|//Input[contains(.,'.')]"):
+        name = each.text.split('.')
+        each.text = '/Return/ReturnData/UNMAPPED/%s_%s'%(name[0],name[1])
+    for each in root.xpath("/Nodes/InputNode[contains(@name,'.')]"):
+        name = each.get('name').split('.')
+        each.set("name",  '/Return/ReturnData/UNMAPPED/%s_%s'%(name[0],name[1]))
 
 
 

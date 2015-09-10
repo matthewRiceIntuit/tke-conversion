@@ -19,7 +19,7 @@ PROJECT_PATH = os.path.join(os.path.dirname(__file__), '..')
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 LOCAL_DB_PATH = os.path.join(BASE_DIR, '..', 'db.sqlite3')
-LOCAL = os.path.isfile(LOCAL_DB_PATH)
+IS_LOCAL = bool(os.path.isfile(LOCAL_DB_PATH))
 
 
 # Quick-start development settings - unsuitable for production
@@ -49,7 +49,7 @@ INSTALLED_APPS = (
     'util',
 )
 
-if not LOCAL:
+if not IS_LOCAL:
     INSTALLED_APPS += ('raven.contrib.django.raven_compat',)
 
 MIDDLEWARE_CLASSES = (
@@ -90,7 +90,7 @@ WSGI_APPLICATION = 'tke.wsgi.application'
 
 
 
-if not LOCAL:
+if not IS_LOCAL:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',

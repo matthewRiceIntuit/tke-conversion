@@ -27,27 +27,33 @@ def main(request, context=None, template_name="main.html"):
 
 
 def calc2script(request, template_name="main.html"):
+
     header = request.POST.get('header', '')
     tps_calc = request.POST['tps_calc'].strip()
-    if not bool(re.match('form ', tps_calc, re.I)):
-        if not bool(re.match('section ', tps_calc, re.I)):
-            tps_calc = header + "SECTION GENERIC;\nBEGIN\n" + tps_calc + "\nEND;"
-        else:
-            tps_calc = header + tps_calc
+    try:
+        if not bool(re.match('form ', tps_calc, re.I)):
+            if not bool(re.match('section ', tps_calc, re.I)):
+                tps_calc = header + "SECTION GENERIC;\nBEGIN\n" + tps_calc + "\nEND;"
+            else:
+                tps_calc = header + tps_calc
 
-    stream = InputStream(tps_calc)
+        stream = InputStream(tps_calc)
 
-    gistscript = convert(stream)
+        gistscript = convert(stream)
 
-    gists = script2gist(InputStream(gistscript))
+        gists = script2gist(InputStream(gistscript))
 
-    codes = external_codes(gists)
+        codes = external_codes(gists)
 
-    data = {'calc2script': gistscript,
-            'script2gist': gists,
-            'external_codes': codes }
+        data = {'calc2script': gistscript,
+                'script2gist': gists,
+                'external_codes': codes }
 
-    response = HttpResponse(json.dumps(data, indent=1) + "\n", content_type="application/json")
+        response = HttpResponse(json.dumps(data, indent=1) + "\n", content_type="application/json")
+    except Exception, e:
+        import os
+        import sys, traceback
+        response =  HttpResponse(json.dumps({'error':str(e)+"\n\n\n"+traceback.format_exc()}, indent=1) + "\n", content_type="application/json")
     response.set_cookie('tke_header', value=header)
     response.set_cookie('tps_calc', value=request.POST['tps_calc'])
     return response

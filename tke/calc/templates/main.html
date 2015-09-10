@@ -139,9 +139,14 @@ END;
     function calc2script(){
         $.post('{% url "calc2script" %}', $('#tps_form').serialize()).
                 done(function (data) {
-                    $('#gistscript').text(data.calc2script)
-                    $('#graph').text(data.script2gist)
-                    $('#external').text(data.external_codes)
+                    if (data.error){
+                        $('#graph').text(data.error)
+                    }
+                    else{
+                        $('#gistscript').text(data.calc2script)
+                        $('#graph').text(data.script2gist)
+                        $('#external').text(data.external_codes)
+                    }
                     $('#tab_graph').click()
                 });
 

@@ -7,7 +7,16 @@
     <xsl:key name="tmps" match="//Tmp/@val" use="." />
 
     <xsl:template match="/">
-        <Nodes>
+        <Nodes
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="TKE_Calc_Graph.xsd" >
+        <xsl:attribute name="topic">TkeConverter</xsl:attribute>
+        <Versions>
+            <Version id="TKE.Calc.Runtime">1</Version>
+            <Version id="TKE.Calc.FileFormat">4</Version>
+            <Version id="TKE.Gist">1</Version>
+            <Version id="TKE.MeF">1</Version>
+        </Versions>
             <xsl:apply-templates/>
 
             <xsl:comment>
@@ -19,9 +28,9 @@
 
 </xsl:text>
             </xsl:comment>
-            <xsl:for-each select="//Var/@val[generate-id() = generate-id(key('vars',.)[1])]">
+            <xsl:for-each select="/Gistscript/Section/Gist//Var/@val[generate-id() = generate-id(key('vars',.)[1])]">
                 <xsl:sort/>
-                <InputNode><xsl:attribute name="name">/Return/ReturnData/<xsl:value-of select="."/></xsl:attribute>
+                <InputNode><xsl:attribute name="name"><xsl:value-of select="."/></xsl:attribute>
 
                     <PostProcessing>
                         <RoundTo>
@@ -32,9 +41,9 @@
                 </InputNode>
             </xsl:for-each>
 
-            <xsl:for-each select="//Tmp/@val[generate-id() = generate-id(key('tmps',.)[1])]">
+            <xsl:for-each select="/Gistscript/Section/Gist//Tmp/@val[generate-id() = generate-id(key('tmps',.)[1])]">
 
-                <InputNode><xsl:attribute name="name">/Temporary/EIC/<xsl:value-of select="."/></xsl:attribute>
+                <InputNode><xsl:attribute name="name">/Temporary/<xsl:value-of select="."/></xsl:attribute>
                     <PostProcessing>
                         <RoundTo>
                             <Dollars/>
@@ -42,6 +51,18 @@
                         <ZeroIfBlank/>
                     </PostProcessing>
                 </InputNode>
+            </xsl:for-each>
+
+            <xsl:for-each select="/Gistscript/Section/Gist//Const">
+
+                <ConstantNode><xsl:attribute name="name">/Constants/<xsl:value-of select="@val"/></xsl:attribute>
+                    <PostProcessing>
+                        <RoundTo>
+                            <Dollars/>
+                        </RoundTo>
+                        <ZeroIfBlank/>
+                    </PostProcessing>
+                </ConstantNode>
             </xsl:for-each>
 
         </Nodes>
