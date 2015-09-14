@@ -11,7 +11,7 @@ from grammar.CalcLexer import CalcLexer
 
 from util import pretty_print, xslt, write, xslt_text
 from patterns import accumulations, multiplications,difference
-from resolve_vars import resolve_vars, assign_ids
+from resolve_vars import resolve_vars, assign_ids ,clean_temps
 
 
 # # python calc.py tps_clc/nontaxablecombsatpay.clc
@@ -55,6 +55,8 @@ def convert(input_stream):
     root = xslt(root, 'xslt/calc2script2.xsl')
     print "## calc2script2 ##"
     pretty_print(root)
+
+    clean_temps(root)
 
     text = xslt_text(root, 'xslt/calc2script3.xsl')
     print "## calc2script3 ##"

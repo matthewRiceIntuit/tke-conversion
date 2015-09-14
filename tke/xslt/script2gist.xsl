@@ -43,7 +43,7 @@
 
             <xsl:for-each select="/Gistscript/Section/Gist//Tmp/@val[generate-id() = generate-id(key('tmps',.)[1])]">
 
-                <InputNode><xsl:attribute name="name">/Temporary/<xsl:value-of select="."/></xsl:attribute>
+                <InputNode><xsl:attribute name="name">/Temporary/Temp<xsl:value-of select="."/></xsl:attribute>
                     <PostProcessing>
                         <RoundTo>
                             <Dollars/>
@@ -65,6 +65,8 @@
                 </ConstantNode>
             </xsl:for-each>
 
+
+
         </Nodes>
     </xsl:template>
 
@@ -83,7 +85,7 @@
             </Inputs>
             <xsl:if test="Gist/Params/Name[@val='BlankIfFalse']">
                 <BlankCondition>
-                    <BlankIfFalse><xsl:value-of select="Gist/Params[Name/@val='BlankIfFalse']/Param/*/@val"/></BlankIfFalse>
+                    <BlankIfFalse><xsl:apply-templates  select="Gist/Params[Name/@val='BlankIfFalse']/Param/*[1]"/></BlankIfFalse>
                 </BlankCondition>
             </xsl:if>
             <Gist>
@@ -96,12 +98,6 @@
                     </InputRoles>
                 </xsl:element>
             </Gist>
-            <PostProcessing>
-                <RoundTo>
-                    <Dollars/>
-                </RoundTo>
-                <ZeroIfBlank/>
-            </PostProcessing>
         </Node>
 
 <xsl:comment>

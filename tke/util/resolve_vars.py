@@ -56,15 +56,22 @@ def name_temporarys(root):
             names.add(node_name)
 
             each.set("name",  node_name)
-
-            for value in root.xpath("//Value[text()='%s']|//Input[text()='%s']" % (name,name)):
+            for value in root.xpath("//*[text()='%s']" % name):
                 value.text = node_name
+            for value in root.xpath("//*[@name='%s']" % name):
+                value.set('name',node_name)
         except Exception:
             pass
 
+    for each in  root.xpath("//*[starts-with(@name,'/Temp/')]"):
+        name= each.get('name','blah')
+        each.set("name",  "/Temporary" + name[5:])
+    for each in  root.xpath("//*[starts-with(text(),'/Temp/')]"):
+        each.text =  "/Temporary" + each.text[5:]
+
 def name_unmapped(root):
     names = set()
-    for each in  root.xpath("//Node[contains(@name,'.')]"):
+    for each in  root.xpath("r"):
         name = each.get('name').split('.')
         each.set("name",  '%s/%s'%(name[0],name[1]))
     for each in  root.xpath("//Value[contains(.,'.')]|//Input[contains(.,'.')]"):
@@ -79,6 +86,12 @@ def name_unmapped(root):
 def assign_ids(root):
     section = ''#root.xpath('/CALC/Section/@val')[0]
     count=1
-    for each in root.xpath("//and|//DivMul|//AddSub|//FunctionCall"):
+    for each in root.xpath("//and|//or|//DivMul|//AddSub|//FunctionCall"):
         each.attrib['id']="%s_%s"%(section,count)
         count+=1
+
+def clean_temps(root):
+    for each in root.xpath("//*[starts-with(text(),'@/Return/ReturnData/')]"):
+        name = each.text.split('/')[-1]
+        each.text = '/Temp/Temp'+name
+    return root

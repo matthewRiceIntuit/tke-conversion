@@ -27,6 +27,12 @@
                     <NoOtherOption>false</NoOtherOption>
                 </DefaultOption>
             </ChoiceMapping>
+            <PostProcessing>
+                <RoundTo>
+                    <Dollars/>
+                </RoundTo>
+                <ZeroIfBlank/>
+            </PostProcessing>
         </NumericChoice>
 
     </xsl:template>
@@ -35,9 +41,15 @@
         <Difference>
             <InputRoles>
                 <Left><xsl:value-of select="InputRoles/*[1]"/></Left>
-                <Right><xsl:value-of select="InputRoles/*[1]"/></Right>
+                <Right><xsl:value-of select="InputRoles/*[2]"/></Right>
             </InputRoles>
         </Difference>
+        <PostProcessing>
+            <RoundTo>
+                <Dollars/>
+            </RoundTo>
+            <ZeroIfBlank/>
+        </PostProcessing>
     </xsl:template>
 
     <xsl:template match="AboveThreshold" >
@@ -47,20 +59,42 @@
                 <Threshold><xsl:value-of select="InputRoles/*[2]"/></Threshold>
             </InputRoles>
         </AboveThreshold>
+        <PostProcessing>
+            <RoundTo>
+                <Dollars/>
+            </RoundTo>
+            <ZeroIfBlank/>
+        </PostProcessing>
     </xsl:template>
 
-    <xsl:template match="Product[contains(InputRoles/Value[2]/text(),'Percent')]" >
-        <PercentageOf>
+    <xsl:template match="Cap" >
+        <Cap>
             <InputRoles>
                 <Value><xsl:value-of select="InputRoles/*[1]"/></Value>
-                <Percentage><xsl:value-of select="InputRoles/*[2]"/></Percentage>
+                <Cap><xsl:value-of select="InputRoles/*[2]"/></Cap>
             </InputRoles>
             <Configuration>
-                <ValueType>income</ValueType>
-                <OutputType>penalty</OutputType>
+                <ValueType>penalty</ValueType>
             </Configuration>
-        </PercentageOf>
+        </Cap>
+        <PostProcessing>
+            <RoundTo>
+                <Dollars/>
+            </RoundTo>
+            <ZeroIfBlank/>
+        </PostProcessing>
     </xsl:template>
+
+    <xsl:template match="AtLeastOneConditionTrue" >
+        <AtLeastOneConditionTrue>
+            <InputRoles>
+                <xsl:for-each select="InputRoles/*">
+                    <Condition><xsl:value-of select="."/></Condition>
+                </xsl:for-each>
+            </InputRoles>
+        </AtLeastOneConditionTrue>
+    </xsl:template>
+
 
     <xsl:template match="Product" >
         <Product>

@@ -38,7 +38,8 @@
 
     <xsl:template match="node()[ID[not(normalize-space())]]"></xsl:template>
 
-    <xsl:template match="Max|AboveThreshold|Accumulate|Product|Difference|Threshold|Cap">
+    <xsl:template match="Max|AboveThreshold|Accumulate|Product|Difference|Threshold|Cap|AtLeastOneConditionTrue">
+
         <xsl:param name="extra"/>
         <xsl:param name="blankiffalse"/>
 

@@ -14,15 +14,18 @@
     ]
 </xsl:template>
 
+    <xsl:template match="FunctionCall" mode="getID"><xsl:apply-templates mode="getID"/></xsl:template>
+
     <xsl:template match="Literal[@val='0']" mode="getID">$Zero</xsl:template>
     <xsl:template match="Literal[@val='.15']" mode="getID">$FifteenPercent</xsl:template>
 
     <xsl:template match="Literal" mode="getID">$<xsl:value-of select="@val"/></xsl:template>
-    <xsl:template match="Call[@val='hasvalue']|Call[@val='ischecked']" mode="getID">@<xsl:value-of select="ArgList/VarRef/ID/@val"/>IsNotBlank</xsl:template>
+    <xsl:template match="Call[@val='hasvalue']|Call[@val='ischecked']" mode="getID"><xsl:choose><xsl:when test="name(..)='Assign'"><xsl:value-of select="../ID/@val"/></xsl:when><xsl:otherwise>@<xsl:value-of select="ArgList/VarRef/ID/@val"/>IsNotBlank</xsl:otherwise></xsl:choose></xsl:template>
     <xsl:template match="Predicate[@val='&gt;']" mode="getID">@<xsl:value-of select="VarRef/ID/@val"/>AboveThreshold</xsl:template>
     <xsl:template match="Predicate[@val='&lt;']" mode="getID">@<xsl:value-of select="VarRef/ID/@val"/>BelowThreshold</xsl:template>
     <xsl:template match="VarRef" mode="getID"><xsl:choose><xsl:when test="name(..)='Assign'"><xsl:value-of select="../ID/@val"/></xsl:when><xsl:otherwise><xsl:value-of select="ID/@val"/></xsl:otherwise></xsl:choose></xsl:template>
     <xsl:template match="and" mode="getID">@AllConditionsTrue<xsl:value-of select="@id"/></xsl:template>
+    <xsl:template match="or" mode="getID">@AtLeastOneConditionTrue<xsl:value-of select="@id"/></xsl:template>
     <xsl:template match="DivMul|Multiply" mode="getID"><xsl:choose><xsl:when test="name(..)='Assign'"><xsl:value-of select="../ID/@val"/></xsl:when><xsl:otherwise>@DivMul<xsl:value-of select="@id"/></xsl:otherwise></xsl:choose></xsl:template>
     <xsl:template match="AddSub|Accumulate|Difference" mode="getID"><xsl:choose><xsl:when test="name(..)='Assign'"><xsl:value-of select="../ID/@val"/></xsl:when><xsl:otherwise>@AddSub<xsl:value-of select="@id"/></xsl:otherwise></xsl:choose></xsl:template>
     <xsl:template match="FunctionCall" mode="getID"><xsl:choose><xsl:when test="name(..)='Assign'"><xsl:value-of select="../ID/@val"/></xsl:when><xsl:otherwise><xsl:apply-templates/></xsl:otherwise></xsl:choose></xsl:template>
@@ -32,7 +35,7 @@
 
     <xsl:template match="Call[@val='hasvalue']|Call[@val='ischecked']">
         <IsNotBlank>
-            <ID><xsl:apply-templates  mode="getID"/>IsNotBlank</ID>
+            <ID>@<xsl:apply-templates  mode="getID"/>IsNotBlank</ID>
             <INPUT><xsl:apply-templates  mode="getID"/></INPUT>
         </IsNotBlank>
     </xsl:template>
@@ -68,7 +71,7 @@
         </IF>
     </xsl:template>
 
-    <xsl:template match="Call[@val='HasValue']|Call[@val='IsChecked']">
+    <xsl:template match="Call[@val='hasvalue']|Call[@val='IsChecked']">
         <IsNotBlank>
             <ID><xsl:apply-templates select="."  mode="getID"/></ID>
             <INPUT><xsl:value-of select="ArgList/VarRef/ID/@val"/></INPUT>
@@ -103,6 +106,16 @@
         </Product>
         <xsl:apply-templates/>
 
+    </xsl:template>
+
+    <xsl:template match="or">
+        <AtLeastOneConditionTrue>
+            <ID><xsl:apply-templates select="."  mode="getID"/></ID>
+            <xsl:for-each select="*">
+                <INPUT><xsl:apply-templates   mode="getID"/></INPUT>
+            </xsl:for-each>
+        </AtLeastOneConditionTrue>
+        <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:template match="AddSub[@val='+']|Accumulate">
