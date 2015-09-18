@@ -52,11 +52,12 @@ def convert(input_stream):
     print "## calc2script ##"
     pretty_print(root)
 
+    clean_temps(root)
+
     root = xslt(root, 'xslt/calc2script2.xsl')
     print "## calc2script2 ##"
     pretty_print(root)
 
-    clean_temps(root)
 
     text = xslt_text(root, 'xslt/calc2script3.xsl')
     print "## calc2script3 ##"

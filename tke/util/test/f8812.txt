@@ -22,7 +22,7 @@ BEGIN
     If Fearninc.combatc > 0 then
             L4B := Fearninc.combatc;
 
-    L5 := L4 - EIthreshold;
+    L5 := L4 - 3000;
     L6 := L5 * .15;
 
     F8959SE := F8959.ADDMCSE;

@@ -28,14 +28,20 @@ def resolve_vars(root,use_tke=False):
         if None is e or e.tag != 'Sub_ID':
             id= str("%s.%s" % (form,each.attrib['val']) ).upper()
             if use_tke:
-                each.attrib['val'] = map.get(id,id)
+                if id in map:
+                    each.attrib['val'] = map.get(id)
+                else:
+                    each.attrib['val'] = "/Return/ReturnData/UNMAPPED/"+ str("%s_%s" %(form,each.attrib['val']) ).upper()
             else:
                 each.attrib['val'] = id
 
         else:
             id= str("%s.%s" % (each.attrib['val'],e.attrib['val'])).upper()
             if use_tke:
-                each.attrib['val'] = map.get(id,id)
+                if id in map:
+                    each.attrib['val'] = map.get(id,id)
+                else:
+                    each.attrib['val'] = "/Return/ReturnData/UNMAPPED/"+ str("%s_%s" % (each.attrib['val'],e.attrib['val'])).upper()
             else:
                 each.attrib['val'] = id
             e.getparent().remove(e)
@@ -93,5 +99,20 @@ def assign_ids(root):
 def clean_temps(root):
     for each in root.xpath("//*[starts-with(text(),'@/Return/ReturnData/')]"):
         name = each.text.split('/')[-1]
-        each.text = '/Temp/Temp'+name
+        each.text = '/Temporary/Temp'+name
+
+    constants  = etree.parse("/Users/mrice/Dev/TaxContent/tax/ty14/branches/feature/tke_top_ten_fed_indiv/federal/incometax/us/indiv/tke/constants/src/main/resources/fdi-constants.xml")
+    for each in root.xpath("//*[starts-with(text(),'$')]"):
+        name = each.text[1:].replace(".",'')
+        const = constants.xpath('//*[@fixed="%s"]' % name)
+        if const:
+            each.text = "$"+get_const_name(const[0])
+
     return root
+
+def get_const_name(node):
+    name = node.tag
+    while node.getparent().tag != 'Constants':
+        node=node.getparent()
+        name = "%s/%s" % (node.tag,name)
+    return name

@@ -5,6 +5,9 @@ from django.conf import settings
 
 from antlr4 import *
 from antlr4.InputStream import InputStream
+import xmlformatter
+import random
+import string
 
 from grammar.GistScriptParser import GistScriptParser
 from grammar.GistScriptListener import GistScriptListener
@@ -95,10 +98,10 @@ def generate_inputs(root):
                 node = etree.Element(tag)
                 parent.append(node)
                 parent = node
-        parent.text = '9999'
+        parent.text = (''.join(random.choice(string.digits ) for _ in range(2)))+"00"
 
 
-    import xmlformatter
+
     formatter = xmlformatter.Formatter()
     pretty = formatter.format_string(etree.tostring(input_xml))
     with open(filename, 'w') as f: f.write( pretty )
@@ -111,16 +114,20 @@ def generate_schema(root):
     filename = 'util/mapping/ElementTypesReturn1040.xml'
     schema = etree.parse(filename)
     parent  =   schema.xpath('/Return/ReturnData/UNMAPPED')[0]
-
-    for each in root.xpath('//InputNode/@name[starts-with(.,"/Return/ReturnData/UNMAPPED")]'):
+    dirty=False
+    for each in root.xpath('//InputNode/@name[starts-with(.,"/Return/ReturnData/UNMAPPED")]|/Nodes/Node[starts-with(@name,"/Return/ReturnData/UNMAPPED")]/@name'):
         if schema.xpath(each):
             continue
         node = etree.SubElement(parent, each.split('/')[-1])
         node.set('baseType',"xsd:integer")
         node.set('structure',"field")
         node.set('type',"USAmountType")
-    pretty_print(parent)
+        dirty=True
 
+    if dirty:
+        formatter = xmlformatter.Formatter()
+        pretty = formatter.format_string(etree.tostring(schema))
+        with open(filename, 'w') as f: f.write( pretty )
 
 
 

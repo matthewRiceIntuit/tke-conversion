@@ -60,7 +60,7 @@
                 </xsl:for-each>
             </InputRoles>
             <Configuration>
-                <Type>income</Type>
+                <Type>UNKNOWN</Type>
             </Configuration>
         </Accumulation>
         <PostProcessing>
@@ -93,7 +93,7 @@
                 <Cap><xsl:value-of select="InputRoles/*[2]"/></Cap>
             </InputRoles>
             <Configuration>
-                <ValueType>penalty</ValueType>
+                <ValueType>UKNOWN</ValueType>
             </Configuration>
         </Cap>
         <PostProcessing>
@@ -124,6 +124,19 @@
         </Product>
     </xsl:template>
 
+    <xsl:template match="PercentageOf" >
+        <PercentageOf>
+            <InputRoles>
+                <Value><xsl:value-of select="InputRoles/*[1]"/></Value>
+                <Percentage><xsl:value-of select="InputRoles/*[2]"/></Percentage>
+            </InputRoles>
+            <Configuration>
+                <ValueType>UNKNOWN</ValueType>
+                <OutputType>UNKNOWN</OutputType>
+            </Configuration>
+        </PercentageOf>
+
+    </xsl:template>
 
     <xsl:template match="Nodes/Node[Gist/AboveThreshold]/PostProcessing" >
     </xsl:template>

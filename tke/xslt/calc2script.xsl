@@ -16,8 +16,10 @@
 
     <xsl:template match="FunctionCall" mode="getID"><xsl:apply-templates mode="getID"/></xsl:template>
 
+    <!--
     <xsl:template match="Literal[@val='0']" mode="getID">$Zero</xsl:template>
     <xsl:template match="Literal[@val='.15']" mode="getID">$FifteenPercent</xsl:template>
+    -->
 
     <xsl:template match="Literal" mode="getID">$<xsl:value-of select="@val"/></xsl:template>
     <xsl:template match="Call[@val='hasvalue']|Call[@val='ischecked']" mode="getID"><xsl:choose><xsl:when test="name(..)='Assign'"><xsl:value-of select="../ID/@val"/></xsl:when><xsl:otherwise>@<xsl:value-of select="ArgList/VarRef/ID/@val"/>IsNotBlank</xsl:otherwise></xsl:choose></xsl:template>

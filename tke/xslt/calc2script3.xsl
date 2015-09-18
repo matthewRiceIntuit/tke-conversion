@@ -40,6 +40,19 @@
 
     <xsl:template match="node()[ID[not(normalize-space())]]"></xsl:template>
 
+    <xsl:template match="Product[INPUT[contains(.,'Percent')]]">
+
+        <xsl:param name="extra"/>
+        <xsl:param name="blankiffalse"/>
+
+        <xsl:value-of select='$extra'/><xsl:apply-templates select="ID"/> = PercentageOf( inputs:[
+        <xsl:for-each select="INPUT">
+            <xsl:apply-templates select="."/>,
+        </xsl:for-each>]<xsl:if test="$blankiffalse">
+        ,BlankIfFalse : <xsl:value-of select="$blankiffalse"/></xsl:if>)
+
+    </xsl:template>
+
     <xsl:template match="Max|AboveThreshold|Accumulation|Product|Difference|Threshold|Cap|AtLeastOneConditionTrue">
 
         <xsl:param name="extra"/>
@@ -89,6 +102,9 @@
         </xsl:for-each>
 
     </xsl:template>
+
+
+
 
 
 </xsl:stylesheet>
