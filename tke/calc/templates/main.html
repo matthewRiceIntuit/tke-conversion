@@ -106,6 +106,8 @@
         <div id="tab_gistscript" type="gistscript" class="tab ">GistScript™</div>
         <div id="tab_graph" class="tab  " type="graph">Graph</div>
         <div id="tab_external" class="tab  " type="external">External Code</div>
+        <div id="tab_inputs" class="tab  " type="inputs">Inputs</div>
+        <div id="tab_schema" class="tab " type="schema">Schema</div>
         <div id="tab_mappings" class="tab last " type="mappings">Mappings</div>
 
     </div>
@@ -130,6 +132,8 @@ END;
         <textarea style='display:none' id="gistscript" name="gistscript"></textarea>
         <textarea style='display:none' id="graph" name="graph"></textarea>
         <textarea style='display:none' id="external" name="external"></textarea>
+        <textarea style='display:none' id="inputs" name="inputs"></textarea>
+        <textarea style='display:none' id="schema" name="schema"></textarea>
 
     </form>
 
@@ -146,6 +150,9 @@ END;
                         $('#gistscript').text(data.calc2script)
                         $('#graph').text(data.script2gist)
                         $('#external').text(data.external_codes)
+                        $('#inputs').text(data.inputs)
+                        $('#schema').text(data.schema)
+
                     }
                     $('#tab_graph').click()
                 });

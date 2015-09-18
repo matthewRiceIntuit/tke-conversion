@@ -71,9 +71,9 @@ def name_temporarys(root):
 
 def name_unmapped(root):
     names = set()
-    for each in  root.xpath("r"):
+    for each in  root.xpath("/Nodes/Node[contains(@name,'.')]"):
         name = each.get('name').split('.')
-        each.set("name",  '%s/%s'%(name[0],name[1]))
+        each.set("name",  '/Return/ReturnData/UNMAPPED/%s_%s'%(name[0],name[1]))
     for each in  root.xpath("//Value[contains(.,'.')]|//Input[contains(.,'.')]"):
         name = each.text.split('.')
         each.text = '/Return/ReturnData/UNMAPPED/%s_%s'%(name[0],name[1])

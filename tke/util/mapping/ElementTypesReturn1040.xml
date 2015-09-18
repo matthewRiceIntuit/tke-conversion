@@ -159,10 +159,17 @@
         </ACAPP>
     </ReturnHeader>
     <ReturnData structure="group" sequence="138">
+
         <UNMAPPED structure="form">
-        <FEARNINC_L26C baseType="xsd:integer" structure="field" type="USAmountType"></FEARNINC_L26C>
+            <FEARNINC_L26C baseType="xsd:integer" structure="field" type="USAmountType"/>
+            <FWCHTXCR_L8 baseType="xsd:integer" structure="field" type="USAmountType"/>
+            <F8812_F8959SE baseType="xsd:integer" structure="field" type="USAmountType"/>
+            <F8812_SUBTOT11 baseType="xsd:integer" structure="field" type="USAmountType"/>
+            <F8812_SUBTOT15 baseType="xsd:integer" structure="field" type="USAmountType"/>
+            <F8812_SUBTOT6 baseType="xsd:integer" structure="field" type="USAmountType"/>
+            <F8812.TOTS8812 baseType="xsd:integer" structure="field" type="USAmountType"/>
         </UNMAPPED>
-        <IRS1040 structure="form" sequence="139">
+    <IRS1040 structure="form" sequence="139">
             <SpecialConditionDesc baseType="xsd:string" structure="field" multiCopy="true" sequence="140"></SpecialConditionDesc>
             <PrimaryDeathDt baseType="xsd:date" structure="field" type="DateType" sequence="141"></PrimaryDeathDt>
             <SpouseDeathDt baseType="xsd:date" structure="field" type="DateType" sequence="142"></SpouseDeathDt>

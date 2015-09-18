@@ -22,7 +22,9 @@
 
     <xsl:template match="Assign">
         <xsl:param name="extra"/>
-        <xsl:value-of select='$extra'/><xsl:value-of select="ID"/> = NumericCopy(inputs:[ <xsl:apply-templates select="INPUT"/> ])
+        <xsl:param name="blankiffalse"/>
+        <xsl:value-of select='$extra'/><xsl:value-of select="ID"/> = NumericCopy(inputs:[ <xsl:apply-templates select="INPUT"/> ]<xsl:if test="$blankiffalse">
+        ,BlankIfFalse : <xsl:value-of select="$blankiffalse"/></xsl:if>)
 
     </xsl:template>
 
@@ -38,7 +40,7 @@
 
     <xsl:template match="node()[ID[not(normalize-space())]]"></xsl:template>
 
-    <xsl:template match="Max|AboveThreshold|Accumulate|Product|Difference|Threshold|Cap|AtLeastOneConditionTrue">
+    <xsl:template match="Max|AboveThreshold|Accumulation|Product|Difference|Threshold|Cap|AtLeastOneConditionTrue">
 
         <xsl:param name="extra"/>
         <xsl:param name="blankiffalse"/>
@@ -83,16 +85,7 @@
         <xsl:apply-templates select="TEST"/>
 
         <xsl:for-each select="THEN/*">
-            <xsl:choose>
-                <xsl:when test="substring(ID,1,1)!='@'" >
-                    <xsl:apply-templates select="."><xsl:with-param name="blankiffalse"><xsl:value-of select="../../TEST//ID"/></xsl:with-param></xsl:apply-templates>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:apply-templates select="."/>
-                </xsl:otherwise>
-
-            </xsl:choose>
-
+            <xsl:apply-templates select="."><xsl:with-param name="blankiffalse"><xsl:value-of select="../../TEST//ID"/></xsl:with-param></xsl:apply-templates>
         </xsl:for-each>
 
     </xsl:template>

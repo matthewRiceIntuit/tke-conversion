@@ -52,6 +52,25 @@
         </PostProcessing>
     </xsl:template>
 
+    <xsl:template match="Accumulation" >
+        <Accumulation>
+            <InputRoles>
+                <xsl:for-each select="InputRoles/*">
+                    <Value><xsl:value-of select="."/></Value>
+                </xsl:for-each>
+            </InputRoles>
+            <Configuration>
+                <Type>income</Type>
+            </Configuration>
+        </Accumulation>
+        <PostProcessing>
+            <RoundTo>
+                <Dollars/>
+            </RoundTo>
+            <ZeroIfBlank/>
+        </PostProcessing>
+    </xsl:template>
+
     <xsl:template match="AboveThreshold" >
         <AboveThreshold>
             <InputRoles>

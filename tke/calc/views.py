@@ -8,14 +8,16 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from antlr4 import InputStream
 
+# from util.util import pretty_print
 from util.calc2script import convert
-from util.script2gist import script2gist
+from util.script2gist import script2gist, generate_inputs, generate_schema
 from util.external_code import external_codes
-
+from util.util import pretty_print
 
 from .forms import FieldMapForm
 from .models import FieldMap
 from django.shortcuts import render, redirect, get_object_or_404
+
 
 def main(request, context=None, template_name="main.html"):
     context = {
@@ -41,19 +43,25 @@ def calc2script(request, template_name="main.html"):
 
         gistscript = convert(stream)
 
-        gists = script2gist(InputStream(gistscript))
+        gists_xml = script2gist(InputStream(gistscript))
+        gists = pretty_print(gists_xml).replace('<!--', '').replace('-->', '')
+
+        inputs = generate_inputs(gists_xml)
+        generate_schema(gists_xml)
 
         codes = external_codes(gists)
 
         data = {'calc2script': gistscript,
                 'script2gist': gists,
-                'external_codes': codes }
+                'inputs': inputs,
+                'external_codes': codes}
 
         response = HttpResponse(json.dumps(data, indent=1) + "\n", content_type="application/json")
     except Exception, e:
         import os
         import sys, traceback
-        response =  HttpResponse(json.dumps({'error':str(e)+"\n\n\n"+traceback.format_exc()}, indent=1) + "\n", content_type="application/json")
+
+        response = HttpResponse(json.dumps({'error': str(e) + "\n\n\n" + traceback.format_exc()}, indent=1) + "\n", content_type="application/json")
     response.set_cookie('tke_header', value=header)
     response.set_cookie('tps_calc', value=request.POST['tps_calc'])
     return response
@@ -61,6 +69,7 @@ def calc2script(request, template_name="main.html"):
 
 def mappings(request, template_name='mappings.html'):
     import os
+
     context = {
         'mappings': FieldMap.objects.all().order_by('tps'),
     }
@@ -70,12 +79,14 @@ def mappings(request, template_name='mappings.html'):
             mapping_form.save()
     return render(request, template_name, context)
 
+
 def bulk_mappings(request):
     mappings = request.POST.get('bulk_mappings')
     import json
+
     for each in json.loads(mappings):
         if not FieldMap.objects.filter(tps=each.get('tps').upper()).exists():
-            field = FieldMap.objects.create(tps=each.get('tps').upper(),tke=each.get('mef'))
+            field = FieldMap.objects.create(tps=each.get('tps').upper(), tke=each.get('mef'))
             field.save()
             print each
     return redirect('mappings')

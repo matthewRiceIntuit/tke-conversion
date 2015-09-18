@@ -13,7 +13,7 @@
         <xsl:attribute name="topic">TkeConverter</xsl:attribute>
         <Versions>
             <Version id="TKE.Calc.Runtime">1</Version>
-            <Version id="TKE.Calc.FileFormat">4</Version>
+            <Version id="TKE.Calc.FileFormat">5</Version>
             <Version id="TKE.Gist">1</Version>
             <Version id="TKE.MeF">1</Version>
         </Versions>

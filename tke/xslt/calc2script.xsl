@@ -27,7 +27,7 @@
     <xsl:template match="and" mode="getID">@AllConditionsTrue<xsl:value-of select="@id"/></xsl:template>
     <xsl:template match="or" mode="getID">@AtLeastOneConditionTrue<xsl:value-of select="@id"/></xsl:template>
     <xsl:template match="DivMul|Multiply" mode="getID"><xsl:choose><xsl:when test="name(..)='Assign'"><xsl:value-of select="../ID/@val"/></xsl:when><xsl:otherwise>@DivMul<xsl:value-of select="@id"/></xsl:otherwise></xsl:choose></xsl:template>
-    <xsl:template match="AddSub|Accumulate|Difference" mode="getID"><xsl:choose><xsl:when test="name(..)='Assign'"><xsl:value-of select="../ID/@val"/></xsl:when><xsl:otherwise>@AddSub<xsl:value-of select="@id"/></xsl:otherwise></xsl:choose></xsl:template>
+    <xsl:template match="AddSub|Accumulation|Difference" mode="getID"><xsl:choose><xsl:when test="name(..)='Assign'"><xsl:value-of select="../ID/@val"/></xsl:when><xsl:otherwise>@AddSub<xsl:value-of select="@id"/></xsl:otherwise></xsl:choose></xsl:template>
     <xsl:template match="FunctionCall" mode="getID"><xsl:choose><xsl:when test="name(..)='Assign'"><xsl:value-of select="../ID/@val"/></xsl:when><xsl:otherwise><xsl:apply-templates/></xsl:otherwise></xsl:choose></xsl:template>
     <xsl:template match="MultiCopyAccumulate" mode="getID"><xsl:value-of select="../ID/@val"/></xsl:template>
 
@@ -118,13 +118,13 @@
         <xsl:apply-templates/>
     </xsl:template>
 
-    <xsl:template match="AddSub[@val='+']|Accumulate">
-        <Accumulate>
+    <xsl:template match="AddSub[@val='+']|Accumulation">
+        <Accumulation>
             <ID><xsl:apply-templates select="."  mode="getID"/></ID>
             <xsl:for-each select="*">
                 <INPUT><xsl:apply-templates select="."  mode="getID"/></INPUT>
             </xsl:for-each>
-        </Accumulate>
+        </Accumulation>
         <xsl:apply-templates/>
     </xsl:template>
 

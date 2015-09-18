@@ -6,7 +6,7 @@ def pprint(root):
 
 
 def accumulations(root):
-    accumulations = root.xpath("//AddSub[@val='+']/Accumulate")
+    accumulations = root.xpath("//AddSub[@val='+']/Accumulation")
     if accumulations:
         last_accumulation = accumulations[-1]
         return collape_accumulation(last_accumulation, root)
@@ -22,7 +22,7 @@ def collape_accumulation(elem, root):
     for each in elem.getchildren():
         parent_elem.append(each)
     parent_elem.remove(elem)
-    parent_elem.tag = 'Accumulate'
+    parent_elem.tag = 'Accumulation'
     parent_elem.attrib.pop('val')
     return accumulations(root)
 

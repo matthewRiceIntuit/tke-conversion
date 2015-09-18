@@ -73,7 +73,57 @@ def script2gist(input_stream):
 
     write(newroot, 'graph.xml')
 
-    return pretty_print(newroot).replace('<!--', '').replace('-->', '')
+    return newroot
+
+
+def generate_inputs(root):
+    filename = "../../output/inputs.xml"
+
+    parser = etree.XMLParser(remove_blank_text=True)
+    input_xml = etree.parse(filename, parser=parser)
+
+    for each in root.xpath('//InputNode/@name'):
+        if each.startswith('/Temporary') or each.startswith('/Constant'):
+            continue
+        if input_xml.xpath(each):
+            continue
+        parent = input_xml.xpath('/Return/ReturnData')[0]
+        for tag in each.split('/')[3:]:
+            if parent.xpath(tag):
+                parent = parent.xpath(tag)[0]
+            else:
+                node = etree.Element(tag)
+                parent.append(node)
+                parent = node
+        parent.text = '9999'
+
+
+    import xmlformatter
+    formatter = xmlformatter.Formatter()
+    pretty = formatter.format_string(etree.tostring(input_xml))
+    with open(filename, 'w') as f: f.write( pretty )
+    return pretty
+
+def generate_schema(root):
+
+    if not root.xpath('//InputNode/@name[starts-with(.,"/Return/ReturnData/UNMAPPED")]'):
+        return
+    filename = 'util/mapping/ElementTypesReturn1040.xml'
+    schema = etree.parse(filename)
+    parent  =   schema.xpath('/Return/ReturnData/UNMAPPED')[0]
+
+    for each in root.xpath('//InputNode/@name[starts-with(.,"/Return/ReturnData/UNMAPPED")]'):
+        if schema.xpath(each):
+            continue
+        node = etree.SubElement(parent, each.split('/')[-1])
+        node.set('baseType',"xsd:integer")
+        node.set('structure',"field")
+        node.set('type',"USAmountType")
+    pretty_print(parent)
+
+
+
+
 
 
 if __name__ == '__main__':
