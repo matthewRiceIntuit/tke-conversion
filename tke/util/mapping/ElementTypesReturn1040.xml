@@ -169,6 +169,15 @@
       <TempFEARNINC_L26CAboveThreshold baseType="xsd:integer" structure="field" type="USAmountType"></TempFEARNINC_L26CAboveThreshold>
       <TempFEARNINC_L26CAboveThreshold baseType="xsd:integer" structure="field" type="USAmountType"></TempFEARNINC_L26CAboveThreshold>
       <FEARNINC_COMBATC baseType="xsd:integer" structure="field" type="USAmountType"></FEARNINC_COMBATC>
+      <F8959_ADDMCSE baseType="xsd:integer" structure="field" type="USAmountType"></F8959_ADDMCSE>
+      <F1040_L57B baseType="xsd:integer" structure="field" type="USAmountType"></F1040_L57B>
+      <F1040_L57C baseType="xsd:integer" structure="field" type="USAmountType"></F1040_L57C>
+      <FW2SUM_HSPCODEA baseType="xsd:integer" structure="field" type="USAmountType"></FW2SUM_HSPCODEA>
+      <FW2SUM_HSPCODEM baseType="xsd:integer" structure="field" type="USAmountType"></FW2SUM_HSPCODEM>
+      <FW2SUM_HTPCODEA baseType="xsd:integer" structure="field" type="USAmountType"></FW2SUM_HTPCODEA>
+      <FW2SUM_HTPCODEM baseType="xsd:integer" structure="field" type="USAmountType"></FW2SUM_HTPCODEM>
+      <F8812_L13 baseType="xsd:integer" structure="field" type="USAmountType"></F8812_L13>
+      <F8812_L7BN baseType="xsd:integer" structure="field" type="USAmountType"></F8812_L7BN>
     </UNMAPPED>
     <IRS1040 sequence="139" structure="form">
       <SpecialConditionDesc baseType="xsd:string" multiCopy="true" sequence="140" structure="field"></SpecialConditionDesc>

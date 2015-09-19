@@ -68,7 +68,7 @@ def script2gist(input_stream):
     pretty_print(newroot)
 
     name_temporarys(newroot)
-    name_unmapped(newroot)
+    #name_unmapped(newroot)
     print "###### name temps ######"
     pretty_print(newroot)
 
@@ -125,6 +125,8 @@ def generate_schema(root):
         dirty=True
 
     if dirty:
+        import ipdb;ipdb.set_trace()
+        print "#### UPDATING SCHEMA ####"
         formatter = xmlformatter.Formatter()
         pretty = formatter.format_string(etree.tostring(schema))
         with open(filename, 'w') as f: f.write( pretty )

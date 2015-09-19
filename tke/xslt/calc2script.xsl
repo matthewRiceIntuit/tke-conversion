@@ -151,12 +151,12 @@
     </xsl:template>
 
     <xsl:template match="FunctionCall[Call[@val='min']]">
-        <Threshold>
+        <Minimum>
             <ID><xsl:apply-templates select="."  mode="getID"/></ID>
             <xsl:for-each select="Call/ArgList/*">
                 <INPUT><xsl:apply-templates select="."  mode="getID"/></INPUT>
             </xsl:for-each>
-        </Threshold>
+        </Minimum>
         <xsl:apply-templates/>
     </xsl:template>
 

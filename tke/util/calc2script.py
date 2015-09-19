@@ -53,6 +53,8 @@ def convert(input_stream):
     pretty_print(root)
 
     clean_temps(root)
+    print "## CleanTemps ##"
+    pretty_print(root)
 
     root = xslt(root, 'xslt/calc2script2.xsl')
     print "## calc2script2 ##"

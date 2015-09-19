@@ -53,7 +53,7 @@
 
     </xsl:template>
 
-    <xsl:template match="Max|AboveThreshold|Accumulation|Product|Difference|Threshold|Cap|AtLeastOneConditionTrue">
+    <xsl:template match="Max|AboveThreshold|BelowThreshold|Accumulation|Product|Difference|Cap|Maximum|Minimum|AtLeastOneConditionTrue">
 
         <xsl:param name="extra"/>
         <xsl:param name="blankiffalse"/>

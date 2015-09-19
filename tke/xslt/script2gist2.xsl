@@ -13,20 +13,25 @@
     <!-- When matching DataSeriesBodyType: do nothing -->
     <xsl:template match="NumericChoice" >
         <NumericChoice>
-            <Choice><xsl:value-of select="InputRoles/*[1]"/></Choice>
-            <Possibility><xsl:value-of select="InputRoles/*[2]"/></Possibility>
-            <Possibility><xsl:value-of select="InputRoles/*[3]"/></Possibility>
-            <ChoiceMapping>
-                <Option>
-                    <Value>true</Value>
-                    <ID><xsl:value-of select="InputRoles/*[2]"/></ID>
-                    <NoOtherOption>false</NoOtherOption>
-                </Option>
-                <DefaultOption>
-                    <ID><xsl:value-of select="InputRoles/*[3]"/></ID>
-                    <NoOtherOption>false</NoOtherOption>
-                </DefaultOption>
-            </ChoiceMapping>
+            <InputRoles>
+                <Choice><xsl:value-of select="InputRoles/*[1]"/></Choice>
+                <Possibility><xsl:value-of select="InputRoles/*[2]"/></Possibility>
+                <Possibility><xsl:value-of select="InputRoles/*[3]"/></Possibility>
+            </InputRoles>
+            <Configuration>
+                <ChoiceMapping>
+                    <Option>
+                        <Value>true</Value>
+                        <ID><xsl:value-of select="InputRoles/*[2]"/></ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </Option>
+                    <DefaultOption>
+                        <ID><xsl:value-of select="InputRoles/*[3]"/></ID>
+                        <NoOtherOption>true</NoOtherOption>
+                    </DefaultOption>
+                </ChoiceMapping>
+            </Configuration>
+
             <PostProcessing>
                 <RoundTo>
                     <Dollars/>
@@ -71,13 +76,14 @@
         </PostProcessing>
     </xsl:template>
 
-    <xsl:template match="AboveThreshold" >
-        <AboveThreshold>
+    <xsl:template match="AboveThreshold|BelowThreshold" >
+        <xsl:variable name="name" select="name()"/>
+        <xsl:element name="{$name}">
             <InputRoles>
                 <Value><xsl:value-of select="InputRoles/*[1]"/></Value>
                 <Threshold><xsl:value-of select="InputRoles/*[2]"/></Threshold>
             </InputRoles>
-        </AboveThreshold>
+        </xsl:element>
         <PostProcessing>
             <RoundTo>
                 <Dollars/>
