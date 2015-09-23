@@ -147,6 +147,13 @@
     <xsl:template match="Nodes/Node[Gist/AboveThreshold]/PostProcessing" >
     </xsl:template>
 
+    <xsl:template match="SkipToMaximumInput|SkipToMinimumInput">
+        <xsl:copy>
+        <xsl:for-each select="*"><xsl:apply-templates select="@*|node()" /></xsl:for-each>
+        </xsl:copy>
+    </xsl:template>
+
+
 
 
 

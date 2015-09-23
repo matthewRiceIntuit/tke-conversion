@@ -69,8 +69,8 @@ def script2gist(input_stream):
 
     name_temporarys(newroot)
     #name_unmapped(newroot)
-    print "###### name temps ######"
-    pretty_print(newroot)
+    # print "###### name temps ######"
+    # pretty_print(newroot)
 
     newroot = xslt(newroot, 'xslt/script2gist2.xsl')
 

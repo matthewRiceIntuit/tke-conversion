@@ -31,8 +31,8 @@ def convert(input_stream):
     walker.walk(listner, tree)
 
     root = etree.XML('<?xml version="1.0" ?>' + listner.output)
-    print "##ParseTreeWalker##"
-    pretty_print(root)
+    # print "##ParseTreeWalker##"
+    # pretty_print(root)
 
 
     resolve_vars(root, use_tke= '-tps' not in sys.argv)
@@ -42,8 +42,8 @@ def convert(input_stream):
     difference(root)
     multiplications(root)
 
-    print "## RESOLVE VARS ##"
-    pretty_print(root)
+    # print "## RESOLVE VARS ##"
+    # pretty_print(root)
 
     section = root.xpath('/CALC/Section/@val')[0]
 
@@ -53,8 +53,8 @@ def convert(input_stream):
     pretty_print(root)
 
     clean_temps(root)
-    print "## CleanTemps ##"
-    pretty_print(root)
+    # print "## CleanTemps ##"
+    # pretty_print(root)
 
     root = xslt(root, 'xslt/calc2script2.xsl')
     print "## calc2script2 ##"

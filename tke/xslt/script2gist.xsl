@@ -96,6 +96,17 @@
                             <Value><xsl:apply-templates select="."/></Value>
                         </xsl:for-each>
                     </InputRoles>
+                    <xsl:if test="Gist/Params/Name[@val='SkipToMaximumInput']">
+                        <Configuration>
+                            <SkipToMaximumInput><Value><xsl:apply-templates select="Gist/Params[Name/@val='SkipToMaximumInput']/Param_list/Param[2]"/></Value><Value>,</Value><Value><xsl:apply-templates select="Gist/Params[Name/@val='SkipToMaximumInput']/Param_list/Param[1]"/></Value></SkipToMaximumInput>
+                        </Configuration>
+                    </xsl:if>
+                    <xsl:if test="Gist/Params/Name[@val='SkipToMinimumInput']">
+                        <Configuration>
+                            <SkipToMinimumInput><Value><xsl:apply-templates select="Gist/Params[Name/@val='SkipToMaximumInput']/Param_list/Param[2]"/></Value><Value>,</Value><Value><xsl:apply-templates select="Gist/Params[Name/@val='SkipToMaximumInput']/Param_list/Param[1]"/></Value></SkipToMinimumInput>
+                        </Configuration>
+                    </xsl:if>
+
                 </xsl:element>
             </Gist>
         </Node>
