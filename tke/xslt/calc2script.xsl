@@ -22,7 +22,8 @@
     -->
 
     <xsl:template match="Literal" mode="getID">$<xsl:value-of select="@val"/></xsl:template>
-    <xsl:template match="Call[@val='hasvalue']|Call[@val='ischecked']" mode="getID"><xsl:choose><xsl:when test="name(..)='Assign'"><xsl:value-of select="../ID/@val"/></xsl:when><xsl:otherwise>@<xsl:value-of select="ArgList/VarRef/ID/@val"/>IsNotBlank</xsl:otherwise></xsl:choose></xsl:template>
+    <xsl:template match="Call[@val='hasvalue']" mode="getID"><xsl:choose><xsl:when test="name(..)='Assign'"><xsl:value-of select="../ID/@val"/></xsl:when><xsl:otherwise>@<xsl:value-of select="ArgList/VarRef/ID/@val"/>IsNotBlank</xsl:otherwise></xsl:choose></xsl:template>
+    <xsl:template match="Call[@val='ischecked']" mode="getID"><xsl:value-of select="ArgList/VarRef/ID/@val"/></xsl:template>
     <xsl:template match="Predicate[@val='&gt;']" mode="getID">@<xsl:value-of select="VarRef/ID/@val"/>AboveThreshold</xsl:template>
     <xsl:template match="Predicate[@val='&lt;']" mode="getID">@<xsl:value-of select="VarRef/ID/@val"/>BelowThreshold</xsl:template>
     <xsl:template match="VarRef" mode="getID"><xsl:choose><xsl:when test="name(..)='Assign'"><xsl:value-of select="../ID/@val"/></xsl:when><xsl:otherwise><xsl:value-of select="ID/@val"/></xsl:otherwise></xsl:choose></xsl:template>
@@ -35,11 +36,15 @@
 
 
 
-    <xsl:template match="Call[@val='hasvalue']|Call[@val='ischecked']">
+    <xsl:template match="Call[@val='hasvalue']">
         <IsNotBlank>
             <ID>@<xsl:apply-templates  mode="getID"/>IsNotBlank</ID>
             <INPUT><xsl:apply-templates  mode="getID"/></INPUT>
         </IsNotBlank>
+    </xsl:template>
+
+    <xsl:template match="Call[@val='ischecked']">
+        <IsChecked><ID><xsl:apply-templates  mode="getID"/></ID></IsChecked>
     </xsl:template>
 
 
@@ -141,12 +146,12 @@
     </xsl:template>
 
     <xsl:template match="FunctionCall[Call[@val='max']]">
-        <Cap>
+        <Maximum>
             <ID><xsl:apply-templates select="."  mode="getID"/></ID>
             <xsl:for-each select="Call/ArgList/*">
                 <INPUT><xsl:apply-templates select="."  mode="getID"/></INPUT>
             </xsl:for-each>
-        </Cap>
+        </Maximum>
         <xsl:apply-templates/>
     </xsl:template>
 

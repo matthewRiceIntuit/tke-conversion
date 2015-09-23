@@ -53,7 +53,9 @@
 
     </xsl:template>
 
-    <xsl:template match="Max|AboveThreshold|BelowThreshold|Accumulation|Product|Difference|Cap|Maximum|Minimum|AtLeastOneConditionTrue">
+    <xsl:template match="IsChecked"/>
+
+    <xsl:template match="AboveThreshold|BelowThreshold|Accumulation|Product|Difference|Cap|AtLeastOneConditionTrue">
 
         <xsl:param name="extra"/>
         <xsl:param name="blankiffalse"/>
@@ -65,6 +67,22 @@
         ,BlankIfFalse : <xsl:value-of select="$blankiffalse"/></xsl:if>)
 
     </xsl:template>
+    <xsl:template match="Maximum|Minimum">
+
+        <xsl:param name="extra"/>
+        <xsl:param name="blankiffalse"/>
+
+        <xsl:value-of select='$extra'/><xsl:apply-templates select="ID"/> = <xsl:value-of select="name()"/>( inputs:[
+        <xsl:for-each select="INPUT">
+            <xsl:apply-templates select="."/>,
+        </xsl:for-each>]
+        <xsl:if test="starts-with(INPUT[1],'$')">,SkipToMaximumInput: [ <xsl:value-of select="INPUT[2]"/>, <xsl:value-of select="INPUT[1]"/>]</xsl:if>
+        <xsl:if test="$blankiffalse">
+        ,BlankIfFalse : <xsl:value-of select="$blankiffalse"/></xsl:if>)
+
+    </xsl:template>
+
+
 
     <xsl:template match="IF[ELSE]">
     <xsl:apply-templates select="TEST"/>

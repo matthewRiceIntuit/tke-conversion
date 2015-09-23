@@ -125,7 +125,6 @@ def generate_schema(root):
         dirty=True
 
     if dirty:
-        import ipdb;ipdb.set_trace()
         print "#### UPDATING SCHEMA ####"
         formatter = xmlformatter.Formatter()
         pretty = formatter.format_string(etree.tostring(schema))

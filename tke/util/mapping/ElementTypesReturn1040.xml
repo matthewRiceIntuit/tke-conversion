@@ -177,7 +177,10 @@
       <FW2SUM_HTPCODEA baseType="xsd:integer" structure="field" type="USAmountType"></FW2SUM_HTPCODEA>
       <FW2SUM_HTPCODEM baseType="xsd:integer" structure="field" type="USAmountType"></FW2SUM_HTPCODEM>
       <F8812_L13 baseType="xsd:integer" structure="field" type="USAmountType"></F8812_L13>
-      <F8812_L7BN baseType="xsd:integer" structure="field" type="USAmountType"></F8812_L7BN>
+      <F8812_L7BN baseType="xsd:boolean" structure="field" type="BooleanType"></F8812_L7BN>
+      <F2441_L12 baseType="xsd:integer" structure="field" type="USAmountType"></F2441_L12>
+      <F2441_L3 baseType="xsd:integer" structure="field" type="USAmountType"></F2441_L3>
+      <F2441_L7BN baseType="xsd:integer" structure="field" type="USAmountType"></F2441_L7BN>
     </UNMAPPED>
     <IRS1040 sequence="139" structure="form">
       <SpecialConditionDesc baseType="xsd:string" multiCopy="true" sequence="140" structure="field"></SpecialConditionDesc>
@@ -696,6 +699,7 @@
       <CalculatedDifferenceAmt baseType="xsd:integer" sequence="621" structure="field" type="USAmountType"></CalculatedDifferenceAmt>
       <LargerCalcIncomeOrDiffAmt baseType="xsd:integer" sequence="622" structure="field" type="USAmountType"></LargerCalcIncomeOrDiffAmt>
       <AdditionalChildTaxCreditAmt baseType="xsd:nonNegativeInteger" sequence="623" structure="field" type="USAmountNNType"></AdditionalChildTaxCreditAmt>
+
     </IRS1040Schedule8812>
     <IRS1040ScheduleA sequence="624" structure="form">
       <MedicalAndDentalExpensesAmt baseType="xsd:integer" sequence="625" structure="field" type="USAmountType"></MedicalAndDentalExpensesAmt>

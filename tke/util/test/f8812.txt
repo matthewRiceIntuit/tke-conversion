@@ -24,9 +24,16 @@ BEGIN
 
     L5 := L4 - 3000;
     L6 := L5 * .15;
+    L13 := Min(L3,L6);
 
     F8959SE := F8959.ADDMCSE;
     TOTS8812 := SUBTOT6 + F8959SE + SUBTOT11 + SUBTOT15;
+
+    If (FWCHTXCR.L1A < 3) then
+            L7BN := Checked;
+
+
+
     L7 := TOTS8812;
 
     L8 := F1040.L27 + F1040.L53 + Max(0,(F1040.L57B - FW2SUM.hTPCODEA - FW2SUM.hSPCODEA))
