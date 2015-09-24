@@ -443,7 +443,21 @@ class CalcListener(ParseTreeListener):
     def exitBool(self, ctx):
         pass
 
+    # Enter a parse tree produced by CalcParser#end_index.
+    def enterForloopstruct(self, ctx):
+        self.enter("ForLoop")
 
+    # Exit a parse tree produced by CalcParser#end_index.
+    def exitForloopstruct(self, ctx):
+        self.exit()
+
+    # Enter a parse tree produced by CalcParser#end_index.
+    def enterArray_index(self, ctx):
+        self.enter("ArrayIndex")
+
+    # Exit a parse tree produced by CalcParser#end_index.
+    def exitArray_index(self, ctx):
+        self.exit()
 
 
 

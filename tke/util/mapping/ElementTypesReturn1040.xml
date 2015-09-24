@@ -184,6 +184,8 @@
       <F8812_CHECKED baseType="xsd:integer" structure="field" type="USAmountType"></F8812_CHECKED>
       <FWCHTXCR_L1A baseType="xsd:integer" structure="field" type="USAmountType"></FWCHTXCR_L1A>
       <F8812_TRUE baseType="xsd:integer" structure="field" type="USAmountType"></F8812_TRUE>
+      <FFIT161_HOSTCRD baseType="xsd:integer" structure="field" type="USAmountType"></FFIT161_HOSTCRD>
+      <FFIT161_FFIT167 baseType="xsd:integer" structure="field" type="USAmountType"></FFIT161_FFIT167>
     </UNMAPPED>
     <IRS1040 sequence="139" structure="form">
       <SpecialConditionDesc baseType="xsd:string" multiCopy="true" sequence="140" structure="field"></SpecialConditionDesc>

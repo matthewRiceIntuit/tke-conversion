@@ -41,7 +41,6 @@ expr : expr op=('/' | '*') expr #DivMul
 	| call #FunctionCall
 	| multicopy_accum #MultiCopyAccumulate
 	| 'MAX' '(' argList ')' #Max
-
 	| '(' expr ')'  #Parens
 	;
 argList : (expr (',' expr)*)? ;
@@ -57,7 +56,7 @@ r_type: arrayDecl? ID;
 
 arrayDecl: ARRAY '[' LITERAL ']' OF;
 
-ctrlStruct : ifStruct | loopStruct ;
+ctrlStruct : ifStruct | loopStruct | forloopstruct ;
 	
 ifStruct : IF expr THEN (block|stmt|dumbblock|assign) elseStruct?;
 
@@ -66,6 +65,10 @@ elseStruct: ELSE  (block|stmt);
 loopStruct : DO (WHILE preCond=expr)?
 				stmt*
 			LOOP (WHILE postCond=expr)? ;
+
+forloopstruct: FOR ID ':=' expr TO expr DO  (block|stmt);
+
+
 			
 ret : RETURN expr? ';' ;
 			
@@ -81,33 +84,66 @@ LITERAL : INT
 	| STRING
 	;
 
-ARRAY: 'Array';
-OF: 'of';
-VAR: 'var'|'VAR';
-CONSTANT: 'constant'| 'CONSTANT';
-IF : 'if'|'IF'|'If' ;
-ELSE : 'else' |'ELSE'|'Else';
-THEN : 'then'|'THEN'|'Then' ;
-SECTION: 'Section'|'SECTION';
-DO : 'do';
-NOT: 'not';
+fragment A:('a'|'A');
+fragment B:('b'|'B');
+fragment C:('c'|'C');
+fragment D:('d'|'D');
+fragment E:('e'|'E');
+fragment F:('f'|'F');
+fragment G:('g'|'G');
+fragment H:('h'|'H');
+fragment I:('i'|'I');
+fragment J:('j'|'J');
+fragment K:('k'|'K');
+fragment L:('l'|'L');
+fragment M:('m'|'M');
+fragment N:('n'|'N');
+fragment O:('o'|'O');
+fragment P:('p'|'P');
+fragment Q:('q'|'Q');
+fragment R:('r'|'R');
+fragment S:('s'|'S');
+fragment T:('t'|'T');
+fragment U:('u'|'U');
+fragment V:('v'|'V');
+fragment W:('w'|'W');
+fragment X:('x'|'X');
+fragment Y:('y'|'Y');
+fragment Z:('z'|'Z');
 
-WHILE : 'while';
-LOOP : 'loop';
-RETURN : 'return';
+ARRAY: A R R A Y;
+OF: O F;
+VAR: V A R;
+CONSTANT: C O N S T A N T;
+IF : I F ;
+ELSE : E L S E;
+THEN : T H E N ;
+SECTION: S E C T I O N;
+DO : D O;
+TO: T O;
+FOR: F O R;
+NOT: N O T;
+
+WHILE : W H I L E;
+LOOP : L O O P;
+RETURN : R E T U R N;
 WS : [ \t\r\n]+ -> skip ;
-BEGIN : 'BEGIN'|'begin'|'Begin' ;
-END : 'END'|'end' | 'End';
+BEGIN : B E G I N;
+END : E N D;
 LET : ':=' ;
-full_id : ID sub_id?;
-sub_id : '.' ID;
-ID : [a-zA-Z_][a-zA-Z_0-9]* ;
+full_id : ID array_index? sub_id?;
+
+sub_id : '.' ID array_index?;
+ID : [a-zA-Z_][a-zA-Z_0-9]*;
+array_index: ('[' expr ']');
 
 INT : '-'? '.'? [0-9]+ ('.' [0-9]+)?;
 STRING : '"' .*? '"' ;
 
-boolean : 'true' | 'false' | 'checked' | 'Checked' | 'True' | 'False';
-
+boolean : TRUE|FALSE|CHECKED;
+TRUE:  T R U E;
+FALSE:  F A L S E;
+CHECKED: C H E C K E D;
 
 COMMENT
     :   '/*' .*? '*/' -> skip
