@@ -22,6 +22,7 @@
     -->
 
     <xsl:template match="Literal" mode="getID">$<xsl:value-of select="@val"/></xsl:template>
+    <xsl:template match="Boolean" mode="getID">$<xsl:value-of select="@val"/></xsl:template>
     <xsl:template match="Call[@val='hasvalue']" mode="getID"><xsl:choose><xsl:when test="name(..)='Assign'"><xsl:value-of select="../ID/@val"/></xsl:when><xsl:otherwise>@<xsl:value-of select="ArgList/VarRef/ID/@val"/>IsNotBlank</xsl:otherwise></xsl:choose></xsl:template>
     <xsl:template match="Call[@val='ischecked']" mode="getID"><xsl:value-of select="ArgList/VarRef/ID/@val"/></xsl:template>
     <xsl:template match="Predicate[@val='&gt;']" mode="getID">@<xsl:value-of select="VarRef/ID/@val"/>AboveThreshold</xsl:template>
@@ -96,10 +97,11 @@
     </xsl:template>
 
 
-    <xsl:template match="Literal[name(..)='Assign']">
+    <xsl:template match="Literal[name(..)='Assign']|Boolean[name(..)='Assign']">
         <Assign>
-            <ID><xsl:apply-templates select="."  mode="getID"/></ID>
-            <INPUT><xsl:value-of select="@val"/></INPUT>
+            #####
+            <ID><xsl:value-of select="../ID/@val"/></ID>
+            <INPUT><xsl:apply-templates select="."  mode="getID"/></INPUT>
         </Assign>
     </xsl:template>
 

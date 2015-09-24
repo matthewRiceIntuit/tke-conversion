@@ -35,12 +35,14 @@ expr : expr op=('/' | '*') expr #DivMul
 	| expr op=('and' | 'or') expr #Logic
 	| expr op=('>' | '<' | '<=' | '>=' | '=') expr #Predicate
 	| expr '*' '(' expr '/' '100' ')' #PercentageOf
+	| LITERAL #Literal
 	| NOT expr #Not
 	| full_id #VarRef
+	| boolean  #Bool
 	| call #FunctionCall
 	| multicopy_accum #MultiCopyAccumulate
 	| 'MAX' '(' argList ')' #Max
-	| LITERAL #Literal
+
 	| '(' expr ')'  #Parens
 	;
 argList : (expr (',' expr)*)? ;
@@ -78,7 +80,6 @@ formPar : r_type name=full_id (LET defaultVal=expr)? ;
 		   
 LITERAL : INT
 	| STRING
-	| BOOLEAN
 	;
 
 ARRAY: 'Array';
@@ -105,7 +106,8 @@ ID : [a-zA-Z_][a-zA-Z_0-9]* ;
 
 INT : '-'? '.'? [0-9]+ ('.' [0-9]+)?;
 STRING : '"' .*? '"' ;
-BOOLEAN : 'true' | 'false' ;
+
+boolean : 'true' | 'false' | 'checked' | 'Checked' | 'True' | 'False';
 
 
 COMMENT

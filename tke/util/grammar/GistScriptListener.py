@@ -147,3 +147,5 @@ class GistScriptListener(ParseTreeListener):
         # Exit a parse tree produced by GistScriptParser#const.
     def exitConst(self, ctx):
         self.exit()
+        # Enter a parse tree produced by GistScriptParser#const.
+

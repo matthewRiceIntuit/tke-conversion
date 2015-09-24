@@ -31,8 +31,8 @@ def convert(input_stream):
     walker.walk(listner, tree)
 
     root = etree.XML('<?xml version="1.0" ?>' + listner.output)
-    # print "##ParseTreeWalker##"
-    # pretty_print(root)
+    print "##ParseTreeWalker##"
+    pretty_print(root)
 
 
     resolve_vars(root, use_tke= '-tps' not in sys.argv)

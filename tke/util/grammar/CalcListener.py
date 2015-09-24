@@ -1,40 +1,39 @@
-
 # Generated from java-escape by ANTLR 4.5
 from antlr4 import *
 import cgi
 
+
 class obj(object):
+    def __init__(self, value, parent):
+        self.value = value
+        self.parent = parent
+        self.children = []
 
-    def __init__(self,value,parent):
-        self.value=value
-        self.parent=parent
-        self.children=[]
 
-INDENT=3
+INDENT = 3
 # This class defines a complete listener for a parse tree produced by CalcParser.
 class CalcListener(ParseTreeListener):
-
     def __init__(self):
-        self.root = obj('root',None)
+        self.root = obj('root', None)
         self.current = self.root
-        self.indent=0
-        self.output =""
+        self.indent = 0
+        self.output = ""
 
-    def enter(self,name,value=None):
-        self.indent+=INDENT
-        self.output += '<%s %s>' % (name,'' if not value else 'val="%s"' % value)
-        child=obj(name,self.current)
+    def enter(self, name, value=None):
+        self.indent += INDENT
+        self.output += '<%s %s>' % (name, '' if not value else 'val="%s"' % value)
+        child = obj(name, self.current)
         self.current.children.append(child)
         self.current = child
 
-    def close(self,name,value=None):
-        self.output +=  '<%s %s/>' % (name,'' if not value else 'val="%s"' % value)
-        child=obj(name,self.current)
+    def close(self, name, value=None):
+        self.output += '<%s %s/>' % (name, '' if not value else 'val="%s"' % value)
+        child = obj(name, self.current)
         self.current.children.append(child)
 
     def exit(self):
-        self.output +=  '</%s>' % self.current.value
-        self.indent-=INDENT
+        self.output += '</%s>' % self.current.value
+        self.indent -= INDENT
         if self.current:
             self.current = self.current.parent
 
@@ -49,15 +48,16 @@ class CalcListener(ParseTreeListener):
 
     # Enter a parse tree produced by CalcParser#program.
     def enterSection(self, ctx):
-        self.enter('Section',ctx.ID().getText())
+        self.enter('Section', ctx.ID().getText())
 
     # Exit a parse tree produced by CalcParser#program.
     def exitSection(self, ctx):
         self.exit()
 
         # Enter a parse tree produced by CalcParser#formset.
+
     def enterFormset(self, ctx):
-        self.enter('FORMSET',ctx.ID().getText())
+        self.enter('FORMSET', ctx.ID().getText())
 
     # Exit a parse tree produced by CalcParser#formset.
     def exitFormset(self, ctx):
@@ -66,23 +66,23 @@ class CalcListener(ParseTreeListener):
 
     # Enter a parse tree produced by CalcParser#form.
     def enterForm(self, ctx):
-        self.close('FORM',ctx.ID().getText())
+        self.close('FORM', ctx.ID().getText())
 
     # Exit a parse tree produced by CalcParser#form.
     def exitForm(self, ctx):
         pass
 
 
-
-
     # Enter a parse tree produced by CalcParser#block.
     def enterBlock(self, ctx):
         self.enter('block')
+
     # Exit a parse tree produced by CalcParser#block.
     def exitBlock(self, ctx):
         self.exit()
 
         # Enter a parse tree produced by CalcParser#dumbblock.
+
     def enterDumbblock(self, ctx):
         self.enter('block')
 
@@ -111,13 +111,14 @@ class CalcListener(ParseTreeListener):
 
     # Enter a parse tree produced by CalcParser#call.
     def enterCall(self, ctx):
-        self.enter("Call",ctx.ID().getText().lower())
+        self.enter("Call", ctx.ID().getText().lower())
 
     # Exit a parse tree produced by CalcParser#call.
     def exitCall(self, ctx):
         self.exit()
 
         # Enter a parse tree produced by CalcParser#max.
+
     def enterMax(self, ctx):
         self.enter("Max")
 
@@ -136,7 +137,7 @@ class CalcListener(ParseTreeListener):
 
     # Enter a parse tree produced by CalcParser#Literal.
     def enterLiteral(self, ctx):
-        self.close("Literal", cgi.escape(ctx.LITERAL().getText()).replace('"',"&quot;"))
+        self.close("Literal", cgi.escape(ctx.LITERAL().getText()).replace('"', "&quot;"))
 
     # Exit a parse tree produced by CalcParser#Literal.
     def exitLiteral(self, ctx):
@@ -145,7 +146,7 @@ class CalcListener(ParseTreeListener):
 
     # Enter a parse tree produced by CalcParser#DivMul.
     def enterDivMul(self, ctx):
-        self.enter("DivMul",ctx.op.text)
+        self.enter("DivMul", ctx.op.text)
 
     # Exit a parse tree produced by CalcParser#DivMul.
     def exitDivMul(self, ctx):
@@ -154,7 +155,7 @@ class CalcListener(ParseTreeListener):
 
     # Enter a parse tree produced by CalcParser#AddSub.
     def enterAddSub(self, ctx):
-        self.enter("AddSub",ctx.op.text)
+        self.enter("AddSub", ctx.op.text)
 
     # Exit a parse tree produced by CalcParser#AddSub.
     def exitAddSub(self, ctx):
@@ -171,7 +172,7 @@ class CalcListener(ParseTreeListener):
 
     # Enter a parse tree produced by CalcParser#Predicate.
     def enterPredicate(self, ctx):
-        self.enter("Predicate",cgi.escape(ctx.op.text))
+        self.enter("Predicate", cgi.escape(ctx.op.text))
 
     # Exit a parse tree produced by CalcParser#Predicate.
     def exitPredicate(self, ctx):
@@ -189,7 +190,7 @@ class CalcListener(ParseTreeListener):
 
     # Enter a parse tree produced by CalcParser#FunctionCall.
     def enterFunctionCall(self, ctx):
-        self.enter("FunctionCall",ctx.ID().getText().lower())
+        self.enter("FunctionCall", ctx.ID().getText().lower())
 
     # Exit a parse tree produced by CalcParser#FunctionCall.
     def exitFunctionCall(self, ctx):
@@ -228,6 +229,7 @@ class CalcListener(ParseTreeListener):
     # Exit a parse tree produced by CalcParser#declList.
     def exitDeclList(self, ctx):
         self.exit()
+
     # Enter a parse tree produced by CalcParser#declList.
     def enterConstdeclList(self, ctx):
         self.enter("DeclList")
@@ -238,7 +240,7 @@ class CalcListener(ParseTreeListener):
 
     # Enter a parse tree produced by CalcParser#declList.
     def enterArrayDecl(self, ctx):
-        self.enter("Array",ctx.LITERAL().getText())
+        self.enter("Array", ctx.LITERAL().getText())
 
 
     # Exit a parse tree produced by CalcParser#declList.
@@ -254,8 +256,9 @@ class CalcListener(ParseTreeListener):
         self.exit()
 
         # Enter a parse tree produced by CalcParser#varDecl.
+
     def enterVarDecl(self, ctx):
-        self.enter("VarDecl",ctx.ID().getText())
+        self.enter("VarDecl", ctx.ID().getText())
 
     # Exit a parse tree produced by CalcParser#varDecl.
     def exitVarDecl(self, ctx):
@@ -264,7 +267,7 @@ class CalcListener(ParseTreeListener):
 
     # Enter a parse tree produced by CalcParser#r_type.
     def enterR_type(self, ctx):
-        self.enter("Type",ctx.ID().getText())
+        self.enter("Type", ctx.ID().getText())
 
     # Exit a parse tree produced by CalcParser#r_type.
     def exitR_type(self, ctx):
@@ -344,6 +347,7 @@ class CalcListener(ParseTreeListener):
 
 
         # Enter a parse tree produced by CalcParser#FunctionCall.
+
     def enterFunctionCall(self, ctx):
         self.enter("FunctionCall")
 
@@ -352,8 +356,9 @@ class CalcListener(ParseTreeListener):
         self.exit()
 
         # Enter a parse tree produced by CalcParser#full_id.
+
     def enterFull_id(self, ctx):
-        self.close("ID",ctx.ID().getText())
+        self.close("ID", ctx.ID().getText())
 
 
     # Exit a parse tree produced by CalcParser#full_id.
@@ -363,7 +368,7 @@ class CalcListener(ParseTreeListener):
 
     # Enter a parse tree produced by CalcParser#sub_id.
     def enterSub_id(self, ctx):
-        self.close("Sub_ID",ctx.ID().getText())
+        self.close("Sub_ID", ctx.ID().getText())
 
     # Exit a parse tree produced by CalcParser#sub_id.
     def exitSub_id(self, ctx):
@@ -371,6 +376,7 @@ class CalcListener(ParseTreeListener):
 
 
         # Enter a parse tree produced by CalcParser#PercentageOf.
+
     def enterPercentageOf(self, ctx):
         self.enter("PercentageOf")
 
@@ -379,6 +385,7 @@ class CalcListener(ParseTreeListener):
         self.exit()
 
         # Enter a parse tree produced by CalcParser#MultiCopyAccumulate.
+
     def enterMulticopy_accum(self, ctx):
         self.enter("MultiCopyAccumulate");
 
@@ -388,6 +395,7 @@ class CalcListener(ParseTreeListener):
         self.exit()
 
         # Enter a parse tree produced by CalcParser#MultiCopyAccumulate.
+
     def enterMultiCopyAccumulate(self, ctx):
         pass
 
@@ -396,9 +404,10 @@ class CalcListener(ParseTreeListener):
         pass
 
         # Enter a parse tree produced by CalcParser#start_index.
+
     def enterStart_index(self, ctx):
 
-        self.enter("StartIndex",ctx.LITERAL().getText())
+        self.enter("StartIndex", ctx.LITERAL().getText())
 
     # Exit a parse tree produced by CalcParser#start_index.
     def exitStart_index(self, ctx):
@@ -413,6 +422,26 @@ class CalcListener(ParseTreeListener):
     def exitEnd_index(self, ctx):
         self.exit()
 
+    # Enter a parse tree produced by CalcParser#boolean.
+    def enterBoolean(self, ctx):
+        pass
+
+    # Exit a parse tree produced by CalcParser#boolean.
+    def exitBoolean(self, ctx):
+        pass
+
+    # Enter a parse tree produced by CalcParser#boolean.
+    def enterBool(self, ctx):
+        val = ctx.getText().upper()
+
+        if val == 'CHECKED':
+            val = 'TRUE'
+
+        self.close('Boolean', val)
+
+    # Exit a parse tree produced by CalcParser#boolean.
+    def exitBool(self, ctx):
+        pass
 
 
 
