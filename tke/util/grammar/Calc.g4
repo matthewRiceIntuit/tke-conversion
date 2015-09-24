@@ -34,7 +34,6 @@ expr : expr op=('/' | '*') expr #DivMul
 	| expr op=('+' | '-') expr #AddSub
 	| expr op=('and' | 'or') expr #Logic
 	| expr op=('>' | '<' | '<=' | '>=' | '=') expr #Predicate
-	| expr '*' '(' expr '/' '100' ')' #PercentageOf
 	| LITERAL #Literal
 	| NOT expr #Not
 	| full_id #VarRef
