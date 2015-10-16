@@ -1,7 +1,7 @@
 import lxml.etree as etree
 
 
-def pprint(root):
+def pp(root):
     print(etree.tostring(root, pretty_print=True))
 
 
@@ -68,3 +68,17 @@ def collape_multiplications(elem, root):
     parent_elem.tag = 'Multiply'
     parent_elem.attrib.pop('val')
     return accumulations(root)
+
+def multicopy_accumulation(root):
+    for each in root.xpath("//ForLoop//Assign"):
+        id = each.getchildren()[0].get('val')
+        self = each.xpath('*[2]//ID[@val="%s"]' % id)
+        if self:
+            each.tag = 'MultiAccumulate'
+            self=self[0].getparent()
+            parent = self.getparent()
+            parent.remove(self)
+            parent.getparent().append(parent.getchildren()[0])
+            parent.getparent().remove(parent)
+
+    pp(root)

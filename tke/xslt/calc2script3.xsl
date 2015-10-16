@@ -92,13 +92,13 @@
             <xsl:when test="substring(ID,1,1)!='@'" >
                 <xsl:value-of select="ID"/> = NumericChoice(inputs: [
                 Choice:<xsl:value-of select="../../TEST//ID"/>,
-                Possibility:@TRUE<xsl:value-of select="ID"/>,
-                Possibility:@FALSE<xsl:value-of select="ID"/>]
+                Possibility:@<xsl:value-of select="/xml/@form"/>/<xsl:value-of select="./ancestor::Section/@id"/>/TRUE<xsl:value-of select="ID"/>,
+                Possibility:@<xsl:value-of select="/xml/@form"/>/<xsl:value-of select="./ancestor::Section/@id"/>/FALSE<xsl:value-of select="ID"/>]
                 )
 
-    <xsl:apply-templates select="."><xsl:with-param name="extra">@TRUE</xsl:with-param></xsl:apply-templates>
+    <xsl:apply-templates select="."><xsl:with-param name="extra">@<xsl:value-of select="/xml/@form"/>/<xsl:value-of select="./ancestor::Section/@id"/>/TRUE</xsl:with-param></xsl:apply-templates>
     <xsl:variable name="id" select="ID"/>
-    <xsl:apply-templates select="../../ELSE/*[ID=$id]"><xsl:with-param name="extra">@FALSE</xsl:with-param></xsl:apply-templates>
+    <xsl:apply-templates select="../../ELSE/*[ID=$id]"><xsl:with-param name="extra">@<xsl:value-of select="/xml/@form"/>/<xsl:value-of select="./ancestor::Section/@id"/>/FALSE</xsl:with-param></xsl:apply-templates>
 
             </xsl:when>
             <xsl:otherwise>

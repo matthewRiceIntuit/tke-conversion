@@ -29,7 +29,6 @@ def main(request, context=None, template_name="main.html"):
 
 
 def calc2script(request, template_name="main.html"):
-
     header = request.POST.get('header', '')
     tps_calc = request.POST['tps_calc'].strip()
     try:

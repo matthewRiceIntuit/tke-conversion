@@ -186,6 +186,9 @@
       <F8812_TRUE baseType="xsd:integer" structure="field" type="USAmountType"></F8812_TRUE>
       <FFIT161_HOSTCRD baseType="xsd:integer" structure="field" type="USAmountType"></FFIT161_HOSTCRD>
       <FFIT161_FFIT167 baseType="xsd:integer" structure="field" type="USAmountType"></FFIT161_FFIT167>
+      <STINFOTP_F1099Q baseType="xsd:integer" structure="field" type="USAmountType"></STINFOTP_F1099Q>
+      <STINFOTP_Q529DT baseType="xsd:integer" structure="field" type="USAmountType"></STINFOTP_Q529DT>
+      <STINFOTP_Q529D baseType="xsd:integer" structure="field" type="USAmountType"></STINFOTP_Q529D>
     </UNMAPPED>
     <IRS1040 sequence="139" structure="form">
       <SpecialConditionDesc baseType="xsd:string" multiCopy="true" sequence="140" structure="field"></SpecialConditionDesc>

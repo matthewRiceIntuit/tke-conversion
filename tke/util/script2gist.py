@@ -128,7 +128,7 @@ def generate_schema(root):
         print "#### UPDATING SCHEMA ####"
         formatter = xmlformatter.Formatter()
         pretty = formatter.format_string(etree.tostring(schema))
-        with open(filename, 'w') as f: f.write( pretty )
+        #with open(filename, 'w') as f: f.write( pretty )
 
 
 

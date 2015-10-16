@@ -1,4 +1,7 @@
 
+
+
+
 FORM S2014US1040PER.F8812;
 var
 	h8812cr  : FDollar;
@@ -9,28 +12,51 @@ var
 			_	:FText;
 CONSTANT
 	MaxQCDITIN = 22;
-Section Generic;
+
+
+Section Lines1to3;
 BEGIN
+
     L1 := FWChTxCr.L8;
     L2 := F1040.L47;
     If HasValue(L1) or HasValue(L2) then
         L3 := Max(0,(L1 - L2));
 
+END;
+
+Section TaxableEI;
+Begin
     If (FEARNINC.L26C > 0) then
                 L4 := FEARNINC.L26C
+End;
 
+
+Section NTCombatpay;
+Begin
     If Fearninc.combatc > 0 then
             L4B := Fearninc.combatc;
 
+End;
+
+
+Section Lines5and6;
+Begin
+
     L5 := L4 - 3000;
     L6 := L5 * .15;
+End;
+
+Section Lines7to9;
+Begin
     L13 := Min(L3,L6);
 
     F8959SE := F8959.ADDMCSE;
     TOTS8812 := SUBTOT6 + F8959SE + SUBTOT11 + SUBTOT15;
 
+
     If (FWCHTXCR.L1A < 3) then
             L7BN := Checked;
+
 
 
 
@@ -39,9 +65,27 @@ BEGIN
     L8 := F1040.L27 + F1040.L53 + Max(0,(F1040.L57B - FW2SUM.hTPCODEA - FW2SUM.hSPCODEA))
             + Max(0,(F1040.L57C - FW2SUM.hTPCODEM - FW2SUM.hSPCODEM))
     L9 := L7 + L8;
-    L10 := F1040.L60 + F1040.L61;
-    L11 := Min(0,L9 - L10)
-    L12 := Max(L6, L11);
+End;
+
+
+
+Section EIC_SSxs;
+Begin
+			L10 := F1040.L60 + F1040.L61;
+End;
+
+    
+Section Line11;
+Begin
+        If (L9 > L10) then
+            L11 := L9 - L10
+        else
+            L11 := 0;
+        L12 := Max(L6, L11);
+End;
+
+Section CTC;
+Begin
 
     If IsChecked(L7BN) then
     begin
@@ -53,3 +97,16 @@ BEGIN
         end;
 
 END;
+        
+
+
+        
+
+
+        
+
+
+        
+
+
+        

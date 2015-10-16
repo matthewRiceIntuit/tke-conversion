@@ -84,12 +84,6 @@
                 <Threshold><xsl:value-of select="InputRoles/*[2]"/></Threshold>
             </InputRoles>
         </xsl:element>
-        <PostProcessing>
-            <RoundTo>
-                <Dollars/>
-            </RoundTo>
-            <ZeroIfBlank/>
-        </PostProcessing>
     </xsl:template>
 
     <xsl:template match="Cap" >

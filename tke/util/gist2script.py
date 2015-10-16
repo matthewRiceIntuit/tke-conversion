@@ -15,7 +15,6 @@ if __name__ == '__main__':
     #pretty_print(root)
     text = xslt_text(root.getroot(),'../xslt/gist2script.xsl')
     text = text.replace(' Value=','').replace(',\n\n',',\n').replace('\n)',')')
-    #text = text.replace('/Return/ReturnData/EIC/EICWorksheetPP/','').replace('/Temporary/EIC/','_')\
 
 
     text=text.replace('/Return/ReturnData/','')

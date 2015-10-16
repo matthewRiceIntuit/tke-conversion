@@ -1,0 +1,35 @@
+FORM S2014US1040PER.STINFOTP;
+
+section Related529PlanExpenseAllocation;
+VAR
+	 i       : Index;
+	 declBal : FDollar;
+	 declDeno: FDollar;
+	 dummy   : FDollar;
+BEGIN
+	declBal := Q5;
+	declDeno := 0;
+	for i := 1 to FNUMCOPY.F1099Q do
+	begin
+	    declDeno := declDeno + q529D[i];
+	end;
+END;
+
+
+
+
+// COPYING all the values from one table to the next
+section	Related529PlanDistributions;
+VAR
+	cpy : Index;
+BEGIN
+	for cpy := 1 to FNUMCOPY.F1099Q do
+		begin
+			if (F1099Q[cpy].whoCode = myWhoCode) and
+			   (F1099Q[cpy].whoNum  = myCopy) then
+				begin
+					q529D[cpy] := F1099Q[cpy].g529Dist;
+				end;
+		end;
+	q529Dt := q529D[1..FNUMCOPY.F1099Q];
+END;

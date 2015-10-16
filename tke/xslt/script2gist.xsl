@@ -5,6 +5,7 @@
 
     <xsl:key name="vars" match="//Var/@val" use="." />
     <xsl:key name="tmps" match="//Tmp/@val" use="." />
+    <xsl:key name="consts" match="//Const/@val" use="." />
 
     <xsl:template match="/">
         <Nodes
@@ -43,7 +44,7 @@
 
             <xsl:for-each select="/Gistscript/Section/Gist//Tmp/@val[generate-id() = generate-id(key('tmps',.)[1])]">
 
-                <InputNode><xsl:attribute name="name">/Temporary/Temp<xsl:value-of select="."/></xsl:attribute>
+                <InputNode><xsl:attribute name="name">/Temporary/<xsl:value-of select="."/></xsl:attribute>
                     <PostProcessing>
                         <RoundTo>
                             <Dollars/>
@@ -53,9 +54,9 @@
                 </InputNode>
             </xsl:for-each>
 
-            <xsl:for-each select="/Gistscript/Section/Gist//Const">
+            <xsl:for-each select="/Gistscript/Section/Gist//Const/@val[generate-id() = generate-id(key('consts',.)[1])]">
 
-                <ConstantNode><xsl:attribute name="name">/Constants/<xsl:value-of select="@val"/></xsl:attribute>
+                <ConstantNode><xsl:attribute name="name">/Constants/<xsl:value-of select="."/></xsl:attribute>
                     <PostProcessing>
                         <RoundTo>
                             <Dollars/>
@@ -71,10 +72,10 @@
     </xsl:template>
 
     <xsl:template match="Var"><xsl:value-of select="@val"/></xsl:template>
-    <xsl:template match="Tmp">/Temporary/Temp<xsl:value-of select="@val"/></xsl:template>
+    <xsl:template match="Tmp">/Temporary/<xsl:value-of select="@val"/></xsl:template>
     <xsl:template match="Const">/Constants/<xsl:value-of select="@val"/></xsl:template>
     <xsl:template match="Named_param[Var]"><xsl:variable name="name" select="Name/@val"/><xsl:element name="{$name}">/Return/ReturnData/<xsl:value-of select="Var/@val"/></xsl:element></xsl:template>
-    <xsl:template match="Named_param[Tmp]"><xsl:variable name="name" select="Name/@val"/><xsl:element name="{$name}">/Temporary/Temp<xsl:value-of select="Var/@val"/></xsl:element></xsl:template>
+    <xsl:template match="Named_param[Tmp]"><xsl:variable name="name" select="Name/@val"/><xsl:element name="{$name}">/Temporary/<xsl:value-of select="Var/@val"/></xsl:element></xsl:template>
 
     <xsl:template match="/Gistscript/Section">
         <Node><xsl:attribute name="name"><xsl:apply-templates select="*[1]"/></xsl:attribute>

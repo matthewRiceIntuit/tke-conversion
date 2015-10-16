@@ -25,14 +25,14 @@
     <xsl:template match="Boolean" mode="getID">$<xsl:value-of select="@val"/></xsl:template>
     <xsl:template match="Call[@val='hasvalue']" mode="getID"><xsl:choose><xsl:when test="name(..)='Assign'"><xsl:value-of select="../ID/@val"/></xsl:when><xsl:otherwise>@<xsl:value-of select="ArgList/VarRef/ID/@val"/>IsNotBlank</xsl:otherwise></xsl:choose></xsl:template>
     <xsl:template match="Call[@val='ischecked']" mode="getID"><xsl:value-of select="ArgList/VarRef/ID/@val"/></xsl:template>
+    <xsl:template match="Call" mode="getID"><xsl:choose><xsl:when test="name(..)='Assign'"><xsl:value-of select="../ID/@val"/></xsl:when><xsl:otherwise>@<xsl:value-of select="/CALC/FORMSET/FORM/@val"/>/<xsl:value-of select="./ancestor::Section/@val"/>/<xsl:value-of select="@val"/><xsl:value-of select="../@id"/></xsl:otherwise></xsl:choose></xsl:template>
     <xsl:template match="Predicate[@val='&gt;']" mode="getID">@<xsl:value-of select="VarRef/ID/@val"/>AboveThreshold</xsl:template>
     <xsl:template match="Predicate[@val='&lt;']" mode="getID">@<xsl:value-of select="VarRef/ID/@val"/>BelowThreshold</xsl:template>
     <xsl:template match="VarRef" mode="getID"><xsl:choose><xsl:when test="name(..)='Assign'"><xsl:value-of select="../ID/@val"/></xsl:when><xsl:otherwise><xsl:value-of select="ID/@val"/></xsl:otherwise></xsl:choose></xsl:template>
     <xsl:template match="and" mode="getID">@AllConditionsTrue<xsl:value-of select="@id"/></xsl:template>
     <xsl:template match="or" mode="getID">@AtLeastOneConditionTrue<xsl:value-of select="@id"/></xsl:template>
     <xsl:template match="DivMul|Multiply" mode="getID"><xsl:choose><xsl:when test="name(..)='Assign'"><xsl:value-of select="../ID/@val"/></xsl:when><xsl:otherwise>@DivMul<xsl:value-of select="@id"/></xsl:otherwise></xsl:choose></xsl:template>
-    <xsl:template match="AddSub|Accumulation|Difference" mode="getID"><xsl:choose><xsl:when test="name(..)='Assign'"><xsl:value-of select="../ID/@val"/></xsl:when><xsl:otherwise>@AddSub<xsl:value-of select="@id"/></xsl:otherwise></xsl:choose></xsl:template>
-    <xsl:template match="FunctionCall" mode="getID"><xsl:choose><xsl:when test="name(..)='Assign'"><xsl:value-of select="../ID/@val"/></xsl:when><xsl:otherwise><xsl:apply-templates/></xsl:otherwise></xsl:choose></xsl:template>
+    <xsl:template match="AddSub|Accumulation|Difference" mode="getID"><xsl:choose><xsl:when test="name(..)='Assign'"><xsl:value-of select="../ID/@val"/></xsl:when><xsl:otherwise>@<xsl:value-of select="/CALC/FORMSET/FORM/@val"/>/<xsl:value-of select="./ancestor::Section/@val"/>/AddSub<xsl:value-of select="@id"/></xsl:otherwise></xsl:choose></xsl:template>
     <xsl:template match="MultiCopyAccumulate" mode="getID"><xsl:value-of select="../ID/@val"/></xsl:template>
 
 
@@ -61,9 +61,18 @@
     <!--</xsl:template>-->
     <xsl:template match="/">
         <xml>
+            <xsl:attribute name="form"><xsl:value-of select="/CALC/FORMSET/FORM/@val"/></xsl:attribute>
             <xsl:apply-templates/>
         </xml>
     </xsl:template>
+
+    <xsl:template match="Section">
+        <Section>
+            <xsl:attribute name="id"><xsl:value-of select="@val"/></xsl:attribute>
+            <xsl:apply-templates/>
+        </Section>
+    </xsl:template>
+
 
     <xsl:template match="IfStruct[Parens/VarRef/ID[@val='F2441.RUNCALC']]">
         <xsl:apply-templates select="*[2]"/>
@@ -118,94 +127,94 @@
     </xsl:template>
 
     <xsl:template match="or">
+        <xsl:apply-templates/>
         <AtLeastOneConditionTrue>
             <ID><xsl:apply-templates select="."  mode="getID"/></ID>
             <xsl:for-each select="*">
                 <INPUT><xsl:apply-templates   mode="getID"/></INPUT>
             </xsl:for-each>
         </AtLeastOneConditionTrue>
-        <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:template match="AddSub[@val='+']|Accumulation">
+        <xsl:apply-templates/>
         <Accumulation>
             <ID><xsl:apply-templates select="."  mode="getID"/></ID>
             <xsl:for-each select="*">
                 <INPUT><xsl:apply-templates select="."  mode="getID"/></INPUT>
             </xsl:for-each>
         </Accumulation>
-        <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:template match="AddSub[@val='-']|Difference">
+        <xsl:apply-templates/>
         <Difference>
             <ID><xsl:apply-templates select="."  mode="getID"/></ID>
             <xsl:for-each select="*">
                 <INPUT><xsl:apply-templates select="."  mode="getID"/></INPUT>
             </xsl:for-each>
         </Difference>
-        <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:template match="FunctionCall[Call[@val='max']]">
+        <xsl:apply-templates/>
         <Maximum>
             <ID><xsl:apply-templates select="."  mode="getID"/></ID>
             <xsl:for-each select="Call/ArgList/*">
                 <INPUT><xsl:apply-templates select="."  mode="getID"/></INPUT>
             </xsl:for-each>
         </Maximum>
-        <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:template match="FunctionCall[Call[@val='min']]">
+        <xsl:apply-templates/>
         <Minimum>
             <ID><xsl:apply-templates select="."  mode="getID"/></ID>
             <xsl:for-each select="Call/ArgList/*">
                 <INPUT><xsl:apply-templates select="."  mode="getID"/></INPUT>
             </xsl:for-each>
         </Minimum>
-        <xsl:apply-templates/>
     </xsl:template>
 
 
 
     <xsl:template match="Predicate[@val='&gt;']">
+        <xsl:apply-templates/>
         <AboveThreshold>
             <ID><xsl:apply-templates select="."  mode="getID"/></ID>
             <xsl:for-each select="*">
                 <INPUT><xsl:apply-templates select="."  mode="getID"/></INPUT>
             </xsl:for-each>
         </AboveThreshold>
-        <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:template match="Predicate[@val='&lt;']">
+        <xsl:apply-templates/>
         <BelowThreshold>
             <ID><xsl:apply-templates select="."  mode="getID"/></ID>
             <xsl:for-each select="*">
                 <INPUT><xsl:apply-templates select="."  mode="getID"/></INPUT>
             </xsl:for-each>
         </BelowThreshold>
-        <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:template match="and">
+        <xsl:apply-templates/>
         <AllConditionsTrue>
             <ID><xsl:apply-templates select="."  mode="getID"/></ID>
             <xsl:for-each select="*">
                 <INPUT><xsl:apply-templates select="."  mode="getID"/></INPUT>
             </xsl:for-each>
         </AllConditionsTrue>
-        <xsl:apply-templates/>
     </xsl:template>
 
 
     <xsl:template match="MultiCopyAccumulate">
+        <xsl:apply-templates/>
         <MultiCopyAccumulation>
             <ID><xsl:apply-templates select="."  mode="getID"/></ID>
             <INPUT><xsl:value-of select="ID/@val"/></INPUT>
         </MultiCopyAccumulation>
-        <xsl:apply-templates/>
 
     </xsl:template>
 
